@@ -31,3 +31,4 @@ Makefile
 .metadata
 */.settings
 */.classpath
+*/UserFixture.java
