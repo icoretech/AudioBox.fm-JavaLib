@@ -1,14 +1,7 @@
 package fm.audiobox.sync;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.OutputStream;
-import java.net.Socket;
-import java.util.Arrays;
 
-import org.apache.http.client.methods.HttpPost;
-
-import fm.audiobox.api.AudioBoxClient;
 import fm.audiobox.api.models.Track;
 import fm.audiobox.util.ThreadItem;
 

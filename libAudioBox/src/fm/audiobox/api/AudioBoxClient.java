@@ -398,7 +398,7 @@ public class AudioBoxClient {
      */
     
     public static String execute(String path, String token, String action , Model target, String httpVerb) throws LoginException , ServiceException {
-    	return execute(path, token, action, target, httpVerb, null);
+    	return execute (path, token, action, target, httpVerb, null);
     }
     
     /**
@@ -419,7 +419,7 @@ public class AudioBoxClient {
      * @return the result of the request, may be a response code, such as HTTP OK ("200") or the response itself.
      */
     
-    public static String execute(String path, String token, String action , Model target, String httpVerb, File uploadFile) throws LoginException , ServiceException {
+    public static String execute (String path, String token, String action , Model target, String httpVerb, File uploadFile) throws LoginException , ServiceException {
 
         token = ( token == null ) ? "" : token.startsWith("/") ? token : "/".concat(token);
         action = ( action == null ) ? "" : action.startsWith("/") ? action : "/".concat(action);
@@ -503,53 +503,54 @@ public class AudioBoxClient {
             	mpe.addPart( "media", fb);
             	post.setEntity( mpe );
             }
-
-            HttpResponse resp = sClient.execute(method);
-
-            int responseCode = resp.getStatusLine().getStatusCode();
-
-            if ( responseCode == HttpStatus.SC_OK ){
-                if ( target != null ) {
-
-                    try {
-
-                        // Instanciate new SaxParser from InputStream
-                        SAXParserFactory spf = SAXParserFactory.newInstance();
-                        SAXParser sp = spf.newSAXParser();
-
-                        /* Get the XMLReader of the SAXParser we created. */
-                        XMLReader xr = sp.getXMLReader();
-
-                        /* Create a new ContentHandler and apply it to the XML-Reader */
-                        xr.setContentHandler( target );
-
-                        final InputStream is = new GZIPInputStream( resp.getEntity().getContent() );
-
-                        xr.parse( new InputSource( is ) );
-
-                    } catch( SAXException e) {
-                        throw new ServiceException( "SAX exception: " + e.getMessage() );
-                    } catch( ParserConfigurationException e) {
-                        throw new ServiceException( "Parser exception: " + e.getMessage() );
-                    }
-                }
-
-            } else if ( responseCode == HttpStatus.SC_SEE_OTHER ){
-
-                // Return the correct location header
-                return resp.getFirstHeader("Location").getValue();
-
-            } else if ( responseCode == HttpStatus.SC_FORBIDDEN || responseCode == HttpStatus.SC_UNAUTHORIZED ) {
-
-                throw new LoginException("Unauthorized response: " + responseCode, responseCode);
-
-            } else {
-                throw new ServiceException( "An error occurred", ServiceException.GENERIC_SERVICE_ERROR );
-            }
-
-            sCollectionListener.onCollectionReady( CollectionListener.DOCUMENT_PARSED ,target );
-
-            return String.valueOf(responseCode);
+            
+            return sClient.execute(method,target);
+//                resp = sClient.execute(method);
+//
+//            int responseCode = resp.getStatusLine().getStatusCode();
+//
+//            if ( responseCode == HttpStatus.SC_OK ){
+//                if ( target != null ) {
+//
+//                    try {
+//
+//                        // Instanciate new SaxParser from InputStream
+//                        SAXParserFactory spf = SAXParserFactory.newInstance();
+//                        SAXParser sp = spf.newSAXParser();
+//
+//                        /* Get the XMLReader of the SAXParser we created. */
+//                        XMLReader xr = sp.getXMLReader();
+//
+//                        /* Create a new ContentHandler and apply it to the XML-Reader */
+//                        xr.setContentHandler( target );
+//
+//                        final InputStream is = new GZIPInputStream( resp.getEntity().getContent() );
+//
+//                        xr.parse( new InputSource( is ) );
+//
+//                    } catch( SAXException e) {
+//                        throw new ServiceException( "SAX exception: " + e.getMessage() );
+//                    } catch( ParserConfigurationException e) {
+//                        throw new ServiceException( "Parser exception: " + e.getMessage() );
+//                    }
+//                }
+//
+//            } else if ( responseCode == HttpStatus.SC_SEE_OTHER ){
+//
+//                // Return the correct location header
+//                return resp.getFirstHeader("Location").getValue();
+//
+//            } else if ( responseCode == HttpStatus.SC_FORBIDDEN || responseCode == HttpStatus.SC_UNAUTHORIZED ) {
+//
+//                throw new LoginException("Unauthorized response: " + responseCode, responseCode);
+//
+//            } else {
+//                throw new ServiceException( "An error occurred", ServiceException.GENERIC_SERVICE_ERROR );
+//            }
+//
+//            sCollectionListener.onCollectionReady( CollectionListener.DOCUMENT_PARSED ,target );
+//
+//            return String.valueOf(responseCode);
 
         } catch( ClientProtocolException e ) {
             throw new ServiceException( "Client protocol exception: " + e.getMessage(), ServiceException.CLIENT_ERROR );
