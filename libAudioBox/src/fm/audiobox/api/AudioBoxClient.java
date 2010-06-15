@@ -43,6 +43,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
@@ -67,6 +68,7 @@ import fm.audiobox.api.exceptions.LoginException;
 import fm.audiobox.api.exceptions.ServiceException;
 import fm.audiobox.api.interfaces.AudioBoxModelLoader;
 import fm.audiobox.api.interfaces.CollectionListener;
+import fm.audiobox.api.models.Track;
 import fm.audiobox.api.models.User;
 import fm.audiobox.api.util.Inflector;
 
@@ -104,7 +106,7 @@ public class AudioBoxClient {
     // Internals
     public static final float VERSION = 0.1f;
     public static final String VERSION_NAME = "0.1-alpha";
-    
+
     /** Message used when the response is succesfully parsed */
     public static final String PROTOCOL = "https";
     public static final String HOST = "audiobox.fm";
@@ -113,39 +115,36 @@ public class AudioBoxClient {
     public static final String API_SUFFIX = ".xml";
     public static final String TRACK_ID_PLACEHOLDER = "[track_id]";
     public static final String API_PATH = PROTOCOL + "://" + HOST + API_PREFIX;
-    
+
     /** Specifies the models package (fm.audiobox.api.models) */
     public static final String DEFAULT_MODELS_PACKAGE = "fm.audiobox.api.models";
     private static final String PATH_PARAMETER = "${path}";
     private static final String TOKEN_PARAMETER = "${token}";
     private static final String ACTION_PARAMETER = "${action}";
 
-    
+
     private static int sTimeout = (180 * 1000);
     private static boolean sForceTrust = false;
     private static String sUserAgent = "AudioBox.fm/"+ VERSION +" (Java; U; " +
-        System.getProperty("os.name") + " " +
-        System.getProperty("os.arch") + "; " + 
-        System.getProperty("user.language") + "; " +
-        System.getProperty("java.runtime.version") +  ") " +
-        System.getProperty("java.vm.name") + "/" + 
-        System.getProperty("java.vm.version") + 
-        " AudioBoxClient/" + VERSION_NAME;
-    
+    System.getProperty("os.name") + " " +
+    System.getProperty("os.arch") + "; " + 
+    System.getProperty("user.language") + "; " +
+    System.getProperty("java.runtime.version") +  ") " +
+    System.getProperty("java.vm.name") + "/" + 
+    System.getProperty("java.vm.version") + 
+    " AudioBoxClient/" + VERSION_NAME;
+
     private static String sCustomModelsPackage = DEFAULT_MODELS_PACKAGE;
     private static String sApiPath = API_PATH + PATH_PARAMETER + TOKEN_PARAMETER + ACTION_PARAMETER;
     private static Class<? extends User> sUserClass = User.class;
     private static Inflector sI = Inflector.getInstance();
     private static User sUser;
-    private static HttpClient  sClient = new DefaultHttpClient();
-    private static HttpParams sParams = sClient.getParams();
 
-    
     
     /* ------------------ */
     /* Default Interfaces */
     /* ------------------ */
-    
+
     /** @see {@link CollectionListener} */
     private static CollectionListener sCollectionListener = new CollectionListener() {
         public void onCollectionReady(int message) {  }
@@ -176,7 +175,7 @@ public class AudioBoxClient {
             return klass;
         }
     };
-    
+
 
     /**
      * Note: When first created, AudioBoxClient instantiate a new {@link User} object needed for authentication 
@@ -188,7 +187,7 @@ public class AudioBoxClient {
      * class you want to use <b>before</b> AudioBoxClient object is created. 
      * This is done through the {@link AudioBoxClient#setUserClass(Class)} method.
      */
-    
+
     public AudioBoxClient() { 
         try {
             Class<? extends User> clazz = sUserClass;
@@ -198,9 +197,10 @@ public class AudioBoxClient {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
+        
     }
-    
-    
+
+
     /**
      * This method should be called before any other call to AudioBox.fm.<br/>
      * It tries to perform a login. If succeeds a User object is returned otherwise a {@link LoginException} is thrown.<br/>
@@ -218,7 +218,7 @@ public class AudioBoxClient {
 
         Log logger = LogFactory.getLog(AudioBoxClient.class);
         logger.info("Starting AudioBoxClient: " + sUserAgent);
-        
+
         sUserClass.cast(sUser).setUsername( username );
         sUserClass.cast(sUser).setPassword( password );
 
@@ -231,57 +231,57 @@ public class AudioBoxClient {
 
     }
 
-    
+
     /**
      * This method returns the User object used to perform requests to AudioBox.fm.
      * 
      * @return {@link User} object
      */
-    
+
     public User getUser() {
         return sUser;
     }
 
-    
+
     /**
      * Use this method to configure the timeout limit for the reqests made against AudioBox.fm.
      * 
      * @param timeout the milliseconds of the timeout limit
      */
-    
+
     public void setTimeout(int timeout) {
         sTimeout = timeout; 
     }
 
-    
+
     /**
      * Returns the requests timeout limit.
      * 
      * @return timeout limit
      */
-    
+
     public int getTimeout() {
         return sTimeout;
     }
 
-    
+
     /**
      * Use this method to override the default {@link CollectionListener}.
      * 
      * @param collectionListener the CollectionListener to use for parser callbacks
      */
-    
+
     public void setCollectionListener(CollectionListener collectionListener) {
         AudioBoxClient.sCollectionListener = collectionListener;
     }
 
-    
+
     /**
      * Use this method to override the default {@link AudioBoxModelLoader}.
      * 
      * @param modelLoader the AudioBoxModelLoader to use for models class loading
      */
-    
+
     public void setAudioBoxModelLoader(AudioBoxModelLoader modelLoader) {
         AudioBoxClient.sAudioBoxModelLoader = modelLoader;
     }
@@ -297,12 +297,12 @@ public class AudioBoxClient {
      * 
      * @return the AudioBoxClient {@link Inflector} instance
      */
-    
+
     public static Inflector getInflector() {
         return AudioBoxClient.sI;
     }
-    
-    
+
+
     /**
      * This method will set SSL certificate validation on or off.
      * You will not need to use this. This method is used for testing purpose only. For this reason this method is 
@@ -310,70 +310,70 @@ public class AudioBoxClient {
      * 
      * @param force set or unset the SSL certificate validation (false validates, true skips validation).
      */
-    
+
     @Deprecated
     public static void setForceTrust(boolean force) {
         AudioBoxClient.sForceTrust = force;
     }
 
-    
+
     /**
      * If you need to extend the {@link User} model class you will have to specify which is the User class to load
      * <b>before</b> instantiate a new {@link AudioBoxClient} object.
      * 
      * @param clazz the extended {@link User} class.
      */
-    
+
     public static void setUserClass(Class<? extends User> clazz) {
         AudioBoxClient.sUserClass = clazz;
     }
 
-    
+
     /**
      * Use this method to make AudioBoxClient loads your extended models classes.<br/>
      * 
      * @param customModelsPackage the extended models classes package.
      */
-    
+
     public static void setCustomModelsPackage(String customModelsPackage) {
         AudioBoxClient.sCustomModelsPackage = customModelsPackage;
     }
 
-    
+
     /**
      * Use this method to gather the models package used for models class loading.
      * 
      * @return the custom models package default is {@link AudioBoxClient#DEFAULT_MODELS_PACKAGE}.
      */
-    
+
     public static String getCustomModelsPackage() {
         return sCustomModelsPackage;
     }
 
-    
+
     /**
      * Use this method to get the configured {@link CollectionListener}.
      * 
      * @return the current collection listener AudioBoxClient is using.
      */
-    
+
     public static CollectionListener getCollectionListener() {
         return sCollectionListener;
     }
 
-    
+
     /**
      * Use this method to get the configured {@link AudioBoxModelLoader}.<br/>
      * You can specify a custom model loader through {@link AudioBoxClient#setAudioBoxModelLoader(AudioBoxModelLoader)}.
      * 
      * @return the current model loader AudioBoxClient is using.
      */
-    
+
     public static AudioBoxModelLoader getAudioBoxModelLoader() {
         return sAudioBoxModelLoader;
     }
 
-    
+
     /**
      * This method is used by the {@link Model} class by running the {@link Model#invoke()} method.<br/>
      * Avoid direct execution of this method if you don't know what you are doing.
@@ -390,7 +390,7 @@ public class AudioBoxClient {
      * 
      * @return the result of the request, may be a response code, such as HTTP OK ("200") or the response itself.
      */
-    
+
     public static String execute(String path, String token, String action , Model target, String httpVerb) throws LoginException , ServiceException {
 
         token = ( token == null ) ? "" : token.startsWith("/") ? token : "/".concat(token);
@@ -406,14 +406,14 @@ public class AudioBoxClient {
 
         return request( url, target, httpVerb );
     }
-    
-    
-    
+
+
+
     /* --------------- */
     /* Private methods */
     /* --------------- */
-    
-    
+
+
     /**
      * This method is used to performs requests to AudioBox.fm service APIs.<br/>
      * Once AudioBox.fm responds the response is parsed through the target {@link Model} only if the response returns
@@ -434,7 +434,7 @@ public class AudioBoxClient {
      * @return the response code or the stream Location (in case of a {@link Track} model)
      * 
      */
-    
+
     private static String request(String url, Model target, String httpVerb) throws LoginException, ServiceException {
 
         if (sUser == null)
@@ -446,11 +446,14 @@ public class AudioBoxClient {
 
             log.info("Requesting resource: " + url);
 
+            HttpClient client = new DefaultHttpClient();
+            HttpParams params = client.getParams();
+            
             if (sForceTrust)
-                forceTrustCertificate(sClient);
+                forceTrustCertificate(client);
 
-            sParams.setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, sTimeout);
-            sParams.setParameter(ClientPNames.HANDLE_REDIRECTS, false);
+            params.setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, sTimeout);
+            params.setParameter(ClientPNames.HANDLE_REDIRECTS, false);
 
             HttpRequestBase method = null; 
             if ( HttpPost.METHOD_NAME.equals(httpVerb) ) {
@@ -466,11 +469,26 @@ public class AudioBoxClient {
             method.addHeader("Accept-Encoding", "gzip");
             method.addHeader("User-Agent", sUserAgent);
 
-            HttpResponse resp = sClient.execute(method);
-
+            HttpResponse resp = client.execute(method);
+            HttpEntity entity = resp.getEntity();
             int responseCode = resp.getStatusLine().getStatusCode();
+            String response = String.valueOf(responseCode);
 
-            if ( responseCode == HttpStatus.SC_OK ){
+            /**
+             * We will look at the response code and take decision based upon it.
+             * Assumption are done:
+             * 
+             * - 200: Parsable entity 
+             * - 303: Redirect to the right stream url
+             * - 401, 403: User cannot access the requested resource
+             * 
+             * If none of previous code has been returned Service error is thrown.
+             */
+
+            switch( responseCode ) {
+
+            case HttpStatus.SC_OK:
+
                 if ( target != null ) {
 
                     try {
@@ -485,9 +503,12 @@ public class AudioBoxClient {
                         /* Create a new ContentHandler and apply it to the XML-Reader */
                         xr.setContentHandler( target );
 
-                        final InputStream is = new GZIPInputStream( resp.getEntity().getContent() );
+
+                        final InputStream is = new GZIPInputStream( entity.getContent() );
 
                         xr.parse( new InputSource( is ) );
+
+                        is.close();
 
                     } catch( SAXException e) {
                         throw new ServiceException( "SAX exception: " + e.getMessage() );
@@ -495,23 +516,29 @@ public class AudioBoxClient {
                         throw new ServiceException( "Parser exception: " + e.getMessage() );
                     }
                 }
+                break;
 
-            } else if ( responseCode == HttpStatus.SC_SEE_OTHER ){
+            case HttpStatus.SC_SEE_OTHER:
 
                 // Return the correct location header
-                return resp.getFirstHeader("Location").getValue();
+                response = resp.getFirstHeader("Location").getValue();
+                break;
 
-            } else if ( responseCode == HttpStatus.SC_FORBIDDEN || responseCode == HttpStatus.SC_UNAUTHORIZED ) {
-
+            case HttpStatus.SC_FORBIDDEN:
+            case HttpStatus.SC_UNAUTHORIZED:
                 throw new LoginException("Unauthorized response: " + responseCode, responseCode);
 
-            } else {
+            default:
                 throw new ServiceException( "An error occurred", ServiceException.GENERIC_SERVICE_ERROR );
             }
 
             sCollectionListener.onCollectionReady( CollectionListener.DOCUMENT_PARSED );
 
-            return String.valueOf(responseCode);
+            // Free resources
+            entity.consumeContent();
+            client.getConnectionManager().shutdown();
+            
+            return response;
 
         } catch( ClientProtocolException e ) {
             throw new ServiceException( "Client protocol exception: " + e.getMessage(), ServiceException.CLIENT_ERROR );
@@ -522,7 +549,7 @@ public class AudioBoxClient {
         } 
     }
 
-    
+
     /**
      * This method is for internal testing and debugging use only.<br/>
      * Please avoid the use of this method.
@@ -539,18 +566,18 @@ public class AudioBoxClient {
      * 
      * @param client HttpClient to set the SSL interfaces to
      */
-    
+
     @Deprecated
     private static void forceTrustCertificate(HttpClient client) {
-        
+
         Log logger = LogFactory.getLog(AudioBoxClient.class);
-        
+
         TrustManager easyTrustManager = new X509TrustManager() {
             public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException { }
             public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException { }
             public X509Certificate[] getAcceptedIssuers() { return null; }
         };
-        
+
         X509HostnameVerifier hnv = new X509HostnameVerifier() {
             public void verify(String arg0, SSLSocket arg1) throws IOException { }
             public void verify(String arg0, X509Certificate arg1) throws SSLException { }
@@ -572,4 +599,5 @@ public class AudioBoxClient {
         }
     }
 
+    
 }
