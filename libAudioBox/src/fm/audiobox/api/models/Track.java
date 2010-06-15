@@ -23,7 +23,6 @@ package fm.audiobox.api.models;
 
 import java.io.File;
 import java.net.SocketException;
-import java.security.MessageDigest;
 
 import javax.xml.parsers.ParserConfigurationException;
 
