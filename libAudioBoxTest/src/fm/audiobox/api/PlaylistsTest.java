@@ -13,6 +13,7 @@ import org.junit.Test;
 import fm.audiobox.api.AudioBoxClient;
 import fm.audiobox.api.exceptions.LoginException;
 import fm.audiobox.api.exceptions.ServiceException;
+import fm.audiobox.api.mocks.fixtures.UserFixture;
 import fm.audiobox.api.models.Album;
 import fm.audiobox.api.models.Playlist;
 import fm.audiobox.api.models.Playlists;
@@ -26,9 +27,6 @@ import fm.audiobox.api.models.User;
  */
 public class PlaylistsTest extends junit.framework.TestCase {
 
-    private static final String LOGIN = "test@test.com";
-    private static final String RIGHT_PASS = "test";
-
     AudioBoxClient abc;
     User user;
     Playlists playlists;
@@ -36,7 +34,7 @@ public class PlaylistsTest extends junit.framework.TestCase {
     @Before
     public void setUp() throws Exception {
         abc = new AudioBoxClient();
-        user = abc.login(LOGIN, RIGHT_PASS);
+        user = abc.login(UserFixture.LOGIN, UserFixture.RIGHT_PASS);
     }
 
     @Test
@@ -115,7 +113,7 @@ public class PlaylistsTest extends junit.framework.TestCase {
 
     private void loginCatched() {
         try {
-            user = abc.login( LOGIN , RIGHT_PASS );
+            user = abc.login( UserFixture.LOGIN , UserFixture.RIGHT_PASS );
         } catch (LoginException e) {
             e.printStackTrace();
         } catch (SocketException e) {

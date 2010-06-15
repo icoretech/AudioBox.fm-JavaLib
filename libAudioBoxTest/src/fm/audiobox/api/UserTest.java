@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import fm.audiobox.api.exceptions.LoginException;
 import fm.audiobox.api.exceptions.ServiceException;
+import fm.audiobox.api.mocks.fixtures.UserFixture;
 import fm.audiobox.api.mocks.models.User;
 
 /**
@@ -20,12 +21,6 @@ import fm.audiobox.api.mocks.models.User;
  */
 public class UserTest extends junit.framework.TestCase {
 
-    private static final String LOGIN = "test@test.com";
-    private static final String RIGHT_PASS = "test";
-    private static final String USERNAME = "test";
-    private static final String WRONG_PASS = "wrong_pass";
-
-    
     AudioBoxClient abc;
     User user;
     
@@ -45,7 +40,7 @@ public class UserTest extends junit.framework.TestCase {
     public void testLoginShouldThrowsLoginExceptionOnWrongPassword() {
         
         try {
-            user = (User) abc.login( LOGIN , WRONG_PASS );
+            user = (User) abc.login( UserFixture.LOGIN , UserFixture.WRONG_PASS );
         } catch (LoginException e) {
            assertEquals( 401, e.getErrorCode());
         } catch (SocketException e) {
@@ -57,7 +52,7 @@ public class UserTest extends junit.framework.TestCase {
     public void testLoginShouldThrowsLoginExceptionOnWrongCredentials() {
         
         try {
-            user = (User) abc.login( "wrong_user" , WRONG_PASS );
+            user = (User) abc.login( "wrong_user" , UserFixture.WRONG_PASS );
         } catch (LoginException e) {
            assertEquals( 401, e.getErrorCode());
         } catch (SocketException e) {
@@ -73,7 +68,7 @@ public class UserTest extends junit.framework.TestCase {
         
         assertNotNull( user.getProfile() );
         assertNotNull( user.getProfile().getName() );
-        assertEquals( USERNAME , user.getUsername());
+        assertEquals( UserFixture.USERNAME , user.getUsername());
     }
 
     
@@ -102,7 +97,7 @@ public class UserTest extends junit.framework.TestCase {
     
     private void loginCatched() {
         try {
-            user = (User) abc.login( LOGIN , RIGHT_PASS );
+            user = (User) abc.login( UserFixture.LOGIN , UserFixture.RIGHT_PASS );
         } catch (LoginException e) {
             e.printStackTrace();
         } catch (SocketException e) {
