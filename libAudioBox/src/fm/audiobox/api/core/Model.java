@@ -78,7 +78,6 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
             default:
         }
         
-        
         return responseString;
     }
 
