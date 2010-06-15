@@ -21,12 +21,24 @@
 
 package fm.audiobox.api.exceptions;
 
+/**
+ * This exception is thrown when a connection to AudioBox.fm service fails due to
+ * an invalid user authentication.
+ * 
+ * @author Valerio Chiodino
+ * @version 0.1
+ */
+
 public class LoginException extends javax.security.auth.login.LoginException {
 
+    /** Tipically used when trying to access services without authentication */
     public static final int NO_CREDENTIALS = -400;
+    
+    /** Error code given by an inactive user login */
     public static final int INACTIVE_USER_STATE = -200;
     
 	private static final long serialVersionUID = 1L;
+	
 	private int errorCode;
 	
 	public LoginException(String message) {

@@ -21,11 +21,31 @@
 
 package fm.audiobox.api.exceptions;
 
+/**
+ * ServiceException is thrown whenever a connection exception occurs while
+ * performing a request to AudioBox.fm services.
+ * 
+ * <p>
+ * 
+ * Exception is specified through the error codes.
+ * 
+ * 
+ * @author Valerio Chiodino
+ * @version 0.1
+ */
+
 public class ServiceException extends java.net.ConnectException {
 
+    /** Socket exception error code */
     public static final int SOCKET_ERROR = 1;
+    
+    /** Client exception error code */
     public static final int CLIENT_ERROR = 2;
+    
+    /** Timeout exception error code */
     public static final int TIMEOUT_ERROR = 3;
+    
+    /** Generic service exception error code */
     public static final int GENERIC_SERVICE_ERROR = 4;
     
     private static final long serialVersionUID = 1L;
