@@ -21,6 +21,7 @@
 
 package fm.audiobox.api;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketTimeoutException;
@@ -56,6 +57,9 @@ import org.apache.http.client.params.ClientPNames;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.conn.ssl.X509HostnameVerifier;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.params.HttpParams;
@@ -147,7 +151,7 @@ public class AudioBoxClient {
 
     /** @see {@link CollectionListener} */
     private static CollectionListener sCollectionListener = new CollectionListener() {
-        public void onCollectionReady(int message) {  }
+        public void onCollectionReady(int message, Object result) {  }
         public void onItemReady(int item, Object obj) { }
     };
 
@@ -372,8 +376,8 @@ public class AudioBoxClient {
     public static AudioBoxModelLoader getAudioBoxModelLoader() {
         return sAudioBoxModelLoader;
     }
-
-
+ 
+    
     /**
      * This method is used by the {@link Model} class by running the {@link Model#invoke()} method.<br/>
      * Avoid direct execution of this method if you don't know what you are doing.
@@ -392,6 +396,28 @@ public class AudioBoxClient {
      */
 
     public static String execute(String path, String token, String action , Model target, String httpVerb) throws LoginException , ServiceException {
+    	return execute(path, token, action, target, httpVerb, null);
+    }
+    
+    /**
+     * This method is used by the {@link Model} class by running the {@link Model#invoke()} method.<br/>
+     * Avoid direct execution of this method if you don't know what you are doing.
+     * 
+     * <p>
+     * 
+     * Some of the parameter may be null other cannot.
+     * 
+     * @param path the partial url to call. Tipically this is a Model end point ({@link Model#getEndPoint()})
+     * @param token the token of the Model if any, may be null or empty ({@link Model#getToken()})
+     * @param action the remote action to execute on the model that executes the action (ie. "scrobble")
+     * @param target usually reffers the Model that executes the method
+     * @param httpVerb the HTTP method to use for the request (GET, PUT and POST are currently supported)
+     * @param uploadFile file to be uploaded
+     * 
+     * @return the result of the request, may be a response code, such as HTTP OK ("200") or the response itself.
+     */
+    
+    public static String execute(String path, String token, String action , Model target, String httpVerb, File uploadFile) throws LoginException , ServiceException {
 
         token = ( token == null ) ? "" : token.startsWith("/") ? token : "/".concat(token);
         action = ( action == null ) ? "" : action.startsWith("/") ? action : "/".concat(action);
@@ -404,7 +430,7 @@ public class AudioBoxClient {
         if ( HttpGet.METHOD_NAME.equals(httpVerb) )
             url += API_SUFFIX;
 
-        return request( url, target, httpVerb );
+        return request( url, target, httpVerb /*, uploadFile */);
     }
 
 
@@ -430,11 +456,12 @@ public class AudioBoxClient {
      * @param url the full url where to make the request
      * @param target the model to use to parse the response
      * @param httpVerb the HTTP method to use for the request
+     * @param uploadFile file to be uploaded
      * 
      * @return the response code or the stream Location (in case of a {@link Track} model)
      * 
      */
-
+    
     private static String request(String url, Model target, String httpVerb) throws LoginException, ServiceException {
 
         if (sUser == null)
@@ -465,9 +492,18 @@ public class AudioBoxClient {
             }
 
             // Seting up default headers
-            method.addHeader("Authorization" , "Basic " + sUser.getAuth());
+            method.addHeader("Authorization" , "Basic " + sUser.getAuth() );
             method.addHeader("Accept-Encoding", "gzip");
             method.addHeader("User-Agent", sUserAgent);
+            
+            
+            if ( method instanceof HttpPost && target instanceof Track ){
+            	HttpPost post = ( HttpPost ) method;
+            	MultipartEntity mpe = new MultipartEntity( HttpMultipartMode.BROWSER_COMPATIBLE );
+            	FileBody fb = new FileBody( ((Track)target).getFile() );
+            	mpe.addPart( "media", fb);
+            	post.setEntity( mpe );
+            }
 
             HttpResponse resp = client.execute(method);
             HttpEntity entity = resp.getEntity();
@@ -533,7 +569,7 @@ public class AudioBoxClient {
                 throw new ServiceException( "An error occurred", ServiceException.GENERIC_SERVICE_ERROR );
             }
 
-            sCollectionListener.onCollectionReady( CollectionListener.DOCUMENT_PARSED );
+            sCollectionListener.onCollectionReady( CollectionListener.DOCUMENT_PARSED ,target );
 
             // Free resources
             entity.consumeContent();
