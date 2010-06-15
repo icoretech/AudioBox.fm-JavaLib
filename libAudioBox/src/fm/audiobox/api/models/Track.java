@@ -36,6 +36,7 @@ import fm.audiobox.api.core.Model;
 import fm.audiobox.api.core.ModelItem;
 import fm.audiobox.api.core.ModelsCollection;
 import fm.audiobox.api.exceptions.LoginException;
+import fm.audiobox.api.util.MD5Converter;
 
 /**
  * The XML response looks like this:
@@ -361,9 +362,8 @@ public class Track extends ModelItem {
 	
 	public String hash(){
 		if ( this.hashCode != null ){ return this.hashCode;}
-		if ( this.file != null && this.file.exists() ){
+		if ( this.file != null && this.file.exists() )
 			this.hashCode = MD5Converter.digest(this.file);
-		
 		return this.hashCode;
 	}
 	

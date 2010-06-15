@@ -432,7 +432,7 @@ public class AudioBoxClient {
         if ( HttpGet.METHOD_NAME.equals(httpVerb) )
             url += API_SUFFIX;
 
-        return request( url, target, httpVerb, uploadFile );
+        return request( url, target, httpVerb /*, uploadFile */);
     }
     
     
