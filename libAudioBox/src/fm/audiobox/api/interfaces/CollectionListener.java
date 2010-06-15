@@ -56,6 +56,7 @@ public interface CollectionListener {
     
     /** Message sent on document fully parsed event. */
     public static final int DOCUMENT_PARSED = -200;
+    public static final int OBJECT_BUILT = -201;
     
     /**
      * This method is called when an element of a list (such as {@link Track} is ready for use.
@@ -80,9 +81,10 @@ public interface CollectionListener {
      * Actually the only message sent by this callback is the negative value represented by 
      * {@link CollectionListener#DOCUMENT_PARSED}.
      *
-     * @param message the {@link CollectionListener#DOCUMENT_PARSED DOCUMENT_PARSED} value. 
+     * @param message the {@link CollectionListener#DOCUMENT_PARSED DOCUMENT_PARSED} value.
+     * @param result the object obtained from the operation  
      */
     
-    public void onCollectionReady(int message);
+    public void onCollectionReady(int message, Object result);
     
 }

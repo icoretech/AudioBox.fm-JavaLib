@@ -21,7 +21,9 @@
 
 package fm.audiobox.api.models;
 
+import java.io.File;
 import java.net.SocketException;
+import java.security.MessageDigest;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -98,9 +100,16 @@ public class Track extends ModelItem {
 	// Utility fields
 	public enum State { IDLE, PLAYING, ERROR, BUFFERING, PAUSED }
 	protected State trackState = Track.State.IDLE;
+	protected File file;
+	protected String hashCode = null;
 	
 	public Track() {
 	    this.endPoint = Tracks.END_POINT;
+	}
+	
+	public Track( File file){
+		super();
+		this.file = file;
 	}
 	
 	@Override
@@ -267,6 +276,12 @@ public class Track extends ModelItem {
 		return durationInSeconds;
 	}
 	
+	/**
+	 * @return the file to upload
+	 */
+	public File getFile(){
+		return this.file;
+	}
 	
 	
 	/* ------- */
@@ -339,6 +354,18 @@ public class Track extends ModelItem {
 	}
 	
 	
+	
+	public void upload() throws LoginException , ParserConfigurationException, SAXException, SocketException{
+		AudioBoxClient.execute( this.endPoint, null, null, this, HttpPost.METHOD_NAME, this.file);
+	}
+	
+	public String hash(){
+		if ( this.hashCode != null ){ return this.hashCode;}
+		if ( this.file != null && this.file.exists() ){
+			this.hashCode = MD5Converter.digest(this.file);
+		
+		return this.hashCode;
+	}
 	
 	/* Overrides */
 	@Override
