@@ -493,21 +493,22 @@ public class AudioBoxClient {
 
                     try {
 
-                        // Instanciate new SaxParser from InputStream
+                        // NOTE: objects that follows cannot be declared as field.
+                        // This to prevent concurrent thread collisions.
+                        
+                        // Instanciate new SaxParser
                         SAXParserFactory spf = SAXParserFactory.newInstance();
                         SAXParser sp = spf.newSAXParser();
 
-                        /* Get the XMLReader of the SAXParser we created. */
+                        // Get the XMLReader of the SAXParser we created.
                         XMLReader xr = sp.getXMLReader();
 
-                        /* Create a new ContentHandler and apply it to the XML-Reader */
+                        // Create a new ContentHandler and apply it to the XML-Reader
                         xr.setContentHandler( target );
 
-
-                        final InputStream is = new GZIPInputStream( entity.getContent() );
-
+                        // Start parsing
+                        InputStream is = new GZIPInputStream( entity.getContent() );
                         xr.parse( new InputSource( is ) );
-
                         is.close();
 
                     } catch( SAXException e) {
