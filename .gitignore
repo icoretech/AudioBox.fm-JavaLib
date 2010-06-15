@@ -23,4 +23,4 @@ doc/*.dot
 .metadata
 */.settings
 */.classpath
-*/src/fm/audiobox/api/mocks/fixtures/*
+libAudioBoxTest/src/fm/audiobox/api/mocks/fixtures/*
