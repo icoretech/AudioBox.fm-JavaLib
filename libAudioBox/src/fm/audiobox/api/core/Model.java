@@ -23,7 +23,6 @@ package fm.audiobox.api.core;
 
 import java.io.IOException;
 import java.io.InputStream;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Stack;
@@ -38,7 +37,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -50,38 +48,19 @@ import fm.audiobox.api.AudioBoxClient;
 import fm.audiobox.api.exceptions.LoginException;
 import fm.audiobox.api.exceptions.ServiceException;
 import fm.audiobox.api.interfaces.AudioBoxModelLoader;
+import fm.audiobox.api.interfaces.ResponseHandler;
 import fm.audiobox.api.util.Inflector;
 
-public abstract class Model extends DefaultHandler implements ResponseHandler<String> {
+public abstract class Model extends DefaultHandler implements ResponseHandler {
 
     private static final String ADD_PREFIX = "add";
-    
+    private static final String SET_PREFIX = "set";
+
     public static final int SAX_ERROR_CODE = -1000;
     public static final int PARSER_CONFIGURATION_ERROR_CODE = -1001;
     public static final int IO_ERROR_CODE = -1002;
-    
-    private static Log log = LogFactory.getLog(Model.class);
-    
-    
-    @Override
-    public final String handleResponse(HttpResponse response) throws ClientProtocolException, IOException {
-        
-        int responseCode = response.getStatusLine().getStatusCode();
-        String responseString = String.valueOf( responseCode );
-        
-        switch( responseCode ) {
-            case    HttpStatus.SC_OK:
-                this.parseResponse( /* response.getStatusLine().getStatusCode(), */ response.getEntity().getContent() );
-                break;
-            case    HttpStatus.SC_SEE_OTHER:
-                responseString = response.getFirstHeader("Location").getValue();
-            default:
-        }
-        
-        return responseString;
-    }
 
-    private static final String SET_PREFIX = "set";
+    private static Log log = LogFactory.getLog(Model.class);
 
     private boolean mSkipField = false;
     private Stack<Object> mStack;
@@ -96,35 +75,48 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
     // Model interfaces
     protected AudioBoxModelLoader abml = AudioBoxClient.getAudioBoxModelLoader();
 
-    
-    public String parseResponse(/*int responseCode , */ InputStream input) {
-        try {
 
-            // Instanciate new SaxParser from InputStream
-            SAXParserFactory spf = SAXParserFactory.newInstance();
-            SAXParser sp = spf.newSAXParser();
+    public final String handleResponse(HttpResponse response, String httpVerb) throws ClientProtocolException, IOException, IllegalStateException, SAXException, ParserConfigurationException {
 
-            /* Get the XMLReader of the SAXParser we created. */
-            XMLReader xr = sp.getXMLReader();
+        int responseCode = response.getStatusLine().getStatusCode();
+        String responseString = String.valueOf( responseCode );
 
-            /* Create a new ContentHandler and apply it to the XML-Reader */
-            xr.setContentHandler( this );
-
-            final InputStream is = new GZIPInputStream( input );
-
-            xr.parse( new InputSource( is ) );
-
-        } catch( SAXException e) {
-            return String.valueOf(SAX_ERROR_CODE);
-        } catch( ParserConfigurationException e) {
-            return String.valueOf(PARSER_CONFIGURATION_ERROR_CODE);
-        } catch( IOException e) {
-            return String.valueOf(IO_ERROR_CODE);
+        switch( responseCode ) {
+        
+        case HttpStatus.SC_OK:
+            this.parseResponse( response.getEntity().getContent() );
+            break;
+        case HttpStatus.SC_SEE_OTHER:
+            responseString = response.getFirstHeader("Location").getValue();
+        default:
+            break;
+            
         }
-        return this.toString();
-    };
-    
-    
+
+        return responseString;
+    }
+
+
+    public void parseResponse( InputStream input ) throws IOException, SAXException, ParserConfigurationException {
+        
+        // Instanciate new SaxParser from InputStream
+        SAXParserFactory spf = SAXParserFactory.newInstance();
+        SAXParser sp = spf.newSAXParser();
+
+        /* Get the XMLReader of the SAXParser we created. */
+        XMLReader xr = sp.getXMLReader();
+
+        /* Create a new ContentHandler and apply it to the XML-Reader */
+        xr.setContentHandler( this );
+
+        final InputStream is = new GZIPInputStream( input );
+
+        xr.parse( new InputSource( is ) );
+        
+        is.close();
+    }
+
+
     public void setAudioBoxModelLoader(AudioBoxModelLoader abml) {
         this.abml = abml;
     }
@@ -136,7 +128,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
     public final void setEndPoint(String endPoint){
         this.endPoint = endPoint;
     }
-    
+
     public final String getEndPoint(){
         return this.endPoint;
     }
@@ -161,12 +153,12 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
         AudioBoxClient.execute( this.getEndPoint(), this.getToken(), null, this, HttpGet.METHOD_NAME);
     }
 
-    
+
     /* --------- */
     /* Overrides */
     /* --------- */
-    
-    
+
+
     @Override
     public final void startDocument() throws SAXException {
         this.mStack = new Stack<Object>();
@@ -199,21 +191,21 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
             if (!scm.equals( peek.getClass().getSimpleName() ) && localName.equals( scm  ) ) {
                 methodPrefix = ADD_PREFIX;
             }
-            
+
             String methodName =  methodPrefix + localName;
             Method method = null;
             try {
                 method = peek.getClass().getMethod(methodName, String.class);
             } catch (NoSuchMethodException e) {
-                 for (Method m : peek.getClass().getMethods()) {
+                for (Method m : peek.getClass().getMethods()) {
                     if (m.getName().equals( methodName )) {
                         method = m;
                         break;
                     }
                 }
             }
-            
-           
+
+
             if (method == null)
                 mSkipField = true;
 
@@ -226,7 +218,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
                     Class<?> objectClass = abml.getModelClassName(this.getClass(), localName ); 
                     Object subClass = objectClass.newInstance();
                     method.invoke(peek, objectClass.cast( subClass ));
-                    
+
                     this.mStack.push( subClass );
                 } else {
                     this.mStack.push( method );
@@ -278,9 +270,9 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
                 } catch (InvocationTargetException e) {
                     e.printStackTrace();
                 }
-                
+
             }
-            
+
             this.mStack.pop();
 
         }

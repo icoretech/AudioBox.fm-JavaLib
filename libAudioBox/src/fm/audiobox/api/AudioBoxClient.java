@@ -21,15 +21,12 @@
 
 package fm.audiobox.api;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.SocketTimeoutException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.zip.GZIPInputStream;
 
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
@@ -39,14 +36,9 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -63,9 +55,7 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.params.HttpParams;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
 
 import fm.audiobox.api.core.Model;
 import fm.audiobox.api.exceptions.LoginException;
@@ -144,7 +134,7 @@ public class AudioBoxClient {
     private static Inflector sI = Inflector.getInstance();
     private static User sUser;
 
-    
+
     /* ------------------ */
     /* Default Interfaces */
     /* ------------------ */
@@ -201,7 +191,7 @@ public class AudioBoxClient {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-        
+
     }
 
 
@@ -376,29 +366,8 @@ public class AudioBoxClient {
     public static AudioBoxModelLoader getAudioBoxModelLoader() {
         return sAudioBoxModelLoader;
     }
- 
-    
-    /**
-     * This method is used by the {@link Model} class by running the {@link Model#invoke()} method.<br/>
-     * Avoid direct execution of this method if you don't know what you are doing.
-     * 
-     * <p>
-     * 
-     * Some of the parameter may be null other cannot.
-     * 
-     * @param path the partial url to call. Tipically this is a Model end point ({@link Model#getEndPoint()})
-     * @param token the token of the Model if any, may be null or empty ({@link Model#getToken()})
-     * @param action the remote action to execute on the model that executes the action (ie. "scrobble")
-     * @param target usually reffers the Model that executes the method
-     * @param httpVerb the HTTP method to use for the request (GET, PUT and POST are currently supported)
-     * 
-     * @return the result of the request, may be a response code, such as HTTP OK ("200") or the response itself.
-     */
 
-    public static String execute(String path, String token, String action , Model target, String httpVerb) throws LoginException , ServiceException {
-    	return execute (path, token, action, target, httpVerb, null);
-    }
-    
+
     /**
      * This method is used by the {@link Model} class by running the {@link Model#invoke()} method.<br/>
      * Avoid direct execution of this method if you don't know what you are doing.
@@ -416,8 +385,8 @@ public class AudioBoxClient {
      * 
      * @return the result of the request, may be a response code, such as HTTP OK ("200") or the response itself.
      */
-    
-    public static String execute (String path, String token, String action , Model target, String httpVerb, File uploadFile) throws LoginException , ServiceException {
+
+    public static String execute (String path, String token, String action , Model target, String httpVerb) throws LoginException , ServiceException {
 
         token = ( token == null ) ? "" : token.startsWith("/") ? token : "/".concat(token);
         action = ( action == null ) ? "" : action.startsWith("/") ? action : "/".concat(action);
@@ -461,7 +430,7 @@ public class AudioBoxClient {
      * @return the response code or the stream Location (in case of a {@link Track} model)
      * 
      */
-    
+
     private static String request(String url, Model target, String httpVerb) throws LoginException, ServiceException {
 
         if (sUser == null)
@@ -475,7 +444,7 @@ public class AudioBoxClient {
 
             HttpClient client = new DefaultHttpClient();
             HttpParams params = client.getParams();
-            
+
             if (sForceTrust)
                 forceTrustCertificate(client);
 
@@ -495,64 +464,78 @@ public class AudioBoxClient {
             method.addHeader("Authorization" , "Basic " + sUser.getAuth() );
             method.addHeader("Accept-Encoding", "gzip");
             method.addHeader("User-Agent", sUserAgent);
-            
-            
+
+
             if ( method instanceof HttpPost && target instanceof Track ){
-            	HttpPost post = ( HttpPost ) method;
-            	MultipartEntity mpe = new MultipartEntity( HttpMultipartMode.BROWSER_COMPATIBLE );
-            	FileBody fb = new FileBody( ((Track)target).getFile() );
-            	mpe.addPart( "media", fb);
-            	post.setEntity( mpe );
+                HttpPost post = ( HttpPost ) method;
+                MultipartEntity mpe = new MultipartEntity( HttpMultipartMode.BROWSER_COMPATIBLE );
+                FileBody fb = new FileBody( ((Track)target).getFile() );
+                mpe.addPart( "media", fb);
+                post.setEntity( mpe );
             }
-            
-            return sClient.execute(method,target);
-//                resp = sClient.execute(method);
-//
-//            int responseCode = resp.getStatusLine().getStatusCode();
-//
-//            if ( responseCode == HttpStatus.SC_OK ){
-//                if ( target != null ) {
-//
-//                    try {
-//
-//                        // Instanciate new SaxParser from InputStream
-//                        SAXParserFactory spf = SAXParserFactory.newInstance();
-//                        SAXParser sp = spf.newSAXParser();
-//
-//                        /* Get the XMLReader of the SAXParser we created. */
-//                        XMLReader xr = sp.getXMLReader();
-//
-//                        /* Create a new ContentHandler and apply it to the XML-Reader */
-//                        xr.setContentHandler( target );
-//
-//                        final InputStream is = new GZIPInputStream( resp.getEntity().getContent() );
-//
-//                        xr.parse( new InputSource( is ) );
-//
-//                    } catch( SAXException e) {
-//                        throw new ServiceException( "SAX exception: " + e.getMessage() );
-//                    } catch( ParserConfigurationException e) {
-//                        throw new ServiceException( "Parser exception: " + e.getMessage() );
-//                    }
-//                }
-//
-//            } else if ( responseCode == HttpStatus.SC_SEE_OTHER ){
-//
-//                // Return the correct location header
-//                return resp.getFirstHeader("Location").getValue();
-//
-//            } else if ( responseCode == HttpStatus.SC_FORBIDDEN || responseCode == HttpStatus.SC_UNAUTHORIZED ) {
-//
-//                throw new LoginException("Unauthorized response: " + responseCode, responseCode);
-//
-//            } else {
-//                throw new ServiceException( "An error occurred", ServiceException.GENERIC_SERVICE_ERROR );
-//            }
-//
-//            sCollectionListener.onCollectionReady( CollectionListener.DOCUMENT_PARSED ,target );
-//
-//            return String.valueOf(responseCode);
->>>>>>> c7d839c3bdd8c31bd4b686fc6ea94be0b835d8b0
+
+            String response = "";
+            try {
+                response = target.handleResponse( client.execute(method), httpVerb );
+            } catch (IllegalStateException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (SAXException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (ParserConfigurationException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            return response;
+
+            //                resp = sClient.execute(method);
+            //
+            //            int responseCode = resp.getStatusLine().getStatusCode();
+            //
+            //            if ( responseCode == HttpStatus.SC_OK ){
+            //                if ( target != null ) {
+            //
+            //                    try {
+            //
+            //                        // Instanciate new SaxParser from InputStream
+            //                        SAXParserFactory spf = SAXParserFactory.newInstance();
+            //                        SAXParser sp = spf.newSAXParser();
+            //
+            //                        /* Get the XMLReader of the SAXParser we created. */
+            //                        XMLReader xr = sp.getXMLReader();
+            //
+            //                        /* Create a new ContentHandler and apply it to the XML-Reader */
+            //                        xr.setContentHandler( target );
+            //
+            //                        final InputStream is = new GZIPInputStream( resp.getEntity().getContent() );
+            //
+            //                        xr.parse( new InputSource( is ) );
+            //
+            //                    } catch( SAXException e) {
+            //                        throw new ServiceException( "SAX exception: " + e.getMessage() );
+            //                    } catch( ParserConfigurationException e) {
+            //                        throw new ServiceException( "Parser exception: " + e.getMessage() );
+            //                    }
+            //                }
+            //
+            //            } else if ( responseCode == HttpStatus.SC_SEE_OTHER ){
+            //
+            //                // Return the correct location header
+            //                return resp.getFirstHeader("Location").getValue();
+            //
+            //            } else if ( responseCode == HttpStatus.SC_FORBIDDEN || responseCode == HttpStatus.SC_UNAUTHORIZED ) {
+            //
+            //                throw new LoginException("Unauthorized response: " + responseCode, responseCode);
+            //
+            //            } else {
+            //                throw new ServiceException( "An error occurred", ServiceException.GENERIC_SERVICE_ERROR );
+            //            }
+            //
+            //            sCollectionListener.onCollectionReady( CollectionListener.DOCUMENT_PARSED ,target );
+            //
+            //            return String.valueOf(responseCode);
 
         } catch( ClientProtocolException e ) {
             throw new ServiceException( "Client protocol exception: " + e.getMessage(), ServiceException.CLIENT_ERROR );
@@ -613,5 +596,5 @@ public class AudioBoxClient {
         }
     }
 
-    
+
 }

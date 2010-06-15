@@ -356,7 +356,7 @@ public class Track extends ModelItem {
 	
 	
 	public void upload() throws LoginException , ParserConfigurationException, SAXException, SocketException{
-		AudioBoxClient.execute( this.endPoint, null, null, this, HttpPost.METHOD_NAME, this.file);
+		AudioBoxClient.execute( this.endPoint, null, null, this, HttpPost.METHOD_NAME );
 	}
 	
 	public String hash(){
