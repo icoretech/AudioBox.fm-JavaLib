@@ -31,4 +31,4 @@ Makefile
 .metadata
 */.settings
 */.classpath
-*/UserFixture.java
+libAudioBoxTest/src/fm/audiobox/api/mocks/fixtures/UserFixture.java
