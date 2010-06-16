@@ -21,10 +21,20 @@
 
 package fm.audiobox.api.models;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import org.apache.http.Header;
+import org.apache.http.client.methods.HttpGet;
+
+import fm.audiobox.api.AudioBoxClient;
 import fm.audiobox.api.core.ModelItem;
 import fm.audiobox.api.core.ModelsCollection;
 import fm.audiobox.api.exceptions.LoginException;
 import fm.audiobox.api.exceptions.ServiceException;
+import fm.audiobox.api.interfaces.ResponseHandler;
 import fm.audiobox.api.util.Base64;
 
 /**
@@ -59,7 +69,7 @@ import fm.audiobox.api.util.Base64;
  * 
  */
 
-public class User extends ModelItem {
+public class User extends ModelItem implements ResponseHandler {
 
     public static final String TAG_NAME = "user";
     public static final String PATH = TAG_NAME;
@@ -83,6 +93,8 @@ public class User extends ModelItem {
     protected ModelsCollection genres;
     protected ModelsCollection artists;
     protected ModelsCollection albums;
+    
+    private String[] tracks;
 
     public User() {
         this.endPoint = PATH;
@@ -103,11 +115,11 @@ public class User extends ModelItem {
         this.artists   = (ModelsCollection) abml.getModelClassName(this.getClass(), Artists.END_POINT ).newInstance();
         this.albums    = (ModelsCollection) abml.getModelClassName(this.getClass(), Albums.END_POINT ).newInstance();
     }
-    
+
     public void setBytesServed(String bytes) {
         this.bytesServed = Long.parseLong( bytes );
     }
-    
+
     /**
      * @return the bytesServed
      */
@@ -115,11 +127,11 @@ public class User extends ModelItem {
         return this.bytesServed;
     }
 
-    
+
     public void setEmail(String email) {
         this.email = email;
     }
-    
+
     /**
      * @return the email
      */
@@ -127,12 +139,12 @@ public class User extends ModelItem {
         return this.email;
     }
 
-    
-    
+
+
     public void setPlayCount(String playCount) {
         this.playCount = Integer.parseInt( playCount );
     }
-    
+
     /**
      * @return the playCount
      */
@@ -140,11 +152,11 @@ public class User extends ModelItem {
         return this.playCount;
     }
 
-    
+
     public void setQuota(String quota) {
         this.quota = Long.parseLong( quota );
     }
-    
+
     /**
      * @return the quota
      */
@@ -152,12 +164,12 @@ public class User extends ModelItem {
         return this.quota;
     }
 
-    
-    
+
+
     public void setState(String state) {
         this.state = state;
     }
-    
+
     /**
      * @return the state
      */
@@ -165,23 +177,23 @@ public class User extends ModelItem {
         return this.state;
     }
 
-    
+
     public void setTracksCount(String tracksCount) {
         this.tracksCount = Integer.parseInt( tracksCount );
     }
-    
+
     /**
      * @return the tracksCount
      */
     public int getTracksCount() {
         return this.tracksCount;
     }
-    
-    
+
+
     public void setUsername(String username) {
         this.username = username;
     }
-    
+
     /**
      * @return the username
      */
@@ -189,25 +201,25 @@ public class User extends ModelItem {
         return this.username;
     }
 
-    
+
     public void setPassword(String password) {
         this.password = password;
     }
 
-    
+
     public void setAvalableStorage(String availableStorage) {
         this.availableStorage = Long.parseLong( availableStorage );
     }
-    
+
     /**
      * @return the availableStorage
      */
     public long getAvailableStorage() {
         return this.availableStorage;
     }
-    
-    
-    
+
+
+
     public void setAvatarUrl(String url) {
         this.avatarUrl = url;
     }
@@ -219,13 +231,13 @@ public class User extends ModelItem {
         return this.avatarUrl;
     }
 
-    
-    
+
+
     public void setProfile(ModelItem profile) {
         this.profile = profile;
     }
-    
-    
+
+
     /**
      * @return the profile
      */
@@ -243,7 +255,7 @@ public class User extends ModelItem {
         String auth = ( email == null ? username : email ) + ":" + password;
         return Base64.encodeBytes( auth.getBytes() );
     }
-    
+
     /**
      * @return the playlists
      * @throws LoginException 
@@ -275,5 +287,37 @@ public class User extends ModelItem {
         return albums;
     }
 
+    public String[] getUploadedTracks() throws ServiceException, LoginException {
+        AudioBoxClient.execute(Tracks.END_POINT, null, null, this, HttpGet.METHOD_NAME, "txt");
+        return this.tracks;
+    }
+
+
+    public void parseResponse(InputStream is, Header contentType) throws IOException {
+
+        if (contentType.getValue().contains("xml")) {
+            super.parseResponse(is, contentType);
+            return;
+        }
+
+        if (is != null) {
+            StringBuilder sb = new StringBuilder();
+            String line;
+
+            try {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line);
+                }
+            } finally {
+                is.close();
+            }
+
+            this.tracks =  sb.toString().split(";");
+        } else {       
+            this.tracks = new String[]{};
+        }
+
+    }
 
 }

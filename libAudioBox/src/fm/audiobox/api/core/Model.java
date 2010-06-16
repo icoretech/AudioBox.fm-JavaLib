@@ -34,6 +34,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
@@ -76,51 +77,6 @@ public abstract class Model extends DefaultHandler implements ResponseHandler {
     protected AudioBoxModelLoader abml = AudioBoxClient.getAudioBoxModelLoader();
 
 
-    public final String handleResponse(HttpResponse response, String httpVerb) throws ClientProtocolException, IOException, IllegalStateException, SAXException, ParserConfigurationException {
-
-        int responseCode = response.getStatusLine().getStatusCode();
-        String responseString = String.valueOf( responseCode );
-
-        switch( responseCode ) {
-        
-        case HttpStatus.SC_OK:
-            this.parseResponse( response.getEntity().getContent() );
-            break;
-        case HttpStatus.SC_SEE_OTHER:
-            responseString = response.getFirstHeader("Location").getValue();
-        default:
-            break;
-            
-        }
-
-        return responseString;
-    }
-
-
-    public void parseResponse( InputStream input ) throws IOException, SAXException, ParserConfigurationException {
-        
-        // Instanciate new SaxParser from InputStream
-        SAXParserFactory spf = SAXParserFactory.newInstance();
-        SAXParser sp = spf.newSAXParser();
-
-        /* Get the XMLReader of the SAXParser we created. */
-        XMLReader xr = sp.getXMLReader();
-
-        /* Create a new ContentHandler and apply it to the XML-Reader */
-        xr.setContentHandler( this );
-
-        final InputStream is = new GZIPInputStream( input );
-
-        xr.parse( new InputSource( is ) );
-        
-        is.close();
-    }
-
-
-    public void setAudioBoxModelLoader(AudioBoxModelLoader abml) {
-        this.abml = abml;
-    }
-
     public String toString() {
         return this.getName();
     }
@@ -147,6 +103,65 @@ public abstract class Model extends DefaultHandler implements ResponseHandler {
 
     public final void setToken(String token) {
         this.token = token;
+    }
+    
+    public final String handleResponse(HttpResponse response, String httpVerb) throws ClientProtocolException, IOException, IllegalStateException, LoginException {
+
+        int responseCode = response.getStatusLine().getStatusCode();
+        String responseString = String.valueOf( responseCode );
+
+        switch( responseCode ) {
+
+        case HttpStatus.SC_OK:
+            this.parseResponse( new GZIPInputStream( response.getEntity().getContent() ), response.getEntity().getContentType() );
+            response.getEntity().consumeContent();
+            break;
+
+        case HttpStatus.SC_SEE_OTHER:
+            responseString = response.getFirstHeader("Location").getValue();
+
+        case HttpStatus.SC_FORBIDDEN:
+        case HttpStatus.SC_UNAUTHORIZED:
+            throw new LoginException("Unauthorized response: " + responseCode, responseCode);
+
+        default:
+            throw new ServiceException( "An error occurred", ServiceException.GENERIC_SERVICE_ERROR );
+
+        }
+
+        return responseString;
+    }
+
+    public void parseResponse( InputStream input, Header contentType ) throws IOException {
+
+        try {
+
+            // Instanciate new SaxParser from InputStream
+            SAXParserFactory spf = SAXParserFactory.newInstance();
+            SAXParser sp = spf.newSAXParser();
+
+            /* Get the XMLReader of the SAXParser we created. */
+            XMLReader xr = sp.getXMLReader();
+
+            /* Create a new ContentHandler and apply it to the XML-Reader */
+            xr.setContentHandler( this );
+
+            xr.parse( new InputSource( input ) );
+
+            input.close();
+            
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void setAudioBoxModelLoader(AudioBoxModelLoader abml) {
+        this.abml = abml;
     }
 
     public void invoke() throws ServiceException, LoginException {
