@@ -26,6 +26,8 @@ import java.net.SocketException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.xml.sax.SAXException;
@@ -35,7 +37,7 @@ import fm.audiobox.api.core.Model;
 import fm.audiobox.api.core.ModelItem;
 import fm.audiobox.api.core.ModelsCollection;
 import fm.audiobox.api.exceptions.LoginException;
-import fm.audiobox.api.util.MD5Converter;
+import fm.audiobox.api.exceptions.ServiceException;
 
 /**
  * The XML response looks like this:
@@ -91,6 +93,8 @@ public class Track extends ModelItem {
 	protected int playCount;
 	protected String title;
 	protected int year;
+	protected String fileHash;
+	
 	protected String streamUrl;
 	protected long audioFileSize;
 	protected ModelItem artist;
@@ -101,13 +105,13 @@ public class Track extends ModelItem {
 	public enum State { IDLE, PLAYING, ERROR, BUFFERING, PAUSED }
 	protected State trackState = Track.State.IDLE;
 	protected File file;
-	protected String hashCode = null;
+	
 	
 	public Track() {
 	    this.endPoint = Tracks.END_POINT;
 	}
 	
-	public Track( File file){
+	public Track(File file) {
 		super();
 		this.file = file;
 	}
@@ -225,7 +229,21 @@ public class Track extends ModelItem {
 	
 	
 	
-	public void setAudioFileSize(String fileSize) {
+	/**
+     * @param fileHash the fileHash to set
+     */
+    public void setFileHash(String fileHash) {
+        this.fileHash = fileHash;
+    }
+
+    /**
+     * @return the fileHash
+     */
+    public String getFileHash() {
+        return fileHash;
+    }
+
+    public void setAudioFileSize(String fileSize) {
 	    this.audioFileSize = Long.parseLong( fileSize );
 	}
 	
@@ -288,16 +306,20 @@ public class Track extends ModelItem {
 	/* Actions */
 	/* ------- */
 	
-	public void scrobble()  throws LoginException , ParserConfigurationException, SAXException, SocketException {
+	public void scrobble() throws ServiceException, LoginException {
 	    AudioBoxClient.execute( this.endPoint, this.getUuid(), SCROBBLE_ACTION, null, HttpPost.METHOD_NAME);
 	}
 	
-	public boolean love() throws LoginException , ParserConfigurationException, SAXException, SocketException {
-	    return "200".equals(  AudioBoxClient.execute( this.endPoint, this.getUuid(), LOVE_ACTION, null, HttpPut.METHOD_NAME)  );
+	public boolean love() throws ServiceException, LoginException  {
+	    return HttpStatus.SC_OK == Integer.parseInt( AudioBoxClient.execute( this.endPoint, this.getUuid(), LOVE_ACTION, null, HttpPut.METHOD_NAME)  );
 	}
 	
-	public boolean unlove() throws LoginException , ParserConfigurationException, SAXException, SocketException {
-	    return "200".equals(  AudioBoxClient.execute( this.endPoint, this.getUuid(), UNLOVE_ACTION, null, HttpPut.METHOD_NAME)  );
+	public boolean unlove() throws ServiceException, LoginException {
+	    return HttpStatus.SC_OK == Integer.parseInt( AudioBoxClient.execute( this.endPoint, this.getUuid(), UNLOVE_ACTION, null, HttpPut.METHOD_NAME) );
+	}
+	
+	public boolean delete() throws ServiceException, LoginException {
+	    return HttpStatus.SC_OK == Integer.parseInt( AudioBoxClient.execute( this.endPoint, this.getUuid(), null, null, HttpDelete.METHOD_NAME) );
 	}
 	
 	
@@ -358,14 +380,7 @@ public class Track extends ModelItem {
 	public void upload() throws LoginException , ParserConfigurationException, SAXException, SocketException{
 		AudioBoxClient.execute( this.endPoint, null, null, this, HttpPost.METHOD_NAME );
 	}
-	
-	public String hash(){
-		if ( this.hashCode != null ){ return this.hashCode;}
-		if ( this.file != null && this.file.exists() )
-			this.hashCode = MD5Converter.digest(this.file);
-		return this.hashCode;
-	}
-	
+
 	/* Overrides */
 	@Override
 	public ModelItem getTrack(String uuid) { return this; }

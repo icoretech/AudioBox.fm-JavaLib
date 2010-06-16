@@ -84,6 +84,22 @@ public class UserTest extends junit.framework.TestCase {
         }
     }
     
+    @Test
+    public void testUserGetUploadedTracks() {
+        loginCatched();
+        
+        try {
+            String[] tracks = user.getUploadedTracks();
+            assertNotNull(tracks);
+            assertNotNull(tracks[0]);
+            
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        } catch (LoginException e) {
+            e.printStackTrace();
+        }
+    }
+    
     @After
     public void tearDown() throws Exception {
         
