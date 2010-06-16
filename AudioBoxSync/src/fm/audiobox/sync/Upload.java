@@ -2,82 +2,53 @@ package fm.audiobox.sync;
 
 import java.io.File;
 
+import org.apache.http.client.methods.HttpPost;
+
+import fm.audiobox.api.AudioBoxClient;
+import fm.audiobox.api.exceptions.LoginException;
+import fm.audiobox.api.exceptions.ServiceException;
 import fm.audiobox.api.models.Track;
 import fm.audiobox.util.ThreadItem;
 
 public class Upload extends ThreadItem {
 	
-	
+	private Track _track = null;
 	private File _file = null;
-	private Track track = null;
-	private int CHUNK = 8192*3;
 	
 	public Upload(File file){
 		this._file = file;
-		this.track = new Track( file );
 	}
 	
 
 	@Override
-	protected void _run() {
+	protected synchronized void _run() {
 		
-		try{
-			this.track.hash();
-			this.track.upload();
-			
-			
-		}catch(Throwable t){
-			// TODO: exceptions management
-			System.out.println( "##### ERRORE: " + t);
+		try {
+			AudioBoxClient.execute("", null, null, this._track, HttpPost.METHOD_NAME);
+		} catch (ServiceException e) {
+			e.printStackTrace( System.out );
+		} catch (LoginException e) {
+			e.printStackTrace( System.out );
 		}
 		
-		
-		
+	}
+	
+	public String upload(){
+		this.start();
+		this._run();
+		return this.end();
 	}
 	
 	
-	private String generateBoundary(){
-		StringBuffer sb = new StringBuffer();
-		
-		// TODO: to fix
-		sb.append( "Wqg5U6mQBaOWMxY18kmYhoWcPJ19YwMy" /*System.currentTimeMillis() */);
-		
-//		while(true){
-//			int u = (int) Math.random();
-//			
-//			Character.
-//			
-//			
-//			break;
-//		}
-		
-		return sb.toString();
+	@Override
+	protected synchronized String end() {
+		return this._track.getFileHash();
 	}
 
 	@Override
-	protected void end() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void start() {
-		// TODO Auto-generated method stub
-		
+	protected synchronized void start() {
+		this._track = new Track( this._file );
 	}
 	
 	
-	public synchronized String upload( String url, String filename, String boundary, String bodylength ){
-		try{
-			
-			
-		} catch(Throwable t){
-			
-		}
-		
-		return "";
-	}
-	
-	
-
 }
