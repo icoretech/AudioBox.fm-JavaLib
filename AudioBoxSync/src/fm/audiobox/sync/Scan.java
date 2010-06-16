@@ -4,8 +4,9 @@ import java.io.File;
 import java.io.FileFilter;
 
 import fm.audiobox.api.interfaces.CollectionListener;
+import fm.audiobox.util.ThreadItem;
 
-public class Scan implements Runnable {
+public class Scan extends ThreadItem {
 
 	
 	private Thread _thread = null;
@@ -15,23 +16,6 @@ public class Scan implements Runnable {
 	private CollectionListener _listener = null;
 
 	public Scan(){
-		
-		this.setFilter( new FileFilter() {
-			
-			@Override
-			public boolean accept(File pathname) {
-				
-				if ( ! pathname.canRead() ) return false;
-				
-				if ( pathname.isDirectory() && ! _recursive ) return false;
-				
-				/* TODO: check file type */
-				
-				return true;
-				
-			}
-			
-		});
 		
 	}
 	
@@ -57,7 +41,7 @@ public class Scan implements Runnable {
 	
 	
 	@Override
-	public void run() {
+	public void _run() {
 		
 		this._listener.onCollectionReady( 200 , this._start(  this._folder ) );
 		
@@ -74,6 +58,33 @@ public class Scan implements Runnable {
 			this._listener.onItemReady( i , file );
 		}
 		return files;
+	}
+
+
+	@Override
+	protected void end() {
+		
+	}
+
+	@Override
+	protected void start() {
+		
+		this.setFilter( new FileFilter() {
+			
+			@Override
+			public boolean accept(File pathname) {
+				
+				if ( ! pathname.canRead() ) return false;
+				
+				if ( pathname.isDirectory() && ! _recursive ) return false;
+				
+				/* TODO: check file type */
+				
+				return true;
+				
+			}
+			
+		});
 	}
 	
 }
