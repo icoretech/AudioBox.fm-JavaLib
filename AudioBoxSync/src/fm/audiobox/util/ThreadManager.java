@@ -2,8 +2,6 @@ package fm.audiobox.util;
 
 import java.util.*;
 
-import fm.audiobox.api.interfaces.ThreadListener;
-
 public class ThreadManager {
 
 	private int MAX = 4;
@@ -41,8 +39,6 @@ public class ThreadManager {
 		
 		ThreadItem item = this._threads.get(this.current_thread_index);
 		Thread thread = new Thread( item );
-
-    System.out.println( "Start new thread");
 
 		thread.start();
     this.started_thread++;
