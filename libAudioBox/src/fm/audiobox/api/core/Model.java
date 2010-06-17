@@ -113,7 +113,19 @@ public abstract class Model extends DefaultHandler implements ResponseHandler {
         switch( responseCode ) {
 
         case HttpStatus.SC_OK:
-            this.parseResponse( new GZIPInputStream( response.getEntity().getContent() ), response.getEntity().getContentType() );
+          InputStream input = response.getEntity().getContent();
+
+
+          /*  TODO: investigate
+           * workaround: Response stream could not in GZIP format
+           */
+          try {
+            input = new GZIPInputStream( input );
+          } catch( Exception e){
+            log.warn("Input stream is not in GZIP format: " + e.getMessage());
+          }
+
+            this.parseResponse( input , response.getEntity().getContentType() );
             response.getEntity().consumeContent();
             break;
 
