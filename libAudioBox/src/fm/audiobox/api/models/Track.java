@@ -38,6 +38,7 @@ import fm.audiobox.api.core.ModelItem;
 import fm.audiobox.api.core.ModelsCollection;
 import fm.audiobox.api.exceptions.LoginException;
 import fm.audiobox.api.exceptions.ServiceException;
+import org.apache.http.entity.mime.content.FileBody;
 
 /**
  * The XML response looks like this:
@@ -104,14 +105,14 @@ public class Track extends ModelItem {
 	// Utility fields
 	public enum State { IDLE, PLAYING, ERROR, BUFFERING, PAUSED }
 	protected State trackState = Track.State.IDLE;
-	protected File file;
+	protected FileBody file;
 	
 	
 	public Track() {
 	    this.endPoint = Tracks.END_POINT;
 	}
 	
-	public Track(File file) {
+	public Track(FileBody file) {
 		super();
 		this.file = file;
 	}
@@ -297,7 +298,7 @@ public class Track extends ModelItem {
 	/**
 	 * @return the file to upload
 	 */
-	public File getFile(){
+	public FileBody getFile(){
 		return this.file;
 	}
 	

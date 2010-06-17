@@ -488,7 +488,7 @@ public class AudioBoxClient {
             if ( method instanceof HttpPost && target instanceof Track ){
                 HttpPost post = ( HttpPost ) method;
                 MultipartEntity mpe = new MultipartEntity( HttpMultipartMode.BROWSER_COMPATIBLE );
-                FileBody fb = new FileBody( ((Track)target).getFile() );
+                FileBody fb = ((Track)target).getFile();
                 mpe.addPart( "media", fb);
                 post.setEntity( mpe );
             }
