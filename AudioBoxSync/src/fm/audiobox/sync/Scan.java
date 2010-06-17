@@ -11,13 +11,19 @@ public class Scan extends ThreadItem {
 
 	
 	private boolean _recursive = false;
+  private boolean _hidden = false;
 	private File _folder = null;
 	private FileFilter _ff = null;
 	private List<File> files = null;
 
-	public Scan( File folder, boolean recursive ){
+  public Scan( File folder , boolean recursive){
+    this(folder,recursive,false);
+  }
+
+	public Scan( File folder, boolean recursive , boolean hidden ){
 		this._folder = folder;
 		this._recursive = recursive;
+    this._hidden = hidden;
 		
 		this.setFilter( new FileFilter() {
 			
@@ -25,6 +31,7 @@ public class Scan extends ThreadItem {
 			public boolean accept(File pathname) {
 				
 				if ( ! pathname.canRead() ) return false;
+        if ( pathname.isHidden() && ! _hidden ) return false;
 				
 				if ( pathname.isDirectory() && ! _recursive ) return false;
 				
