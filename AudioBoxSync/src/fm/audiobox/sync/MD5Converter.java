@@ -40,7 +40,10 @@ public class MD5Converter extends ThreadItem{
 				
 				byte[] bytes = new byte[ CHUNK ];
 				
-				int read = fis.read( bytes );
+				int read = -1;
+
+
+        if ( ( read = fis.read( bytes ) ) <= 0 ) break;
 				
 				if ( read < CHUNK )
 					bytes = Arrays.copyOf( bytes , read);
