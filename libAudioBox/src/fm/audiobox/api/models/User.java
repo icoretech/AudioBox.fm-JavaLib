@@ -313,7 +313,16 @@ public class User extends ModelItem implements ResponseHandler {
                 is.close();
             }
 
-            this.tracks =  sb.toString().split(";");
+
+            /*
+             * TODO: check this code
+             * remove whitespaces
+             */
+            String[] result = sb.toString().split(";");
+            this.tracks =  new String[ result.length ];
+            int pos=0;
+            for ( String hash : result )
+              this.tracks[ pos++ ] = hash.trim();
         } else {       
             this.tracks = new String[]{};
         }
