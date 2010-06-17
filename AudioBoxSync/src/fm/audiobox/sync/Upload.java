@@ -22,7 +22,7 @@ public class Upload extends ThreadItem {
 	protected void _run() {
 		
 		try{
-			this.track.hash();
+			//this.track.hash();
 			this.track.upload();
 			
 			

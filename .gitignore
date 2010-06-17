@@ -24,3 +24,8 @@ doc/*.dot
 */.settings
 */.classpath
 libAudioBoxTest/src/fm/audiobox/api/mocks/fixtures/*
+*/build/
+*/dist/
+manifest.mf
+*/nbproject/
+*/build.xml
