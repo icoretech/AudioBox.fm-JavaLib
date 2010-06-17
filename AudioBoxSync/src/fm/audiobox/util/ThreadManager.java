@@ -34,26 +34,29 @@ public class ThreadManager {
 	
 	private synchronized void start(){
 		
-		if ( started_thread == this.max_threads ) return;
-		if ( (current_thread_index+1) >= this._threads.size() ) return;
+		if ( this.started_thread == this.max_threads ) return;
+		if ( (this.current_thread_index+1) >= this._threads.size() ) return;
 		
-		current_thread_index++;
+		this.current_thread_index++;
 		
-		ThreadItem item = this._threads.get(current_thread_index);
+		ThreadItem item = this._threads.get(this.current_thread_index);
 		Thread thread = new Thread( item );
-		
+
+    System.out.println( "Start new thread");
+
 		thread.start();
+    this.started_thread++;
 		
 	}
 
 	public synchronized void onComplete(ThreadItem item) {
-		started_thread--;
+		this.started_thread--;
 		this.start();
 	}
 
 
 	public synchronized void onStart(ThreadItem item) {
-		started_thread++;
+		
 	}
 	
 	

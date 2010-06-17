@@ -4,15 +4,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import com.sun.swing.internal.plaf.synth.resources.synth;
 
 import fm.audiobox.util.ThreadItem;
 
@@ -52,7 +49,8 @@ public class MD5Converter extends ThreadItem{
 				
 				completed += read;
 				this.getThreadListener().onProgress( this , file_length , completed, file_length - completed, this._file );
-				
+
+
 				if ( read < CHUNK )
 					break;
 			}
