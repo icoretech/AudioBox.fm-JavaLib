@@ -45,7 +45,7 @@ public class Scan extends ThreadItem {
 		});
 	}
 	
-	public void setFilter( FileFilter fileFilter ){
+	public final void setFilter( FileFilter fileFilter ){
 		this._ff = fileFilter;
 	}
 	

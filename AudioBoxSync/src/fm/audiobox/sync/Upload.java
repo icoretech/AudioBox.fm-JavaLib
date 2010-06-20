@@ -105,6 +105,7 @@ public class Upload extends ThreadItem {
 		public void upload() throws ServiceException, LoginException{
 			AudioBoxClient.execute(Tracks.END_POINT , null, null, this, HttpPost.METHOD_NAME);
 		}
+    @Override
 		public void parseResponse( InputStream input, Header contentType ) throws IOException {
 			byte[] bytes = new byte[CHUNK];
 			int read;

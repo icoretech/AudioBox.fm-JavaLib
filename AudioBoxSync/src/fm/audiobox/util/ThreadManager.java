@@ -49,7 +49,8 @@ public class ThreadManager {
   public void start(){
     if ( !this._autoStart ){
       this._autoStart = true;
-      this._start();
+      for(int i=0;i<this.max_threads;i++)
+        this._start();
     }
   }
 
