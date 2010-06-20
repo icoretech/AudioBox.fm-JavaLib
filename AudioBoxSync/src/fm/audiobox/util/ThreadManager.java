@@ -8,6 +8,7 @@ public class ThreadManager {
 	private int current_thread_index = -1;
 	private int started_thread = 0;
 	private int max_threads = MAX;
+  private boolean _autoStart = true;
 	
 	private List<ThreadItem> _threads = null;
 	
@@ -15,9 +16,19 @@ public class ThreadManager {
 	public ThreadManager(){
 		this.max_threads = MAX;
 	}
+
+  public ThreadManager(boolean autoStart){
+		super();
+    this._autoStart = autoStart;
+	}
 	
 	public ThreadManager(int maxThread){
 		this.max_threads = maxThread;
+	}
+
+  public ThreadManager(int maxThread, boolean autoStart){
+		this.max_threads = maxThread;
+    this._autoStart = autoStart;
 	}
 	
 	public void newThread(ThreadItem item){
@@ -26,11 +37,23 @@ public class ThreadManager {
 		
 		item.setManager( this );
 		this._threads.add( item );
-		this.start();
+    if ( this._autoStart )
+      this._start();
 	}
 
-	
-	private synchronized void start(){
+
+  public void setAutoStart(boolean autoStart){
+    this._autoStart = autoStart;
+  }
+
+  public void start(){
+    if ( !this._autoStart ){
+      this._autoStart = true;
+      this._start();
+    }
+  }
+
+	private synchronized void _start(){
 		
 		if ( this.started_thread == this.max_threads ) return;
 		if ( (this.current_thread_index+1) >= this._threads.size() ) return;
@@ -47,7 +70,7 @@ public class ThreadManager {
 
 	public synchronized void onComplete(ThreadItem item) {
 		this.started_thread--;
-		this.start();
+		this._start();
 	}
 
 
