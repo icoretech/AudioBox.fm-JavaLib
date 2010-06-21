@@ -23,7 +23,7 @@ doc/*.dot
 .metadata
 */.settings
 */.classpath
-libAudioBoxTest/src/fm/audiobox/api/mocks/fixtures/*
+**/mocks/fixtures/*
 */build/
 */dist/
 manifest.mf
