@@ -26,7 +26,6 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Stack;
-import java.util.zip.GZIPInputStream;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -113,7 +112,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler {
         switch( responseCode ) {
 
         case HttpStatus.SC_OK:
-            this.parseResponse( new GZIPInputStream( response.getEntity().getContent() ), response.getEntity().getContentType() );
+            this.parseResponse( response.getEntity().getContent(), response.getEntity().getContentType() );
             response.getEntity().consumeContent();
             break;
 

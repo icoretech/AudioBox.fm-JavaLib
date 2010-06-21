@@ -9,6 +9,6 @@ import fm.audiobox.api.exceptions.LoginException;
 
 public interface ResponseHandler {
 
-    public Object handleResponse(HttpResponse response, String restAction) throws ClientProtocolException, IOException, IllegalStateException, LoginException;
+    public String handleResponse(HttpResponse response, String restAction) throws ClientProtocolException, IOException, IllegalStateException, LoginException;
     
 }
