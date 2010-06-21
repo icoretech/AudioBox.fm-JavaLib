@@ -7,17 +7,30 @@ import fm.audiobox.api.interfaces.ThreadListener;
 public abstract class ThreadItem implements Runnable{
 
 	protected Map<String, Object> properties = new HashMap<String,Object>();
+	private ThreadManager threadManager = null;
+	
 	private ThreadListener threadListener = new ThreadListener() {
 		@Override
 		public void onStart(ThreadItem result) {}
 		
 		@Override
-		public void onComplete(ThreadItem result) {}
+		public void onProgress(ThreadItem result, long total, long completed, long remaining, Object item) {}
+		
+		@Override
+		public void onComplete(ThreadItem result , Object item) {}
 	};
 	
 	
-	protected void setThreadListener(ThreadListener tl){
+	protected final void setManager( ThreadManager tm ){
+		this.threadManager = tm;
+	}
+	
+	public void setThreadListener(ThreadListener tl){
 		this.threadListener = tl;
+	}
+	
+	public ThreadListener getThreadListener(){
+		return this.threadListener;
 	}
 	
 	public void setProperty(String key, Object value){
@@ -29,21 +42,20 @@ public abstract class ThreadItem implements Runnable{
 	
 	protected abstract void start();
 	protected abstract void _run();
-	protected abstract void end();
+	protected abstract Object end();
 	
 	
 	@Override
 	public final void run() {
-		// TODO Auto-generated method stub
-		
+		this.threadManager.onStart( this );
 		this.threadListener.onStart( this );
 		this.start();
 		
 		this._run();
 		
-		this.end();
-		this.threadListener.onComplete(this);
-		
+		Object result = this.end();
+		this.threadListener.onComplete(this, result);
+		this.threadManager.onComplete( this );
 		
 	}
 	
