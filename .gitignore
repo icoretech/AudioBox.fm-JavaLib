@@ -23,7 +23,7 @@ doc/*.dot
 .metadata
 */.settings
 */.classpath
-**/mocks/fixtures/*
+*/**/mocks/fixtures/*
 */build/
 */dist/
 manifest.mf
