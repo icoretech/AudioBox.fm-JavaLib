@@ -22,6 +22,7 @@
 package fm.audiobox.core.interfaces;
 
 import fm.audiobox.core.AudioBoxClient;
+import fm.audiobox.core.models.Track;
 
 /**
  * CollectionListener provides a usefull interface to easily implement

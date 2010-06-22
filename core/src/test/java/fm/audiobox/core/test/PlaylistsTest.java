@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fm.audiobox.core;
+package fm.audiobox.core.test;
 
 
 import java.net.SocketException;
@@ -10,9 +10,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import fm.audiobox.core.AudioBoxClient;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.mocks.fixtures.UserFixture;
+import fm.audiobox.core.test.mocks.fixtures.UserFixture;
 import fm.audiobox.core.models.Album;
 import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;

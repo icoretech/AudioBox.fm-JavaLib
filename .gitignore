@@ -18,10 +18,11 @@
 *.class
 *.out
 */build/
+*/bin
 manifest.mf
 */nbproject/
 */build.xml
 **/target
 
 # Project spcifics
-core/**/fixtures/*
+*/core/**/fixtures/*

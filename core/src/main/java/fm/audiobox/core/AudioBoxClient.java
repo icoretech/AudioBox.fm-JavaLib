@@ -109,7 +109,7 @@ public class AudioBoxClient {
     public static final String TRACK_ID_PLACEHOLDER = "[track_id]";
     public static final String API_PATH = PROTOCOL + "://" + HOST + API_PREFIX;
 
-    /** Specifies the models package (fm.audiobox.api.models) */
+    /** Specifies the models package (default: fm.audiobox.core.models) */
     public static final String DEFAULT_MODELS_PACKAGE = "fm.audiobox.core.models";
     private static final String PATH_PARAMETER = "${path}";
     private static final String TOKEN_PARAMETER = "${token}";
@@ -237,7 +237,7 @@ public class AudioBoxClient {
 
 
     /**
-     * Use this method to configure the timeout limit for the reqests made against AudioBox.fm.
+     * Use this method to configure the timeout limit for reqests made against AudioBox.fm.
      * 
      * @param timeout the milliseconds of the timeout limit
      */
@@ -285,8 +285,10 @@ public class AudioBoxClient {
     /* -------------- */
 
     /**
-     * To be sure to not waste memory or resource use this method to get the {@link Inflector} used in the parser.<br/>
-     * Keep in mind that this is an util object and should not be overwritten.
+     * AudioBox.fm RESTful API uses inflections to distinguish between a single item and a collection.<br/>
+     * To preserve the same philosophy we also use an inflector.<br/>
+     * To be sure to not waste memory or resources use this method to get the {@link Inflector} instance used by 
+     * the parser.
      * 
      * @return the AudioBoxClient {@link Inflector} instance
      */
@@ -297,7 +299,7 @@ public class AudioBoxClient {
 
 
     /**
-     * This method will set SSL certificate validation on or off.
+     * This method will switch SSL certificate validation on or off.
      * You will not need to use this. This method is used for testing purpose only. For this reason this method is 
      * marked as "deprecated".
      * 
@@ -379,9 +381,9 @@ public class AudioBoxClient {
      * @param token the token of the Model if any, may be null or empty ({@link Model#getToken()})
      * @param action the remote action to execute on the model that executes the action (ie. "scrobble")
      * @param target usually reffers the Model that executes the method
-     * @param httpVerb the HTTP method to use for the request (GET, PUT and POST are currently supported)
+     * @param httpVerb the HTTP method to use for the request (ie: GET, PUT, POST and DELETE)
      * 
-     * @return the result of the request, may be a response code, such as HTTP OK ("200") or the response itself.
+     * @return the result of the request, may be a response code, such as HTTP OK ("200") or the body of the response.
      */
 
     public static String execute(String path, String token, String action , Model target, String httpVerb) throws LoginException , ServiceException {
@@ -400,10 +402,10 @@ public class AudioBoxClient {
      * @param token the token of the Model if any, may be null or empty ({@link Model#getToken()})
      * @param action the remote action to execute on the model that executes the action (ie. "scrobble")
      * @param target usually reffers the Model that executes the method
-     * @param httpVerb the HTTP method to use for the request (GET, PUT and POST are currently supported)
+     * @param httpVerb the HTTP method to use for the request (ie: GET, PUT, POST and DELETE)
      * @param format the request format (xml or txt)
      * 
-     * @return the result of the request, may be a response code, such as HTTP OK ("200") or the response itself.
+     * @return the result of the request, may be a response code, such as HTTP OK ("200") or the body of the response.
      */
 
     public static String execute (String path, String token, String action , Model target, String httpVerb, String format) throws LoginException , ServiceException {

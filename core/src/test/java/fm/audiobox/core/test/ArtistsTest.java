@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fm.audiobox.core;
+package fm.audiobox.core.test;
 
 
 import java.net.SocketException;
@@ -10,11 +10,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import fm.audiobox.core.AudioBoxClient;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.mocks.fixtures.UserFixture;
-import fm.audiobox.core.models.Genre;
-import fm.audiobox.core.models.Genres;
+import fm.audiobox.core.test.mocks.fixtures.UserFixture;
+import fm.audiobox.core.models.Artist;
+import fm.audiobox.core.models.Artists;
 import fm.audiobox.core.models.Track;
 import fm.audiobox.core.models.Tracks;
 import fm.audiobox.core.models.User;
@@ -23,11 +24,11 @@ import fm.audiobox.core.models.User;
  * @author keytwo
  *
  */
-public class GenresTest extends junit.framework.TestCase {
+public class ArtistsTest extends junit.framework.TestCase {
 
     AudioBoxClient abc;
     User user;
-    Genres genres;
+    Artists artists;
     
     @Before
     public void setUp() throws Exception {
@@ -43,14 +44,14 @@ public class GenresTest extends junit.framework.TestCase {
 
    
     @Test
-    public void testGenresShouldBePopulated() {
+    public void testArtistsShouldBePopulated() {
         loginCatched();
         try {
             
-            loadGenres();
+            loadArtists();
             
-            assertNotNull(genres);
-            Genre al = (Genre) genres.get(0);
+            assertNotNull(artists);
+            Artist al = (Artist) artists.get(0);
             assertNotNull(al);
 
         } catch (LoginException e) {
@@ -67,14 +68,14 @@ public class GenresTest extends junit.framework.TestCase {
     }
     
     @Test
-    public void testGenreShouldBePopulatedAndContainsTracks() {
+    public void testArtistshouldBePopulatedAndContainsTracks() {
         loginCatched();
         try {
             
-            loadGenres();
+            loadArtists();
             
-            assertNotNull(genres);
-            Genre al = (Genre) genres.get(0);
+            assertNotNull(artists);
+            Artist al = (Artist) artists.get(0);
             assertNotNull(al);
             
             Tracks trs = (Tracks) al.getTracks();
@@ -104,9 +105,9 @@ public class GenresTest extends junit.framework.TestCase {
         
     }
     
-    private void loadGenres() throws ServiceException, LoginException, InstantiationException, IllegalAccessException, ClassNotFoundException {
-        genres = (Genres) user.getGenres();
-        genres.invoke();
+    private void loadArtists() throws ServiceException, LoginException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+        artists = (Artists) user.getArtists();
+        artists.invoke();
     }
     
     private void loginCatched() {
