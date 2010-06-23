@@ -1,4 +1,4 @@
-package fm.audiobox.core.mocks.models;
+package fm.audiobox.core.test.mocks.models;
 
 public class Track extends fm.audiobox.core.models.Track {
     private String test;

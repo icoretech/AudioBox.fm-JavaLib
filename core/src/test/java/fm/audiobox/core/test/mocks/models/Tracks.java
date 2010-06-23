@@ -1,4 +1,4 @@
-package fm.audiobox.core.mocks.models;
+package fm.audiobox.core.test.mocks.models;
 
 
 

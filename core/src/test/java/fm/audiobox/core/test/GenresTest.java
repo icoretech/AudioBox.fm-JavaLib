@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fm.audiobox.core;
+package fm.audiobox.core.test;
 
 
 import java.net.SocketException;
@@ -10,32 +10,31 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import fm.audiobox.core.AudioBoxClient;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.mocks.fixtures.UserFixture;
-import fm.audiobox.core.mocks.models.Album;
-import fm.audiobox.core.mocks.models.Track;
-import fm.audiobox.core.mocks.models.Tracks;
-import fm.audiobox.core.models.Albums;
+import fm.audiobox.core.test.mocks.fixtures.UserFixture;
+import fm.audiobox.core.models.Genre;
+import fm.audiobox.core.models.Genres;
+import fm.audiobox.core.models.Track;
+import fm.audiobox.core.models.Tracks;
 import fm.audiobox.core.models.User;
 
 /**
  * @author keytwo
  *
  */
-public class AlbumsTest extends junit.framework.TestCase {
+public class GenresTest extends junit.framework.TestCase {
 
     AudioBoxClient abc;
     User user;
-    Albums albums;
+    Genres genres;
     
     @Before
     public void setUp() throws Exception {
-        AudioBoxClient.setCustomModelsPackage(Album.class.getPackage().getName());
         abc = new AudioBoxClient();
         user = abc.login(UserFixture.LOGIN, UserFixture.RIGHT_PASS);
     }
-    
     
     @Test
     public void testPreconditions() {
@@ -45,14 +44,14 @@ public class AlbumsTest extends junit.framework.TestCase {
 
    
     @Test
-    public void testAlbumsShouldBePopulated() {
+    public void testGenresShouldBePopulated() {
         loginCatched();
         try {
             
-            loadAlbums();
+            loadGenres();
             
-            assertNotNull(albums);
-            Album al = (Album) albums.get(0);
+            assertNotNull(genres);
+            Genre al = (Genre) genres.get(0);
             assertNotNull(al);
 
         } catch (LoginException e) {
@@ -68,16 +67,15 @@ public class AlbumsTest extends junit.framework.TestCase {
         }
     }
     
-    
     @Test
-    public void testAlbumShouldBePopulatedAndContainsTracks() {
+    public void testGenreShouldBePopulatedAndContainsTracks() {
         loginCatched();
         try {
             
-            loadAlbums();
+            loadGenres();
             
-            assertNotNull(albums);
-            Album al = (Album) albums.get(0);
+            assertNotNull(genres);
+            Genre al = (Genre) genres.get(0);
             assertNotNull(al);
             
             Tracks trs = (Tracks) al.getTracks();
@@ -86,7 +84,6 @@ public class AlbumsTest extends junit.framework.TestCase {
             trs.invoke();
             
             Track tr = (Track) trs.get(0);
-            assertNotNull(tr.getTest());
             assertNotNull(tr);
 
         } catch (LoginException e) {
@@ -108,9 +105,9 @@ public class AlbumsTest extends junit.framework.TestCase {
         
     }
     
-    private void loadAlbums() throws ServiceException, LoginException, InstantiationException, IllegalAccessException, ClassNotFoundException {
-        albums = (Albums) user.getAlbums();
-        albums.invoke();
+    private void loadGenres() throws ServiceException, LoginException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+        genres = (Genres) user.getGenres();
+        genres.invoke();
     }
     
     private void loginCatched() {

@@ -1,8 +1,8 @@
-package fm.audiobox.core.mocks.models;
+package fm.audiobox.core.test.mocks.models;
 
-public class User extends fm.audiobox.core.models.User {
-    
-    private String test = "test";
+public class Album extends fm.audiobox.core.models.Album {
+
+    private String test;
 
     /**
      * @param test the test to set
@@ -17,4 +17,5 @@ public class User extends fm.audiobox.core.models.User {
     public String getTest() {
         return test;
     }
+    
 }
