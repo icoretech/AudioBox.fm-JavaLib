@@ -11,7 +11,7 @@ public abstract class ThreadItem implements Runnable{
 	
 	private ThreadListener threadListener = new ThreadListener() {
 		@Override
-		public void onStart(ThreadItem result) {}
+		public boolean onStart(ThreadItem result) {return true;}
 		
 		@Override
 		public void onProgress(ThreadItem result, long total, long completed, long remaining, Object item) {}
@@ -48,13 +48,16 @@ public abstract class ThreadItem implements Runnable{
 	@Override
 	public final void run() {
 		this.threadManager.onStart( this );
-		this.threadListener.onStart( this );
-		this.start();
+		if ( this.threadListener.onStart( this ) ){
+			this.start();
+			
+			this._run();
+			
+			Object result = this.end();
+			this.threadListener.onComplete(this, result);
+		} else
+			this.threadListener.onComplete(this, null);
 		
-		this._run();
-		
-		Object result = this.end();
-		this.threadListener.onComplete(this, result);
 		this.threadManager.onComplete( this );
 		
 	}
