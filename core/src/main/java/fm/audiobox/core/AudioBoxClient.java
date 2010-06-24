@@ -28,7 +28,6 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
 
 import javax.net.ssl.KeyManager;
@@ -59,9 +58,6 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.client.protocol.ClientContext;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.ClientConnectionRequest;
-import org.apache.http.conn.ManagedClientConnection;
 import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.conn.params.ConnPerRouteBean;
 import org.apache.http.conn.routing.HttpRoute;
@@ -507,15 +503,16 @@ public class AudioBoxClient {
             
             HttpResponse resp = sClient.execute(method, new BasicHttpContext());
             response = target.handleResponse( resp, httpVerb );
+            
+            HttpEntity e = resp.getEntity(); 
+            if (e != null) 
+                e.consumeContent();
+            
             //ClientConnectionRequest connReq = sCm.requestConnection(sAudioBoxRoute, null);
+            
             //ManagedClientConnection conn = connReq.getConnection(sTimeout, TimeUnit.MILLISECONDS);
-            //conn.shutdown();
-
-            HttpEntity entity = resp.getEntity();
-            if (entity != null) {
-                // ensure the connection gets released to the manager
-                entity.consumeContent();
-            }
+            //sCm.closeExpiredConnections();
+            //conn.releaseConnection();
 
             return response;
 
@@ -527,7 +524,6 @@ public class AudioBoxClient {
             
         } catch( IOException e ) {
             throw new ServiceException( "IO exception: " + e.getMessage(), ServiceException.SOCKET_ERROR );
-            
             
         } 
     }
