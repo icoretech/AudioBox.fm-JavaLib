@@ -29,7 +29,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.FileEntity;
 import org.xml.sax.SAXException;
 
 import fm.audiobox.core.AudioBoxClient;
@@ -104,16 +104,16 @@ public class Track extends ModelItem {
 	// Utility fields
 	public enum State { IDLE, PLAYING, ERROR, BUFFERING, PAUSED }
 	protected State trackState = Track.State.IDLE;
-	protected FileBody file;
+	protected FileEntity entity;
 	
 	
 	public Track() {
 	    this.endPoint = Tracks.END_POINT;
 	}
 	
-	public Track(FileBody file) {
+	public Track(FileEntity file) {
 		super();
-		this.file = file;
+		this.entity = file;
 	}
 	
 	@Override
@@ -297,8 +297,8 @@ public class Track extends ModelItem {
 	/**
 	 * @return the file to upload
 	 */
-	public FileBody getFile(){
-		return this.file;
+	public FileEntity getFileEntity(){
+		return this.entity;
 	}
 	
 	

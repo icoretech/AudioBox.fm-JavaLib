@@ -25,6 +25,7 @@ public class UserTest extends junit.framework.TestCase {
     AudioBoxClient abc;
     User user;
     
+    @SuppressWarnings("deprecation")
     @Before
     public void setUp() throws Exception {
         System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
@@ -37,6 +38,7 @@ public class UserTest extends junit.framework.TestCase {
         
         AudioBoxClient.setCustomModelsPackage(User.class.getPackage().getName());
         AudioBoxClient.setUserClass(User.class);
+        AudioBoxClient.setForceTrust(true);
         abc = new AudioBoxClient();
     }
     

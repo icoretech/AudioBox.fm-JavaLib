@@ -22,11 +22,14 @@
 package fm.audiobox.core;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.SocketTimeoutException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.concurrent.TimeUnit;
+import java.util.zip.GZIPInputStream;
 
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
@@ -38,6 +41,15 @@ import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.Header;
+import org.apache.http.HeaderElement;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpException;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpRequestInterceptor;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
@@ -46,15 +58,25 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.params.ClientPNames;
+import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.ClientConnectionRequest;
+import org.apache.http.conn.ManagedClientConnection;
+import org.apache.http.conn.params.ConnManagerParams;
+import org.apache.http.conn.params.ConnPerRouteBean;
+import org.apache.http.conn.routing.HttpRoute;
+import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.conn.ssl.X509HostnameVerifier;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.HttpEntityWrapper;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.CoreConnectionPNames;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
 
 import fm.audiobox.core.api.Model;
 import fm.audiobox.core.exceptions.LoginException;
@@ -96,13 +118,9 @@ import fm.audiobox.core.util.Inflector;
 
 public class AudioBoxClient {
 
-    // Internals
-    public static final float VERSION = 0.1f;
-    public static final String VERSION_NAME = "0.1-alpha";
-
     /** Message used when the response is succesfully parsed */
     public static final String PROTOCOL = "https";
-    public static final String HOST = "audiobox.fm";
+    public static final String HOST = "audiobox.dev";
     public static final String PORT = "443";
     public static final String API_PREFIX = "/api/";
     public static final String API_SUFFIX = "xml";
@@ -116,22 +134,26 @@ public class AudioBoxClient {
     private static final String ACTION_PARAMETER = "${action}";
 
 
-    private static int sTimeout = (180 * 1000);
+    private static long sTimeout = (180 * 1000);
     private static boolean sForceTrust = false;
-    private static String sUserAgent = "AudioBox.fm/"+ VERSION +" (Java; U; " +
+    private static String sUserAgent = "AudioBox.fm/0.1-alpha (Java; U; " +
     System.getProperty("os.name") + " " +
     System.getProperty("os.arch") + "; " + 
     System.getProperty("user.language") + "; " +
     System.getProperty("java.runtime.version") +  ") " +
     System.getProperty("java.vm.name") + "/" + 
     System.getProperty("java.vm.version") + 
-    " AudioBoxClient/" + VERSION_NAME;
+    " AudioBoxClient/0.1";
 
     private static String sCustomModelsPackage = DEFAULT_MODELS_PACKAGE;
     private static String sApiPath = API_PATH + PATH_PARAMETER + TOKEN_PARAMETER + ACTION_PARAMETER;
     private static Class<? extends User> sUserClass = User.class;
     private static Inflector sI = Inflector.getInstance();
     private static User sUser;
+    private static ThreadSafeClientConnManager sCm;
+    private static DefaultHttpClient sClient;
+    private static HttpRoute sAudioBoxRoute;
+    private static HttpContext sContext;
 
 
     /* ------------------ */
@@ -185,6 +207,9 @@ public class AudioBoxClient {
         try {
             Class<? extends User> clazz = sUserClass;
             sUser = clazz.cast(clazz.newInstance());
+            sAudioBoxRoute = new HttpRoute(new HttpHost(HOST, Integer.parseInt(PORT)));
+
+            httpSetup();
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -242,7 +267,7 @@ public class AudioBoxClient {
      * @param timeout the milliseconds of the timeout limit
      */
 
-    public void setTimeout(int timeout) {
+    public void setTimeout(long timeout) {
         sTimeout = timeout; 
     }
 
@@ -253,7 +278,7 @@ public class AudioBoxClient {
      * @return timeout limit
      */
 
-    public int getTimeout() {
+    public long getTimeout() {
         return sTimeout;
     }
 
@@ -450,7 +475,7 @@ public class AudioBoxClient {
      * @return the response code or the stream Location (in case of a {@link Track} model)
      * 
      */
-
+    
     private static String request(String url, Model target, String httpVerb) throws LoginException, ServiceException {
 
         if (sUser == null)
@@ -461,15 +486,6 @@ public class AudioBoxClient {
         try {
 
             log.info("Requesting resource: " + url);
-
-            HttpClient client = new DefaultHttpClient();
-            HttpParams params = client.getParams();
-
-            if (sForceTrust)
-                forceTrustCertificate(client);
-
-            params.setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, sTimeout);
-            params.setParameter(ClientPNames.HANDLE_REDIRECTS, false);
 
             HttpRequestBase method = null; 
             if ( HttpPost.METHOD_NAME.equals( httpVerb ) ) {
@@ -482,36 +498,41 @@ public class AudioBoxClient {
                 method = new HttpGet(url);
             }
 
-            // Seting up default headers
-            method.addHeader("Authorization" , "Basic " + sUser.getAuth() );
-            method.addHeader("Accept-Encoding", "gzip");
-            method.addHeader("User-Agent", sUserAgent);
-
             if ( method instanceof HttpPost && target instanceof Track ){
                 HttpPost post = ( HttpPost ) method;
-                MultipartEntity mpe = new MultipartEntity( HttpMultipartMode.BROWSER_COMPATIBLE );
-                FileBody fb = ((Track)target).getFile();
-                mpe.addPart( "media", fb);
-                post.setEntity( mpe );
+                post.setEntity( ((Track)target).getFileEntity() );
             }
 
-            String response = "";
-            response = target.handleResponse( client.execute(method), httpVerb );
-            client.getConnectionManager().shutdown();
+            String response = "" ; //sClient.execute( method  );
+            
+            HttpResponse resp = sClient.execute(method, new BasicHttpContext());
+            response = target.handleResponse( resp, httpVerb );
+            //ClientConnectionRequest connReq = sCm.requestConnection(sAudioBoxRoute, null);
+            //ManagedClientConnection conn = connReq.getConnection(sTimeout, TimeUnit.MILLISECONDS);
+            //conn.shutdown();
+
+            HttpEntity entity = resp.getEntity();
+            if (entity != null) {
+                // ensure the connection gets released to the manager
+                entity.consumeContent();
+            }
 
             return response;
 
-
         } catch( ClientProtocolException e ) {
             throw new ServiceException( "Client protocol exception: " + e.getMessage(), ServiceException.CLIENT_ERROR );
+            
         } catch( SocketTimeoutException e ) {
             throw new ServiceException( "Service does not respond: " + e.getMessage(), ServiceException.TIMEOUT_ERROR );
+            
         } catch( IOException e ) {
             throw new ServiceException( "IO exception: " + e.getMessage(), ServiceException.SOCKET_ERROR );
+            
+            
         } 
     }
 
-
+    
     /**
      * This method is for internal testing and debugging use only.<br/>
      * Please avoid the use of this method.
@@ -562,4 +583,96 @@ public class AudioBoxClient {
     }
 
 
+    
+    
+    
+    private static void httpSetup() {
+
+        SchemeRegistry schemeRegistry = new SchemeRegistry();
+        schemeRegistry.register( new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
+        schemeRegistry.register( new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
+
+        HttpParams params = new BasicHttpParams();
+        params.setParameter(ConnManagerParams.TIMEOUT, sTimeout);
+        params.setParameter(ClientPNames.HANDLE_REDIRECTS, false);
+
+        sCm = new ThreadSafeClientConnManager(params, schemeRegistry);
+        sClient = new DefaultHttpClient( sCm, params );
+        
+        // Increase max total connection to 200
+        ConnManagerParams.setMaxTotalConnections(params, 200);
+
+        // Increase default max connection per route to 20
+        ConnPerRouteBean connPerRoute = new ConnPerRouteBean(20);
+
+        // Increase max connections for audiobox.fm:443 to 50
+        connPerRoute.setMaxForRoute(sAudioBoxRoute, 50);
+        ConnManagerParams.setMaxConnectionsPerRoute(params, connPerRoute);
+
+       // sCm = (ThreadSafeClientConnManager) sClient.getConnectionManager();
+
+        if (sForceTrust)
+            forceTrustCertificate(sClient);
+
+
+        sClient.addRequestInterceptor(new HttpRequestInterceptor() {
+
+            public void process( final HttpRequest request,  final HttpContext context) throws HttpException, IOException {
+                if (!request.containsHeader("Accept-Encoding")) {
+                    request.addHeader("Accept-Encoding", "gzip");
+                }
+                request.addHeader("Authorization" , "Basic " + sUser.getAuth() );
+                request.addHeader("User-Agent", sUserAgent);
+            }
+
+        });
+
+        sClient.addResponseInterceptor(new HttpResponseInterceptor() {
+
+            public void process( final HttpResponse response, final HttpContext context) throws HttpException, IOException {
+                HttpEntity entity = response.getEntity();
+                Header ceheader = entity.getContentEncoding();
+                if (ceheader != null) {
+                    HeaderElement[] codecs = ceheader.getElements();
+                    for (int i = 0; i < codecs.length; i++) {
+                        if (codecs[i].getName().equalsIgnoreCase("gzip")) {
+                            response.setEntity( new GzipDecompressingEntity(response.getEntity()) ); 
+                            return;
+                        }
+                    }
+                }
+            }
+        });
+
+        sContext = new BasicHttpContext();
+        sContext.setAttribute( ClientContext.SCHEME_REGISTRY, sClient.getConnectionManager().getSchemeRegistry());
+        sContext.setAttribute( ClientContext.AUTHSCHEME_REGISTRY, sClient.getAuthSchemes());
+        sContext.setAttribute( ClientContext.COOKIESPEC_REGISTRY, sClient.getCookieSpecs());
+        sContext.setAttribute( ClientContext.COOKIE_STORE, sClient.getCookieStore());
+        sContext.setAttribute( ClientContext.CREDS_PROVIDER, sClient.getCredentialsProvider());
+
+    }
+
+    static class GzipDecompressingEntity extends HttpEntityWrapper {
+
+        public GzipDecompressingEntity(final HttpEntity entity) {
+            super(entity);
+        }
+
+        @Override
+        public InputStream getContent() throws IOException, IllegalStateException {
+
+            // the wrapped entity's getContent() decides about repeatability
+            InputStream wrappedin = wrappedEntity.getContent();
+
+            return new GZIPInputStream(wrappedin);
+        }
+
+        @Override
+        public long getContentLength() {
+            // length of ungzipped content is not known
+            return -1;
+        }
+
+    } 
 }

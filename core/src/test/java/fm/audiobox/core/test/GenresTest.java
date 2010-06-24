@@ -30,8 +30,10 @@ public class GenresTest extends junit.framework.TestCase {
     User user;
     Genres genres;
     
+    @SuppressWarnings("deprecation")
     @Before
     public void setUp() throws Exception {
+        AudioBoxClient.setForceTrust(true);
         abc = new AudioBoxClient();
         user = abc.login(UserFixture.LOGIN, UserFixture.RIGHT_PASS);
     }

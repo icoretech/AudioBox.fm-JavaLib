@@ -30,9 +30,11 @@ public class AlbumsTest extends junit.framework.TestCase {
     User user;
     Albums albums;
     
+    @SuppressWarnings("deprecation")
     @Before
     public void setUp() throws Exception {
         AudioBoxClient.setCustomModelsPackage(Album.class.getPackage().getName());
+        AudioBoxClient.setForceTrust(true);
         abc = new AudioBoxClient();
         user = abc.login(UserFixture.LOGIN, UserFixture.RIGHT_PASS);
     }

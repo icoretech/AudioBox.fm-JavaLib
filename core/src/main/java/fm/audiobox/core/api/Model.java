@@ -26,7 +26,6 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Stack;
-import java.util.zip.GZIPInputStream;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -104,7 +103,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler {
     public final void setToken(String token) {
         this.token = token;
     }
-    
+
     public final String handleResponse(HttpResponse response, String httpVerb) throws ClientProtocolException, IOException, IllegalStateException, LoginException {
 
         int responseCode = response.getStatusLine().getStatusCode();
@@ -114,18 +113,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler {
 
         case HttpStatus.SC_OK:
 
-          InputStream input = response.getEntity().getContent();
-
-
-          /*  TODO: investigate
-           * workaround: Response stream could not in GZIP format
-           */
-          try {
-            input = new GZIPInputStream( input );
-          } catch( Exception e){
-            log.warn("Input stream is not in GZIP format: " + e.getMessage());
-          }
-
+            InputStream input = response.getEntity().getContent();
             this.parseResponse( input , response.getEntity().getContentType() );
             response.getEntity().consumeContent();
             break;
@@ -162,7 +150,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler {
             xr.parse( new InputSource( input ) );
 
             input.close();
-            
+
         } catch (IllegalStateException e) {
             e.printStackTrace();
         } catch (SAXException e) {
