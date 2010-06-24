@@ -57,7 +57,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.params.ClientPNames;
-import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.conn.params.ConnPerRouteBean;
 import org.apache.http.conn.routing.HttpRoute;
@@ -105,6 +104,27 @@ import fm.audiobox.core.util.Inflector;
  * For instance the default models package is "fm.audiobox.api.models"; here you will find the default {@link Track}
  * model (example).
  * 
+ * <p>
+ * 
+ * The usual execution flow can be demonstrated by the code snippet below: 
+ * 
+ * <pre>
+ * 
+ * AudioBoxClient.setCustomModelsPackage(User.class.getPackage().getName());
+ * AudioBoxClient.setUserClass(User.class);
+ *
+ * abc = new AudioBoxClient();
+ * try {
+ *    user = (User) abc.login( UserFixture.LOGIN , UserFixture.RIGHT_PASS );
+ * } catch (LoginException e) {
+ *    e.printStackTrace();
+ * } catch (SocketException e) {
+ *    e.printStackTrace();
+ * }
+ * 
+ * </pre>
+ * 
+ * 
  * @author Valerio Chiodino
  * @author Fabio Tunno
  * 
@@ -149,7 +169,6 @@ public class AudioBoxClient {
     private static ThreadSafeClientConnManager sCm;
     private static DefaultHttpClient sClient;
     private static HttpRoute sAudioBoxRoute;
-    private static HttpContext sContext;
 
 
     /* ------------------ */
@@ -499,7 +518,7 @@ public class AudioBoxClient {
                 post.setEntity( ((Track)target).getFileEntity() );
             }
 
-            String response = "" ; //sClient.execute( method  );
+            String response = "" ;
             
             HttpResponse resp = sClient.execute(method, new BasicHttpContext());
             response = target.handleResponse( resp, httpVerb );
@@ -508,12 +527,6 @@ public class AudioBoxClient {
             if (e != null) 
                 e.consumeContent();
             
-            //ClientConnectionRequest connReq = sCm.requestConnection(sAudioBoxRoute, null);
-            
-            //ManagedClientConnection conn = connReq.getConnection(sTimeout, TimeUnit.MILLISECONDS);
-            //sCm.closeExpiredConnections();
-            //conn.releaseConnection();
-
             return response;
 
         } catch( ClientProtocolException e ) {
@@ -528,7 +541,85 @@ public class AudioBoxClient {
         } 
     }
 
+
+    /**
+     * When AudioBoxClient is first created a new {@link HttpClient} is configured as well.
+     * 
+     * <p>
+     * 
+     * This method provides global HttpClient configuration.
+     * 
+     */
     
+    private static void httpSetup() {
+
+        SchemeRegistry schemeRegistry = new SchemeRegistry();
+        schemeRegistry.register( new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
+        schemeRegistry.register( new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
+
+        HttpParams params = new BasicHttpParams();
+        params.setParameter(ConnManagerParams.TIMEOUT, sTimeout);
+        params.setParameter(ClientPNames.HANDLE_REDIRECTS, false);
+
+        sCm = new ThreadSafeClientConnManager(params, schemeRegistry);
+        sClient = new DefaultHttpClient( sCm, params );
+        
+        // Increase max total connection to 200
+        ConnManagerParams.setMaxTotalConnections(params, 200);
+
+        // Increase default max connection per route to 20
+        ConnPerRouteBean connPerRoute = new ConnPerRouteBean(20);
+
+        // Increase max connections for audiobox.fm:443 to 50
+        connPerRoute.setMaxForRoute(sAudioBoxRoute, 50);
+        ConnManagerParams.setMaxConnectionsPerRoute(params, connPerRoute);
+
+        if (sForceTrust)
+            forceTrustCertificate(sClient);
+
+
+        sClient.addRequestInterceptor(new HttpRequestInterceptor() {
+
+            public void process( final HttpRequest request,  final HttpContext context) throws HttpException, IOException {
+                if (!request.containsHeader("Accept-Encoding")) {
+                    request.addHeader("Accept-Encoding", "gzip");
+                }
+                request.addHeader("Authorization" , "Basic " + sUser.getAuth() );
+                request.addHeader("User-Agent", sUserAgent);
+            }
+
+        });
+
+        sClient.addResponseInterceptor(new HttpResponseInterceptor() {
+
+            public void process( final HttpResponse response, final HttpContext context) throws HttpException, IOException {
+                HttpEntity entity = response.getEntity();
+                Header ceheader = entity.getContentEncoding();
+                if (ceheader != null) {
+                    HeaderElement[] codecs = ceheader.getElements();
+                    for (int i = 0; i < codecs.length; i++) {
+                        if (codecs[i].getName().equalsIgnoreCase("gzip")) {
+                            response.setEntity( new HttpEntityWrapper(entity){
+                                @Override
+                                public InputStream getContent() throws IOException, IllegalStateException {
+                                    // the wrapped entity's getContent() decides about repeatability
+                                    InputStream wrappedin = wrappedEntity.getContent();
+                                    return new GZIPInputStream(wrappedin);
+                                }
+
+                                @Override
+                                public long getContentLength() { return -1; }
+
+                            }); 
+                            return;
+                        }
+                    }
+                }
+            }
+        });
+        
+    }
+
     /**
      * This method is for internal testing and debugging use only.<br/>
      * Please avoid the use of this method.
@@ -577,98 +668,5 @@ public class AudioBoxClient {
             logger.warn("Cannot force SSL certificate trust due to 'KeyManagementException': " + e.getMessage());
         }
     }
-
-
     
-    
-    
-    private static void httpSetup() {
-
-        SchemeRegistry schemeRegistry = new SchemeRegistry();
-        schemeRegistry.register( new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
-        schemeRegistry.register( new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
-
-        HttpParams params = new BasicHttpParams();
-        params.setParameter(ConnManagerParams.TIMEOUT, sTimeout);
-        params.setParameter(ClientPNames.HANDLE_REDIRECTS, false);
-
-        sCm = new ThreadSafeClientConnManager(params, schemeRegistry);
-        sClient = new DefaultHttpClient( sCm, params );
-        
-        // Increase max total connection to 200
-        ConnManagerParams.setMaxTotalConnections(params, 200);
-
-        // Increase default max connection per route to 20
-        ConnPerRouteBean connPerRoute = new ConnPerRouteBean(20);
-
-        // Increase max connections for audiobox.fm:443 to 50
-        connPerRoute.setMaxForRoute(sAudioBoxRoute, 50);
-        ConnManagerParams.setMaxConnectionsPerRoute(params, connPerRoute);
-
-       // sCm = (ThreadSafeClientConnManager) sClient.getConnectionManager();
-
-        if (sForceTrust)
-            forceTrustCertificate(sClient);
-
-
-        sClient.addRequestInterceptor(new HttpRequestInterceptor() {
-
-            public void process( final HttpRequest request,  final HttpContext context) throws HttpException, IOException {
-                if (!request.containsHeader("Accept-Encoding")) {
-                    request.addHeader("Accept-Encoding", "gzip");
-                }
-                request.addHeader("Authorization" , "Basic " + sUser.getAuth() );
-                request.addHeader("User-Agent", sUserAgent);
-            }
-
-        });
-
-        sClient.addResponseInterceptor(new HttpResponseInterceptor() {
-
-            public void process( final HttpResponse response, final HttpContext context) throws HttpException, IOException {
-                HttpEntity entity = response.getEntity();
-                Header ceheader = entity.getContentEncoding();
-                if (ceheader != null) {
-                    HeaderElement[] codecs = ceheader.getElements();
-                    for (int i = 0; i < codecs.length; i++) {
-                        if (codecs[i].getName().equalsIgnoreCase("gzip")) {
-                            response.setEntity( new GzipDecompressingEntity(response.getEntity()) ); 
-                            return;
-                        }
-                    }
-                }
-            }
-        });
-
-        sContext = new BasicHttpContext();
-        sContext.setAttribute( ClientContext.SCHEME_REGISTRY, sClient.getConnectionManager().getSchemeRegistry());
-        sContext.setAttribute( ClientContext.AUTHSCHEME_REGISTRY, sClient.getAuthSchemes());
-        sContext.setAttribute( ClientContext.COOKIESPEC_REGISTRY, sClient.getCookieSpecs());
-        sContext.setAttribute( ClientContext.COOKIE_STORE, sClient.getCookieStore());
-        sContext.setAttribute( ClientContext.CREDS_PROVIDER, sClient.getCredentialsProvider());
-
-    }
-
-    static class GzipDecompressingEntity extends HttpEntityWrapper {
-
-        public GzipDecompressingEntity(final HttpEntity entity) {
-            super(entity);
-        }
-
-        @Override
-        public InputStream getContent() throws IOException, IllegalStateException {
-
-            // the wrapped entity's getContent() decides about repeatability
-            InputStream wrappedin = wrappedEntity.getContent();
-
-            return new GZIPInputStream(wrappedin);
-        }
-
-        @Override
-        public long getContentLength() {
-            // length of ungzipped content is not known
-            return -1;
-        }
-
-    } 
 }
