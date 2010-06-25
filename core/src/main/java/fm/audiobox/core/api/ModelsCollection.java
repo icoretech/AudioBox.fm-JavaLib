@@ -1,6 +1,5 @@
 
-/**
- *************************************************************************
+/***************************************************************************
  *   Copyright (C) 2010 iCoreTech research labs                            *
  *   Contributed code from:                                                *
  *   - Valerio Chiodino - keytwo at keytwo dot net                         *
@@ -19,11 +18,7 @@
  *   You should have received a copy of the GNU General Public License     *
  *   along with this program. If not, see http://www.gnu.org/licenses/     *
  *                                                                         *
- **************************************************************************
- *
- * @author keytwo
- * @version $Id: $
- */
+ ***************************************************************************/
 
 package fm.audiobox.core.api;
 
@@ -32,6 +27,16 @@ import java.util.List;
 import org.xml.sax.SAXException;
 
 import fm.audiobox.core.AudioBoxClient;
+
+
+/**
+ * 
+ * @author Valerio Chiodino
+ * @author Fabio Tunno
+ * 
+ * @version 0.0.1
+ */
+
 public abstract class ModelsCollection extends Model {
 
     /**

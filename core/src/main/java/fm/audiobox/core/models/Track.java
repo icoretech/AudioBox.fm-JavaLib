@@ -1,3 +1,4 @@
+
 /***************************************************************************
  *   Copyright (C) 2010 iCoreTech research labs                            *
  *   Contributed code from:                                                *
@@ -39,6 +40,7 @@ import fm.audiobox.core.api.ModelsCollection;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 
+
 /**
  * The XML response looks like this:
  *
@@ -68,8 +70,9 @@ import fm.audiobox.core.exceptions.ServiceException;
  * </pre>
  *
  * @author Valerio Chiodino
- * @version 0.2-beta
+ * @version 0.0.1
  */
+
 public class Track extends ModelItem {
 	
 	// Constants

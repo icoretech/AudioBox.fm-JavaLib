@@ -1,3 +1,4 @@
+
 /***************************************************************************
  *   Copyright (C) 2010 iCoreTech research labs                            *
  *   Contributed code from:                                                *
@@ -38,6 +39,7 @@ import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.interfaces.ResponseHandler;
 import fm.audiobox.core.util.Base64;
 
+
 /**
  *
  * User model is a special {@link Model} just because almost every library browse action is performed through this
@@ -72,8 +74,9 @@ import fm.audiobox.core.util.Base64;
  * </pre>
  *
  * @author Valerio Chiodino
- * @version 0.2-beta
+ * @version 0.0.1
  */
+
 public class User extends ModelItem implements ResponseHandler {
 
     /** Constant <code>TAG_NAME="user"</code> */

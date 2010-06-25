@@ -1,3 +1,4 @@
+
 /***************************************************************************
  *   Copyright (C) 2010 iCoreTech research labs                            *
  *   Contributed code from:                                                *
@@ -24,6 +25,7 @@ package fm.audiobox.core.interfaces;
 import fm.audiobox.core.AudioBoxClient;
 import fm.audiobox.core.models.Track;
 
+
 /**
  * CollectionListener provides a usefull interface to easily implement
  * callbacks functions during the parse process of the AudioBox.fm APIs responses.
@@ -49,8 +51,9 @@ import fm.audiobox.core.models.Track;
  * </ul>
  *
  * @author Valerio Chiodino
- * @version 0.1
+ * @version 0.0.1
  */
+
 public interface CollectionListener {
     
     /** Message sent on document fully parsed event. */

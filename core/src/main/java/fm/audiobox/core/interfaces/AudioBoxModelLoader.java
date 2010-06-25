@@ -1,3 +1,4 @@
+
 /***************************************************************************
  *   Copyright (C) 2010 iCoreTech research labs                            *
  *   Contributed code from:                                                *
@@ -23,6 +24,7 @@ package fm.audiobox.core.interfaces;
 
 import fm.audiobox.core.AudioBoxClient;
 import fm.audiobox.core.api.Model;
+
 
 /**
  * AudioBoxModelLoader interface allow a develper to extends default models
@@ -52,8 +54,9 @@ import fm.audiobox.core.api.Model;
  * that your custom models don't reside in the same package.
  *
  * @author Valerio Chiodino
- * @version 0.1
+ * @version 0.0.1
  */
+
 public interface AudioBoxModelLoader {
     
     

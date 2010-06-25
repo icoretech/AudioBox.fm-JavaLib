@@ -1,6 +1,5 @@
 
-/**
- *************************************************************************
+/***************************************************************************
  *   Copyright (C) 2010 iCoreTech research labs                            *
  *   Contributed code from:                                                *
  *   - Valerio Chiodino - keytwo at keytwo dot net                         *
@@ -19,11 +18,7 @@
  *   You should have received a copy of the GNU General Public License     *
  *   along with this program. If not, see http://www.gnu.org/licenses/     *
  *                                                                         *
- **************************************************************************
- *
- * @author keytwo
- * @version $Id: $
- */
+ ***************************************************************************/
 
 package fm.audiobox.core.models;
 
@@ -31,6 +26,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fm.audiobox.core.api.ModelsCollection;
+
+
+/**
+ *
+ * @author Valerio Chiodino
+ * @version 0.0.1
+ */
+
 public class Artists extends ModelsCollection {
 
     /** Constant <code>END_POINT="artists"</code> */

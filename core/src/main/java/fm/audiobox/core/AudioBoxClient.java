@@ -148,9 +148,11 @@ import fm.audiobox.core.util.Inflector;
  *
  * </pre>
  *
+ *
  * @author Valerio Chiodino
  * @author Fabio Tunno
- * @version 0.1
+ * @version 0.0.1
+ * 
  */
 public class AudioBoxClient {
 

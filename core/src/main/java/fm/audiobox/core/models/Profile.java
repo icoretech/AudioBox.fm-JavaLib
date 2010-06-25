@@ -1,3 +1,4 @@
+
 /***************************************************************************
  *   Copyright (C) 2010 iCoreTech research labs                            *
  *   Contributed code from:                                                *
@@ -27,6 +28,7 @@ import java.util.Date;
 
 import fm.audiobox.core.api.ModelItem;
 
+
 /**
  * <pre>
  * {@code
@@ -43,8 +45,9 @@ import fm.audiobox.core.api.ModelItem;
  * </pre>
  *
  * @author Valerio Chiodino
- * @version 0.2-beta
+ * @version 0.0.1
  */
+
 public class Profile extends ModelItem {
 
     /** Constant <code>TAG_NAME="profile"</code> */
