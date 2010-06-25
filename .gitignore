@@ -26,5 +26,4 @@ manifest.mf
 
 # Project spcifics
 /core/**/fixtures/*
-/core/src/main/resources
 /core/src/docbkx
