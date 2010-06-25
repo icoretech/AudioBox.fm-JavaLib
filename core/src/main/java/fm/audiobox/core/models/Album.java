@@ -38,11 +38,10 @@ import fm.audiobox.core.api.ModelItem;
  * </album>
  * }
  * </pre>
- * 
+ *
  * @author Valerio Chiodino
  * @version 0.2-beta
  */
-
 public class Album extends ModelItem {
 
     // Name and token are inherited from Model
@@ -51,18 +50,29 @@ public class Album extends ModelItem {
     protected ModelItem artist;
 	
 	
+	/** Constant <code>TAG_NAME="album"</code> */
 	public static final String TAG_NAME = "album";
 	
+	/**
+	 * <p>Constructor for Album.</p>
+	 */
 	public Album() {
 		this.endPoint = Albums.END_POINT;
 	}
 	
 	
+	/**
+	 * <p>Setter for the field <code>coverUrlAsThumb</code>.</p>
+	 *
+	 * @param coverUrlAsThumb a {@link java.lang.String} object.
+	 */
 	public void setCoverUrlAsThumb( String coverUrlAsThumb ) {
         this.coverUrlAsThumb = coverUrlAsThumb;
     }
 	
 	/**
+	 * <p>Getter for the field <code>coverUrlAsThumb</code>.</p>
+	 *
 	 * @return the coverUrlAsThumb
 	 */
 	public String getCoverUrlAsThumb() {
@@ -70,11 +80,18 @@ public class Album extends ModelItem {
 	}
 	
 	
+	/**
+	 * <p>Setter for the field <code>coverUrl</code>.</p>
+	 *
+	 * @param coverUrl a {@link java.lang.String} object.
+	 */
 	public void setCoverUrl( String coverUrl ) {
 	    this.coverUrl = coverUrl;
 	}
 	
 	/**
+	 * <p>Getter for the field <code>coverUrl</code>.</p>
+	 *
 	 * @return the coverUrl
 	 */
 	public String getCoverUrl() {
@@ -82,11 +99,18 @@ public class Album extends ModelItem {
 	}
 
 	
+	/**
+	 * <p>Setter for the field <code>artist</code>.</p>
+	 *
+	 * @param artist a {@link fm.audiobox.core.api.ModelItem} object.
+	 */
 	public void setArtist(ModelItem artist ) {
 	    this.artist = artist;
 	}
 	
 	/**
+	 * <p>Getter for the field <code>artist</code>.</p>
+	 *
 	 * @return the artist
 	 */
 	public ModelItem getArtist() {

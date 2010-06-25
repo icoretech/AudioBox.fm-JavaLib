@@ -35,13 +35,20 @@ import java.util.regex.Pattern;
  * the <a href="http://api.rubyonrails.org/classes/Inflector.html">Inflector</a> class in <a
  * href="http://www.rubyonrails.org">Ruby on Rails</a>, which is distributed under the <a
  * href="http://wiki.rubyonrails.org/rails/pages/License">Rails license</a>.
- * 
+ *
  * @author Randall Hauch
+ * @version $Id: $
  */
 public class Inflector {
 
+	/** Constant <code>INSTANCE</code> */
 	protected static final Inflector INSTANCE = new Inflector();
 
+	/**
+	 * <p>getInstance</p>
+	 *
+	 * @return a {@link fm.audiobox.core.util.Inflector} object.
+	 */
 	public static final Inflector getInstance() {
 		return INSTANCE;
 	}
@@ -100,16 +107,25 @@ public class Inflector {
 	 */
 	private final Set<String> uncountables = new HashSet<String>();
 
+	/**
+	 * <p>Constructor for Inflector.</p>
+	 */
 	public Inflector() {
 		initialize();
 	}
 
+	/**
+	 * <p>Constructor for Inflector.</p>
+	 *
+	 * @param original a {@link fm.audiobox.core.util.Inflector} object.
+	 */
 	protected Inflector( Inflector original ) {
 		this.plurals.addAll(original.plurals);
 		this.singulars.addAll(original.singulars);
 		this.uncountables.addAll(original.uncountables);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Inflector clone() {
 		return new Inflector(this);
@@ -123,7 +139,7 @@ public class Inflector {
 	 * Returns the plural form of the word in the string.
 	 * <p>
 	 * Examples:
-	 * 
+	 *
 	 * <pre>
 	 *   inflector.pluralize(&quot;post&quot;)               #=&gt; &quot;posts&quot;
 	 *   inflector.pluralize(&quot;octopus&quot;)            #=&gt; &quot;octopi&quot;
@@ -132,12 +148,12 @@ public class Inflector {
 	 *   inflector.pluralize(&quot;the blue mailman&quot;)   #=&gt; &quot;the blue mailmen&quot;
 	 *   inflector.pluralize(&quot;CamelOctopus&quot;)       #=&gt; &quot;CamelOctopi&quot;
 	 * </pre>
-	 * 
+	 *
 	 * </p>
 	 * <p>
 	 * Note that if the {@link Object#toString()} is called on the supplied object, so this method works for non-strings, too.
 	 * </p>
-	 * 
+	 *
 	 * @param word the word that is to be pluralized.
 	 * @return the pluralized form of the word, or the word itself if it could not be pluralized
 	 * @see #singularize(Object)
@@ -154,6 +170,13 @@ public class Inflector {
 		return wordStr;
 	}
 
+	/**
+	 * <p>pluralize</p>
+	 *
+	 * @param word a {@link java.lang.Object} object.
+	 * @param count a int.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String pluralize( Object word,
 			int count ) {
 		if (word == null) return null;
@@ -167,7 +190,7 @@ public class Inflector {
 	 * Returns the singular form of the word in the string.
 	 * <p>
 	 * Examples:
-	 * 
+	 *
 	 * <pre>
 	 *   inflector.singularize(&quot;posts&quot;)             #=&gt; &quot;post&quot;
 	 *   inflector.singularize(&quot;octopi&quot;)            #=&gt; &quot;octopus&quot;
@@ -176,12 +199,12 @@ public class Inflector {
 	 *   inflector.singularize(&quot;the blue mailmen&quot;)  #=&gt; &quot;the blue mailman&quot;
 	 *   inflector.singularize(&quot;CamelOctopi&quot;)       #=&gt; &quot;CamelOctopus&quot;
 	 * </pre>
-	 * 
+	 *
 	 * </p>
 	 * <p>
 	 * Note that if the {@link Object#toString()} is called on the supplied object, so this method works for non-strings, too.
 	 * </p>
-	 * 
+	 *
 	 * @param word the word that is to be pluralized.
 	 * @return the pluralized form of the word, or the word itself if it could not be pluralized
 	 * @see #pluralize(Object)
@@ -202,19 +225,25 @@ public class Inflector {
 	 * Converts strings to lowerCamelCase. This method will also use any extra delimiter characters to identify word boundaries.
 	 * <p>
 	 * Examples:
-	 * 
+	 *
 	 * <pre>
 	 *   inflector.lowerCamelCase(&quot;active_record&quot;)       #=&gt; &quot;activeRecord&quot;
 	 *   inflector.lowerCamelCase(&quot;first_name&quot;)          #=&gt; &quot;firstName&quot;
 	 *   inflector.lowerCamelCase(&quot;name&quot;)                #=&gt; &quot;name&quot;
 	 *   inflector.lowerCamelCase(&quot;the-first_name&quot;,'-')  #=&gt; &quot;theFirstName&quot;
 	 * </pre>
-	 * 
+	 *
 	 * </p>
-	 * 
+	 *
 	 * @param lowerCaseAndUnderscoredWord the word that is to be converted to camel case
 	 * @param delimiterChars optional characters that are used to delimit word boundaries
 	 * @return the lower camel case version of the word
+	 * @see #underscore(String, char[])
+	 * @see #camelCase(String, boolean, char[])
+	 * @see #upperCamelCase(String, char[])
+	 * @see #underscore(String, char[])
+	 * @see #camelCase(String, boolean, char[])
+	 * @see #upperCamelCase(String, char[])
 	 * @see #underscore(String, char[])
 	 * @see #camelCase(String, boolean, char[])
 	 * @see #upperCamelCase(String, char[])
@@ -228,19 +257,25 @@ public class Inflector {
 	 * Converts strings to UpperCamelCase. This method will also use any extra delimiter characters to identify word boundaries.
 	 * <p>
 	 * Examples:
-	 * 
+	 *
 	 * <pre>
 	 *   inflector.upperCamelCase(&quot;active_record&quot;)       #=&gt; &quot;SctiveRecord&quot;
 	 *   inflector.upperCamelCase(&quot;first_name&quot;)          #=&gt; &quot;FirstName&quot;
 	 *   inflector.upperCamelCase(&quot;name&quot;)                #=&gt; &quot;Name&quot;
 	 *   inflector.lowerCamelCase(&quot;the-first_name&quot;,'-')  #=&gt; &quot;TheFirstName&quot;
 	 * </pre>
-	 * 
+	 *
 	 * </p>
-	 * 
+	 *
 	 * @param lowerCaseAndUnderscoredWord the word that is to be converted to camel case
 	 * @param delimiterChars optional characters that are used to delimit word boundaries
 	 * @return the upper camel case version of the word
+	 * @see #underscore(String, char[])
+	 * @see #camelCase(String, boolean, char[])
+	 * @see #lowerCamelCase(String, char[])
+	 * @see #underscore(String, char[])
+	 * @see #camelCase(String, boolean, char[])
+	 * @see #lowerCamelCase(String, char[])
 	 * @see #underscore(String, char[])
 	 * @see #camelCase(String, boolean, char[])
 	 * @see #lowerCamelCase(String, char[])
@@ -256,7 +291,7 @@ public class Inflector {
 	 * boundaries.
 	 * <p>
 	 * Examples:
-	 * 
+	 *
 	 * <pre>
 	 *   inflector.camelCase(&quot;active_record&quot;,false)    #=&gt; &quot;activeRecord&quot;
 	 *   inflector.camelCase(&quot;active_record&quot;,true)     #=&gt; &quot;ActiveRecord&quot;
@@ -265,14 +300,20 @@ public class Inflector {
 	 *   inflector.camelCase(&quot;name&quot;,false)             #=&gt; &quot;name&quot;
 	 *   inflector.camelCase(&quot;name&quot;,true)              #=&gt; &quot;Name&quot;
 	 * </pre>
-	 * 
+	 *
 	 * </p>
-	 * 
+	 *
 	 * @param lowerCaseAndUnderscoredWord the word that is to be converted to camel case
 	 * @param uppercaseFirstLetter true if the first character is to be uppercased, or false if the first character is to be
 	 *        lowercased
 	 * @param delimiterChars optional characters that are used to delimit word boundaries
 	 * @return the camel case version of the word
+	 * @see #underscore(String, char[])
+	 * @see #upperCamelCase(String, char[])
+	 * @see #lowerCamelCase(String, char[])
+	 * @see #underscore(String, char[])
+	 * @see #upperCamelCase(String, char[])
+	 * @see #lowerCamelCase(String, char[])
 	 * @see #underscore(String, char[])
 	 * @see #upperCamelCase(String, char[])
 	 * @see #lowerCamelCase(String, char[])
@@ -305,7 +346,7 @@ public class Inflector {
 	 * camelCase} method. Also changes any characters that match the supplied delimiters into underscore.
 	 * <p>
 	 * Examples:
-	 * 
+	 *
 	 * <pre>
 	 *   inflector.underscore(&quot;activeRecord&quot;)     #=&gt; &quot;active_record&quot;
 	 *   inflector.underscore(&quot;ActiveRecord&quot;)     #=&gt; &quot;active_record&quot;
@@ -314,9 +355,9 @@ public class Inflector {
 	 *   inflector.underscore(&quot;name&quot;)             #=&gt; &quot;name&quot;
 	 *   inflector.underscore(&quot;The.firstName&quot;)    #=&gt; &quot;the_first_name&quot;
 	 * </pre>
-	 * 
+	 *
 	 * </p>
-	 * 
+	 *
 	 * @param camelCaseWord the camel-cased word that is to be converted;
 	 * @param delimiterChars optional characters that are used to delimit word boundaries (beyond capitalization)
 	 * @return a lower-cased version of the input, with separate words delimited by the underscore character.
@@ -339,7 +380,7 @@ public class Inflector {
 
 	/**
 	 * Returns a copy of the input with the first character converted to uppercase and the remainder to lowercase.
-	 * 
+	 *
 	 * @param words the word to be capitalized
 	 * @return the string with the first character capitalized and the remaining characters lowercased
 	 */
@@ -356,14 +397,14 @@ public class Inflector {
 	 * Like {@link #titleCase(String, String[])}, this is meant for creating pretty output.
 	 * <p>
 	 * Examples:
-	 * 
+	 *
 	 * <pre>
 	 *   inflector.humanize(&quot;employee_salary&quot;)       #=&gt; &quot;Employee salary&quot;
 	 *   inflector.humanize(&quot;author_id&quot;)             #=&gt; &quot;Author&quot;
 	 * </pre>
-	 * 
+	 *
 	 * </p>
-	 * 
+	 *
 	 * @param lowerCaseAndUnderscoredWords the input to be humanized
 	 * @param removableTokens optional array of tokens that are to be removed
 	 * @return the humanized string
@@ -392,14 +433,14 @@ public class Inflector {
 	 * {@link #humanize(String, String[])}, this is meant for creating pretty output.
 	 * <p>
 	 * Examples:
-	 * 
+	 *
 	 * <pre>
 	 *   inflector.titleCase(&quot;man from the boondocks&quot;)       #=&gt; &quot;Man From The Boondocks&quot;
 	 *   inflector.titleCase(&quot;x-men: the last stand&quot;)        #=&gt; &quot;X Men: The Last Stand&quot;
 	 * </pre>
-	 * 
+	 *
 	 * </p>
-	 * 
+	 *
 	 * @param words the input to be turned into title case
 	 * @param removableTokens optional array of tokens that are to be removed
 	 * @return the title-case version of the supplied words
@@ -414,7 +455,7 @@ public class Inflector {
 	/**
 	 * Turns a non-negative number into an ordinal string used to denote the position in an ordered sequence, such as 1st, 2nd,
 	 * 3rd, 4th.
-	 * 
+	 *
 	 * @param number the non-negative number
 	 * @return the string with the number and ordinal suffix
 	 */
@@ -436,7 +477,7 @@ public class Inflector {
 	/**
 	 * Determine whether the supplied word is considered uncountable by the {@link #pluralize(Object) pluralize} and
 	 * {@link #singularize(Object) singularize} methods.
-	 * 
+	 *
 	 * @param word the word
 	 * @return true if the plural and singular forms of the word are the same
 	 */
@@ -448,25 +489,43 @@ public class Inflector {
 
 	/**
 	 * Get the set of words that are not processed by the Inflector. The resulting map is directly modifiable.
-	 * 
+	 *
 	 * @return the set of uncountable words
 	 */
 	public Set<String> getUncountables() {
 		return uncountables;
 	}
 
+	/**
+	 * <p>addPluralize</p>
+	 *
+	 * @param rule a {@link java.lang.String} object.
+	 * @param replacement a {@link java.lang.String} object.
+	 */
 	public void addPluralize( String rule,
 			String replacement ) {
 		final Rule pluralizeRule = new Rule(rule, replacement);
 		this.plurals.addFirst(pluralizeRule);
 	}
 
+	/**
+	 * <p>addSingularize</p>
+	 *
+	 * @param rule a {@link java.lang.String} object.
+	 * @param replacement a {@link java.lang.String} object.
+	 */
 	public void addSingularize( String rule,
 			String replacement ) {
 		final Rule singularizeRule = new Rule(rule, replacement);
 		this.singulars.addFirst(singularizeRule);
 	}
 
+	/**
+	 * <p>addIrregular</p>
+	 *
+	 * @param singular a {@link java.lang.String} object.
+	 * @param plural a {@link java.lang.String} object.
+	 */
 	public void addIrregular( String singular,
 			String plural ) {
 		//CheckArg.isNotEmpty(singular, "singular rule");
@@ -477,6 +536,11 @@ public class Inflector {
 		addSingularize("(" + plural.charAt(0) + ")" + pluralRemainder + "$", "$1" + singularRemainder);
 	}
 
+	/**
+	 * <p>addUncountable</p>
+	 *
+	 * @param words a {@link java.lang.String} object.
+	 */
 	public void addUncountable( String... words ) {
 		if (words == null || words.length == 0) return;
 		for (String word : words) {
@@ -493,10 +557,10 @@ public class Inflector {
 	 * to uppercase or lowercase the backreferences. For example, <code>\L1</code> would lowercase the first backreference, and
 	 * <code>&#92;u3</code> would uppercase the 3rd backreference.
 	 * </p>
-	 * 
-	 * @param input
-	 * @param regex
-	 * @param groupNumberToUppercase
+	 *
+	 * @param input a {@link java.lang.String} object.
+	 * @param regex a {@link java.lang.String} object.
+	 * @param groupNumberToUppercase a int.
 	 * @return the input string with the appropriate characters converted to upper-case
 	 */
 	protected static String replaceAllWithUppercase( String input,
@@ -521,6 +585,9 @@ public class Inflector {
 		this.singulars.clear();
 	}
 
+	/**
+	 * <p>initialize</p>
+	 */
 	protected void initialize() {
 		Inflector inflect = this;
 		inflect.addPluralize("$", "s");

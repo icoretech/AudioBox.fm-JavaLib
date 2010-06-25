@@ -27,51 +27,46 @@ import fm.audiobox.core.api.Model;
 /**
  * AudioBoxModelLoader interface allow a develper to extends default models
  * classes with his own.
- * 
+ *
  * <p>
- * 
- * A {@link Model} object can be created while parsing the AudioBox.fm API XML or 
+ *
+ * A {@link Model} object can be created while parsing the AudioBox.fm API XML or
  * when a model itself contains submodels. Anytime a model is dynamically
  * created the only method this interface provides is called.
- * 
+ *
  * <p>
- * 
+ *
  * You can override the default AudioBoxModelLoader in {@link AudioBoxClient}
- * by providing your own implementation of this interface. Keep in mind though 
+ * by providing your own implementation of this interface. Keep in mind though
  * that this will be almost never necessary if your models resides in the same
  * package.
- * 
+ *
  * <p>
- * 
+ *
  * By specifying your custom model package with {@link AudioBoxClient#setCustomModelsPackage(String)}
  * you don't need to override the default AudioBoxModelLoader implementation.
- * 
+ *
  * <p>
- * 
+ *
  * A good reason to implement your version of AudioBoxModelLoader is, for instance,
  * that your custom models don't reside in the same package.
- * 
+ *
  * @author Valerio Chiodino
  * @version 0.1
- * 
  */
-
 public interface AudioBoxModelLoader {
     
     
     /**
      * This method is used to gather the correct class of a specific model.
-     * Default implementation of this method (found in {@link AudioBoxClient}) will first 
+     * Default implementation of this method (found in {@link AudioBoxClient}) will first
      * look for the specifyed class in the custom package set by user. If the class is not found
      * then it will return the default model class.
-     * 
-     * 
+     *
      * @param clazz the class used to probe the package where the desired class should be found
      * @param tagName used by the parser when a "typed" tag is found
-     *  
      * @return a class that extends a Model
      */
-    
     public Class<?> getModelClassName(Class<? extends Model> clazz, String tagName);
     
 }

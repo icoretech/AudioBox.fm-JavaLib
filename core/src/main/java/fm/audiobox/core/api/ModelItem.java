@@ -1,4 +1,6 @@
-/***************************************************************************
+
+/**
+ *************************************************************************
  *   Copyright (C) 2010 iCoreTech research labs                            *
  *   Contributed code from:                                                *
  *   - Valerio Chiodino - keytwo at keytwo dot net                         *
@@ -17,24 +19,43 @@
  *   You should have received a copy of the GNU General Public License     *
  *   along with this program. If not, see http://www.gnu.org/licenses/     *
  *                                                                         *
- ***************************************************************************/
+ **************************************************************************
+ *
+ * @author keytwo
+ * @version $Id: $
+ */
 
 package fm.audiobox.core.api;
 
 import fm.audiobox.core.models.Tracks;
-
 public abstract class ModelItem extends Model {
 
     public ModelsCollection tracks;
     
+    /**
+     * <p>getTrack</p>
+     *
+     * @param uuid a {@link java.lang.String} object.
+     * @return a {@link fm.audiobox.core.api.ModelItem} object.
+     */
     public ModelItem getTrack(String uuid) {
         return (ModelItem) tracks.get(uuid);
     }
 
+    /**
+     * <p>Setter for the field <code>tracks</code>.</p>
+     *
+     * @param tracks a {@link fm.audiobox.core.api.ModelsCollection} object.
+     */
     public void setTracks(ModelsCollection tracks) {
         this.tracks = tracks;
     }
     
+    /**
+     * <p>Getter for the field <code>tracks</code>.</p>
+     *
+     * @return a {@link fm.audiobox.core.api.Model} object.
+     */
     public Model getTracks(){
         
         if (tracks == null) {

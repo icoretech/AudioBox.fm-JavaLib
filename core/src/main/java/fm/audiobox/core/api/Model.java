@@ -1,4 +1,6 @@
-/***************************************************************************
+
+/**
+ *************************************************************************
  *   Copyright (C) 2010 iCoreTech research labs                            *
  *   Contributed code from:                                                *
  *   - Valerio Chiodino - keytwo at keytwo dot net                         *
@@ -17,7 +19,11 @@
  *   You should have received a copy of the GNU General Public License     *
  *   along with this program. If not, see http://www.gnu.org/licenses/     *
  *                                                                         *
- ***************************************************************************/
+ **************************************************************************
+ *
+ * @author keytwo
+ * @version $Id: $
+ */
 
 package fm.audiobox.core.api;
 
@@ -50,14 +56,16 @@ import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.interfaces.AudioBoxModelLoader;
 import fm.audiobox.core.interfaces.ResponseHandler;
 import fm.audiobox.core.util.Inflector;
-
 public abstract class Model extends DefaultHandler implements ResponseHandler {
 
     private static final String ADD_PREFIX = "add";
     private static final String SET_PREFIX = "set";
 
+    /** Constant <code>SAX_ERROR_CODE=-1000</code> */
     public static final int SAX_ERROR_CODE = -1000;
+    /** Constant <code>PARSER_CONFIGURATION_ERROR_CODE=-1001</code> */
     public static final int PARSER_CONFIGURATION_ERROR_CODE = -1001;
+    /** Constant <code>IO_ERROR_CODE=-1002</code> */
     public static final int IO_ERROR_CODE = -1002;
 
     private static Log log = LogFactory.getLog(Model.class);
@@ -76,34 +84,70 @@ public abstract class Model extends DefaultHandler implements ResponseHandler {
     protected AudioBoxModelLoader abml = AudioBoxClient.getAudioBoxModelLoader();
 
 
+    /**
+     * <p>toString</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String toString() {
         return this.getName();
     }
 
+    /**
+     * <p>Setter for the field <code>endPoint</code>.</p>
+     *
+     * @param endPoint a {@link java.lang.String} object.
+     */
     public final void setEndPoint(String endPoint){
         this.endPoint = endPoint;
     }
 
+    /**
+     * <p>Getter for the field <code>endPoint</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public final String getEndPoint(){
         return this.endPoint;
     }
 
+    /**
+     * <p>Getter for the field <code>name</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getName() {
         return this.name;
     }
 
+    /**
+     * <p>Setter for the field <code>name</code>.</p>
+     *
+     * @param name a {@link java.lang.String} object.
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * <p>Getter for the field <code>token</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getToken() {
         return this.token;
     }
 
+    /**
+     * <p>Setter for the field <code>token</code>.</p>
+     *
+     * @param token a {@link java.lang.String} object.
+     */
     public final void setToken(String token) {
         this.token = token;
     }
 
+    /** {@inheritDoc} */
     public final String handleResponse(HttpResponse response, String httpVerb) throws ClientProtocolException, IOException, IllegalStateException, LoginException {
 
         int responseCode = response.getStatusLine().getStatusCode();
@@ -133,6 +177,13 @@ public abstract class Model extends DefaultHandler implements ResponseHandler {
         return responseString;
     }
 
+    /**
+     * <p>parseResponse</p>
+     *
+     * @param input a {@link java.io.InputStream} object.
+     * @param contentType a {@link org.apache.http.Header} object.
+     * @throws java.io.IOException if any.
+     */
     public void parseResponse( InputStream input, Header contentType ) throws IOException {
 
         try {
@@ -161,10 +212,21 @@ public abstract class Model extends DefaultHandler implements ResponseHandler {
     }
 
 
+    /**
+     * <p>setAudioBoxModelLoader</p>
+     *
+     * @param abml a {@link fm.audiobox.core.interfaces.AudioBoxModelLoader} object.
+     */
     public void setAudioBoxModelLoader(AudioBoxModelLoader abml) {
         this.abml = abml;
     }
 
+    /**
+     * <p>invoke</p>
+     *
+     * @throws fm.audiobox.core.exceptions.ServiceException if any.
+     * @throws fm.audiobox.core.exceptions.LoginException if any.
+     */
     public void invoke() throws ServiceException, LoginException {
         AudioBoxClient.execute( this.getEndPoint(), this.getToken(), null, this, HttpGet.METHOD_NAME);
     }
@@ -175,6 +237,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler {
     /* --------- */
 
 
+    /** {@inheritDoc} */
     @Override
     public final void startDocument() throws SAXException {
         this.mStack = new Stack<Object>();
@@ -182,6 +245,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler {
         super.startDocument();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void endDocument() throws SAXException {
         this.mStack = null;
@@ -189,6 +253,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler {
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public final void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
@@ -260,6 +325,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler {
         super.startElement(uri, localName, qName, attributes);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
 
@@ -296,6 +362,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler {
         super.endElement(uri, localName, qName);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
 

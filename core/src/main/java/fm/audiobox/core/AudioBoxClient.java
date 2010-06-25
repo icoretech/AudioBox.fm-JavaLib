@@ -90,81 +90,83 @@ import fm.audiobox.core.util.Inflector;
  * To populate and get informations  about user library use the {@link User} (or an extended User) model instead.
  *
  * <p>
- * 
- * As many other libraries out there AudioBox.fm-JavaLib allows you to extends default models and use them in place 
+ *
+ * As many other libraries out there AudioBox.fm-JavaLib allows you to extends default models and use them in place
  * of default ones.
- * 
+ *
  * <p>
- * 
- * For this purpose we embrace the "convention over configuration" phylosophy this is why you will need to store all 
+ *
+ * For this purpose we embrace the "convention over configuration" phylosophy this is why you will need to store all
  * your extended models in the same package.
- * 
+ *
  * <p>
- * 
- * If you dislike this phylosophy or you have special needs you can bypass it by overwriting the default 
+ *
+ * If you dislike this phylosophy or you have special needs you can bypass it by overwriting the default
  * {@link AudioBoxModelLoader} providing your implementation.
- * 
+ *
  * <p>
- * 
- * In order to make AudioBoxClient load your extended models you will need to provide a full package path where 
- * your classes are stored.<br/> 
+ *
+ * In order to make AudioBoxClient load your extended models you will need to provide a full package path where
+ * your classes are stored.<br/>
  * For instance the default models package is "fm.audiobox.api.models"; here you will find the default {@link Track}
  * model.<br/>
- * If you plan to override the Track model you must inform AudioBoxClient where to find your Track class and this can 
+ * If you plan to override the Track model you must inform AudioBoxClient where to find your Track class and this can
  * be done in two ways:
- * 
+ *
  * <ol>
  *  <li>simply setting up the custom package path through {@link AudioBoxClient#setCustomModelsPackage(String) setCustomModelsPackage(String)}.</li>
  *  <li>overwriting the default {@link AudioBoxModelLoader} as told before.</li>
  * </ol>
- * 
+ *
  * <p>
- * 
- * The usual execution flow can be demonstrated by the code snippet below: 
- * 
+ *
+ * The usual execution flow can be demonstrated by the code snippet below:
+ *
  * <pre>
- * 
- * // This is needed if you plan to extend default models 
+ *
+ * // This is needed if you plan to extend default models
  * AudioBoxClient.setCustomModelsPackage("my.custom.models");
- * 
- * // If you extended the {@link User} model AudioBoxClient should be informed before create a new instance 
+ *
+ * // If you extended the {@link User} model AudioBoxClient should be informed before create a new instance
  * AudioBoxClient.setUserClass(MyUser.class);
  *
- * // Creating the new AudioBoxClient instance 
+ * // Creating the new AudioBoxClient instance
  * abc = new AudioBoxClient();
  * try {
- *    
+ *
  *    // Should perform a login before anything else is done with the AudioBoxClient object
  *    MyUser user = (MyUser) abc.login( "user@email.com" , "password" );
- *    
+ *
  *    // Now you can browse your library with calls like this:
  *    Playlists pls = user.getPlaylists();
- *    
+ *
  * } catch (LoginException e) {
  *    // Handle {@link LoginException}
  * } catch (ServiceException e) {
  *    // Handle {@link ServiceException}
  * }
- * 
+ *
  * </pre>
- * 
- * 
+ *
  * @author Valerio Chiodino
  * @author Fabio Tunno
- * 
  * @version 0.1
- * 
  */
-
 public class AudioBoxClient {
 
     /** Message used when the response is succesfully parsed */
     public static final String PROTOCOL = "https";
+    /** Constant <code>HOST="audiobox.dev"</code> */
     public static final String HOST = "audiobox.dev";
+    /** Constant <code>PORT="443"</code> */
     public static final String PORT = "443";
+    /** Constant <code>API_PREFIX="/api/"</code> */
     public static final String API_PREFIX = "/api/";
+    /** Constant <code>API_SUFFIX="xml"</code> */
     public static final String API_SUFFIX = "xml";
+    /** Constant <code>TRACK_ID_PLACEHOLDER="[track_id]"</code> */
     public static final String TRACK_ID_PLACEHOLDER = "[track_id]";
+    /** Constant <code>API_PATH="PROTOCOL + :// + HOST + API_PREFIX"</code> */
     public static final String API_PATH = PROTOCOL + "://" + HOST + API_PREFIX;
 
     /** Specifies the models package (default: fm.audiobox.core.models) */
@@ -224,17 +226,17 @@ public class AudioBoxClient {
 
 
     /**
-     * Note: When first created, AudioBoxClient instantiate a new {@link User} object needed for authentication 
+     * Note: When first created, AudioBoxClient instantiate a new {@link User} object needed for authentication
      * on AudioBox.fm.
-     * 
+     *
      * <p>
-     * 
+     *
      * If you wish to overload or override the default User model class you have to specify which is the User
-     * class you want to use <b>before</b> AudioBoxClient object is created. 
+     * class you want to use <b>before</b> AudioBoxClient object is created.
      * This is done through the {@link AudioBoxClient#setUserClass(Class)} method.
-     * @throws IOException 
+     *
+     * @throws IOException if any.
      */
-
     public AudioBoxClient() { 
 
         String version = "unattended";
@@ -277,15 +279,15 @@ public class AudioBoxClient {
      * This method should be called before any other call to AudioBox.fm.<br/>
      * It tries to perform a login. If succeeds a User object is returned otherwise a {@link LoginException} is thrown.<br/>
      * This method also checks whether the user is active or not. If not a LoginException is thrown.
-     * 
+     *
      * <p>
-     * 
+     *
      * @param username the username to login to AudioBox.fm in form of an e-mail
      * @param password the password to use for authentication
-     * 
      * @return {@link User} object
+     * @throws fm.audiobox.core.exceptions.LoginException if any.
+     * @throws fm.audiobox.core.exceptions.ServiceException if any.
      */
-
     public User login(String username, String password) throws LoginException, ServiceException {
 
         Log logger = LogFactory.getLog(AudioBoxClient.class);
@@ -307,10 +309,9 @@ public class AudioBoxClient {
 
     /**
      * This method returns the User object used to perform requests to AudioBox.fm.
-     * 
+     *
      * @return {@link User} object
      */
-
     public User getUser() {
         return sUser;
     }
@@ -318,10 +319,9 @@ public class AudioBoxClient {
 
     /**
      * Use this method to configure the timeout limit for reqests made against AudioBox.fm.
-     * 
+     *
      * @param timeout the milliseconds of the timeout limit
      */
-
     public void setTimeout(long timeout) {
         sTimeout = timeout; 
     }
@@ -329,10 +329,9 @@ public class AudioBoxClient {
 
     /**
      * Returns the requests timeout limit.
-     * 
+     *
      * @return timeout limit
      */
-
     public long getTimeout() {
         return sTimeout;
     }
@@ -340,10 +339,9 @@ public class AudioBoxClient {
 
     /**
      * Use this method to override the default {@link CollectionListener}.
-     * 
+     *
      * @param collectionListener the CollectionListener to use for parser callbacks
      */
-
     public void setCollectionListener(CollectionListener collectionListener) {
         AudioBoxClient.sCollectionListener = collectionListener;
     }
@@ -351,10 +349,9 @@ public class AudioBoxClient {
 
     /**
      * Use this method to override the default {@link AudioBoxModelLoader}.
-     * 
+     *
      * @param modelLoader the AudioBoxModelLoader to use for models class loading
      */
-
     public void setAudioBoxModelLoader(AudioBoxModelLoader modelLoader) {
         AudioBoxClient.sAudioBoxModelLoader = modelLoader;
     }
@@ -367,12 +364,11 @@ public class AudioBoxClient {
     /**
      * AudioBox.fm RESTful API uses inflections to distinguish between a single item and a collection.<br/>
      * To preserve the same philosophy we also use an inflector.<br/>
-     * To be sure to not waste memory or resources use this method to get the {@link Inflector} instance used by 
+     * To be sure to not waste memory or resources use this method to get the {@link Inflector} instance used by
      * the parser.
-     * 
+     *
      * @return the AudioBoxClient {@link Inflector} instance
      */
-
     public static Inflector getInflector() {
         return AudioBoxClient.sI;
     }
@@ -380,12 +376,11 @@ public class AudioBoxClient {
 
     /**
      * This method will switch SSL certificate validation on or off.
-     * You will not need to use this. This method is used for testing purpose only. For this reason this method is 
+     * You will not need to use this. This method is used for testing purpose only. For this reason this method is
      * marked as "deprecated".
-     * 
+     *
      * @param force set or unset the SSL certificate validation (false validates, true skips validation).
      */
-
     @Deprecated
     public static void setForceTrust(boolean force) {
         AudioBoxClient.sForceTrust = force;
@@ -395,10 +390,9 @@ public class AudioBoxClient {
     /**
      * If you need to extend the {@link User} model class you will have to specify which is the User class to load
      * <b>before</b> instantiate a new {@link AudioBoxClient} object.
-     * 
+     *
      * @param clazz the extended {@link User} class.
      */
-
     public static void setUserClass(Class<? extends User> clazz) {
         AudioBoxClient.sUserClass = clazz;
     }
@@ -406,10 +400,9 @@ public class AudioBoxClient {
 
     /**
      * Use this method to make AudioBoxClient loads your extended models classes.<br/>
-     * 
+     *
      * @param customModelsPackage the extended models classes package.
      */
-
     public static void setCustomModelsPackage(String customModelsPackage) {
         AudioBoxClient.sCustomModelsPackage = customModelsPackage;
     }
@@ -417,10 +410,9 @@ public class AudioBoxClient {
 
     /**
      * Use this method to gather the models package used for models class loading.
-     * 
+     *
      * @return the custom models package default is {@link AudioBoxClient#DEFAULT_MODELS_PACKAGE}.
      */
-
     public static String getCustomModelsPackage() {
         return sCustomModelsPackage;
     }
@@ -428,10 +420,9 @@ public class AudioBoxClient {
 
     /**
      * Use this method to get the configured {@link CollectionListener}.
-     * 
+     *
      * @return the current collection listener AudioBoxClient is using.
      */
-
     public static CollectionListener getCollectionListener() {
         return sCollectionListener;
     }
@@ -440,10 +431,9 @@ public class AudioBoxClient {
     /**
      * Use this method to get the configured {@link AudioBoxModelLoader}.<br/>
      * You can specify a custom model loader through {@link AudioBoxClient#setAudioBoxModelLoader(AudioBoxModelLoader)}.
-     * 
+     *
      * @return the current model loader AudioBoxClient is using.
      */
-
     public static AudioBoxModelLoader getAudioBoxModelLoader() {
         return sAudioBoxModelLoader;
     }
@@ -452,20 +442,20 @@ public class AudioBoxClient {
     /**
      * This method is used by the {@link Model} class by running the {@link Model#invoke()} method.<br/>
      * Avoid direct execution of this method if you don't know what you are doing.
-     * 
+     *
      * <p>
-     * 
+     *
      * Some of the parameter may be null other cannot.
-     * 
+     *
      * @param path the partial url to call. Tipically this is a Model end point ({@link Model#getEndPoint()})
      * @param token the token of the Model if any, may be null or empty ({@link Model#getToken()})
      * @param action the remote action to execute on the model that executes the action (ie. "scrobble")
      * @param target usually reffers the Model that executes the method
      * @param httpVerb the HTTP method to use for the request (ie: GET, PUT, POST and DELETE)
-     * 
      * @return the result of the request, may be a response code, such as HTTP OK ("200") or the body of the response.
+     * @throws fm.audiobox.core.exceptions.LoginException if any.
+     * @throws fm.audiobox.core.exceptions.ServiceException if any.
      */
-
     public static String execute(String path, String token, String action , Model target, String httpVerb) throws LoginException , ServiceException {
         return execute(path, token, action, target, httpVerb, API_SUFFIX);
     }
@@ -473,21 +463,21 @@ public class AudioBoxClient {
     /**
      * This method is used by the {@link Model} class by running the {@link Model#invoke()} method.<br/>
      * Avoid direct execution of this method if you don't know what you are doing.
-     * 
+     *
      * <p>
-     * 
+     *
      * Some of the parameter may be null other cannot.
-     * 
+     *
      * @param path the partial url to call. Tipically this is a Model end point ({@link Model#getEndPoint()})
      * @param token the token of the Model if any, may be null or empty ({@link Model#getToken()})
      * @param action the remote action to execute on the model that executes the action (ie. "scrobble")
      * @param target usually reffers the Model that executes the method
      * @param httpVerb the HTTP method to use for the request (ie: GET, PUT, POST and DELETE)
      * @param format the request format (xml or txt)
-     * 
      * @return the result of the request, may be a response code, such as HTTP OK ("200") or the body of the response.
+     * @throws fm.audiobox.core.exceptions.LoginException if any.
+     * @throws fm.audiobox.core.exceptions.ServiceException if any.
      */
-
     public static String execute (String path, String token, String action , Model target, String httpVerb, String format) throws LoginException , ServiceException {
 
         token = ( token == null ) ? "" : token.startsWith("/") ? token : "/".concat(token);

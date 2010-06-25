@@ -24,16 +24,14 @@ package fm.audiobox.core.exceptions;
 /**
  * ServiceException is thrown whenever a connection exception occurs while
  * performing a request to AudioBox.fm services.
- * 
+ *
  * <p>
- * 
+ *
  * Exception is specified through the error codes.
- * 
- * 
+ *
  * @author Valerio Chiodino
  * @version 0.1
  */
-
 public class ServiceException extends java.net.ConnectException {
 
     /** Socket exception error code */
@@ -52,14 +50,30 @@ public class ServiceException extends java.net.ConnectException {
 
     private int errorCode;
 	
+	/**
+	 * <p>Constructor for ServiceException.</p>
+	 *
+	 * @param message a {@link java.lang.String} object.
+	 */
 	public ServiceException(String message) {
 		super(message);
 	}
 	
+	/**
+	 * <p>Constructor for ServiceException.</p>
+	 *
+	 * @param message a {@link java.lang.String} object.
+	 * @param errorCode a int.
+	 */
 	public ServiceException(String message, int errorCode) {
 	    this.errorCode = errorCode;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>errorCode</code>.</p>
+	 *
+	 * @return a int.
+	 */
 	public int getErrorCode(){
 		return errorCode;
 	}

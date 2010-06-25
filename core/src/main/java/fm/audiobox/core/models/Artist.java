@@ -32,15 +32,18 @@ import fm.audiobox.core.api.ModelItem;
  * </artist>
  * }
  * </pre>
- * 
+ *
  * @author keytwo
  * @version 0.2-beta
  */
-
 public class Artist extends ModelItem {
 	
+	/** Constant <code>TAG_NAME="artist"</code> */
 	public static final String TAG_NAME = "artist";
 	
+	/**
+	 * <p>Constructor for Artist.</p>
+	 */
 	public Artist() {
 		this.endPoint = Artists.END_POINT;
 	}

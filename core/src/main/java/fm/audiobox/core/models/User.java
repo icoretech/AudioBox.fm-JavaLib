@@ -39,12 +39,12 @@ import fm.audiobox.core.interfaces.ResponseHandler;
 import fm.audiobox.core.util.Base64;
 
 /**
- * 
- * User model is a special {@link Model} just because almost every library browse action is performed through this 
+ *
+ * User model is a special {@link Model} just because almost every library browse action is performed through this
  * object.
- * 
+ *
  * <p>
- *   
+ *
  * <pre>
  * {@code
  * <user>
@@ -67,20 +67,21 @@ import fm.audiobox.core.util.Base64;
  *      <time-zone>New York</time-zone>
  *   </profile>
  * </user>
- * 
+ *
  * }
  * </pre>
- * 
+ *
  * @author Valerio Chiodino
  * @version 0.2-beta
- * 
  */
-
 public class User extends ModelItem implements ResponseHandler {
 
+    /** Constant <code>TAG_NAME="user"</code> */
     public static final String TAG_NAME = "user";
+    /** Constant <code>PATH="TAG_NAME"</code> */
     public static final String PATH = TAG_NAME;
 
+    /** Constant <code>ACTIVE_STATE="active"</code> */
     public static final String ACTIVE_STATE = "active";
 
     protected long bytesServed;
@@ -103,6 +104,9 @@ public class User extends ModelItem implements ResponseHandler {
     
     private String[] tracks;
 
+    /**
+     * <p>Constructor for User.</p>
+     */
     public User() {
         this.endPoint = PATH;
         this.name = TAG_NAME;
@@ -123,11 +127,18 @@ public class User extends ModelItem implements ResponseHandler {
         this.albums    = (ModelsCollection) abml.getModelClassName(this.getClass(), Albums.END_POINT ).newInstance();
     }
 
+    /**
+     * <p>Setter for the field <code>bytesServed</code>.</p>
+     *
+     * @param bytes a {@link java.lang.String} object.
+     */
     public void setBytesServed(String bytes) {
         this.bytesServed = Long.parseLong( bytes );
     }
 
     /**
+     * <p>Getter for the field <code>bytesServed</code>.</p>
+     *
      * @return the bytesServed
      */
     public long getBytesServed() {
@@ -135,11 +146,18 @@ public class User extends ModelItem implements ResponseHandler {
     }
 
 
+    /**
+     * <p>Setter for the field <code>email</code>.</p>
+     *
+     * @param email a {@link java.lang.String} object.
+     */
     public void setEmail(String email) {
         this.email = email;
     }
 
     /**
+     * <p>Getter for the field <code>email</code>.</p>
+     *
      * @return the email
      */
     public String getEmail() {
@@ -148,11 +166,18 @@ public class User extends ModelItem implements ResponseHandler {
 
 
 
+    /**
+     * <p>Setter for the field <code>playCount</code>.</p>
+     *
+     * @param playCount a {@link java.lang.String} object.
+     */
     public void setPlayCount(String playCount) {
         this.playCount = Integer.parseInt( playCount );
     }
 
     /**
+     * <p>Getter for the field <code>playCount</code>.</p>
+     *
      * @return the playCount
      */
     public int getPlayCount() {
@@ -160,11 +185,19 @@ public class User extends ModelItem implements ResponseHandler {
     }
 
 
+    /**
+     * <p>Setter for the field <code>quota</code>.</p>
+     *
+     * @param quota a {@link java.lang.String} object.
+     */
     public void setQuota(String quota) {
         this.quota = Long.parseLong( quota );
     }
 
+    
     /**
+     * <p>Getter for the field <code>quota</code>.</p>
+     *
      * @return the quota
      */
     public long getQuota() {
@@ -172,12 +205,19 @@ public class User extends ModelItem implements ResponseHandler {
     }
 
 
-
+    /**
+     * <p>Setter for the field <code>state</code>.</p>
+     *
+     * @param state a {@link java.lang.String} object.
+     */
     public void setState(String state) {
         this.state = state;
     }
 
+    
     /**
+     * <p>Getter for the field <code>state</code>.</p>
+     *
      * @return the state
      */
     public String getState() {
@@ -185,11 +225,19 @@ public class User extends ModelItem implements ResponseHandler {
     }
 
 
+    /**
+     * <p>Setter for the field <code>tracksCount</code>.</p>
+     *
+     * @param tracksCount a {@link java.lang.String} object.
+     */
     public void setTracksCount(String tracksCount) {
         this.tracksCount = Integer.parseInt( tracksCount );
     }
 
+    
     /**
+     * <p>Getter for the field <code>tracksCount</code>.</p>
+     *
      * @return the tracksCount
      */
     public int getTracksCount() {
@@ -197,11 +245,19 @@ public class User extends ModelItem implements ResponseHandler {
     }
 
 
+    /**
+     * <p>Setter for the field <code>username</code>.</p>
+     *
+     * @param username a {@link java.lang.String} object.
+     */
     public void setUsername(String username) {
         this.username = username;
     }
 
+    
     /**
+     * <p>Getter for the field <code>username</code>.</p>
+     *
      * @return the username
      */
     public String getUsername() {
@@ -209,16 +265,29 @@ public class User extends ModelItem implements ResponseHandler {
     }
 
 
+    /**
+     * <p>Setter for the field <code>password</code>.</p>
+     *
+     * @param password a {@link java.lang.String} object.
+     */
     public void setPassword(String password) {
         this.password = password;
     }
 
 
+    /**
+     * <p>setAvalableStorage</p>
+     *
+     * @param availableStorage a {@link java.lang.String} object.
+     */
     public void setAvalableStorage(String availableStorage) {
         this.availableStorage = Long.parseLong( availableStorage );
     }
 
+    
     /**
+     * <p>Getter for the field <code>availableStorage</code>.</p>
+     *
      * @return the availableStorage
      */
     public long getAvailableStorage() {
@@ -226,12 +295,19 @@ public class User extends ModelItem implements ResponseHandler {
     }
 
 
-
+    /**
+     * <p>Setter for the field <code>avatarUrl</code>.</p>
+     *
+     * @param url a {@link java.lang.String} object.
+     */
     public void setAvatarUrl(String url) {
         this.avatarUrl = url;
     }
 
+    
     /**
+     * <p>Getter for the field <code>avatarUrl</code>.</p>
+     *
      * @return the avatarUrl
      */
     public String getAvatarUrl() {
@@ -239,40 +315,59 @@ public class User extends ModelItem implements ResponseHandler {
     }
 
 
-
+    /**
+     * <p>Setter for the field <code>profile</code>.</p>
+     *
+     * @param profile a {@link fm.audiobox.core.api.ModelItem} object.
+     */
     public void setProfile(ModelItem profile) {
         this.profile = profile;
     }
 
 
     /**
+     * <p>Getter for the field <code>profile</code>.</p>
+     *
      * @return the profile
      */
     public ModelItem getProfile() {
         return this.profile;
     }
 
+    
+    /** {@inheritDoc} */
     @Override
     public String getName() {
         return this.username;
     }
 
 
+    /**
+     * <p>getAuth</p>
+     *
+     * @return the base64 encoded username:password string pair for Basic Authentications
+     */
     public String getAuth() {
         String auth = ( email == null ? username : email ) + ":" + password;
         return Base64.encodeBytes( auth.getBytes() );
     }
 
+    
     /**
+     * <p>Getter for the field <code>playlists</code>.</p>
+     *
      * @return the playlists
-     * @throws LoginException 
-     * @throws ServiceException 
+     * @throws fm.audiobox.core.exceptions.LoginException if any.
+     * @throws fm.audiobox.core.exceptions.ServiceException if any.
      */
     public ModelsCollection getPlaylists() throws ServiceException, LoginException {
         return playlists;
     }
+    
 
     /**
+     * <p>Getter for the field <code>genres</code>.</p>
+     *
      * @return the genres
      */
     public ModelsCollection getGenres() {
@@ -281,25 +376,39 @@ public class User extends ModelItem implements ResponseHandler {
 
 
     /**
+     * <p>Getter for the field <code>artists</code>.</p>
+     *
      * @return the artists
      */
     public ModelsCollection getArtists() {
         return artists;
     }
 
+    
     /**
+     * <p>Getter for the field <code>albums</code>.</p>
+     *
      * @return the albums
      */
     public ModelsCollection getAlbums() {
         return albums;
     }
 
+    
+    /**
+     * <p>getUploadedTracks</p>
+     *
+     * @return an array of MD5 hashes of uploaded tracks.
+     * @throws fm.audiobox.core.exceptions.ServiceException if any.
+     * @throws fm.audiobox.core.exceptions.LoginException if any.
+     */
     public String[] getUploadedTracks() throws ServiceException, LoginException {
         AudioBoxClient.execute(Tracks.END_POINT, null, null, this, HttpGet.METHOD_NAME, "txt");
         return this.tracks;
     }
 
 
+    /** {@inheritDoc} */
     public void parseResponse(InputStream is, Header contentType) throws IOException {
 
         if (contentType.getValue().contains("xml")) {
@@ -330,6 +439,7 @@ public class User extends ModelItem implements ResponseHandler {
             int pos=0;
             for ( String hash : result )
               this.tracks[ pos++ ] = hash.trim();
+            
         } else {       
             this.tracks = new String[]{};
         }
