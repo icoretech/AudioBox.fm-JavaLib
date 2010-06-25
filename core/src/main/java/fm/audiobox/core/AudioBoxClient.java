@@ -21,6 +21,7 @@
 
 package fm.audiobox.core;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketTimeoutException;
@@ -28,6 +29,7 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Properties;
 import java.util.zip.GZIPInputStream;
 
 import javax.net.ssl.KeyManager;
@@ -144,8 +146,6 @@ import fm.audiobox.core.util.Inflector;
  *    // Handle {@link ServiceException}
  * }
  * 
- * 
- * 
  * </pre>
  * 
  * 
@@ -173,17 +173,9 @@ public class AudioBoxClient {
     private static final String TOKEN_PARAMETER = "${token}";
     private static final String ACTION_PARAMETER = "${action}";
 
-
     private static long sTimeout = (180 * 1000);
     private static boolean sForceTrust = false;
-    private static String sUserAgent = "AudioBox.fm/0.1-alpha (Java; U; " +
-    System.getProperty("os.name") + " " +
-    System.getProperty("os.arch") + "; " + 
-    System.getProperty("user.language") + "; " +
-    System.getProperty("java.runtime.version") +  ") " +
-    System.getProperty("java.vm.name") + "/" + 
-    System.getProperty("java.vm.version") + 
-    " AudioBoxClient/0.1";
+    private static String sUserAgent;
 
     private static String sCustomModelsPackage = DEFAULT_MODELS_PACKAGE;
     private static String sApiPath = API_PATH + PATH_PARAMETER + TOKEN_PARAMETER + ACTION_PARAMETER;
@@ -240,9 +232,32 @@ public class AudioBoxClient {
      * If you wish to overload or override the default User model class you have to specify which is the User
      * class you want to use <b>before</b> AudioBoxClient object is created. 
      * This is done through the {@link AudioBoxClient#setUserClass(Class)} method.
+     * @throws IOException 
      */
 
     public AudioBoxClient() { 
+
+        String version = "unattended";
+
+        try {
+            Properties ps = new Properties();
+            ps.load(AudioBoxClient.class.getResourceAsStream("config/env.properties"));
+            version = ps.getProperty("libaudioboxfm-core.version");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        sUserAgent = "AudioBox.fm/" + version + " (Java; U; " +
+        System.getProperty("os.name") + " " +
+        System.getProperty("os.arch") + "; " + 
+        System.getProperty("user.language") + "; " +
+        System.getProperty("java.runtime.version") +  ") " +
+        System.getProperty("java.vm.name") + "/" + 
+        System.getProperty("java.vm.version") + 
+        " AudioBoxClient/" + version;
+
         try {
             Class<? extends User> clazz = sUserClass;
             sUser = clazz.cast(clazz.newInstance());
@@ -274,6 +289,7 @@ public class AudioBoxClient {
     public User login(String username, String password) throws LoginException, ServiceException {
 
         Log logger = LogFactory.getLog(AudioBoxClient.class);
+
         logger.info("Starting AudioBoxClient: " + sUserAgent);
 
         sUserClass.cast(sUser).setUsername( username );
@@ -432,7 +448,7 @@ public class AudioBoxClient {
         return sAudioBoxModelLoader;
     }
 
-    
+
     /**
      * This method is used by the {@link Model} class by running the {@link Model#invoke()} method.<br/>
      * Avoid direct execution of this method if you don't know what you are doing.
@@ -514,7 +530,7 @@ public class AudioBoxClient {
      * @return the response code or the stream Location (in case of a {@link Track} model)
      * 
      */
-    
+
     private static String request(String url, Model target, String httpVerb) throws LoginException, ServiceException {
 
         if (sUser == null)
@@ -543,25 +559,25 @@ public class AudioBoxClient {
             }
 
             String response = "" ;
-            
+
             HttpResponse resp = sClient.execute(method, new BasicHttpContext());
             response = target.handleResponse( resp, httpVerb );
-            
+
             HttpEntity e = resp.getEntity(); 
             if (e != null) 
                 e.consumeContent();
-            
+
             return response;
 
         } catch( ClientProtocolException e ) {
             throw new ServiceException( "Client protocol exception: " + e.getMessage(), ServiceException.CLIENT_ERROR );
-            
+
         } catch( SocketTimeoutException e ) {
             throw new ServiceException( "Service does not respond: " + e.getMessage(), ServiceException.TIMEOUT_ERROR );
-            
+
         } catch( IOException e ) {
             throw new ServiceException( "IO exception: " + e.getMessage(), ServiceException.SOCKET_ERROR );
-            
+
         } 
     }
 
@@ -574,7 +590,7 @@ public class AudioBoxClient {
      * This method provides global HttpClient configuration.
      * 
      */
-    
+
     private static void httpSetup() {
 
         SchemeRegistry schemeRegistry = new SchemeRegistry();
@@ -587,7 +603,7 @@ public class AudioBoxClient {
 
         sCm = new ThreadSafeClientConnManager(params, schemeRegistry);
         sClient = new DefaultHttpClient( sCm, params );
-        
+
         // Increase max total connection to 200
         ConnManagerParams.setMaxTotalConnections(params, 200);
 
@@ -641,7 +657,7 @@ public class AudioBoxClient {
                 }
             }
         });
-        
+
     }
 
     /**
@@ -692,5 +708,5 @@ public class AudioBoxClient {
             logger.warn("Cannot force SSL certificate trust due to 'KeyManagementException': " + e.getMessage());
         }
     }
-    
+
 }
