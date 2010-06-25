@@ -83,26 +83,38 @@ import fm.audiobox.core.models.User;
 import fm.audiobox.core.util.Inflector;
 
 /**
- * 
- * AudioBoxClient is the main library class.<br/>
- * Use this object to make requests to AudioBox.fm API.<br />
- * Requests are made through Apache httpclient object.
+ * AudioBoxClient is the main library class. Every request to AudioBox.fm are made through this object.
+ * This class is used mainly to configure every aspect of the library itself.<br/>
+ * To populate and get informations  about user library use the {@link User} (or an extended User) model instead.
  *
  * <p>
  * 
- * AudioBoxClient libs allows you to extends default models.
+ * As many other libraries out there AudioBox.fm-JavaLib allows you to extends default models and use them in place 
+ * of default ones.
  * 
  * <p>
  * 
- * We embrace the "convention over configuration" phylosophy this is why you will need to store all your 
- * extended models in the same package.
+ * For this purpose we embrace the "convention over configuration" phylosophy this is why you will need to store all 
+ * your extended models in the same package.
+ * 
+ * <p>
+ * 
+ * If you dislike this phylosophy or you have special needs you can bypass it by overwriting the default 
+ * {@link AudioBoxModelLoader} providing your implementation.
  * 
  * <p>
  * 
  * In order to make AudioBoxClient load your extended models you will need to provide a full package path where 
  * your classes are stored.<br/> 
  * For instance the default models package is "fm.audiobox.api.models"; here you will find the default {@link Track}
- * model (example).
+ * model.<br/>
+ * If you plan to override the Track model you must inform AudioBoxClient where to find your Track class and this can 
+ * be done in two ways:
+ * 
+ * <ol>
+ *  <li>simply setting up the custom package path through {@link AudioBoxClient#setCustomModelsPackage(String) setCustomModelsPackage(String)}.</li>
+ *  <li>overwriting the default {@link AudioBoxModelLoader} as told before.</li>
+ * </ol>
  * 
  * <p>
  * 
@@ -110,17 +122,29 @@ import fm.audiobox.core.util.Inflector;
  * 
  * <pre>
  * 
- * AudioBoxClient.setCustomModelsPackage(User.class.getPackage().getName());
- * AudioBoxClient.setUserClass(User.class);
+ * // This is needed if you plan to extend default models 
+ * AudioBoxClient.setCustomModelsPackage("my.custom.models");
+ * 
+ * // If you extended the {@link User} model AudioBoxClient should be informed before create a new instance 
+ * AudioBoxClient.setUserClass(MyUser.class);
  *
+ * // Creating the new AudioBoxClient instance 
  * abc = new AudioBoxClient();
  * try {
- *    user = (User) abc.login( UserFixture.LOGIN , UserFixture.RIGHT_PASS );
+ *    
+ *    // Should perform a login before anything else is done with the AudioBoxClient object
+ *    MyUser user = (MyUser) abc.login( "user@email.com" , "password" );
+ *    
+ *    // Now you can browse your library with calls like this:
+ *    Playlists pls = user.getPlaylists();
+ *    
  * } catch (LoginException e) {
- *    e.printStackTrace();
- * } catch (SocketException e) {
- *    e.printStackTrace();
+ *    // Handle {@link LoginException}
+ * } catch (ServiceException e) {
+ *    // Handle {@link ServiceException}
  * }
+ * 
+ * 
  * 
  * </pre>
  * 

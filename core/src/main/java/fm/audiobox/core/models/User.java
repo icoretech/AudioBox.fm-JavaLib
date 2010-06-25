@@ -30,6 +30,7 @@ import org.apache.http.Header;
 import org.apache.http.client.methods.HttpGet;
 
 import fm.audiobox.core.AudioBoxClient;
+import fm.audiobox.core.api.Model;
 import fm.audiobox.core.api.ModelItem;
 import fm.audiobox.core.api.ModelsCollection;
 import fm.audiobox.core.exceptions.LoginException;
@@ -38,6 +39,12 @@ import fm.audiobox.core.interfaces.ResponseHandler;
 import fm.audiobox.core.util.Base64;
 
 /**
+ * 
+ * User model is a special {@link Model} just because almost every library browse action is performed through this 
+ * object.
+ * 
+ * <p>
+ *   
  * <pre>
  * {@code
  * <user>
