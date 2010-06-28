@@ -1,4 +1,3 @@
-
 /***************************************************************************
  *   Copyright (C) 2010 iCoreTech research labs                            *
  *   Contributed code from:                                                *
@@ -27,72 +26,38 @@ import java.util.List;
 
 import fm.audiobox.core.api.ModelsCollection;
 
-
-/**
- *
- * @author Valerio Chiodino
- * @version 0.0.1
- */
-
 public class Playlists extends ModelsCollection {
 
-    /** Constant <code>END_POINT="playlists"</code> */
     public static final String END_POINT = "playlists";
     
     protected List<Playlist> collection = new ArrayList<Playlist>();
     
-    /**
-     * <p>Constructor for Playlists.</p>
-     */
-    public Playlists(){
+    protected Playlists(){
         this.endPoint = END_POINT;
     }
     
-    /**
-     * <p>getTagName</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
     public String getTagName() {
         return Playlist.TAG_NAME;
     }
 
-    /**
-     * <p>Getter for the field <code>collection</code>.</p>
-     *
-     * @return a {@link java.util.List} object.
-     */
     public List<? extends Playlist> getCollection() {
         return this.collection;
     }
     
-    /**
-     * <p>addPlaylist</p>
-     *
-     * @param playlist a {@link fm.audiobox.core.models.Playlist} object.
-     */
     public void addPlaylist(Playlist playlist) {
         this.collection.add(playlist);
     }
     
-    /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     @Override
     public void setCollection(List<?> collection) {
         this.collection = (List<Playlist>) collection;
     }
     
-    /** {@inheritDoc} */
     public Playlist get(int index) {
         return collection.get(index);
     }
     
-    /**
-     * <p>get</p>
-     *
-     * @param token a {@link java.lang.String} object.
-     * @return a {@link fm.audiobox.core.models.Playlist} object.
-     */
     public Playlist get(String token) {
         for (Playlist playlist : collection) {
             if ( token.equals( playlist.getToken() ) )

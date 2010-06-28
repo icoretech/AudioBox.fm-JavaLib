@@ -10,15 +10,15 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import fm.audiobox.core.AudioBoxClient;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.test.mocks.fixtures.UserFixture;
 import fm.audiobox.core.models.Artist;
 import fm.audiobox.core.models.Artists;
 import fm.audiobox.core.models.Track;
 import fm.audiobox.core.models.Tracks;
 import fm.audiobox.core.models.User;
+import fm.audiobox.core.test.mocks.fixtures.StaticAudioBox;
+import fm.audiobox.core.test.mocks.fixtures.UserFixture;
 
 /**
  * @author keytwo
@@ -26,15 +26,16 @@ import fm.audiobox.core.models.User;
  */
 public class ArtistsTest extends junit.framework.TestCase {
 
-    AudioBoxClient abc;
+	StaticAudioBox abc;
     User user;
     Artists artists;
     
     @SuppressWarnings("deprecation")
     @Before
     public void setUp() throws Exception {
-        AudioBoxClient.setForceTrust(true);
-        abc = new AudioBoxClient();
+    	abc = new StaticAudioBox();
+        abc.setForceTrust(true);
+        
         user = abc.login(UserFixture.LOGIN, UserFixture.RIGHT_PASS);
     }
     
@@ -83,7 +84,7 @@ public class ArtistsTest extends junit.framework.TestCase {
             Tracks trs = (Tracks) al.getTracks();
             assertNotNull(trs);
             
-            trs.invoke();
+            //trs.invoke();
             
             Track tr = (Track) trs.get(0);
             assertNotNull(tr);
@@ -109,7 +110,7 @@ public class ArtistsTest extends junit.framework.TestCase {
     
     private void loadArtists() throws ServiceException, LoginException, InstantiationException, IllegalAccessException, ClassNotFoundException {
         artists = (Artists) user.getArtists();
-        artists.invoke();
+        //artists.invoke();
     }
     
     private void loginCatched() {

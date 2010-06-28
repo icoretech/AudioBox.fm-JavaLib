@@ -8,7 +8,6 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Before;
 import org.junit.Test;
 
-import fm.audiobox.core.AudioBoxClient;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Album;
@@ -16,12 +15,13 @@ import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
 import fm.audiobox.core.models.Track;
 import fm.audiobox.core.models.Tracks;
+import fm.audiobox.core.test.mocks.fixtures.StaticAudioBox;
 import fm.audiobox.core.test.mocks.fixtures.UserFixture;
 import fm.audiobox.core.test.mocks.models.User;
 
 public class ThreadedTest extends junit.framework.TestCase {
 
-    AudioBoxClient abc;
+	StaticAudioBox abc;
     User user;
 
     @SuppressWarnings("deprecation")
@@ -35,10 +35,11 @@ public class ThreadedTest extends junit.framework.TestCase {
 
         System.setProperty("org.apache.commons.logging.simplelog.log.fm.audiobox.api", "debug");
 
-        AudioBoxClient.setCustomModelsPackage(User.class.getPackage().getName());
-        AudioBoxClient.setUserClass(User.class);
-        AudioBoxClient.setForceTrust(true);
-        abc = new AudioBoxClient();
+        StaticAudioBox.initClass(StaticAudioBox.USER_KEY , User.class );
+        //AudioBoxClient.setUserClass(User.class);
+        abc = new StaticAudioBox();
+        abc.setForceTrust(true);
+        
         try {
             user = (User) abc.login( UserFixture.LOGIN , UserFixture.RIGHT_PASS );
         } catch (LoginException e) {
@@ -96,11 +97,11 @@ public class ThreadedTest extends junit.framework.TestCase {
                     logger.info("\nStarted thread #2\n");
                     
                     Playlists pls = (Playlists) user.getPlaylists();
-                    pls.invoke();
+                    //pls.invoke();
                     assertNotNull(pls.getCollection());
                     
                     Playlist pl = pls.get(0);
-                    pl.invoke();
+                    //pl.invoke();
                     
                     assertNotNull(pl);
                     
@@ -134,23 +135,15 @@ public class ThreadedTest extends junit.framework.TestCase {
             }
         });
 
+        long _start = System.currentTimeMillis();
         t1.start();
         t2.start();
         
-        long i = 1;
-        boolean success = false;
-        while (i < 30) {
-            Thread.sleep(1000);
-            logger.info("Time: " + i  + " | T1 done: " +  h1.getDone() + " | T2 done: " + h2.getDone());
-            success = h2.getDone() && h1.getDone();
-            i++;
-            if (success) {
-                logger.info("Time: " + i + " | T1 done: " +  h1.getDone() + " | T2 done: " + h2.getDone());
-                break;
-            }
-        }
+        while ( t1.isAlive() || t2.isAlive() ) {}
+
+        logger.info( "End: " +  (  System.currentTimeMillis() - _start  ) );
         
-        assertTrue(success);
+        assertTrue( h1.getDone() && h2.getDone() );
     }
 
     private class Handle {

@@ -1,4 +1,3 @@
-
 /***************************************************************************
  *   Copyright (C) 2010 iCoreTech research labs                            *
  *   Contributed code from:                                                *
@@ -28,7 +27,6 @@ import java.util.Date;
 
 import fm.audiobox.core.api.ModelItem;
 
-
 /**
  * <pre>
  * {@code
@@ -45,12 +43,12 @@ import fm.audiobox.core.api.ModelItem;
  * </pre>
  *
  * @author Valerio Chiodino
- * @version 0.0.1
+ * @version 0.2-beta
+ *
  */
 
 public class Profile extends ModelItem {
 
-    /** Constant <code>TAG_NAME="profile"</code> */
     public static final String TAG_NAME = "profile";
     
     protected boolean autoplay;
@@ -62,10 +60,7 @@ public class Profile extends ModelItem {
     protected String timeZone;
 
     // Override default constructor
-    /**
-     * <p>Constructor for Profile.</p>
-     */
-    public Profile() { }
+    protected Profile() { }
 
 
     /* =================== */
@@ -73,18 +68,11 @@ public class Profile extends ModelItem {
     /* =================== */
 
 
-    /**
-     * <p>Setter for the field <code>autoplay</code>.</p>
-     *
-     * @param autoplay a {@link java.lang.String} object.
-     */
     public void setAutoplay(String autoplay) {
         this.autoplay = Boolean.parseBoolean( autoplay );
     }
 
     /**
-     * <p>hasAutoplay</p>
-     *
      * @return the autoplay
      */
     public boolean hasAutoplay() {
@@ -92,19 +80,11 @@ public class Profile extends ModelItem {
     }
 
 
-    /**
-     * <p>Setter for the field <code>birthDate</code>.</p>
-     *
-     * @param date a {@link java.lang.String} object.
-     * @throws java.text.ParseException if any.
-     */
     public void setBirthDate(String date) throws ParseException {
         this.birthDate = new SimpleDateFormat( "yyyy-MM-dd" ).parse( date );
     }
 
     /**
-     * <p>Getter for the field <code>birthDate</code>.</p>
-     *
      * @return the birthDate
      */
     public Date getBirthDate() {
@@ -112,19 +92,12 @@ public class Profile extends ModelItem {
     }
 
 
-    /**
-     * <p>Setter for the field <code>country</code>.</p>
-     *
-     * @param country a {@link java.lang.String} object.
-     */
     public void setCountry(String country) {
         this.country = country;
     }
 
 
     /**
-     * <p>Getter for the field <code>country</code>.</p>
-     *
      * @return the country
      */
     public String getCountry() {
@@ -132,18 +105,11 @@ public class Profile extends ModelItem {
     }
 
 
-    /**
-     * <p>Setter for the field <code>gender</code>.</p>
-     *
-     * @param gender a {@link java.lang.String} object.
-     */
     public void setGender(String gender) {
         this.gender = gender;
     }
 
     /**
-     * <p>Getter for the field <code>gender</code>.</p>
-     *
      * @return the gender
      */
     public String getGender() {
@@ -151,19 +117,12 @@ public class Profile extends ModelItem {
     }
 
 
-    /**
-     * <p>Setter for the field <code>homePage</code>.</p>
-     *
-     * @param homePage a {@link java.lang.String} object.
-     */
     public void setHomePage(String homePage) {
         this.homePage = homePage;
     }
 
 
     /**
-     * <p>Getter for the field <code>homePage</code>.</p>
-     *
      * @return the homePage
      */
     public String getHomePage() {
@@ -171,18 +130,11 @@ public class Profile extends ModelItem {
     }
 
 
-    /**
-     * <p>Setter for the field <code>realName</code>.</p>
-     *
-     * @param realName a {@link java.lang.String} object.
-     */
     public void setRealName(String realName) {
         this.realName = realName;
     }
 
     /**
-     * <p>Getter for the field <code>realName</code>.</p>
-     *
      * @return the realName
      */
     public String getRealName() {
@@ -190,18 +142,11 @@ public class Profile extends ModelItem {
     }
 
 
-    /**
-     * <p>Setter for the field <code>timeZone</code>.</p>
-     *
-     * @param timeZone a {@link java.lang.String} object.
-     */
     public void setTimeZone(String timeZone) {
         this.timeZone = timeZone;
     }
 
     /**
-     * <p>Getter for the field <code>timeZone</code>.</p>
-     *
      * @return the timeZone
      */
     public String getTimeZone() {
@@ -213,7 +158,6 @@ public class Profile extends ModelItem {
     /* Utils methods */
     /* ============= */
 
-    /** {@inheritDoc} */
     @Override
     public String getName() {
         return this.realName;

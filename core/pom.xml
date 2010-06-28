@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>fm.audiobox</groupId>
-	<artifactId>libaudioboxfm-core</artifactId>
+	<artifactId>core</artifactId>
 	<name>AudioBox.fm-JavaLib</name>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
@@ -20,29 +20,10 @@
 		<url>http://github.com/audiobox/AudioBox.fm-JavaLib/issues</url>
 	</issueManagement>
 
-	<developers>
-		<developer>
-			<id>Keytwo</id>
-			<name>Valerio Chiodino</name>
-			<email>keytwo.why@gmail.com</email>
-			<url>http://www.keytwo.net</url>
-			<timezone>Rome</timezone>
-		</developer>
-		<developer>
-			<id>fat</id>
-			<name>Fabio Tunno</name>
-			<email>fat@fatshotty.net</email>
-			<url>http//fatshotty.net</url>
-			<timezone>Rome</timezone>
-			<roles>
-			</roles>
-		</developer>
-	</developers>
-
 	<scm>
 		<connection>scm:git:git@github.com:audiobox/AudioBox.fm-JavaLib.git</connection>
-		<developerConnection>scm:git:git@github.com:audiobox/AudioBox.fm-JavaLib.git</developerConnection>
 		<url>http://github.com/audiobox/AudioBox.fm-JavaLib/tree/edge</url>
+		<developerConnection>scm:git:git@github.com:audiobox/AudioBox.fm-JavaLib.git</developerConnection>
 	</scm>
 
 	<organization>
@@ -54,7 +35,7 @@
 		<resources>
 			<resource>
 				<directory>${basedir}/src/main/resources</directory>
-				<filtering>true</filtering>
+				<filtering>false</filtering>
 				<includes>
 					<include>**/*.*</include>
 				</includes>
@@ -62,8 +43,6 @@
 		</resources>
 
 		<plugins>
-
-			<!-- Javadoc -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
@@ -76,7 +55,6 @@
 				</configuration>
 			</plugin>
 
-			<!-- Javadoc doclet (docbook) -->
 			<plugin>
 				<groupId>com.agilejava.docbkx</groupId>
 				<artifactId>docbkx-maven-plugin</artifactId>
@@ -104,7 +82,6 @@
 				</configuration>
 			</plugin>
 
-			<!-- Compiler (used to set the JDK version) -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -117,14 +94,12 @@
 				</configuration>
 			</plugin>
 
-			<!-- Release (used to perform deploy) -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
 				<version>2.0</version>
 			</plugin>
 
-			<!-- Test coverage reports -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>cobertura-maven-plugin</artifactId>
@@ -148,6 +123,7 @@
 						<packageBranchRate>85</packageBranchRate>
 					</check>
 				</configuration>
+
 				<executions>
 					<execution>
 						<goals>
@@ -158,32 +134,11 @@
 				</executions>
 			</plugin>
 
-			<!-- Manifest -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.2</version>
-				<configuration>
-					<archive>
-						<manifestEntries>
-							<Url>${project.url}</Url>
-							<Extension-Name>${project.name}</Extension-Name>
-							<Specification-Vendor>${project.organization.name}</Specification-Vendor>
-							<Implementation-Vendor>${project.organization.name}</Implementation-Vendor>
-							<Implementation-Title>${project.name}</Implementation-Title>
-							<Implementation-Version>${project.version}</Implementation-Version>
-						</manifestEntries>
-					</archive>
-				</configuration>
-			</plugin>
-
 		</plugins>
 	</build>
 
 	<reporting>
 		<plugins>
-
-			<!-- Test coverage reports -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>cobertura-maven-plugin</artifactId>
@@ -196,8 +151,6 @@
 				</configuration>
 			</plugin>
 
-
-			<!-- Changelog reports -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-changelog-plugin</artifactId>
@@ -206,6 +159,9 @@
 
 		</plugins>
 	</reporting>
+
+	<repositories>
+	</repositories>
 
 	<dependencies>
 		<dependency>
@@ -230,12 +186,5 @@
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
-
-	<pluginRepositories>
-		<pluginRepository>
-			<id>maven-replacer-plugin reposoitory</id>
-			<url>http://maven-replacer-plugin.googlecode.com/svn/release-repo</url>
-		</pluginRepository>
-	</pluginRepositories>
 
 </project>

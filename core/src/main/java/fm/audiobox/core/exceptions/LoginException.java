@@ -1,4 +1,3 @@
-
 /***************************************************************************
  *   Copyright (C) 2010 iCoreTech research labs                            *
  *   Contributed code from:                                                *
@@ -22,13 +21,12 @@
 
 package fm.audiobox.core.exceptions;
 
-
 /**
  * This exception is thrown when a connection to AudioBox.fm service fails due to
  * an invalid user authentication.
- *
+ * 
  * @author Valerio Chiodino
- * @version 0.0.1
+ * @version 0.1
  */
 
 public class LoginException extends javax.security.auth.login.LoginException {
@@ -43,31 +41,15 @@ public class LoginException extends javax.security.auth.login.LoginException {
 	
 	private int errorCode;
 	
-	/**
-	 * <p>Constructor for LoginException.</p>
-	 *
-	 * @param message a {@link java.lang.String} object.
-	 */
 	public LoginException(String message) {
 		super(message);
 	}
 	
-	/**
-	 * <p>Constructor for LoginException.</p>
-	 *
-	 * @param message a {@link java.lang.String} object.
-	 * @param code a int.
-	 */
 	public LoginException(String message, int code) {
 	    super(message);
 	    errorCode = code;
 	}
 	
-	/**
-	 * <p>Getter for the field <code>errorCode</code>.</p>
-	 *
-	 * @return a int.
-	 */
 	public int getErrorCode() {
 	    return errorCode;
 	}

@@ -10,9 +10,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import fm.audiobox.core.AudioBoxClient;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
+import fm.audiobox.core.test.mocks.fixtures.StaticAudioBox;
 import fm.audiobox.core.test.mocks.fixtures.UserFixture;
 import fm.audiobox.core.test.mocks.models.User;
 
@@ -22,7 +22,7 @@ import fm.audiobox.core.test.mocks.models.User;
  */
 public class UserTest extends junit.framework.TestCase {
 
-    AudioBoxClient abc;
+	StaticAudioBox abc;
     User user;
     
     @SuppressWarnings("deprecation")
@@ -36,10 +36,10 @@ public class UserTest extends junit.framework.TestCase {
         
         System.setProperty("org.apache.commons.logging.simplelog.log.fm.audiobox.api", "debug");
         
-        AudioBoxClient.setCustomModelsPackage(User.class.getPackage().getName());
-        AudioBoxClient.setUserClass(User.class);
-        AudioBoxClient.setForceTrust(true);
-        abc = new AudioBoxClient();
+        abc = new StaticAudioBox();
+        StaticAudioBox.initClass(StaticAudioBox.USER_KEY , User.class );
+        abc.setForceTrust(true);
+        
     }
     
     @Test

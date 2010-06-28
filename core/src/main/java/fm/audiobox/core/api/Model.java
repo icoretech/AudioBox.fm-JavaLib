@@ -1,4 +1,3 @@
-
 /***************************************************************************
  *   Copyright (C) 2010 iCoreTech research labs                            *
  *   Contributed code from:                                                *
@@ -38,174 +37,140 @@ import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpGet;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
-import fm.audiobox.core.AudioBoxClient;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.interfaces.AudioBoxModelLoader;
 import fm.audiobox.core.interfaces.ResponseHandler;
+import fm.audiobox.core.models.AudioBoxClient;
+import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
 import fm.audiobox.core.util.Inflector;
-
-
-/**
- * 
- * @author Valerio Chiodino
- * @author Fabio Tunno
- * 
- * @version 0.0.1
- */
 
 public abstract class Model extends DefaultHandler implements ResponseHandler {
 
     private static final String ADD_PREFIX = "add";
     private static final String SET_PREFIX = "set";
 
-    /** Constant <code>SAX_ERROR_CODE=-1000</code> */
     public static final int SAX_ERROR_CODE = -1000;
-    /** Constant <code>PARSER_CONFIGURATION_ERROR_CODE=-1001</code> */
     public static final int PARSER_CONFIGURATION_ERROR_CODE = -1001;
-    /** Constant <code>IO_ERROR_CODE=-1002</code> */
     public static final int IO_ERROR_CODE = -1002;
+    protected static final int CHUNK = 4096;
 
     private static Log log = LogFactory.getLog(Model.class);
 
     private boolean mSkipField = false;
     private Stack<Object> mStack;
-    private Inflector mInflector = AudioBoxClient.getInflector();
+    private Inflector mInflector = Inflector.getInstance();
     private StringBuffer mStringBuffer = new StringBuffer();
 
     // Default models variables
     protected String name;
     protected String token;
     protected String endPoint;
+    protected AudioBoxConnector connectorS;
 
     // Model interfaces
-    protected AudioBoxModelLoader abml = AudioBoxClient.getAudioBoxModelLoader();
+//    protected AudioBoxModelLoader abml = AudioBoxClient.getAudioBoxModelLoader();
 
 
-    /**
-     * <p>toString</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
+    public void setConnector(AudioBoxConnector conn){
+    	this.connectorS = conn;
+    }
+    public AudioBoxConnector getConnector(){
+    	return this.connectorS;
+    }
+    
     public String toString() {
         return this.getName();
     }
 
-    /**
-     * <p>Setter for the field <code>endPoint</code>.</p>
-     *
-     * @param endPoint a {@link java.lang.String} object.
-     */
     public final void setEndPoint(String endPoint){
         this.endPoint = endPoint;
     }
 
-    /**
-     * <p>Getter for the field <code>endPoint</code>.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
     public final String getEndPoint(){
         return this.endPoint;
     }
 
-    /**
-     * <p>Getter for the field <code>name</code>.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
     public String getName() {
         return this.name;
     }
 
-    /**
-     * <p>Setter for the field <code>name</code>.</p>
-     *
-     * @param name a {@link java.lang.String} object.
-     */
     public void setName(String name) {
         this.name = name;
     }
 
-    /**
-     * <p>Getter for the field <code>token</code>.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
     public String getToken() {
         return this.token;
     }
 
-    /**
-     * <p>Setter for the field <code>token</code>.</p>
-     *
-     * @param token a {@link java.lang.String} object.
-     */
     public final void setToken(String token) {
         this.token = token;
     }
 
-    /** {@inheritDoc} */
     public final String handleResponse(HttpResponse response, String httpVerb) throws ClientProtocolException, IOException, IllegalStateException, LoginException {
 
         int responseCode = response.getStatusLine().getStatusCode();
-        String responseString = String.valueOf( responseCode );
+        String responseString = "";//String.valueOf( responseCode );
 
         switch( responseCode ) {
 
-        case HttpStatus.SC_OK:
-
-            InputStream input = response.getEntity().getContent();
-            this.parseResponse( input , response.getEntity().getContentType() );
-            response.getEntity().consumeContent();
-            break;
-
-        case HttpStatus.SC_SEE_OTHER:
-            responseString = response.getFirstHeader("Location").getValue();
-
-        case HttpStatus.SC_FORBIDDEN:
-        case HttpStatus.SC_UNAUTHORIZED:
-            throw new LoginException("Unauthorized response: " + responseCode, responseCode);
-
-        default:
-            throw new ServiceException( "An error occurred", ServiceException.GENERIC_SERVICE_ERROR );
+	        case HttpStatus.SC_OK:
+	            InputStream input = response.getEntity().getContent();
+	            responseString = this.parseResponse( input , response.getEntity().getContentType() );
+	            response.getEntity().consumeContent();
+	            break;
+	
+	        case HttpStatus.SC_SEE_OTHER:
+	            responseString = response.getFirstHeader("Location").getValue();
+	            break;
+	
+	        case HttpStatus.SC_FORBIDDEN:
+	        case HttpStatus.SC_UNAUTHORIZED:
+	            throw new LoginException("Unauthorized user", responseCode);
+	
+	        default:
+	            throw new ServiceException( "An error occurred", ServiceException.GENERIC_SERVICE_ERROR );
 
         }
 
         return responseString;
     }
 
-    /**
-     * <p>parseResponse</p>
-     *
-     * @param input a {@link java.io.InputStream} object.
-     * @param contentType a {@link org.apache.http.Header} object.
-     * @throws java.io.IOException if any.
-     */
-    public void parseResponse( InputStream input, Header contentType ) throws IOException {
-
+    public String parseResponse( InputStream input, Header contentType ) throws IOException {
+    	String response = "";
         try {
+        	
+        	if ( contentType.getValue().contains(AudioBoxConnector.XML_FORMAT) ){
 
-            // Instanciate new SaxParser from InputStream
-            SAXParserFactory spf = SAXParserFactory.newInstance();
-            SAXParser sp = spf.newSAXParser();
-
-            /* Get the XMLReader of the SAXParser we created. */
-            XMLReader xr = sp.getXMLReader();
-
-            /* Create a new ContentHandler and apply it to the XML-Reader */
-            xr.setContentHandler( this );
-
-            xr.parse( new InputSource( input ) );
-
-            input.close();
+	            // Instanciate new SaxParser from InputStream
+	            SAXParserFactory spf = SAXParserFactory.newInstance();
+	            SAXParser sp = spf.newSAXParser();
+	
+	            /* Get the XMLReader of the SAXParser we created. */
+	            XMLReader xr = sp.getXMLReader();
+	
+	            /* Create a new ContentHandler and apply it to the XML-Reader */
+	            xr.setContentHandler( this );
+	
+	            xr.parse( new InputSource( input ) );
+	
+	            input.close();
+	            
+        	} else {
+        		/* read response content */
+        		int read;
+        		byte[] bytes = new byte[ CHUNK ];
+        		StringBuffer sb = new StringBuffer();
+        		while(  ( read = input.read( bytes) ) != -1 ){
+        			sb.append( new String( bytes, 0, read ));
+        		}
+        		response =  sb.toString().trim();
+        	}
 
         } catch (IllegalStateException e) {
             e.printStackTrace();
@@ -214,27 +179,17 @@ public abstract class Model extends DefaultHandler implements ResponseHandler {
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
         }
+        return response;
     }
 
 
-    /**
-     * <p>setAudioBoxModelLoader</p>
-     *
-     * @param abml a {@link fm.audiobox.core.interfaces.AudioBoxModelLoader} object.
-     */
-    public void setAudioBoxModelLoader(AudioBoxModelLoader abml) {
-        this.abml = abml;
-    }
+//    public void setAudioBoxModelLoader(AudioBoxModelLoader abml) {
+//        this.abml = abml;
+//    }
 
-    /**
-     * <p>invoke</p>
-     *
-     * @throws fm.audiobox.core.exceptions.ServiceException if any.
-     * @throws fm.audiobox.core.exceptions.LoginException if any.
-     */
-    public void invoke() throws ServiceException, LoginException {
-        AudioBoxClient.execute( this.getEndPoint(), this.getToken(), null, this, HttpGet.METHOD_NAME);
-    }
+//    public void invoke() throws ServiceException, LoginException {
+//        AudioBoxClient.execute( this.getEndPoint(), this.getToken(), null, this, HttpGet.METHOD_NAME);
+//    }
 
 
     /* --------- */
@@ -242,7 +197,6 @@ public abstract class Model extends DefaultHandler implements ResponseHandler {
     /* --------- */
 
 
-    /** {@inheritDoc} */
     @Override
     public final void startDocument() throws SAXException {
         this.mStack = new Stack<Object>();
@@ -250,7 +204,6 @@ public abstract class Model extends DefaultHandler implements ResponseHandler {
         super.startDocument();
     }
 
-    /** {@inheritDoc} */
     @Override
     public void endDocument() throws SAXException {
         this.mStack = null;
@@ -258,7 +211,6 @@ public abstract class Model extends DefaultHandler implements ResponseHandler {
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public final void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
@@ -301,11 +253,17 @@ public abstract class Model extends DefaultHandler implements ResponseHandler {
 
                 if ( ! argType.isPrimitive() && ! argType.equals(String.class) ){
 
-                    Class<?> objectClass = abml.getModelClassName(this.getClass(), localName ); 
-                    Object subClass = objectClass.newInstance();
-                    method.invoke(peek, objectClass.cast( subClass ));
+                    Model subClass = null;
+                    try {
+                        subClass = AudioBoxClient.getModelClass( mInflector.lowerCamelCase( localName, '-'), this.getConnector() );
+                        method.invoke(peek, subClass );
 
-                    this.mStack.push( subClass );
+                        this.mStack.push( subClass );
+                    } catch (ServiceException e) {
+                        e.printStackTrace();
+                        
+                    }
+					
                 } else {
                     this.mStack.push( method );
                 }
@@ -315,9 +273,6 @@ public abstract class Model extends DefaultHandler implements ResponseHandler {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
             log.error("Illegal AccessException @" + localName + ": " + e.getMessage());
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            log.error("Instantiation Exception @" + localName + ": " + e.getMessage());
             e.printStackTrace();
         } catch (SecurityException e) {
             log.error("Security Exception @" + localName + ": " + e.getMessage());
@@ -330,7 +285,6 @@ public abstract class Model extends DefaultHandler implements ResponseHandler {
         super.startElement(uri, localName, qName, attributes);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
 
@@ -367,7 +321,6 @@ public abstract class Model extends DefaultHandler implements ResponseHandler {
         super.endElement(uri, localName, qName);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
 

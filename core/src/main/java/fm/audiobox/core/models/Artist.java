@@ -1,4 +1,3 @@
-
 /***************************************************************************
  *   Copyright (C) 2010 iCoreTech research labs                            *
  *   Contributed code from:                                                *
@@ -24,7 +23,6 @@ package fm.audiobox.core.models;
 
 import fm.audiobox.core.api.ModelItem;
 
-
 /**
  * <pre>
  * {@code
@@ -34,21 +32,16 @@ import fm.audiobox.core.api.ModelItem;
  * </artist>
  * }
  * </pre>
- *
- * @author Valerio Chiodino
- * @version 0.0.1
  * 
+ * @author keytwo
+ * @version 0.2-beta
  */
 
 public class Artist extends ModelItem {
 	
-	/** Constant <code>TAG_NAME="artist"</code> */
 	public static final String TAG_NAME = "artist";
 	
-	/**
-	 * <p>Constructor for Artist.</p>
-	 */
-	public Artist() {
+	protected Artist() {
 		this.endPoint = Artists.END_POINT;
 	}
 	

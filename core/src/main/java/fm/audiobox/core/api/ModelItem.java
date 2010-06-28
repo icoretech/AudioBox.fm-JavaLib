@@ -1,4 +1,3 @@
-
 /***************************************************************************
  *   Copyright (C) 2010 iCoreTech research labs                            *
  *   Contributed code from:                                                *
@@ -22,61 +21,30 @@
 
 package fm.audiobox.core.api;
 
+import fm.audiobox.core.exceptions.LoginException;
+import fm.audiobox.core.exceptions.ServiceException;
+import fm.audiobox.core.models.AudioBoxClient;
+import fm.audiobox.core.models.Track;
 import fm.audiobox.core.models.Tracks;
-
-
-/**
- * 
- * @author Valerio Chiodino
- * @author Fabio Tunno
- * 
- * @version 0.0.1
- */
 
 public abstract class ModelItem extends Model {
 
-    public ModelsCollection tracks;
+    public Tracks tracks;
     
-    /**
-     * <p>getTrack</p>
-     *
-     * @param uuid a {@link java.lang.String} object.
-     * @return a {@link fm.audiobox.core.api.ModelItem} object.
-     */
-    public ModelItem getTrack(String uuid) {
-        return (ModelItem) tracks.get(uuid);
+    public Track getTrack(String uuid) {
+        return this.tracks.get(uuid);
     }
 
-    /**
-     * <p>Setter for the field <code>tracks</code>.</p>
-     *
-     * @param tracks a {@link fm.audiobox.core.api.ModelsCollection} object.
-     */
-    public void setTracks(ModelsCollection tracks) {
+    public void setTracks(Tracks tracks) {
         this.tracks = tracks;
     }
     
-    /**
-     * <p>Getter for the field <code>tracks</code>.</p>
-     *
-     * @return a {@link fm.audiobox.core.api.Model} object.
-     */
-    public Model getTracks(){
+    public Tracks getTracks() throws ServiceException, LoginException{
         
-        if (tracks == null) {
-            try {
-                tracks = (ModelsCollection) abml.getModelClassName(this.getClass(), Tracks.END_POINT ).newInstance();
-                
-                tracks.setToken( this.getToken() );
-                tracks.setEndPoint( this.endPoint );
-                
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-        return tracks;
+		this.tracks = (Tracks)AudioBoxClient.getModelClass(AudioBoxClient.TRACKS_KEY, this.getConnector());
+		this.getConnector().execute(this.getEndPoint(), this.getToken(), null, this.tracks, null);
+        
+        return this.tracks;
     }
     
 }

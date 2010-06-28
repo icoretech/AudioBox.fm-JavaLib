@@ -10,15 +10,15 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import fm.audiobox.core.AudioBoxClient;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
+import fm.audiobox.core.models.Albums;
+import fm.audiobox.core.models.User;
+import fm.audiobox.core.test.mocks.fixtures.StaticAudioBox;
 import fm.audiobox.core.test.mocks.fixtures.UserFixture;
 import fm.audiobox.core.test.mocks.models.Album;
 import fm.audiobox.core.test.mocks.models.Track;
 import fm.audiobox.core.test.mocks.models.Tracks;
-import fm.audiobox.core.models.Albums;
-import fm.audiobox.core.models.User;
 
 /**
  * @author keytwo
@@ -26,16 +26,18 @@ import fm.audiobox.core.models.User;
  */
 public class AlbumsTest extends junit.framework.TestCase {
 
-    AudioBoxClient abc;
+	StaticAudioBox abc;
     User user;
     Albums albums;
     
     @SuppressWarnings("deprecation")
     @Before
     public void setUp() throws Exception {
-        AudioBoxClient.setCustomModelsPackage(Album.class.getPackage().getName());
-        AudioBoxClient.setForceTrust(true);
-        abc = new AudioBoxClient();
+        StaticAudioBox.initClass( StaticAudioBox.ALBUM_KEY, Album.class );
+        StaticAudioBox.initClass( StaticAudioBox.TRACKS_KEY, Tracks.class );
+        StaticAudioBox.initClass( StaticAudioBox.TRACK_KEY, Track.class );
+        abc = new StaticAudioBox();
+        abc.setForceTrust(true);
         user = abc.login(UserFixture.LOGIN, UserFixture.RIGHT_PASS);
     }
     
@@ -86,11 +88,13 @@ public class AlbumsTest extends junit.framework.TestCase {
             Tracks trs = (Tracks) al.getTracks();
             assertNotNull(trs);
             
-            trs.invoke();
+            //trs.invoke();
             
             Track tr = (Track) trs.get(0);
             assertNotNull(tr.getTest());
             assertNotNull(tr);
+            
+            System.out.println( tr.getStreamUrl() );
 
         } catch (LoginException e) {
             e.printStackTrace();
@@ -113,7 +117,7 @@ public class AlbumsTest extends junit.framework.TestCase {
     
     private void loadAlbums() throws ServiceException, LoginException, InstantiationException, IllegalAccessException, ClassNotFoundException {
         albums = (Albums) user.getAlbums();
-        albums.invoke();
+        //albums.invoke();
     }
     
     private void loginCatched() {

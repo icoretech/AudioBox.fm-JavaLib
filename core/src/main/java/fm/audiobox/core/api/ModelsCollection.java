@@ -1,4 +1,3 @@
-
 /***************************************************************************
  *   Copyright (C) 2010 iCoreTech research labs                            *
  *   Contributed code from:                                                *
@@ -26,57 +25,23 @@ import java.util.List;
 
 import org.xml.sax.SAXException;
 
-import fm.audiobox.core.AudioBoxClient;
+import fm.audiobox.core.interfaces.CollectionListener;
 
-
-/**
- * 
- * @author Valerio Chiodino
- * @author Fabio Tunno
- * 
- * @version 0.0.1
- */
 
 public abstract class ModelsCollection extends Model {
 
-    /**
-     * <p>getTagName</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    protected abstract String getTagName();
+	protected CollectionListener collectionListener = null;
+	
+	protected abstract String getTagName();
     
-    /**
-     * <p>setCollection</p>
-     *
-     * @param collection a {@link java.util.List} object.
-     */
     public abstract void setCollection(List<?> collection);
     
-    /**
-     * <p>getCollection</p>
-     *
-     * @return a {@link java.util.List} object.
-     */
     public abstract List<?> getCollection();
     
-    /**
-     * <p>get</p>
-     *
-     * @param index a int.
-     * @return a {@link fm.audiobox.core.api.ModelItem} object.
-     */
     public abstract ModelItem get(int index);
 
-    /**
-     * <p>get</p>
-     *
-     * @param token a {@link java.lang.String} object.
-     * @return a {@link fm.audiobox.core.api.ModelItem} object.
-     */
     public abstract ModelItem get(String token);
     
-    /** {@inheritDoc} */
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         super.endElement(uri, localName, qName);
@@ -85,8 +50,12 @@ public abstract class ModelsCollection extends Model {
         }
         if ( this.getTagName().equals(localName) ) {
             int index = this.getCollection().size() -1;
-            AudioBoxClient.getCollectionListener().onItemReady( index, this.getCollection().get(index));
+            this.collectionListener.onItemReady( index, this.getCollection().get(index));
         }
+    }
+    
+    public void setCollectionListener(CollectionListener cl){
+    	this.collectionListener = cl;
     }
 
 }
