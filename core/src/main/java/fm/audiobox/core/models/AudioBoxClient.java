@@ -166,14 +166,13 @@ public class AudioBoxClient {
     public static final String DEFAULT_MODELS_PACKAGE = AudioBoxClient.class.getPackage().getName();
     public static final String TRACK_ID_PLACEHOLDER = "[track_id]";
 
-    private String mUserAgent;
-
-    private static Inflector sI = Inflector.getInstance();
+    
     private User sUser;
-
-    private AudioBoxConnector connector;  // used by extending class
+    private AudioBoxConnector connector;
 
     private static Map<String,Class<? extends Model>> mapper = null;
+    private String mUserAgent;
+    private static Inflector sI = Inflector.getInstance();
     
     public static final String 
 	    USER_KEY      = User.TAG_NAME,  PROFILE_KEY  = Profile.TAG_NAME, 
@@ -206,19 +205,20 @@ public class AudioBoxClient {
 
     /** @see {@link CollectionListener} */
     private static CollectionListener sCollectionListener = new CollectionListener() {
-        public void onCollectionReady(int message, Object result) {  }
+        public void onCollectionReady(int message, Object result) { }
         public void onItemReady(int item, Object obj) { }
     };
 
 
-    public AudioBoxClient(){
+    public AudioBoxClient() {
+        
         this.connector = this.new AudioBoxConnector();	// setup connection
 
         String version = "unattended";
 
         try {
             Properties ps = new Properties();
-            ps.load(AudioBoxClient.class.getResourceAsStream("config/env.properties"));
+            ps.load(AudioBoxClient.class.getResourceAsStream("../config/env.properties"));
             version = ps.getProperty("libaudioboxfm-core.version");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -245,13 +245,13 @@ public class AudioBoxClient {
     public static void initClass(String key, Class<? extends Model> klass){
         Class<? extends Model> _klass = mapper.get( key );
         if ( _klass != null ){
-            mapper.put( key , klass);
+            mapper.put( key , klass );
         }
     }
 
 
     @SuppressWarnings("unchecked")
-    public synchronized static Model getModelInstance(String key, AudioBoxConnector connector) throws ModelException {
+    public static Model getModelInstance(String key, AudioBoxConnector connector) throws ModelException {
         
         Model model = null;
         Class<? extends Model> klass = mapper.get( key );
@@ -268,7 +268,7 @@ public class AudioBoxClient {
 
         try {
             
-            log.info("Try to instantiate: " + klass.getName() );
+            log.debug("New model instance: " + klass.getName() );
             model = klass.newInstance();
             
         } catch (InstantiationException e) {
@@ -507,7 +507,7 @@ public class AudioBoxClient {
          * @return the result of the request, may be a response code, such as HTTP OK ("200") or the body of the response.
          */
 
-        public synchronized String[] execute(String path, String token, String action , Model target, String httpVerb) throws LoginException , ServiceException {
+        public String[] execute(String path, String token, String action , Model target, String httpVerb) throws LoginException , ServiceException {
             return execute(path, token, action, target, httpVerb, XML_FORMAT);
         }
 
@@ -530,7 +530,7 @@ public class AudioBoxClient {
          * @return the result of the request, may be a response code, such as HTTP OK ("200") or the body of the response.
          */
 
-        public synchronized String[] execute (String path, String token, String action , Model target, String httpVerb, String format) throws LoginException , ServiceException {
+        public String[] execute(String path, String token, String action , Model target, String httpVerb, String format) throws LoginException , ServiceException {
 
             token = ( token == null ) ? "" : token.startsWith("/") ? token : "/".concat(token);
             action = ( action == null ) ? "" : action.startsWith("/") ? action : "/".concat(action);
@@ -593,7 +593,7 @@ public class AudioBoxClient {
          * 
          */
 
-        private synchronized String[] request(String url, Model target, String httpVerb) throws LoginException, ServiceException {
+        private String[] request(String url, Model target, String httpVerb) throws LoginException, ServiceException {
 
             if (sUser == null)
                 throw new LoginException("Cannot execute API actions without credentials.", LoginException.NO_CREDENTIALS);
@@ -618,8 +618,6 @@ public class AudioBoxClient {
                     HttpPost post = ( HttpPost ) method;
                     post.setEntity( ((Track)target).getFileEntity() );
                 }
-
-
 
                 HttpResponse resp = mClient.execute(method, new BasicHttpContext());
                 String response = null;

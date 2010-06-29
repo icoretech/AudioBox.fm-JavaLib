@@ -72,14 +72,15 @@ public abstract class Model extends DefaultHandler implements ResponseHandler {
     protected String name;
     protected String token;
     protected String endPoint;
-    protected AudioBoxConnector connectorS;
+    protected AudioBoxConnector connector;
 
 
     public void setConnector(AudioBoxConnector conn){
-    	this.connectorS = conn;
+    	this.connector = conn;
     }
+    
     public AudioBoxConnector getConnector(){
-    	return this.connectorS;
+    	return this.connector;
     }
     
     public String toString() {

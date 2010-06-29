@@ -97,7 +97,7 @@ public class ThreadedTest extends junit.framework.TestCase {
                 try {
                     logger.info("\nStarted thread #2\n");
                     
-                    Playlists pls = (Playlists) user.getPlaylists();
+                    Playlists pls = (Playlists) user.getPlaylists(false);
                     //pls.invoke();
                     assertNotNull(pls.getCollection());
                     

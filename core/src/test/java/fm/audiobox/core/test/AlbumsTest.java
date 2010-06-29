@@ -121,7 +121,7 @@ public class AlbumsTest extends junit.framework.TestCase {
     }
     
     private void loadAlbums() throws ServiceException, LoginException, InstantiationException, IllegalAccessException, ClassNotFoundException, ModelException {
-        albums = (Albums) user.getAlbums();
+        albums = (Albums) user.getAlbums(false);
         //albums.invoke();
     }
     

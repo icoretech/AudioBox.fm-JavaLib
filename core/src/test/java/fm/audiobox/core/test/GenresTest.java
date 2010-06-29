@@ -114,7 +114,7 @@ public class GenresTest extends junit.framework.TestCase {
     }
     
     private void loadGenres() throws ServiceException, LoginException, InstantiationException, IllegalAccessException, ClassNotFoundException, ModelException {
-        genres = (Genres) user.getGenres();
+        genres = (Genres) user.getGenres(false);
         //genres.invoke();
     }
     

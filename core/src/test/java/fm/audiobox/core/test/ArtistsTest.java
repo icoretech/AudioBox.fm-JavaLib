@@ -114,7 +114,7 @@ public class ArtistsTest extends junit.framework.TestCase {
     }
     
     private void loadArtists() throws ServiceException, LoginException, InstantiationException, IllegalAccessException, ClassNotFoundException, ModelException {
-        artists = (Artists) user.getArtists();
+        artists = (Artists) user.getArtists(false);
         //artists.invoke();
     }
     
