@@ -6,13 +6,13 @@ import java.net.SocketException;
 import org.junit.Before;
 import org.junit.Test;
 
+import fm.audiobox.core.StaticAudioBox;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.models.Albums;
 import fm.audiobox.core.models.Artists;
 import fm.audiobox.core.models.Genres;
 import fm.audiobox.core.models.Playlists;
-import fm.audiobox.core.test.mocks.fixtures.StaticAudioBox;
 import fm.audiobox.core.test.mocks.fixtures.UserFixture;
 import fm.audiobox.core.test.mocks.models.User;
 
