@@ -10,6 +10,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import fm.audiobox.core.StaticAudioBox;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
@@ -19,7 +20,6 @@ import fm.audiobox.core.models.Playlists;
 import fm.audiobox.core.models.Track;
 import fm.audiobox.core.models.Tracks;
 import fm.audiobox.core.models.User;
-import fm.audiobox.core.test.mocks.fixtures.StaticAudioBox;
 import fm.audiobox.core.test.mocks.fixtures.UserFixture;
 
 /**
