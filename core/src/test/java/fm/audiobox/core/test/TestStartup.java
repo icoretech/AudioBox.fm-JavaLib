@@ -22,7 +22,7 @@ public class TestStartup extends junit.framework.TestCase {
 			User user = abc.login(UserFixture.USERNAME, UserFixture.RIGHT_PASS);
 			user.getUploadedTracks();
 			
-			Albums albums= user.getAlbums();
+			Albums albums= user.getAlbums(false);
 			Tracks tracks = albums.get(0).getTracks();
 			
 			System.out.println( tracks.get(0).getStreamUrl() );

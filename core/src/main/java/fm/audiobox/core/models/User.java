@@ -25,6 +25,7 @@ import org.apache.http.client.methods.HttpGet;
 
 import fm.audiobox.core.api.Model;
 import fm.audiobox.core.api.ModelItem;
+import fm.audiobox.core.api.ModelsCollection;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
@@ -94,7 +95,7 @@ public class User extends ModelItem implements ResponseHandler {
     protected Genres genres;
     protected Artists artists;
     protected Albums albums;
-    
+
     private String[] tracks;
 
     protected User() {
@@ -246,70 +247,111 @@ public class User extends ModelItem implements ResponseHandler {
 
     /**
      * @return the playlists
-     * @throws LoginException 
-     * @throws ServiceException 
      * @throws ModelException 
-     * @throws IllegalAccessException 
-     * @throws InstantiationException 
      */
-    public Playlists getPlaylists() throws ServiceException, LoginException, ModelException {
-    	this.playlists = (Playlists)AudioBoxClient.getModelInstance(AudioBoxClient.PLAYLISTS_KEY, this.getConnector());
-    	this.getConnector().execute(Playlists.END_POINT, null, null, this.playlists, null);
+    public Playlists getPlaylists() throws ModelException {
+        return this.getPlaylists(false);
+    }
+    
+    
+    public Playlists getPlaylists(boolean async) throws ModelException {
+        this.playlists = (Playlists) AudioBoxClient.getModelInstance(AudioBoxClient.PLAYLISTS_KEY, this.getConnector());
+        Thread t = populateCollection( Playlists.END_POINT, this.playlists );
+        if (async)
+            t.start();
+        else
+            t.run();
+        
         return playlists;
     }
 
     /**
      * @return the genres
-     * @throws IllegalAccessException 
-     * @throws InstantiationException 
-     * @throws LoginException 
-     * @throws ServiceException 
      * @throws ModelException 
      */
-    public Genres getGenres() throws ServiceException, LoginException, ModelException {
-   		this.genres = (Genres)AudioBoxClient.getModelInstance(AudioBoxClient.GENRES_KEY, this.getConnector());
-   		this.getConnector().execute(Genres.END_POINT, null, null, this.genres, null);
+    public Genres getGenres() throws ModelException {
+        return this.getGenres(false);
+    }
+    
+    public Genres getGenres(boolean async) throws ModelException {
+        this.genres = (Genres) AudioBoxClient.getModelInstance(AudioBoxClient.GENRES_KEY, this.getConnector());
+        Thread t = populateCollection( Genres.END_POINT, this.genres );
+        if (async)
+            t.start();
+        else
+            t.run();
+        
         return this.genres;
     }
 
 
     /**
      * @return the artists
-     * @throws IllegalAccessException 
-     * @throws InstantiationException 
-     * @throws LoginException 
-     * @throws ServiceException 
      * @throws ModelException 
      */
-    public Artists getArtists() throws ServiceException, LoginException, ModelException {
-   		this.artists = (Artists)AudioBoxClient.getModelInstance(AudioBoxClient.ARTISTS_KEY, this.getConnector());
-   		this.getConnector().execute(Artists.END_POINT, null, null, this.artists, null);
+    public Artists getArtists() throws ModelException {
+        return this.getArtists(false);
+    }
+    
+    public Artists getArtists(boolean async) throws ModelException {
+        this.artists = (Artists) AudioBoxClient.getModelInstance(AudioBoxClient.ARTISTS_KEY, this.getConnector());
+        Thread t = populateCollection( Artists.END_POINT, this.artists );
+        if (async)
+            t.start();
+        else
+            t.run();
+
         return this.artists;
     }
 
     /**
      * @return the albums
-     * @throws IllegalAccessException 
-     * @throws InstantiationException 
-     * @throws LoginException 
-     * @throws ServiceException 
      * @throws ModelException 
      */
-    public Albums getAlbums() throws ServiceException, LoginException, ModelException {
-   		this.albums = (Albums)AudioBoxClient.getModelInstance(AudioBoxClient.ALBUMS_KEY, this.getConnector());
-   		this.getConnector().execute(Albums.END_POINT, null, null, this.albums, null);
+    public Albums getAlbums() throws ModelException {
+        return this.getAlbums(false);
+    }
+    
+    public Albums getAlbums(boolean async) throws ModelException {
+        this.albums = (Albums) AudioBoxClient.getModelInstance(AudioBoxClient.ALBUMS_KEY, this.getConnector());
+        Thread t = populateCollection( Albums.END_POINT, this.albums );
+        if (async)
+            t.start();
+        else
+            t.run();
+
         return this.albums;
     }
 
     public String[] getUploadedTracks() throws ServiceException, LoginException {
-    	String[] result = this.getConnector().execute(Tracks.END_POINT, null, null, this, HttpGet.METHOD_NAME, AudioBoxConnector.TEXT_FORMAT);
-    	String response = result[1];
-    	result = response.split(";");
-    	this.tracks =  new String[ result.length ];
-    	int pos=0;
-    	for ( String hash : result )
-    		this.tracks[ pos++ ] = hash.trim();
+        String[] result = this.getConnector().execute(Tracks.END_POINT, null, null, this, HttpGet.METHOD_NAME, AudioBoxConnector.TEXT_FORMAT);
+        String response = result[1];
+        result = response.split(";");
+        this.tracks =  new String[ result.length ];
+        int pos=0;
+        for ( String hash : result )
+            this.tracks[ pos++ ] = hash.trim();
         return this.tracks;
     }
 
+
+    private Thread populateCollection(final String endpoint, final ModelsCollection collection) {
+        
+        final User user = this;
+        
+        return new Thread() {
+            
+            public void run() {
+                try {
+                    user.getConnector().execute(endpoint, null, null, collection, null);
+                } catch (ServiceException e) {
+                    e.printStackTrace();
+                } catch (LoginException e) {
+                    e.printStackTrace();
+                }
+            }
+            
+        };
+
+    }
 }

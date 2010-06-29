@@ -113,7 +113,7 @@ public class PlaylistsTest extends junit.framework.TestCase {
     }
 
     private void loadPlaylists() throws ServiceException, LoginException, InstantiationException, IllegalAccessException, ClassNotFoundException, ModelException {
-        playlists = (Playlists) user.getPlaylists();
+        playlists = (Playlists) user.getPlaylists(false);
         //playlists.invoke();
     }
 
