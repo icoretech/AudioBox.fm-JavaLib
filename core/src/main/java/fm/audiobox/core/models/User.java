@@ -303,8 +303,8 @@ public class User extends ModelItem implements ResponseHandler {
 
     public String[] getUploadedTracks() throws ServiceException, LoginException {
     	String[] result = this.getConnector().execute(Tracks.END_POINT, null, null, this, HttpGet.METHOD_NAME, AudioBoxConnector.TEXT_FORMAT);
-    	String response = result[1];
-    	result = response.split(";");
+    	String response = result[ AudioBoxConnector.RESPONSE_BODY ];
+    	result = response.split( ";" , response.length() );
     	this.tracks =  new String[ result.length ];
     	int pos=0;
     	for ( String hash : result )
