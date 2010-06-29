@@ -175,12 +175,12 @@ public class AudioBoxClient {
     private static Inflector sI = Inflector.getInstance();
     
     public static final String 
-    USER_KEY      = User.TAG_NAME,  PROFILE_KEY  = Profile.TAG_NAME, 
-    PLAYLISTS_KEY = "Playlists",    PLAYLIST_KEY = Playlist.TAG_NAME,
-    GENRES_KEY    = "Genres",       GENRE_KEY    = Genre.TAG_NAME,
-    ARTISTS_KEY   = "Artists",      ARTIST_KEY   = Artist.TAG_NAME,
-    ALBUMS_KEY    = "Albums",       ALBUM_KEY    = Album.TAG_NAME,
-    TRACKS_KEY    = "Tracks",       TRACK_KEY    = Track.TAG_NAME;
+	    USER_KEY      = User.TAG_NAME,  PROFILE_KEY  = Profile.TAG_NAME, 
+	    PLAYLISTS_KEY = "Playlists",    PLAYLIST_KEY = Playlist.TAG_NAME,
+	    GENRES_KEY    = "Genres",       GENRE_KEY    = Genre.TAG_NAME,
+	    ARTISTS_KEY   = "Artists",      ARTIST_KEY   = Artist.TAG_NAME,
+	    ALBUMS_KEY    = "Albums",       ALBUM_KEY    = Album.TAG_NAME,
+	    TRACKS_KEY    = "Tracks",       TRACK_KEY    = Track.TAG_NAME;
 
     static {
         mapper = new HashMap<String , Class<? extends Model>>();
@@ -227,12 +227,12 @@ public class AudioBoxClient {
         }
 
         mUserAgent = "AudioBox.fm/" + version + " (Java; U; " +
-        System.getProperty("os.name") + " " +
-        System.getProperty("os.arch") + "; " + 
-        System.getProperty("user.language") + "; " +
-        System.getProperty("java.runtime.version") +  ") " +
-        System.getProperty("java.vm.name") + "/" + 
-        System.getProperty("java.vm.version") + 
+	        System.getProperty("os.name") + " " +
+	        System.getProperty("os.arch") + "; " + 
+	        System.getProperty("user.language") + "; " +
+	        System.getProperty("java.runtime.version") +  ") " +
+	        System.getProperty("java.vm.name") + "/" + 
+	        System.getProperty("java.vm.version") + 
         " AudioBoxClient/" + version;
     }
 

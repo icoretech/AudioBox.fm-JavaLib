@@ -74,9 +74,6 @@ public abstract class Model extends DefaultHandler implements ResponseHandler {
     protected String endPoint;
     protected AudioBoxConnector connector;
 
-    // Model interfaces
-//    protected AudioBoxModelLoader abml = AudioBoxClient.getAudioBoxModelLoader();
-
 
     public void setConnector(AudioBoxConnector conn){
     	this.connector = conn;

@@ -32,6 +32,7 @@ import org.apache.http.entity.FileEntity;
 import fm.audiobox.core.api.ModelItem;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
+import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
 
 /**
  * The XML response looks like this:
@@ -172,7 +173,7 @@ public class Track extends ModelItem {
 	 */
 	public String getStreamUrl() throws LoginException , SocketException {
 		String[] result = this.getConnector().execute( this.endPoint, this.getUuid(), STREAM_ACTION, this, null);
-		return result[1];
+		return result[ AudioBoxConnector.RESPONSE_BODY ];
 	}
 	
 	public void setLoved(String loved) {
@@ -306,17 +307,17 @@ public class Track extends ModelItem {
 	
 	public boolean love() throws ServiceException, LoginException  {
 		String[] result = this.getConnector().execute( this.endPoint, this.getUuid(), LOVE_ACTION, null, HttpPut.METHOD_NAME);
-	    return HttpStatus.SC_OK == Integer.parseInt( result[0] );
+	    return HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
 	}
 	
 	public boolean unlove() throws ServiceException, LoginException {
 		String[] result = this.getConnector().execute( this.endPoint, this.getUuid(), UNLOVE_ACTION, null, HttpPut.METHOD_NAME);
-	    return HttpStatus.SC_OK == Integer.parseInt( result[0] );
+	    return HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
 	}
 	
 	public boolean delete() throws ServiceException, LoginException {
 		String[] result = this.getConnector().execute( this.endPoint, this.getUuid(), null, null, HttpDelete.METHOD_NAME);
-	    return HttpStatus.SC_OK == Integer.parseInt( result[0] );
+	    return HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
 	}
 	
 	
