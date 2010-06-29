@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import fm.audiobox.core.exceptions.LoginException;
+import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.test.mocks.fixtures.StaticAudioBox;
 import fm.audiobox.core.test.mocks.fixtures.UserFixture;
@@ -56,6 +57,8 @@ public class UserTest extends junit.framework.TestCase {
            assertEquals( 401, e.getErrorCode());
         } catch (SocketException e) {
             e.printStackTrace();
+        } catch (ModelException e) {
+            e.printStackTrace();
         }
     }
     
@@ -67,6 +70,8 @@ public class UserTest extends junit.framework.TestCase {
         } catch (LoginException e) {
            assertEquals( 401, e.getErrorCode());
         } catch (SocketException e) {
+            e.printStackTrace();
+        } catch (ModelException e) {
             e.printStackTrace();
         }
     }
@@ -128,6 +133,8 @@ public class UserTest extends junit.framework.TestCase {
         } catch (LoginException e) {
             e.printStackTrace();
         } catch (SocketException e) {
+            e.printStackTrace();
+        } catch (ModelException e) {
             e.printStackTrace();
         }
         

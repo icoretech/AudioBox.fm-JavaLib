@@ -125,7 +125,7 @@ public class Track extends ModelItem {
 	public String getUuid() {
 
 		if (uuid == null) {
-			String	regex = "^" + AudioBoxClient.API_PATH.replace(".", "\\.") + PATH + "/([^\\s]+)/stream$";
+			String	regex = "^" + AudioBoxClient.AudioBoxConnector.API_PATH.replace(".", "\\.") + PATH + "/([^\\s]+)/stream$";
 			java.util.regex.Matcher m = java.util.regex.Pattern.compile(regex).matcher(streamUrl);
 			m.find();
 			uuid = m.group(1);

@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import fm.audiobox.core.exceptions.LoginException;
+import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Albums;
 import fm.audiobox.core.models.User;
@@ -70,6 +71,8 @@ public class AlbumsTest extends junit.framework.TestCase {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+        } catch (ModelException e) {
+            e.printStackTrace();
         }
     }
     
@@ -106,6 +109,8 @@ public class AlbumsTest extends junit.framework.TestCase {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+        } catch (ModelException e) {
+            e.printStackTrace();
         }
     }
     
@@ -115,7 +120,7 @@ public class AlbumsTest extends junit.framework.TestCase {
         
     }
     
-    private void loadAlbums() throws ServiceException, LoginException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+    private void loadAlbums() throws ServiceException, LoginException, InstantiationException, IllegalAccessException, ClassNotFoundException, ModelException {
         albums = (Albums) user.getAlbums();
         //albums.invoke();
     }
@@ -126,6 +131,8 @@ public class AlbumsTest extends junit.framework.TestCase {
         } catch (LoginException e) {
             e.printStackTrace();
         } catch (SocketException e) {
+            e.printStackTrace();
+        } catch (ModelException e) {
             e.printStackTrace();
         }
         

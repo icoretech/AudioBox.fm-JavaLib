@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import fm.audiobox.core.exceptions.LoginException;
+import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Album;
 import fm.audiobox.core.models.Playlist;
@@ -68,11 +69,13 @@ public class PlaylistsTest extends junit.framework.TestCase {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+        } catch (ModelException e) {
+            e.printStackTrace();
         }
     }
 
     @Test
-    public void testPlaylistShouldBePopulatedAndContainsTracks() throws ServiceException, LoginException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+    public void testPlaylistShouldBePopulatedAndContainsTracks() throws ServiceException, LoginException, InstantiationException, IllegalAccessException, ClassNotFoundException, ModelException {
         loginCatched();
 
         loadPlaylists();
@@ -109,7 +112,7 @@ public class PlaylistsTest extends junit.framework.TestCase {
 
     }
 
-    private void loadPlaylists() throws ServiceException, LoginException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+    private void loadPlaylists() throws ServiceException, LoginException, InstantiationException, IllegalAccessException, ClassNotFoundException, ModelException {
         playlists = (Playlists) user.getPlaylists();
         //playlists.invoke();
     }
@@ -120,6 +123,8 @@ public class PlaylistsTest extends junit.framework.TestCase {
         } catch (LoginException e) {
             e.printStackTrace();
         } catch (SocketException e) {
+            e.printStackTrace();
+        } catch (ModelException e) {
             e.printStackTrace();
         }
 

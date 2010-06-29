@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import fm.audiobox.core.exceptions.LoginException;
+import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Album;
 import fm.audiobox.core.models.Playlist;
@@ -130,6 +131,8 @@ public class ThreadedTest extends junit.framework.TestCase {
                 } catch (ServiceException e) {
                     e.printStackTrace();
                 } catch (LoginException e) {
+                    e.printStackTrace();
+                } catch (ModelException e) {
                     e.printStackTrace();
                 }
             }

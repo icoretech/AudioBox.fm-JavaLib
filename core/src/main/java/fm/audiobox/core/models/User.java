@@ -26,6 +26,7 @@ import org.apache.http.client.methods.HttpGet;
 import fm.audiobox.core.api.Model;
 import fm.audiobox.core.api.ModelItem;
 import fm.audiobox.core.exceptions.LoginException;
+import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.interfaces.ResponseHandler;
 import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
@@ -247,11 +248,12 @@ public class User extends ModelItem implements ResponseHandler {
      * @return the playlists
      * @throws LoginException 
      * @throws ServiceException 
+     * @throws ModelException 
      * @throws IllegalAccessException 
      * @throws InstantiationException 
      */
-    public Playlists getPlaylists() throws ServiceException, LoginException {
-    	this.playlists = (Playlists)AudioBoxClient.getModelClass(AudioBoxClient.PLAYLISTS_KEY, this.getConnector());
+    public Playlists getPlaylists() throws ServiceException, LoginException, ModelException {
+    	this.playlists = (Playlists)AudioBoxClient.getModelInstance(AudioBoxClient.PLAYLISTS_KEY, this.getConnector());
     	this.getConnector().execute(Playlists.END_POINT, null, null, this.playlists, null);
         return playlists;
     }
@@ -262,9 +264,10 @@ public class User extends ModelItem implements ResponseHandler {
      * @throws InstantiationException 
      * @throws LoginException 
      * @throws ServiceException 
+     * @throws ModelException 
      */
-    public Genres getGenres() throws ServiceException, LoginException {
-   		this.genres = (Genres)AudioBoxClient.getModelClass(AudioBoxClient.GENRES_KEY, this.getConnector());
+    public Genres getGenres() throws ServiceException, LoginException, ModelException {
+   		this.genres = (Genres)AudioBoxClient.getModelInstance(AudioBoxClient.GENRES_KEY, this.getConnector());
    		this.getConnector().execute(Genres.END_POINT, null, null, this.genres, null);
         return this.genres;
     }
@@ -276,9 +279,10 @@ public class User extends ModelItem implements ResponseHandler {
      * @throws InstantiationException 
      * @throws LoginException 
      * @throws ServiceException 
+     * @throws ModelException 
      */
-    public Artists getArtists() throws ServiceException, LoginException {
-   		this.artists = (Artists)AudioBoxClient.getModelClass(AudioBoxClient.ARTISTS_KEY, this.getConnector());
+    public Artists getArtists() throws ServiceException, LoginException, ModelException {
+   		this.artists = (Artists)AudioBoxClient.getModelInstance(AudioBoxClient.ARTISTS_KEY, this.getConnector());
    		this.getConnector().execute(Artists.END_POINT, null, null, this.artists, null);
         return this.artists;
     }
@@ -289,9 +293,10 @@ public class User extends ModelItem implements ResponseHandler {
      * @throws InstantiationException 
      * @throws LoginException 
      * @throws ServiceException 
+     * @throws ModelException 
      */
-    public Albums getAlbums() throws ServiceException, LoginException {
-   		this.albums = (Albums)AudioBoxClient.getModelClass(AudioBoxClient.ALBUMS_KEY, this.getConnector());
+    public Albums getAlbums() throws ServiceException, LoginException, ModelException {
+   		this.albums = (Albums)AudioBoxClient.getModelInstance(AudioBoxClient.ALBUMS_KEY, this.getConnector());
    		this.getConnector().execute(Albums.END_POINT, null, null, this.albums, null);
         return this.albums;
     }

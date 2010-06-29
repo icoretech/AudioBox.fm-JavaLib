@@ -44,6 +44,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 import fm.audiobox.core.exceptions.LoginException;
+import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.interfaces.ResponseHandler;
 import fm.audiobox.core.models.AudioBoxClient;
@@ -166,9 +167,8 @@ public abstract class Model extends DefaultHandler implements ResponseHandler {
         		int read;
         		byte[] bytes = new byte[ CHUNK ];
         		StringBuffer sb = new StringBuffer();
-        		while(  ( read = input.read( bytes) ) != -1 ){
+        		while(  ( read = input.read( bytes) ) != -1 )
         			sb.append( new String( bytes, 0, read ));
-        		}
         		response =  sb.toString().trim();
         	}
 
@@ -255,11 +255,11 @@ public abstract class Model extends DefaultHandler implements ResponseHandler {
 
                     Model subClass = null;
                     try {
-                        subClass = AudioBoxClient.getModelClass( mInflector.lowerCamelCase( localName, '-'), this.getConnector() );
+                        subClass = AudioBoxClient.getModelInstance( mInflector.lowerCamelCase( localName, '-'), this.getConnector() );
                         method.invoke(peek, subClass );
 
                         this.mStack.push( subClass );
-                    } catch (ServiceException e) {
+                    } catch (ModelException e) {
                         e.printStackTrace();
                         
                     }

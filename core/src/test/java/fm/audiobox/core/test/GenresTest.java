@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import fm.audiobox.core.exceptions.LoginException;
+import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Genre;
 import fm.audiobox.core.models.Genres;
@@ -67,6 +68,8 @@ public class GenresTest extends junit.framework.TestCase {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+        } catch (ModelException e) {
+            e.printStackTrace();
         }
     }
     
@@ -99,6 +102,8 @@ public class GenresTest extends junit.framework.TestCase {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+        } catch (ModelException e) {
+            e.printStackTrace();
         }
     }
     
@@ -108,7 +113,7 @@ public class GenresTest extends junit.framework.TestCase {
         
     }
     
-    private void loadGenres() throws ServiceException, LoginException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+    private void loadGenres() throws ServiceException, LoginException, InstantiationException, IllegalAccessException, ClassNotFoundException, ModelException {
         genres = (Genres) user.getGenres();
         //genres.invoke();
     }
@@ -119,6 +124,8 @@ public class GenresTest extends junit.framework.TestCase {
         } catch (LoginException e) {
             e.printStackTrace();
         } catch (SocketException e) {
+            e.printStackTrace();
+        } catch (ModelException e) {
             e.printStackTrace();
         }
         

@@ -22,8 +22,10 @@
 package fm.audiobox.core.models;
 
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.SocketTimeoutException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -31,6 +33,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.zip.GZIPInputStream;
 
 import javax.net.ssl.KeyManager;
@@ -78,6 +81,7 @@ import org.apache.http.protocol.HttpContext;
 import fm.audiobox.core.api.Model;
 import fm.audiobox.core.api.ModelsCollection;
 import fm.audiobox.core.exceptions.LoginException;
+import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.interfaces.CollectionListener;
 import fm.audiobox.core.util.Inflector;
@@ -144,8 +148,6 @@ import fm.audiobox.core.util.Inflector;
  *    // Handle {@link ServiceException}
  * }
  * 
- * 
- * 
  * </pre>
  * 
  * 
@@ -158,73 +160,46 @@ import fm.audiobox.core.util.Inflector;
 
 public class AudioBoxClient {
 
-    public static double VERSION = 0.1;
     private static Log log = LogFactory.getLog(AudioBoxClient.class);
-    
-    /** Message used when the response is succesfully parsed */
-    public static final String PROTOCOL = "https";
-    public static final String HOST = "audiobox.fm";
-    public static final String PORT = "443";
-    public static final String API_PREFIX = "/api/";
-//    public static final String API_SUFFIX = "xml";
-    public static final String TRACK_ID_PLACEHOLDER = "[track_id]";
-    public static final String API_PATH = PROTOCOL + "://" + HOST + API_PREFIX;
 
     /** Specifies the models package (default: fm.audiobox.core.models) */
     public static final String DEFAULT_MODELS_PACKAGE = AudioBoxClient.class.getPackage().getName();
-    private static final String PATH_PARAMETER = "${path}";
-    private static final String TOKEN_PARAMETER = "${token}";
-    private static final String ACTION_PARAMETER = "${action}";
-    
-    protected String ACTIVE_STATE = "active";
+    public static final String TRACK_ID_PLACEHOLDER = "[track_id]";
 
+    private String mUserAgent;
 
-    private static long sTimeout = (180 * 1000);
-//    private static boolean sForceTrust = false;
-    private static String sUserAgent = "AudioBox.fm/" + String.valueOf(VERSION) + 
-            " (Java; U; " +
-    	    System.getProperty("os.name") + " " +
-    	    System.getProperty("os.arch") + "; " + 
-    	    System.getProperty("user.language") + "; " +
-    	    System.getProperty("java.runtime.version") +  ") " +
-    	    System.getProperty("java.vm.name") + "/" + 
-    	    System.getProperty("java.vm.version") + 
-	    " AudioBoxClient/" + String.valueOf(VERSION);
-
-//    private /*static*/ String sCustomModelsPackage = DEFAULT_MODELS_PACKAGE;
-    private static String sApiPath = API_PATH + PATH_PARAMETER + TOKEN_PARAMETER + ACTION_PARAMETER;
-//    private static Class<? extends User> sUserClass = User.class;
     private static Inflector sI = Inflector.getInstance();
-//    private Class<? extends User> sUserClass = User.class;
-    private /*static*/ User sUser;
-    
+    private User sUser;
+
     private AudioBoxConnector connector;  // used by extending class
 
-//    private /*static*/ ThreadSafeClientConnManager sCm;
-//    private /*static*/ DefaultHttpClient sClient;
-    
-
     private static Map<String,Class<? extends Model>> mapper = null;
-    public static String 
-        USER_KEY = User.TAG_NAME, PROFILE_KEY = Profile.TAG_NAME, 
-    	PLAYLISTS_KEY = "Playlists", PLAYLIST_KEY = Playlist.TAG_NAME,
-    	GENRES_KEY = "Genres", GENRE_KEY = Genre.TAG_NAME,
-    	ARTISTS_KEY = "Artists", ARTIST_KEY = Artist.TAG_NAME,
-    	ALBUMS_KEY = "Albums", ALBUM_KEY = Album.TAG_NAME,
-    	TRACKS_KEY = "Tracks", TRACK_KEY = Track.TAG_NAME,
-    	COLLECTION_LISTENER = "COLLECTION_LISTENER";
     
+    public static final String 
+    USER_KEY      = User.TAG_NAME,  PROFILE_KEY  = Profile.TAG_NAME, 
+    PLAYLISTS_KEY = "Playlists",    PLAYLIST_KEY = Playlist.TAG_NAME,
+    GENRES_KEY    = "Genres",       GENRE_KEY    = Genre.TAG_NAME,
+    ARTISTS_KEY   = "Artists",      ARTIST_KEY   = Artist.TAG_NAME,
+    ALBUMS_KEY    = "Albums",       ALBUM_KEY    = Album.TAG_NAME,
+    TRACKS_KEY    = "Tracks",       TRACK_KEY    = Track.TAG_NAME;
+
     static {
-    	mapper = new HashMap<String , Class<? extends Model>>();
-    	mapper.put( USER_KEY , User.class); mapper.put( PROFILE_KEY , Profile.class);
-    	mapper.put( PLAYLISTS_KEY , Playlists.class); mapper.put( PLAYLIST_KEY , Playlist.class);
-    	mapper.put( GENRES_KEY , Genres.class); mapper.put( GENRE_KEY , Genre.class);
-    	mapper.put( ARTISTS_KEY, Artists.class); mapper.put( ARTIST_KEY , Artist.class);
-    	mapper.put( ALBUMS_KEY, Albums.class); mapper.put( ALBUM_KEY , Album.class);
-    	mapper.put( TRACKS_KEY , Tracks.class); mapper.put( TRACK_KEY , Track.class);
+        mapper = new HashMap<String , Class<? extends Model>>();
+        mapper.put( USER_KEY,      User.class ); 
+        mapper.put( PROFILE_KEY ,  Profile.class );
+        mapper.put( PLAYLISTS_KEY, Playlists.class ); 
+        mapper.put( PLAYLIST_KEY,  Playlist.class );
+        mapper.put( GENRES_KEY,    Genres.class ); 
+        mapper.put( GENRE_KEY,     Genre.class );
+        mapper.put( ARTISTS_KEY,   Artists.class ); 
+        mapper.put( ARTIST_KEY,    Artist.class );
+        mapper.put( ALBUMS_KEY,    Albums.class ); 
+        mapper.put( ALBUM_KEY ,    Album.class );
+        mapper.put( TRACKS_KEY,    Tracks.class ); 
+        mapper.put( TRACK_KEY ,    Track.class );
     }
-    
-    
+
+
     /* ------------------ */
     /* Default Interfaces */
     /* ------------------ */
@@ -235,99 +210,82 @@ public class AudioBoxClient {
         public void onItemReady(int item, Object obj) { }
     };
 
-//    /** @see {@link AudioBoxModelLoader} */
-//    private static AudioBoxModelLoader sAudioBoxModelLoader = new AudioBoxModelLoader() {
-//        @SuppressWarnings("unchecked")
-//        public Class<? extends Model> getModelClassName(Class<? extends Model> clazz,  String tagName) {
-//            Class<? extends Model> klass = null;
-//            String tname = clazz.getCanonicalName();
-//
-//            if (tagName != null && tagName.trim().length() > 0)
-//                tname = sI.upperCamelCase( tagName, '-' );
-//
-//            try {
-//                klass = (Class<? extends Model>) Class.forName( sCustomModelsPackage  + "." +  tname );
-//            } catch(ClassNotFoundException e) {
-//                try {
-//                    klass = (Class<? extends Model>) Class.forName( DEFAULT_MODELS_PACKAGE + "." +  tname );
-//                } catch (ClassNotFoundException e1) {
-//                    // This should never happens...
-//                    e1.printStackTrace();
-//                }
-//            }
-//
-//            return klass;
-//        }
-//    };
 
-
-    
-     
     public AudioBoxClient(){
         this.connector = this.new AudioBoxConnector();	// setup connection
-    }
-    
-    
-    protected AudioBoxConnector _getConnector(){
-    	return this.connector;
+
+        String version = "unattended";
+
+        try {
+            Properties ps = new Properties();
+            ps.load(AudioBoxClient.class.getResourceAsStream("config/env.properties"));
+            version = ps.getProperty("libaudioboxfm-core.version");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        mUserAgent = "AudioBox.fm/" + version + " (Java; U; " +
+        System.getProperty("os.name") + " " +
+        System.getProperty("os.arch") + "; " + 
+        System.getProperty("user.language") + "; " +
+        System.getProperty("java.runtime.version") +  ") " +
+        System.getProperty("java.vm.name") + "/" + 
+        System.getProperty("java.vm.version") + 
+        " AudioBoxClient/" + version;
     }
 
 
-//    /**
-//     * Note: When first created, AudioBoxClient instantiate a new {@link User} object needed for authentication 
-//     * on AudioBox.fm.
-//     * 
-//     * <p>
-//     * 
-//     * If you wish to overload or override the default User model class you have to specify which is the User
-//     * class you want to use <b>before</b> AudioBoxClient object is created. 
-//     * This is done through the {@link AudioBoxClient#setUserClass(Class)} method.
-//     */
-//
-//    public AudioBoxClient(Class<? extends User> userClass) throws InstantiationException, InstantiationException {
-//    	super();
-////      Class<? extends User> clazz = sUserClass;
-////      sUser = clazz.cast(clazz.newInstance());
-//    	this.sUserClass = userClass; 
-//    }
-    
-    
-    
+    protected AudioBoxConnector getMainConnector(){
+        return this.connector;
+    }
+
+
     public static void initClass(String key, Class<? extends Model> klass){
-    	Class<? extends Model> _klass = mapper.get( key );
-    	if ( _klass != null ){
-    		mapper.put( key , klass);
-    	}
+        Class<? extends Model> _klass = mapper.get( key );
+        if ( _klass != null ){
+            mapper.put( key , klass);
+        }
     }
-    
-    
+
+
     @SuppressWarnings("unchecked")
-    public synchronized static Model getModelClass(String key, AudioBoxConnector _connector) throws ServiceException{
-    	Model model = null;
-    	Class<? extends Model> klass = mapper.get( key );
-    	if ( klass == null ) {
+    public synchronized static Model getModelInstance(String key, AudioBoxConnector connector) throws ModelException {
+        
+        Model model = null;
+        Class<? extends Model> klass = mapper.get( key );
+        
+        if ( klass == null ) {
             String className = DEFAULT_MODELS_PACKAGE + "." + sI.upperCamelCase( key, '-');
-            log.info("Try to instanciate: " + className );
+            
             try {
                 klass = (Class<? extends Model>) Class.forName( className );
             } catch (ClassNotFoundException e) {
-                throw new ServiceException("No Model found: " + className );
+                throw new ModelException("No model class found: " + className );
             }
-    	}
-    	
-    	try {
-            model = klass.newInstance();
-        } catch (InstantiationException e) {
-            throw new ServiceException("InstantiationException: " + klass.getName() );
-        } catch (IllegalAccessException e) {
-            throw new ServiceException("InstantiationException: " + klass.getName() );
         }
-    	
-    	model.setConnector( _connector );
-    	if ( model instanceof ModelsCollection )
-    		((ModelsCollection)model).setCollectionListener(sCollectionListener);
-    	return model;
+
+        try {
+            
+            log.info("Try to instantiate: " + klass.getName() );
+            model = klass.newInstance();
+            
+        } catch (InstantiationException e) {
+            throw new ModelException("Instantiation Exception: " + klass.getName() );
+            
+        } catch (IllegalAccessException e) {
+            throw new ModelException("Illegal Access Exception: " + klass.getName() );
+            
+        }
+
+        model.setConnector( connector );
+        
+        if ( model instanceof ModelsCollection )
+            ((ModelsCollection)model).setCollectionListener(sCollectionListener);
+        return model;
     }
+
     
     /**
      * This method should be called before any other call to AudioBox.fm.<br/>
@@ -340,24 +298,21 @@ public class AudioBoxClient {
      * @param password the password to use for authentication
      * 
      * @return {@link User} object
+     * @throws ModelException 
      * @throws IllegalAccessException 
      * @throws InstantiationException 
      */
 
-    public User login(String username, String password) throws LoginException, ServiceException {
+    public User login(String username, String password) throws LoginException, ServiceException, ModelException {
 
-        log.info("Starting AudioBoxClient: " + sUserAgent);
+        log.info("Starting AudioBoxClient: " + mUserAgent);
 
-//        sUserClass.cast(sUser).setUsername( username );
-//        sUserClass.cast(sUser).setPassword( password );
-        this.sUser = (User) getModelClass( USER_KEY , this._getConnector() );
+        this.sUser = (User) getModelInstance( USER_KEY , this.getMainConnector() );
         this.sUser.setUsername(username);
         this.sUser.setPassword(password);
 
-//        sUser.invoke();
-        this._getConnector().execute( User.PATH, null, null, this.sUser, null);
+        this.getMainConnector().execute( User.PATH, null, null, this.sUser, null);
 
-//        if ( ! User.ACTIVE_STATE.equalsIgnoreCase( sUserClass.cast(sUser).getState() ))
         if ( ! User.ACTIVE_STATE.equalsIgnoreCase( this.sUser.getState() ) )
             throw new LoginException("User is not active", LoginException.INACTIVE_USER_STATE );
 
@@ -377,28 +332,6 @@ public class AudioBoxClient {
 
 
     /**
-     * Use this method to configure the timeout limit for reqests made against AudioBox.fm.
-     * 
-     * @param timeout the milliseconds of the timeout limit
-     */
-
-    public void setTimeout(long timeout) {
-        sTimeout = timeout; 
-    }
-
-
-    /**
-     * Returns the requests timeout limit.
-     * 
-     * @return timeout limit
-     */
-
-    public long getTimeout() {
-        return sTimeout;
-    }
-
-
-    /**
      * Use this method to override the default {@link CollectionListener}.
      * 
      * @param collectionListener the CollectionListener to use for parser callbacks
@@ -407,35 +340,6 @@ public class AudioBoxClient {
     public static void setCollectionListener(CollectionListener collectionListener) {
         sCollectionListener = collectionListener;
     }
-
-
-//    /**
-//     * Use this method to override the default {@link AudioBoxModelLoader}.
-//     * 
-//     * @param modelLoader the AudioBoxModelLoader to use for models class loading
-//     */
-//
-//    public void setAudioBoxModelLoader(AudioBoxModelLoader modelLoader) {
-//        AudioBoxClient.sAudioBoxModelLoader = modelLoader;
-//    }
-
-
-    /* -------------- */
-    /* Static methods */
-    /* -------------- */
-
-//    /**
-//     * AudioBox.fm RESTful API uses inflections to distinguish between a single item and a collection.<br/>
-//     * To preserve the same philosophy we also use an inflector.<br/>
-//     * To be sure to not waste memory or resources use this method to get the {@link Inflector} instance used by 
-//     * the parser.
-//     * 
-//     * @return the AudioBoxClient {@link Inflector} instance
-//     */
-//
-//    public static Inflector getInflector() {
-//        return AudioBoxClient.sI;
-//    }
 
 
     /**
@@ -448,42 +352,8 @@ public class AudioBoxClient {
 
     @Deprecated
     public void setForceTrust(boolean force) {
-        this._getConnector().setForce(force);
+        this.getMainConnector().setForceTrust(force);
     }
-
-
-//    /**
-//     * If you need to extend the {@link User} model class you will have to specify which is the User class to load
-//     * <b>before</b> instantiate a new {@link AudioBoxClient} object.
-//     * 
-//     * @param clazz the extended {@link User} class.
-//     */
-//
-//    public static void setUserClass(Class<? extends User> clazz) {
-//        AudioBoxClient.sUserClass = clazz;
-//    }
-
-
-//    /**
-//     * Use this method to make AudioBoxClient loads your extended models classes.<br/>
-//     * 
-//     * @param customModelsPackage the extended models classes package.
-//     */
-//
-//    public static void setCustomModelsPackage(String customModelsPackage) {
-//        AudioBoxClient.sCustomModelsPackage = customModelsPackage;
-//    }
-
-
-//    /**
-//     * Use this method to gather the models package used for models class loading.
-//     * 
-//     * @return the custom models package default is {@link AudioBoxClient#DEFAULT_MODELS_PACKAGE}.
-//     */
-//
-//    public static String getCustomModelsPackage() {
-//        return sCustomModelsPackage;
-//    }
 
 
     /**
@@ -497,36 +367,42 @@ public class AudioBoxClient {
     }
 
 
-//    /**
-//     * Use this method to get the configured {@link AudioBoxModelLoader}.<br/>
-//     * You can specify a custom model loader through {@link AudioBoxClient#setAudioBoxModelLoader(AudioBoxModelLoader)}.
-//     * 
-//     * @return the current model loader AudioBoxClient is using.
-//     */
-//
-//    public static AudioBoxModelLoader getAudioBoxModelLoader() {
-//        return sAudioBoxModelLoader;
-//    }
+    public class AudioBoxConnector implements Serializable {
 
-    
-    
+        private static final long serialVersionUID = -1947929692214926338L;
+
+        private Log log = LogFactory.getLog(AudioBoxConnector.class);
+
+        public static final String TEXT_FORMAT = "txt";
+        public static final String XML_FORMAT = "xml";
+
+        public static final int RESPONSE_CODE = 0;
+        public static final int RESPONSE_BODY = 1;
+
+        private static final String PATH_PARAMETER = "${path}";
+        private static final String TOKEN_PARAMETER = "${token}";
+        private static final String ACTION_PARAMETER = "${action}";
+
+        private static final String PROTOCOL = "https";
+        private static final String HOST = "audiobox.fm";
+        private static final String PORT = "443";
+        private static final String API_PREFIX = "/api/";
+        public static final String API_PATH = PROTOCOL + "://" + HOST + API_PREFIX;
+
+        private String sApiPath = API_PATH + PATH_PARAMETER + TOKEN_PARAMETER + ACTION_PARAMETER;
+        private long sTimeout = (180 * 1000);
+
+        private HttpRoute mAudioBoxRoute;
+        private ThreadSafeClientConnManager mCm;
+        private DefaultHttpClient mClient;
+        private boolean mForceTrust = false;
 
 
-    public class AudioBoxConnector /* implements Serializable */ {
-    	
-    	private Log log = LogFactory.getLog(AudioBoxConnector.class);
-    	
-    	public static final String TEXT_FORMAT = "txt";
-    	public static final String XML_FORMAT = "xml";
-    	
-    	private HttpRoute sAudioBoxRoute;
-    	private ThreadSafeClientConnManager sCm;
-    	private DefaultHttpClient sClient;
-    	private boolean sForceTrust = false;
-    	
-    	private AudioBoxConnector(){
-    		this.sAudioBoxRoute = new HttpRoute(new HttpHost(HOST, Integer.parseInt(PORT)));
-    		SchemeRegistry schemeRegistry = new SchemeRegistry();
+
+        private AudioBoxConnector() {
+
+            this.mAudioBoxRoute = new HttpRoute(new HttpHost(HOST, Integer.parseInt(PORT)));
+            SchemeRegistry schemeRegistry = new SchemeRegistry();
             schemeRegistry.register( new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
             schemeRegistry.register( new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
 
@@ -534,9 +410,9 @@ public class AudioBoxClient {
             params.setParameter(ConnManagerParams.TIMEOUT, sTimeout);
             params.setParameter(ClientPNames.HANDLE_REDIRECTS, false);
 
-            this.sCm = new ThreadSafeClientConnManager(params, schemeRegistry);
-            this.sClient = new DefaultHttpClient( this.sCm, params );
-            
+            this.mCm = new ThreadSafeClientConnManager(params, schemeRegistry);
+            this.mClient = new DefaultHttpClient( this.mCm, params );
+
             // Increase max total connection to 200
             ConnManagerParams.setMaxTotalConnections(params, 200);
 
@@ -544,26 +420,26 @@ public class AudioBoxClient {
             ConnPerRouteBean connPerRoute = new ConnPerRouteBean(20);
 
             // Increase max connections for audiobox.fm:443 to 50
-            connPerRoute.setMaxForRoute(sAudioBoxRoute, 50);
+            connPerRoute.setMaxForRoute(mAudioBoxRoute, 50);
             ConnManagerParams.setMaxConnectionsPerRoute(params, connPerRoute);
 
-            if (sForceTrust)
+            if (mForceTrust)
                 this.forceTrustCertificate();
 
 
-            this.sClient.addRequestInterceptor(new HttpRequestInterceptor() {
+            this.mClient.addRequestInterceptor(new HttpRequestInterceptor() {
 
                 public void process( final HttpRequest request,  final HttpContext context) throws HttpException, IOException {
                     if (!request.containsHeader("Accept-Encoding")) {
                         request.addHeader("Accept-Encoding", "gzip");
                     }
                     request.addHeader("Authorization" , "Basic " + sUser.getAuth() );
-                    request.addHeader("User-Agent", sUserAgent);
+                    request.addHeader("User-Agent", mUserAgent);
                 }
 
             });
 
-            this.sClient.addResponseInterceptor(new HttpResponseInterceptor() {
+            this.mClient.addResponseInterceptor(new HttpResponseInterceptor() {
 
                 public void process( final HttpResponse response, final HttpContext context) throws HttpException, IOException {
                     HttpEntity entity = response.getEntity();
@@ -590,15 +466,185 @@ public class AudioBoxClient {
                     }
                 }
             });
-    	}
-    	
-    	
-    	protected void setForce(boolean force){
-    		this.sForceTrust = force;
-    	}
-    	
-    	
-    	/**
+        }
+
+
+        /**
+         * Use this method to configure the timeout limit for reqests made against AudioBox.fm.
+         * 
+         * @param timeout the milliseconds of the timeout limit
+         */
+
+        public void setTimeout(long timeout) {
+            sTimeout = timeout; 
+        }
+
+
+        /**
+         * Returns the requests timeout limit.
+         * 
+         * @return timeout limit
+         */
+
+        public long getTimeout() {
+            return sTimeout;
+        }
+
+        /**
+         * This method is used by the {@link Model} class by running the {@link Model#invoke()} method.<br/>
+         * Avoid direct execution of this method if you don't know what you are doing.
+         * 
+         * <p>
+         * 
+         * Some of the parameter may be null other cannot.
+         * 
+         * @param path the partial url to call. Tipically this is a Model end point ({@link Model#getEndPoint()})
+         * @param token the token of the Model if any, may be null or empty ({@link Model#getToken()})
+         * @param action the remote action to execute on the model that executes the action (ie. "scrobble")
+         * @param target usually reffers the Model that executes the method
+         * @param httpVerb the HTTP method to use for the request (ie: GET, PUT, POST and DELETE)
+         * 
+         * @return the result of the request, may be a response code, such as HTTP OK ("200") or the body of the response.
+         */
+
+        public synchronized String[] execute(String path, String token, String action , Model target, String httpVerb) throws LoginException , ServiceException {
+            return execute(path, token, action, target, httpVerb, XML_FORMAT);
+        }
+
+
+        /**
+         * This method is used by the {@link Model} class by running the {@link Model#invoke()} method.<br/>
+         * Avoid direct execution of this method if you don't know what you are doing.
+         * 
+         * <p>
+         * 
+         * Some of the parameter may be null other cannot.
+         * 
+         * @param path the partial url to call. Tipically this is a Model end point ({@link Model#getEndPoint()})
+         * @param token the token of the Model if any, may be null or empty ({@link Model#getToken()})
+         * @param action the remote action to execute on the model that executes the action (ie. "scrobble")
+         * @param target usually reffers the Model that executes the method
+         * @param httpVerb the HTTP method to use for the request (ie: GET, PUT, POST and DELETE)
+         * @param format the request format (xml or txt)
+         * 
+         * @return the result of the request, may be a response code, such as HTTP OK ("200") or the body of the response.
+         */
+
+        public synchronized String[] execute (String path, String token, String action , Model target, String httpVerb, String format) throws LoginException , ServiceException {
+
+            token = ( token == null ) ? "" : token.startsWith("/") ? token : "/".concat(token);
+            action = ( action == null ) ? "" : action.startsWith("/") ? action : "/".concat(action);
+
+            // Replace the placeholder with the right values
+            String url = sApiPath.replace( PATH_PARAMETER , path ).replace( TOKEN_PARAMETER , token ).replace( ACTION_PARAMETER , action ); 
+
+            httpVerb = httpVerb == null ? HttpGet.METHOD_NAME : httpVerb;
+
+            if (HttpGet.METHOD_NAME.equals(httpVerb) )
+                url += "." + format;
+            return request( url, target, httpVerb );
+        }
+
+
+
+        /* ----------------- */
+        /* Protected methods */
+        /* ----------------- */
+
+
+        /**
+         * This method will switch SSL certificate validation on or off.
+         * You will not need to use this. This method is used for testing purpose only. For this reason this method is 
+         * marked as "deprecated".
+         * 
+         * @param force set or unset the SSL certificate validation (false validates, true skips validation).
+         */
+
+        @Deprecated
+        protected void setForceTrust(boolean force){
+            this.mForceTrust = force;
+        }
+
+
+
+        /* --------------- */
+        /* Private methods */
+        /* --------------- */
+
+
+        /**
+         * This method is used to performs requests to AudioBox.fm service APIs.<br/>
+         * Once AudioBox.fm responds the response is parsed through the target {@link Model} only if the response returns
+         * with a 200 code.
+         * 
+         * <p>
+         * 
+         * If a sream url is requested (tipically from a {@link Track} object, the location for audio streaming is returned.
+         * 
+         * <p>
+         * 
+         * Any other case returns a string representing the status code.
+         * 
+         * @param url the full url where to make the request
+         * @param target the model to use to parse the response
+         * @param httpVerb the HTTP method to use for the request
+         * 
+         * @return the response code or the stream Location (in case of a {@link Track} model)
+         * 
+         */
+
+        private synchronized String[] request(String url, Model target, String httpVerb) throws LoginException, ServiceException {
+
+            if (sUser == null)
+                throw new LoginException("Cannot execute API actions without credentials.", LoginException.NO_CREDENTIALS);
+
+
+            try {
+
+                log.info("Requesting resource: " + url);
+
+                HttpRequestBase method = null; 
+                if ( HttpPost.METHOD_NAME.equals( httpVerb ) ) {
+                    method = new HttpPost(url);
+                } else if ( HttpPut.METHOD_NAME.equals( httpVerb ) ) {
+                    method = new HttpPut(url);
+                } else if ( HttpDelete.METHOD_NAME.equals( httpVerb ) ) {
+                    method = new HttpDelete(url);
+                } else {
+                    method = new HttpGet(url);
+                }
+
+                if ( method instanceof HttpPost && target instanceof Track ){
+                    HttpPost post = ( HttpPost ) method;
+                    post.setEntity( ((Track)target).getFileEntity() );
+                }
+
+
+
+                HttpResponse resp = mClient.execute(method, new BasicHttpContext());
+                String response = null;
+                if ( target != null )
+                    response = target.handleResponse( resp, httpVerb );
+
+                HttpEntity responseEntity = resp.getEntity(); 
+                if (responseEntity != null) responseEntity.consumeContent();
+
+                return new String[]{ String.valueOf( resp.getStatusLine().getStatusCode() ) , response };
+
+            } catch( ClientProtocolException e ) {
+                throw new ServiceException( "Client protocol exception: " + e.getMessage(), ServiceException.CLIENT_ERROR );
+
+            } catch( SocketTimeoutException e ) {
+                throw new ServiceException( "Service does not respond: " + e.getMessage(), ServiceException.TIMEOUT_ERROR );
+
+            } catch( IOException e ) {
+                throw new ServiceException( "IO exception: " + e.getMessage(), ServiceException.SOCKET_ERROR );
+
+            } 
+        }
+
+
+        /**
          * This method is for internal testing and debugging use only.<br/>
          * Please avoid the use of this method.
          * 
@@ -637,149 +683,15 @@ public class AudioBoxClient {
                 SSLSocketFactory sf = new SSLSocketFactory(ctx);
                 sf.setHostnameVerifier( hnv );
                 Scheme https = new Scheme("https", sf, 443);
-                this.sClient.getConnectionManager().getSchemeRegistry().register(https);
+                this.mClient.getConnectionManager().getSchemeRegistry().register(https);
             } catch (NoSuchAlgorithmException e) {
                 log.warn("Cannot force SSL certificate trust due to 'NoSuchAlgorithmException': " + e.getMessage());
             } catch (KeyManagementException e) {
                 log.warn("Cannot force SSL certificate trust due to 'KeyManagementException': " + e.getMessage());
             }
         }
-    	
-        
-        
-        /**
-         * This method is used by the {@link Model} class by running the {@link Model#invoke()} method.<br/>
-         * Avoid direct execution of this method if you don't know what you are doing.
-         * 
-         * <p>
-         * 
-         * Some of the parameter may be null other cannot.
-         * 
-         * @param path the partial url to call. Tipically this is a Model end point ({@link Model#getEndPoint()})
-         * @param token the token of the Model if any, may be null or empty ({@link Model#getToken()})
-         * @param action the remote action to execute on the model that executes the action (ie. "scrobble")
-         * @param target usually reffers the Model that executes the method
-         * @param httpVerb the HTTP method to use for the request (ie: GET, PUT, POST and DELETE)
-         * 
-         * @return the result of the request, may be a response code, such as HTTP OK ("200") or the body of the response.
-         */
 
-        public synchronized String[] execute(String path, String token, String action , Model target, String httpVerb) throws LoginException , ServiceException {
-            return execute(path, token, action, target, httpVerb, XML_FORMAT);
-        }
-
-        /**
-         * This method is used by the {@link Model} class by running the {@link Model#invoke()} method.<br/>
-         * Avoid direct execution of this method if you don't know what you are doing.
-         * 
-         * <p>
-         * 
-         * Some of the parameter may be null other cannot.
-         * 
-         * @param path the partial url to call. Tipically this is a Model end point ({@link Model#getEndPoint()})
-         * @param token the token of the Model if any, may be null or empty ({@link Model#getToken()})
-         * @param action the remote action to execute on the model that executes the action (ie. "scrobble")
-         * @param target usually reffers the Model that executes the method
-         * @param httpVerb the HTTP method to use for the request (ie: GET, PUT, POST and DELETE)
-         * @param format the request format (xml or txt)
-         * 
-         * @return the result of the request, may be a response code, such as HTTP OK ("200") or the body of the response.
-         */
-
-        public synchronized String[] execute (String path, String token, String action , Model target, String httpVerb, String format) throws LoginException , ServiceException {
-
-            token = ( token == null ) ? "" : token.startsWith("/") ? token : "/".concat(token);
-            action = ( action == null ) ? "" : action.startsWith("/") ? action : "/".concat(action);
-
-            // Replace the placeholder with the right values
-            String url = sApiPath.replace( PATH_PARAMETER , path ).replace( TOKEN_PARAMETER , token ).replace( ACTION_PARAMETER , action ); 
-
-            httpVerb = httpVerb == null ? HttpGet.METHOD_NAME : httpVerb;
-
-            if (HttpGet.METHOD_NAME.equals(httpVerb) )
-                url += "." + format;
-            return request( url, target, httpVerb );
-        }
-
-
-
-        /* --------------- */
-        /* Private methods */
-        /* --------------- */
-
-
-        /**
-         * This method is used to performs requests to AudioBox.fm service APIs.<br/>
-         * Once AudioBox.fm responds the response is parsed through the target {@link Model} only if the response returns
-         * with a 200 code.
-         * 
-         * <p>
-         * 
-         * If a sream url is requested (tipically from a {@link Track} object, the location for audio streaming is returned.
-         * 
-         * <p>
-         * 
-         * Any other case returns a string representing the status code.
-         * 
-         * @param url the full url where to make the request
-         * @param target the model to use to parse the response
-         * @param httpVerb the HTTP method to use for the request
-         * 
-         * @return the response code or the stream Location (in case of a {@link Track} model)
-         * 
-         */
-        
-        private synchronized String[] request(String url, Model target, String httpVerb) throws LoginException, ServiceException {
-
-            if (sUser == null)
-                throw new LoginException("Cannot execute API actions without credentials.", LoginException.NO_CREDENTIALS);
-
-
-            try {
-
-                log.info("Requesting resource: " + url);
-
-                HttpRequestBase method = null; 
-                if ( HttpPost.METHOD_NAME.equals( httpVerb ) ) {
-                    method = new HttpPost(url);
-                } else if ( HttpPut.METHOD_NAME.equals( httpVerb ) ) {
-                    method = new HttpPut(url);
-                } else if ( HttpDelete.METHOD_NAME.equals( httpVerb ) ) {
-                    method = new HttpDelete(url);
-                } else {
-                    method = new HttpGet(url);
-                }
-
-                if ( method instanceof HttpPost && target instanceof Track ){
-                    HttpPost post = ( HttpPost ) method;
-                    post.setEntity( ((Track)target).getFileEntity() );
-                }
-
-                
-                
-                HttpResponse resp = sClient.execute(method, new BasicHttpContext());
-                String response = "";
-                if ( target != null )
-                    response = target.handleResponse( resp, httpVerb );
-                
-                HttpEntity responseEntity = resp.getEntity(); 
-                if (responseEntity != null) responseEntity.consumeContent();
-                
-                return new String[]{String.valueOf( resp.getStatusLine().getStatusCode() ) , response};
-
-            } catch( ClientProtocolException e ) {
-                throw new ServiceException( "Client protocol exception: " + e.getMessage(), ServiceException.CLIENT_ERROR );
-                
-            } catch( SocketTimeoutException e ) {
-                throw new ServiceException( "Service does not respond: " + e.getMessage(), ServiceException.TIMEOUT_ERROR );
-                
-            } catch( IOException e ) {
-                throw new ServiceException( "IO exception: " + e.getMessage(), ServiceException.SOCKET_ERROR );
-                
-            } 
-        }
-    	
     }
-    
-    
+
+
 }

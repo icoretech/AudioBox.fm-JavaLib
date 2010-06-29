@@ -19,33 +19,33 @@
  *                                                                         *
  ***************************************************************************/
 
-package fm.audiobox.core.api;
+package fm.audiobox.core.exceptions;
 
-import fm.audiobox.core.exceptions.LoginException;
-import fm.audiobox.core.exceptions.ModelException;
-import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.models.AudioBoxClient;
-import fm.audiobox.core.models.Track;
-import fm.audiobox.core.models.Tracks;
+/**
+ * This exception is thrown whenever an InstantiationException, IllegalAccessException or
+ * a ClassNotFoundException occurs on a Model instantiation. 
+ * 
+ * @author Valerio Chiodino
+ * @version 0.1
+ */
 
-public abstract class ModelItem extends Model {
+public class ModelException extends Exception {
 
-    public Tracks tracks;
-    
-    public Track getTrack(String uuid) {
-        return this.tracks.get(uuid);
-    }
-
-    public void setTracks(Tracks tracks) {
-        this.tracks = tracks;
-    }
-    
-    public Tracks getTracks() throws ServiceException, LoginException, ModelException {
-        
-		this.tracks = (Tracks) AudioBoxClient.getModelInstance(AudioBoxClient.TRACKS_KEY, this.getConnector());
-		this.getConnector().execute(this.getEndPoint(), this.getToken(), null, this.tracks, null);
-        
-        return this.tracks;
-    }
-    
+	private static final long serialVersionUID = 1L;
+	
+	private int errorCode;
+	
+	public ModelException(String message) {
+		super(message);
+	}
+	
+	public ModelException(String message, int code) {
+	    super(message);
+	    errorCode = code;
+	}
+	
+	public int getErrorCode() {
+	    return errorCode;
+	}
+	
 }

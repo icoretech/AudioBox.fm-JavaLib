@@ -4,11 +4,13 @@ import java.net.SocketException;
 import org.junit.Test;
 
 import fm.audiobox.core.exceptions.LoginException;
+import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Albums;
 import fm.audiobox.core.models.AudioBoxClient;
 import fm.audiobox.core.models.Tracks;
 import fm.audiobox.core.models.User;
+import fm.audiobox.core.test.mocks.fixtures.UserFixture;
 
 public class TestStartup extends junit.framework.TestCase {
 
@@ -17,7 +19,7 @@ public class TestStartup extends junit.framework.TestCase {
 		AudioBoxClient abc = new AudioBoxClient();
 		//AudioBoxClient.initClass( AudioBoxClient.USER_KEY, myUser.class);
 		try {
-			User user = abc.login("fat@fatshotty.net", "f4tb0x");
+			User user = abc.login(UserFixture.USERNAME, UserFixture.RIGHT_PASS);
 			user.getUploadedTracks();
 			
 			Albums albums= user.getAlbums();
@@ -31,7 +33,9 @@ public class TestStartup extends junit.framework.TestCase {
 			e.printStackTrace();
 		} catch (LoginException e) {
 			e.printStackTrace();
-		} catch (SocketException e) {
+        } catch (SocketException e) {
+            e.printStackTrace();
+        } catch (ModelException e) {
             e.printStackTrace();
         }
 		
