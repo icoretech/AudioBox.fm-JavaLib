@@ -5,12 +5,15 @@ package fm.audiobox.core.test;
 
 
 import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import fm.audiobox.core.StaticAudioBox;
+import fm.audiobox.core.api.Model;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
@@ -55,8 +58,29 @@ public class ArtistsTest extends junit.framework.TestCase {
             loadArtists();
             
             assertNotNull(artists);
-            Artist al = (Artist) artists.get(0);
-            assertNotNull(al);
+            
+            Artist artist = null;
+            
+            for (Model ar : artists.getCollection()) {
+                Artist art = (Artist) ar;
+                assertNotNull(art);
+                artist = art;
+            }
+
+            assertNotNull(artist);
+            
+            Artist ar = (Artist) artists.get(artist.getToken());
+            assertNotNull( ar );
+            assertSame( ar, artist );
+            
+            List<Artist> list = new ArrayList<Artist>();
+            artists.setCollection( list );
+            
+            assertNotNull( artists.getCollection() );
+            assertSame( list, artists.getCollection() );
+            
+            ar = (Artist) artists.get(ar.getToken());
+            assertNull( ar );
 
         } catch (LoginException e) {
             e.printStackTrace();

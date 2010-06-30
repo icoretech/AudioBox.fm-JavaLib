@@ -194,10 +194,10 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
             throw new ClientProtocolException(String.valueOf(responseCode));
 
         case HttpStatus.SC_UNPROCESSABLE_ENTITY:
-            throw new ServiceException( "Unprocessable entity", ServiceException.GENERIC_SERVICE_ERROR );
+            throw new ServiceException( "Unprocessable entity", ServiceException.UNPROCESSABLE_ENTITY );
 
         case HttpStatus.SC_NOT_FOUND:
-            throw new ServiceException( "Resource not found", ServiceException.GENERIC_SERVICE_ERROR );
+            throw new ServiceException( "Resource not found", ServiceException.RESOURCE_NOT_FOUND );
 
         default:
             throw new ServiceException( "An error occurred", ServiceException.GENERIC_SERVICE_ERROR );

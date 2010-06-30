@@ -86,7 +86,6 @@ import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.interfaces.CollectionListener;
-import fm.audiobox.core.test.mocks.models.User;
 import fm.audiobox.core.util.Inflector;
 
 
@@ -618,8 +617,8 @@ public class AudioBoxClient {
          */
         public String[] execute(String path, String token, String action , Model target, String httpVerb, String format) throws LoginException , ServiceException {
 
-            token = ( token == null ) ? "" : token.startsWith("/") ? token : "/".concat(token);
-            action = ( action == null ) ? "" : action.startsWith("/") ? action : "/".concat(action);
+            token = ( ( token == null ) ? "" : token.startsWith("/") ? token : "/".concat(token) ).trim();
+            action = ( ( action == null ) ? "" : action.startsWith("/") ? action : "/".concat(action) ).trim();
 
             // Replace the placeholder with the right values
             String url = sApiPath.replace( PATH_PARAMETER , path ).replace( TOKEN_PARAMETER , token ).replace( ACTION_PARAMETER , action ); 
@@ -724,10 +723,13 @@ public class AudioBoxClient {
 
             } catch( SocketTimeoutException e ) {
                 throw new ServiceException( "Service does not respond: " + e.getMessage(), ServiceException.TIMEOUT_ERROR );
-
+                
+            } catch( ServiceException e ) {
+                // Bypass IOException 
+                throw e;
+                
             } catch( IOException e ) {
                 throw new ServiceException( "IO exception: " + e.getMessage(), ServiceException.SOCKET_ERROR );
-
             } 
         }
 

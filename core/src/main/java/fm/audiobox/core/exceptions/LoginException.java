@@ -34,41 +34,32 @@ public class LoginException extends javax.security.auth.login.LoginException {
 
     /** Tipically used when trying to access services without authentication */
     public static final int NO_CREDENTIALS = -400;
-    
+
     /** Error code given by an inactive user login */
     public static final int INACTIVE_USER_STATE = -200;
-    
-	private static final long serialVersionUID = 1L;
-	
-	private int errorCode;
-	
-	/**
-	 * <p>Constructor for LoginException.</p>
-	 *
-	 * @param message a {@link java.lang.String} object.
-	 */
-	public LoginException(String message) {
-		super(message);
-	}
-	
-	/**
-	 * <p>Constructor for LoginException.</p>
-	 *
-	 * @param message a {@link java.lang.String} object.
-	 * @param code a int.
-	 */
-	public LoginException(String message, int code) {
-	    super(message);
-	    errorCode = code;
-	}
-	
-	/**
-	 * <p>Getter for the field <code>errorCode</code>.</p>
-	 *
-	 * @return a int.
-	 */
-	public int getErrorCode() {
-	    return errorCode;
-	}
-	
+
+    private static final long serialVersionUID = 1L;
+
+    private int errorCode;
+
+    /**
+     * <p>Constructor for LoginException.</p>
+     *
+     * @param message a {@link java.lang.String} object.
+     * @param code a int.
+     */
+    public LoginException(String message, int code) {
+        super(message);
+        errorCode = code;
+    }
+
+    /**
+     * <p>Getter for the field <code>errorCode</code>.</p>
+     *
+     * @return a int.
+     */
+    public int getErrorCode() {
+        return errorCode;
+    }
+
 }

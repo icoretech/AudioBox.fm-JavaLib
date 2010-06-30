@@ -5,6 +5,8 @@ package fm.audiobox.core.test;
 
 
 import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,6 +14,7 @@ import org.junit.Test;
 import fm.audiobox.core.StaticAudioBox;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
+import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Albums;
 import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
@@ -144,6 +147,36 @@ public class TrackTest extends junit.framework.TestCase {
             testTr.setPlayCount(playcount + 1);
             assertTrue( testTr.getPlayCount() == ( playcount + 1) );
             
+            
+            Track tr = user.getTrackByUuid( testTr.getUuid() );
+            
+            assertNotNull(tr);
+            
+            assertEquals(tr.getUuid(), testTr.getUuid());
+            assertNotSame(tr, testTr);
+            
+            String uuid = testTr.getUuid();
+            
+            Track track = trs.get(uuid);
+            assertNotNull( track );
+            assertSame(testTr, track);
+            
+            
+            try {
+                Track t = user.getTrackByUuid( "aaa ");
+                assertNull( t );
+            } catch( ServiceException e ) {
+                assertEquals( ServiceException.RESOURCE_NOT_FOUND, e.getErrorCode() );
+            }
+            
+            List<Track> list = new ArrayList<Track>();
+            trs.setCollection( list );
+            
+            assertNotNull( trs.getCollection() );
+            assertSame( list, trs.getCollection() );
+            
+            track = trs.get(uuid);
+            assertNull( track );
 
         } catch (LoginException e) {
             e.printStackTrace();

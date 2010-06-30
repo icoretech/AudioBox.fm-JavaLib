@@ -261,7 +261,7 @@ public class User extends ModelItem {
      *
      * @param availableStorage a {@link java.lang.String} object.
      */
-    public void setAvalableStorage(String availableStorage) {
+    public void setAvailableStorage(String availableStorage) {
         this.availableStorage = Long.parseLong( availableStorage );
     }
 
@@ -340,9 +340,10 @@ public class User extends ModelItem {
      * @return the requested track if it exists.
      * @throws fm.audiobox.core.exceptions.LoginException if user has not been authenticated
      * @throws fm.audiobox.core.exceptions.ServiceException if the requested resource doesn't exists or any other fm.audiobox.core.exceptions.ServiceException occur.
+     * @throws ModelException 
      */
-    public Track getTrackByUuid(String uuid) throws ServiceException, LoginException {
-        Track tr = new Track();
+    public Track getTrackByUuid(String uuid) throws ServiceException, LoginException, ModelException {
+        Track tr = (Track) AudioBoxClient.getModelInstance(AudioBoxClient.TRACK_KEY, this.getConnector());
         this.getConnector().execute(Tracks.END_POINT, uuid, null, tr, HttpGet.METHOD_NAME);
         return tr;
     }

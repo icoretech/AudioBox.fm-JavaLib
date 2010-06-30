@@ -29,11 +29,11 @@ import fm.audiobox.core.api.ModelItem;
  * <pre>
  * {@code
  * <playlist>
- *   <id type="integer">13</id>
  *   <name>Music</name>
- *   <playlist-tracks-count type="integer">1490</playlist-tracks-count>
+ *   <playlist-tracks-count type="integer">1591</playlist-tracks-count>
  *   <playlist-type>audio</playlist-type>
  *   <position type="integer">1</position>
+ *   <token>ass8sad909sh</token>
  * </playlist>
  * }
  * </pre>
@@ -47,13 +47,11 @@ public class Playlist extends ModelItem {
     /** Constant <code>TAG_NAME="playlist"</code> */
     public static final String TAG_NAME = "playlist";
     
-    protected int id;
     protected int playlistTracksCount;
     protected String playlistType;
     protected int position;
-    
-    
 
+    
     /**
      * <p>Constructor for Playlist.</p>
      */
@@ -61,29 +59,6 @@ public class Playlist extends ModelItem {
         this.endPoint = Playlists.END_POINT;
     }
 
-    
-    
-    
-    /**
-     * <p>Setter for the field <code>id</code>.</p>
-     *
-     * @param id a {@link java.lang.String} object.
-     */
-    public void setId(String id) {
-        this.id = Integer.parseInt(id);
-    }
-
-    /**
-     * <p>Getter for the field <code>id</code>.</p>
-     *
-     * @return the id
-     */
-    public int getId() {
-        return id;
-    }
-
-
-    
     
     /**
      * <p>Setter for the field <code>playlistTracksCount</code>.</p>

@@ -5,12 +5,14 @@ package fm.audiobox.core.test;
 
 
 import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import fm.audiobox.core.StaticAudioBox;
+import fm.audiobox.core.api.Model;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
@@ -55,9 +57,27 @@ public class PlaylistsTest extends junit.framework.TestCase {
 
             loadPlaylists();
             assertNotNull(playlists);
+            
+            Playlist playlist = null;
+            
+            for (Model p : playlists.getCollection()) {
+                Playlist pls = (Playlist) p;
+                assertNotNull(pls);
+                playlist = pls;
+            }
 
-            Playlist al = (Playlist) playlists.get(0);
-            assertNotNull(al);
+            Playlist p = (Playlist) playlists.get(playlist.getToken());
+            assertNotNull( p );
+            assertSame( p, playlist);
+            
+            List<Playlist> list = new ArrayList<Playlist>();
+            playlists.setCollection( list );
+            
+            assertNotNull( playlists.getCollection() );
+            assertSame( list, playlists.getCollection() );
+            
+            playlist = (Playlist) playlists.get(playlist.getToken());
+            assertNull( playlist );
 
         } catch (LoginException e) {
             e.printStackTrace();
@@ -81,12 +101,22 @@ public class PlaylistsTest extends junit.framework.TestCase {
         loadPlaylists();
         assertNotNull(playlists);
 
-        Playlist pl = (Playlist) playlists.get(0);
-        assertNotNull(pl);
-        assertNotNull( pl.getName() );
-        assertNotNull( pl.getToken() );
+        
+        Playlist testPl = null;
+        
+        for (Playlist pl : playlists.getCollection()) {
+            assertNotNull( pl );
+            assertNotNull( pl.getName() );
+            assertNotNull( pl.getToken() );
+            assertNotNull( pl.getPlaylistType() );
+            assertNotNull( pl.getPlaylistTracksCount() );
+            assertNotNull( pl.getPosition() );
+            testPl = pl;
+        }
+        
+        assertNotNull( testPl ); 
 
-        Tracks trs = (Tracks) pl.getTracks();
+        Tracks trs = (Tracks) testPl.getTracks();
         assertNotNull(trs);
         
         //trs.invoke();
@@ -107,14 +137,8 @@ public class PlaylistsTest extends junit.framework.TestCase {
     }
 
 
-    @After
-    public void tearDown() throws Exception {
-
-    }
-
     private void loadPlaylists() throws ServiceException, LoginException, InstantiationException, IllegalAccessException, ClassNotFoundException, ModelException {
         playlists = (Playlists) user.getPlaylists(false);
-        //playlists.invoke();
     }
 
     private void loginCatched() {

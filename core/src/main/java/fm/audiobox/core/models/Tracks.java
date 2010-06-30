@@ -91,13 +91,13 @@ public class Tracks extends ModelsCollection {
     /**
      * <p>get</p>
      *
-     * @param token a {@link java.lang.String} object.
+     * @param uuid the UUID of the track you are looking for.
+     * 
      * @return a {@link fm.audiobox.core.models.Track} object.
      */
-    public Track get(String token) {
+    public Track get(String uuid) {
         for (Track track : collection) {
-            // NOTE: Track#getToken() is equivalent to Track.getUuid()
-            if ( token.equals( track.getToken() ) )
+            if ( uuid.equals( track.getUuid() ) )
                 return track;
         }
         return null;

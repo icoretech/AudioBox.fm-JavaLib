@@ -22,6 +22,8 @@
 
 package fm.audiobox.core.exceptions;
 
+import org.apache.http.HttpStatus;
+
 
 /**
  * ServiceException is thrown whenever a connection exception occurs while
@@ -38,46 +40,52 @@ public class ServiceException extends java.net.ConnectException {
 
     /** Socket exception error code */
     public static final int SOCKET_ERROR = 1;
-    
+
     /** Client exception error code */
     public static final int CLIENT_ERROR = 2;
-    
+
     /** Timeout exception error code */
     public static final int TIMEOUT_ERROR = 3;
-    
+
+    /** Resource unavailable error code */
+    public static final int RESOURCE_NOT_FOUND = HttpStatus.SC_NOT_FOUND;
+
+    /** Not processable entity error code */
+    public static final int UNPROCESSABLE_ENTITY = HttpStatus.SC_UNPROCESSABLE_ENTITY;
+
     /** Generic service exception error code */
-    public static final int GENERIC_SERVICE_ERROR = 4;
-    
+    public static final int GENERIC_SERVICE_ERROR = 6;
+
     private static final long serialVersionUID = 1L;
 
     private int errorCode;
-	
-	/**
-	 * <p>Constructor for ServiceException.</p>
-	 *
-	 * @param message a {@link java.lang.String} object.
-	 */
-	public ServiceException(String message) {
-		super(message);
-	}
-	
-	/**
-	 * <p>Constructor for ServiceException.</p>
-	 *
-	 * @param message a {@link java.lang.String} object.
-	 * @param errorCode a int.
-	 */
-	public ServiceException(String message, int errorCode) {
-	    this(message);
-	    this.errorCode = errorCode;
-	}
-	
-	/**
-	 * <p>Getter for the field <code>errorCode</code>.</p>
-	 *
-	 * @return a int.
-	 */
-	public int getErrorCode(){
-		return errorCode;
-	}
+
+    /**
+     * <p>Constructor for ServiceException.</p>
+     *
+     * @param message a {@link java.lang.String} object.
+     */
+    public ServiceException(String message) {
+        super(message);
+    }
+
+    /**
+     * <p>Constructor for ServiceException.</p>
+     *
+     * @param message a {@link java.lang.String} object.
+     * @param errorCode a int.
+     */
+    public ServiceException(String message, int errorCode) {
+        this(message);
+        this.errorCode = errorCode;
+    }
+
+    /**
+     * <p>Getter for the field <code>errorCode</code>.</p>
+     *
+     * @return a int.
+     */
+    public int getErrorCode(){
+        return errorCode;
+    }
 }

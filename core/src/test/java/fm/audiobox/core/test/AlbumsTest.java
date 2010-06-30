@@ -5,6 +5,8 @@ package fm.audiobox.core.test;
 
 
 import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
@@ -28,10 +30,10 @@ import fm.audiobox.core.test.mocks.models.Tracks;
  */
 public class AlbumsTest extends junit.framework.TestCase {
 
-	StaticAudioBox abc;
+    StaticAudioBox abc;
     User user;
     Albums albums;
-    
+
     @SuppressWarnings("deprecation")
     @Before
     public void setUp() throws Exception {
@@ -42,28 +44,46 @@ public class AlbumsTest extends junit.framework.TestCase {
         abc.setForceTrust(true);
         user = abc.login(UserFixture.LOGIN, UserFixture.RIGHT_PASS);
     }
-    
-    
+
+
     @Test
     public void testPreconditions() {
         assertNotNull( abc );
         assertNotNull( user );
     }
 
-   
+
     @Test
     public void testAlbumsShouldBePopulated() {
         loginCatched();
         try {
-            
+
             loadAlbums();
-            
+
             assertNotNull(albums);
+            
+            Album album = null;
+            
             for (Model al : albums.getCollection()) {
                 Album alb = (Album) al;
                 assertNotNull(alb);
+                assertNotNull(alb.getCoverUrlAsThumb());
+                assertNotNull(alb.getCoverUrl());
+                album = alb;
             }
+
+            Album al = (Album) albums.get(album.getToken());
+            assertNotNull( al );
+            assertSame( al, album);
             
+            List<Album> list = new ArrayList<Album>();
+            albums.setCollection( list );
+            
+            assertNotNull( albums.getCollection() );
+            assertSame( list, albums.getCollection() );
+            
+            al = (Album) albums.get(al.getToken());
+            assertNull( al );
 
         } catch (LoginException e) {
             e.printStackTrace();
@@ -79,26 +99,26 @@ public class AlbumsTest extends junit.framework.TestCase {
             e.printStackTrace();
         }
     }
-    
-    
+
+
     @Test
     public void testAlbumShouldBePopulatedAndContainsTracks() {
         loginCatched();
         try {
-            
+
             loadAlbums();
-            
+
             assertNotNull(albums);
             Album al = (Album) albums.get(0);
             assertNotNull(al);
-            
+
             Tracks trs = (Tracks) al.getTracks();
             assertNotNull(trs);
-            
+
             Track tr = (Track) trs.get(0);
             assertNotNull(tr.getTest());
             assertNotNull(tr);
-            
+
         } catch (LoginException e) {
             e.printStackTrace();
         } catch (SocketException e) {
@@ -113,18 +133,18 @@ public class AlbumsTest extends junit.framework.TestCase {
             e.printStackTrace();
         }
     }
-    
-    
+
+
     @After
     public void tearDown() throws Exception {
-        
+
     }
-    
+
     private void loadAlbums() throws ServiceException, LoginException, InstantiationException, IllegalAccessException, ClassNotFoundException, ModelException {
         albums = (Albums) user.getAlbums(false);
         //albums.invoke();
     }
-    
+
     private void loginCatched() {
         try {
             user = abc.login( UserFixture.LOGIN , UserFixture.RIGHT_PASS );
@@ -135,6 +155,6 @@ public class AlbumsTest extends junit.framework.TestCase {
         } catch (ModelException e) {
             e.printStackTrace();
         }
-        
+
     }
 }

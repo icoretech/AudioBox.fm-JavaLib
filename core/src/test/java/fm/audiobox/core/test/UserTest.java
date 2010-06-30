@@ -6,6 +6,7 @@ package fm.audiobox.core.test;
 
 import java.net.SocketException;
 
+import org.apache.http.HttpStatus;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,6 +15,11 @@ import fm.audiobox.core.StaticAudioBox;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
+import fm.audiobox.core.models.Albums;
+import fm.audiobox.core.models.Artists;
+import fm.audiobox.core.models.Genres;
+import fm.audiobox.core.models.Playlists;
+import fm.audiobox.core.models.Profile;
 import fm.audiobox.core.test.mocks.fixtures.UserFixture;
 import fm.audiobox.core.test.mocks.models.User;
 
@@ -44,12 +50,56 @@ public class UserTest extends junit.framework.TestCase {
     }
     
     @Test
+    public void testUser() {
+        try {
+            StaticAudioBox.getConnector().setTimeout(5000);
+            assertEquals( 5000, StaticAudioBox.getConnector().getTimeout());
+            
+            user = (User) abc.login( UserFixture.LOGIN , UserFixture.RIGHT_PASS );
+            assertSame( user, abc.getUser() );
+            
+            assertNotNull( user.getBytesServed() );
+            assertNotNull( user.getEmail() );
+            assertNotNull( user.getPlayCount() );
+            assertNotNull( user.getQuota() );
+            assertNotNull( user.getTracksCount() );
+            assertNotNull( user.getAvailableStorage() );
+            assertNotNull( user.getAvatarUrl() );
+            assertNotNull( user.getName() );
+            
+            
+            assertTrue( user.getQuota() < user.getAvailableStorage() );
+            
+            // Profile
+            Profile p = user.getProfile();
+            assertNotNull( p.hasAutoplay() );
+            assertNotNull( p.getBirthDate() );
+            assertNotNull( p.getCountry() );
+            assertNotNull( p.getGender() );
+            assertNotNull( p.getHomePage() );
+            assertNotNull( p.getRealName() );
+            assertNotNull( p.getTimeZone() );
+            assertEquals( p.getName(), p.getRealName() );
+            assertNull( p.getToken() );
+            
+            
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        } catch (LoginException e) {
+            e.printStackTrace();
+        } catch (ModelException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    
+    @Test
     public void testLoginShouldThrowsLoginExceptionOnWrongPassword() {
         assertNotNull( abc );
         try {
             user = (User) abc.login( UserFixture.LOGIN , UserFixture.WRONG_PASS );
         } catch (LoginException e) {
-           assertEquals( 401, e.getErrorCode());
+           assertEquals( HttpStatus.SC_UNAUTHORIZED, e.getErrorCode());
         } catch (SocketException e) {
             e.printStackTrace();
         } catch (ModelException e) {
@@ -95,6 +145,29 @@ public class UserTest extends junit.framework.TestCase {
             assertEquals( LoginException.INACTIVE_USER_STATE, e.getErrorCode() );
         } catch (SocketException e) {
             e.printStackTrace();
+        } catch (ModelException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    
+    @Test
+    public void testUserCollections() {
+        loginCatched();
+        try {
+            
+            Playlists pls = user.getPlaylists();
+            assertNotNull( pls );
+            
+            Genres gnr = user.getGenres();
+            assertNotNull( gnr );
+            
+            Artists art = user.getArtists();
+            assertNotNull( art );
+            
+            Albums alb = user.getAlbums();
+            assertNotNull( alb );
+            
         } catch (ModelException e) {
             e.printStackTrace();
         }
