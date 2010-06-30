@@ -34,19 +34,19 @@ import fm.audiobox.core.api.ModelItem;
  * </artist>
  * }
  * </pre>
- * 
- * 
+ *
  * @author Valerio Chiodino
  * @author Fabio Tunno
- * 
  * @version 0.0.1
- * 
  */
-
 public class Artist extends ModelItem {
 	
+	/** Constant <code>TAG_NAME="artist"</code> */
 	public static final String TAG_NAME = "artist";
 	
+	/**
+	 * <p>Constructor for Artist.</p>
+	 */
 	protected Artist() {
 		this.endPoint = Artists.END_POINT;
 	}

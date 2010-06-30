@@ -29,46 +29,71 @@ import fm.audiobox.core.api.ModelsCollection;
 
 
 /**
- * 
+ * <p>Tracks class.</p>
+ *
  * @author Valerio Chiodino
  * @author Fabio Tunno
- * 
  * @version 0.0.1
- * 
  */
-
 public class Tracks extends ModelsCollection {
 
+    /** Constant <code>END_POINT="tracks"</code> */
     public static final String END_POINT = "tracks";
     
     protected List<Track> collection = new ArrayList<Track>();
     
+    /**
+     * <p>Constructor for Tracks.</p>
+     */
     protected Tracks(){
         this.endPoint = END_POINT;
     }
     
+    /**
+     * <p>getTagName</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getTagName() {
         return Track.TAG_NAME;
     }
     
+    /**
+     * <p>Getter for the field <code>collection</code>.</p>
+     *
+     * @return a {@link java.util.List} object.
+     */
     public List<? extends Track> getCollection() {
         return this.collection;
     }
     
+    /**
+     * <p>addTrack</p>
+     *
+     * @param track a {@link fm.audiobox.core.models.Track} object.
+     */
     public void addTrack(Track track) {
         this.collection.add(track);
     }
     
+    /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     @Override
     public void setCollection(List<?> collection) {
         this.collection = (List<Track>) collection;
     }
     
+    /** {@inheritDoc} */
     public Track get(int index) {
         return collection.get(index);
     }
     
+    /**
+     * <p>get</p>
+     *
+     * @param token a {@link java.lang.String} object.
+     * @return a {@link fm.audiobox.core.models.Track} object.
+     */
     public Track get(String token) {
         for (Track track : collection) {
             // NOTE: Track#getToken() is equivalent to Track.getUuid()

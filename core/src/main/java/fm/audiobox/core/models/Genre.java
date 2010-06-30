@@ -34,18 +34,19 @@ import fm.audiobox.core.api.ModelItem;
  * </genre>
  * }
  * </pre>
- * 
+ *
  * @author Valerio Chiodino
  * @author Fabio Tunno
- * 
  * @version 0.0.1
- * 
  */
-
 public class Genre extends ModelItem {
 	
+	/** Constant <code>TAG_NAME="genre"</code> */
 	public static final String TAG_NAME = "genre";
 	
+	/**
+	 * <p>Constructor for Genre.</p>
+	 */
 	protected Genre() {
 		this.endPoint = Genres.END_POINT;
 	}

@@ -54,22 +54,24 @@ import fm.audiobox.core.util.Inflector;
 
 
 /**
- * 
+ * <p>Abstract Model class.</p>
+ *
  * @author Valerio Chiodino
  * @author Fabio Tunno
- * 
  * @version 0.0.1
- * 
  */
-
 public abstract class Model extends DefaultHandler implements ResponseHandler<String[]> {
 
     private static final String ADD_PREFIX = "add";
     private static final String SET_PREFIX = "set";
 
+    /** Constant <code>SAX_ERROR_CODE=-1000</code> */
     public static final int SAX_ERROR_CODE = -1000;
+    /** Constant <code>PARSER_CONFIGURATION_ERROR_CODE=-1001</code> */
     public static final int PARSER_CONFIGURATION_ERROR_CODE = -1001;
+    /** Constant <code>IO_ERROR_CODE=-1002</code> */
     public static final int IO_ERROR_CODE = -1002;
+    /** Constant <code>CHUNK=4096</code> */
     protected static final int CHUNK = 4096;
 
     private static Log log = LogFactory.getLog(Model.class);
@@ -86,43 +88,89 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
     protected AudioBoxConnector connector;
 
 
+    /**
+     * <p>Setter for the field <code>connector</code>.</p>
+     *
+     * @param conn a {@link fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector} object.
+     */
     public void setConnector(AudioBoxConnector conn){
         this.connector = conn;
     }
 
+    /**
+     * <p>Getter for the field <code>connector</code>.</p>
+     *
+     * @return a {@link fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector} object.
+     */
     public AudioBoxConnector getConnector(){
         return this.connector;
     }
 
+    /**
+     * <p>toString</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String toString() {
         return this.getName();
     }
 
+    /**
+     * <p>Setter for the field <code>endPoint</code>.</p>
+     *
+     * @param endPoint a {@link java.lang.String} object.
+     */
     public final void setEndPoint(String endPoint){
         this.endPoint = endPoint;
     }
 
+    /**
+     * <p>Getter for the field <code>endPoint</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public final String getEndPoint(){
         return this.endPoint;
     }
 
+    /**
+     * <p>Getter for the field <code>name</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getName() {
         return this.name;
     }
 
+    /**
+     * <p>Setter for the field <code>name</code>.</p>
+     *
+     * @param name a {@link java.lang.String} object.
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * <p>Getter for the field <code>token</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getToken() {
         return this.token;
     }
 
+    /**
+     * <p>Setter for the field <code>token</code>.</p>
+     *
+     * @param token a {@link java.lang.String} object.
+     */
     public final void setToken(String token) {
         this.token = token;
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public String[] handleResponse(HttpResponse response) throws ClientProtocolException, IOException {
 
@@ -165,6 +213,14 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
 
     }
 
+    /**
+     * <p>parseResponse</p>
+     *
+     * @param input a {@link java.io.InputStream} object.
+     * @param contentType a {@link org.apache.http.Header} object.
+     * @return a {@link java.lang.String} object.
+     * @throws java.io.IOException if any.
+     */
     public String parseResponse( InputStream input, Header contentType ) throws IOException {
         String response = "";
         try {
@@ -211,6 +267,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
     /* --------- */
 
 
+    /** {@inheritDoc} */
     @Override
     public final void startDocument() throws SAXException {
         this.mStack = new Stack<Object>();
@@ -218,6 +275,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
         super.startDocument();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void endDocument() throws SAXException {
         this.mStack = null;
@@ -225,6 +283,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public final void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
@@ -299,6 +358,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
         super.startElement(uri, localName, qName, attributes);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
 
@@ -335,6 +395,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
         super.endElement(uri, localName, qName);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
 

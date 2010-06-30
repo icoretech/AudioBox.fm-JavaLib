@@ -25,27 +25,42 @@ package fm.audiobox.core.exceptions;
 
 /**
  * This exception is thrown whenever an {@link InstantiationException}, {@link IllegalAccessException} or
- * a {@link ClassNotFoundException} occurs on a Model instantiation. 
- * 
+ * a {@link ClassNotFoundException} occurs on a Model instantiation.
+ *
  * @author Valerio Chiodino
  * @version 0.0.1
  */
-
 public class ModelException extends Exception {
 
 	private static final long serialVersionUID = 1L;
 	
 	private int errorCode;
 	
+	/**
+	 * <p>Constructor for ModelException.</p>
+	 *
+	 * @param message a {@link java.lang.String} object.
+	 */
 	public ModelException(String message) {
 		super(message);
 	}
 	
+	/**
+	 * <p>Constructor for ModelException.</p>
+	 *
+	 * @param message a {@link java.lang.String} object.
+	 * @param code a int.
+	 */
 	public ModelException(String message, int code) {
 	    super(message);
 	    errorCode = code;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>errorCode</code>.</p>
+	 *
+	 * @return a int.
+	 */
 	public int getErrorCode() {
 	    return errorCode;
 	}

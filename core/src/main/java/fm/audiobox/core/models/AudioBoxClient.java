@@ -1,3 +1,4 @@
+
 /***************************************************************************
  *   Copyright (C) 2010 iCoreTech research labs                            *
  *   Contributed code from:                                                *
@@ -79,91 +80,131 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 
+import fm.audiobox.core.StaticAudioBox;
 import fm.audiobox.core.api.Model;
 import fm.audiobox.core.api.ModelsCollection;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.interfaces.CollectionListener;
+import fm.audiobox.core.test.mocks.models.User;
 import fm.audiobox.core.util.Inflector;
 
 
 /**
- * AudioBoxClient is the main library class. Every request to AudioBox.fm are made through this object.
+ * AudioBoxClient is the main library class. Every request to AudioBox.fm should pass through this object.
  * This class is used mainly to configure every aspect of the library itself.<br/>
  * To populate and get informations about user library use the {@link User} (or an extended User) model instead.
  *
  * <p>
- * 
- * As many other libraries out there AudioBox.fm-JavaLib allows you to extends default models and use them in place 
- * of default ones.
- * 
- * <p>
- * 
- * In order to make AudioBoxClient load your extended models you will need to provide a full package path where 
- * your classes are stored.<br/> 
- * For instance the default models package is "fm.audiobox.api.models"; here you will find the default {@link Track}
- * model.<br/>
- * If you plan to override the Track model you must inform AudioBoxClient where to find your Track class and this can 
- * be done in two ways:
- * 
- * <ol>
- *  <li>simply setting up the custom package path through {@link AudioBoxClient#setCustomModelsPackage(String) setCustomModelsPackage(String)}.</li>
- *  <li>overwriting the default {@link AudioBoxModelLoader} as told before.</li>
- * </ol>
- * 
- * <p>
- * 
- * The usual execution flow can be demonstrated by the code snippet below: 
- * 
- * <pre>
- * 
- * // This is needed if you plan to extend default models 
- * AudioBoxClient.setCustomModelsPackage("my.custom.models");
- * 
- * // If you extended the {@link User} model AudioBoxClient should be informed before create a new instance 
- * AudioBoxClient.setUserClass(MyUser.class);
  *
- * // Creating the new AudioBoxClient instance 
+ * As many other libraries out there AudioBox.fm-JavaLib allows you to extends default models and use them in place
+ * of default ones.
+ *
+ * <p>
+ *
+ * In order to make AudioBoxClient load your extended models you will need to provide your {@link Model} extension
+ * through the {@link AudioBoxClient#setCollectionListenerFor(String, CollectionListener)} method.<br/>
+ *
+ * <p>
+ * 
+ * Note that some of the requests, such as the ModelsCollection population requests, can be done asynchronously.<br/>
+ * To keep track of the collection building process you can make use of the {@link CollectionListener} object.
+ * 
+ * <p>
+ *
+ * The usual execution flow can be demonstrated by the code snippet below:
+ *
+ * <pre>
+ *
+ * // Creating the new AudioBoxClient instance
  * abc = new AudioBoxClient();
+ *
+ * // If you extended the {@link User} model AudioBoxClient should be informed before the login take place.
+ * AudioBoxClient.setModelClassFor(AudioBoxClient.USER_KEY , MyUser.class );
+ * 
+ * // Suppose we want to limit requests timeout to 5 seconds
+ * abc.getMainConnector().setTimeout( 5000 );
+ *  
+ * // Now we can try to perform a login...
  * try {
- *    
+ *
  *    // Should perform a login before anything else is done with the AudioBoxClient object
  *    MyUser user = (MyUser) abc.login( "user@email.com" , "password" );
- *    
- *    // Now you can browse your library with calls like this:
+ *
+ *    // To browse user library we have some nice utils methods
+ *    // We can get the user's playlists...
  *    Playlists pls = user.getPlaylists();
  *    
+ *    // ...and get more details on a specific one
+ *    Playlist pl = playlists.get(0);
+ *    
+ *    // Get playlist's tracks
+ *    Tracks trs = pl.getTracks();
+ *    
+ *    // Track informations
+ *    Track tr = trs.get(0);
+ *
  * } catch (LoginException e) {
  *    // Handle {@link LoginException}
  * } catch (ServiceException e) {
  *    // Handle {@link ServiceException}
  * }
- * 
+ *
  * </pre>
- * 
+ *
+ * This is briefly the navigation loop. Moreover each model offer some action that can be performed. To know what a model
+ * can do consult the specific model documentation.
  * 
  * @author Valerio Chiodino
  * @author Fabio Tunno
- * 
  * @version 0.0.1
- * 
  */
-
 public class AudioBoxClient {
 
     private static Log log = LogFactory.getLog(AudioBoxClient.class);
 
     /** Specifies the models package (default: fm.audiobox.core.models) */
     public static final String DEFAULT_MODELS_PACKAGE = AudioBoxClient.class.getPackage().getName();
+    
+    /** Constant <code>TRACK_ID_PLACEHOLDER="[track_id]"</code> */
     public static final String TRACK_ID_PLACEHOLDER = "[track_id]";
-    public static final String 
-    USER_KEY      = User.TAG_NAME,  PROFILE_KEY  = Profile.TAG_NAME, 
-    PLAYLISTS_KEY = "Playlists",    PLAYLIST_KEY = Playlist.TAG_NAME,
-    GENRES_KEY    = "Genres",       GENRE_KEY    = Genre.TAG_NAME,
-    ARTISTS_KEY   = "Artists",      ARTIST_KEY   = Artist.TAG_NAME,
-    ALBUMS_KEY    = "Albums",       ALBUM_KEY    = Album.TAG_NAME,
-    TRACKS_KEY    = "Tracks",       TRACK_KEY    = Track.TAG_NAME;
+    
+    /** Constant <code>USER_KEY="User.TAG_NAME"</code> */
+    public static final String USER_KEY      = User.TAG_NAME;
+    
+    /** Constant <code>PROFILE_KEY="Profile.TAG_NAME"</code> */
+    public static final String PROFILE_KEY   = Profile.TAG_NAME;
+    
+    /** Constant <code>PLAYLISTS_KEY="Playlists"</code> */
+    public static final String PLAYLISTS_KEY = "Playlists";
+    
+    /** Constant <code>PLAYLIST_KEY="Playlist.TAG_NAME"</code> */
+    public static final String PLAYLIST_KEY  = Playlist.TAG_NAME;
+    
+    /** Constant <code>GENRES_KEY="Genres"</code> */
+    public static final String GENRES_KEY    = "Genres";
+    
+    /** Constant <code>GENRE_KEY="Genre.TAG_NAME"</code> */
+    public static final String GENRE_KEY     = Genre.TAG_NAME;
+    
+    /** Constant <code>ARTISTS_KEY="Artists"</code> */
+    public static final String ARTISTS_KEY   = "Artists";
+    
+    /** Constant <code>ARTIST_KEY="Artist.TAG_NAME"</code> */
+    public static final String ARTIST_KEY    = Artist.TAG_NAME;
+    
+    /** Constant <code>ALBUMS_KEY="Albums"</code> */
+    public static final String ALBUMS_KEY    = "Albums";
+    
+    /** Constant <code>ALBUM_KEY="Album.TAG_NAME"</code> */
+    public static final String ALBUM_KEY     = Album.TAG_NAME;
+    
+    /** Constant <code>TRACKS_KEY="Tracks"</code> */
+    public static final String TRACKS_KEY    = "Tracks";
+    
+    /** Constant <code>TRACK_KEY="Track.TAG_NAME"</code> */
+    public static final String TRACK_KEY     = Track.TAG_NAME;
 
     private static Inflector sI = Inflector.getInstance();
 
@@ -193,17 +234,24 @@ public class AudioBoxClient {
     /* Default Interfaces */
     /* ------------------ */
 
-    /** @see {@link CollectionListener} */
+    /** The default {@link CollectionListener}. Dummy implementation. */
     private static CollectionListener sDefaultCollectionListener = new CollectionListener() {
         public void onCollectionReady(int message, Object result) { }
         public void onItemReady(int item, Object obj) { }
     };
 
 
+    /**
+     * <p>Constructor for AudioBoxClient.</p>
+     * 
+     * When is created it instantiate an {@link AudioBoxConnector} too.
+     * 
+     */
     public AudioBoxClient() {
 
         this.connector = new AudioBoxConnector();	// setup connection
-
+        this.connector.setTimeout( 180 * 1000 );
+        
         String version = "unattended";
 
         try {
@@ -227,11 +275,23 @@ public class AudioBoxClient {
     }
 
 
+    /**
+     * <p>Getter method for the default connector Object<p>
+     *
+     * @return the main {@link fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector} object.
+     */
     protected AudioBoxConnector getMainConnector(){
         return this.connector;
     }
 
 
+    /**
+     * <p>If you need to customize or extend the default models classes you can set your own implementation through
+     * this method.</p>
+     * 
+     * @param key one of the key defined as AudioBoxClient model constants,
+     * @param klass your extended {@link Model} {@link Class}.
+     */
     public static void setModelClassFor(String key, Class<? extends Model> klass){
         Class<? extends Model> _klass = sModelsMap.get( key );
         if ( _klass != null ){
@@ -239,10 +299,37 @@ public class AudioBoxClient {
         }
     }
 
+    /**
+     * <p>{@link CollectionListener} is mainly used for async requests.</p>
+     * Default implementation does nothing.
+     * 
+     * <p>
+     * 
+     * If you wish to interact with the collection while it's being build you can provide your implementation through 
+     * this method.
+     * 
+     * <p>
+     * 
+     * Note that this will affect only {@link ModelsCollection} models only.
+     * 
+     * @param key one of the key defined as AudioBoxClient model constants.
+     * @param cl your CollectionListener implementation.
+     */
     public static void setCollectionListenerFor(String key, CollectionListener cl) {
-        sCollectionListenersMap.put( key, cl );
+        if (cl != null)
+            sCollectionListenersMap.put( key, cl );
     }
 
+    /**
+     * <p>Create new {@link Model} object based upon the provided key.</p>
+     *
+     * @param key one of the key defined as AudioBoxClient model constants.
+     * @param connector CollectionListener implementation or null.
+     * 
+     * @return a {@link Model} object.
+     * 
+     * @throws ModelException if provided key isn't covered from the models map.
+     */
     @SuppressWarnings("unchecked")
     public static Model getModelInstance(String key, AudioBoxConnector connector) throws ModelException {
 
@@ -285,20 +372,21 @@ public class AudioBoxClient {
 
     /**
      * This method should be called before any other call to AudioBox.fm.<br/>
-     * It tries to perform a login. If succeeds a User object is returned otherwise a {@link LoginException} is thrown.<br/>
+     * It tries to perform a login. If succeeds a {@link User} object is returned otherwise a 
+     * {@link LoginException} is thrown.<br/>
      * This method also checks whether the user is active or not. If not a LoginException is thrown.
-     * 
+     *
      * <p>
-     * 
+     *
      * @param username the username to login to AudioBox.fm in form of an e-mail
      * @param password the password to use for authentication
      * 
      * @return {@link User} object
-     * @throws ModelException 
-     * @throws IllegalAccessException 
-     * @throws InstantiationException 
+     * 
+     * @throws ModelException if any of the custom model class does not exists or is not instantiable.
+     * @throws LoginException if user doesn't exists or is inactive.
+     * @throws ServiceException if any connection problem occurs.
      */
-
     public User login(String username, String password) throws LoginException, ServiceException, ModelException {
 
         log.info("Starting AudioBoxClient: " + mUserAgent);
@@ -317,23 +405,26 @@ public class AudioBoxClient {
 
 
     /**
-     * This method returns the User object used to perform requests to AudioBox.fm.
+     * This method returns the User object used to perform authenticated requests to AudioBox.fm.
+     * 
+     * <p>
+     * 
+     * May return <b>null</b> if the user has not yet performed a {@link AudioBoxClient#login(String, String) login}.
      * 
      * @return {@link User} object
      */
-
     public User getUser() {
         return sUser;
     }
 
 
     /**
-     * Use this method to get the configured {@link CollectionListener}.
-     * 
+     * Use this method to get the configured {@link CollectionListener} for the <em>key</em> specified {@link ModelsCollection}.
+     *
      * @param key the name of the ModelsCollection associated with the collection listener.
+     * 
      * @return the current collection listener AudioBoxClient is using.
      */
-
     public static CollectionListener getCollectionListenerFor(String key) {
         return sCollectionListenersMap.get(key);
     }
@@ -341,55 +432,64 @@ public class AudioBoxClient {
 
     /**
      * This method will switch SSL certificate validation on or off.
-     * You will not need to use this. This method is used for testing purpose only. For this reason this method is 
+     * You will not need to use this. This method is used for testing purpose only. For this reason is
      * marked as "deprecated".
-     * 
+     *
      * @param force set or unset the SSL certificate validation (false validates, true skips validation).
      */
-
     @Deprecated
     public void setForceTrust(boolean force) {
         this.getMainConnector().setForceTrust(force);
     }
 
+    /**
+     * AudioBoxConnector is the AudioBoxClient http request wrapper.
+     * 
+     * <p>
+     * 
+     * Every HTTP request to AudioBox.fm is done through this object and 
+     * responses are handled from {@link Model} objects.
+     * 
+     * <p>
+     * 
+     * Actually the only configurable parameter is the timeout through the {@link AudioBoxConnector#setTimeout(long)}.
+     */
     public class AudioBoxConnector implements Serializable {
 
         private static final long serialVersionUID = -1947929692214926338L;
-
-        private Log log = LogFactory.getLog(AudioBoxConnector.class);
-
+        private static final String PATH_PARAMETER = "${path}";
+        private static final String TOKEN_PARAMETER = "${token}";
+        private static final String ACTION_PARAMETER = "${action}";
+        private static final String PROTOCOL = "https";
+        private static final String HOST = "audiobox.dev";
+        private static final String PORT = "443";
+        private static final String API_PREFIX = "/api/";
+        
+        public static final String API_PATH = PROTOCOL + "://" + HOST + API_PREFIX;
         public static final String TEXT_FORMAT = "txt";
         public static final String XML_FORMAT = "xml";
 
         public static final int RESPONSE_CODE = 0;
         public static final int RESPONSE_BODY = 1;
 
-        private static final String PATH_PARAMETER = "${path}";
-        private static final String TOKEN_PARAMETER = "${token}";
-        private static final String ACTION_PARAMETER = "${action}";
-
-        private static final String PROTOCOL = "https";
-        private static final String HOST = "audiobox.dev";
-        private static final String PORT = "443";
-        private static final String API_PREFIX = "/api/";
-        public static final String API_PATH = PROTOCOL + "://" + HOST + API_PREFIX;
-
         private String sApiPath = API_PATH + PATH_PARAMETER + TOKEN_PARAMETER + ACTION_PARAMETER;
-        private long sTimeout = (180 * 1000);
 
         private HttpRoute mAudioBoxRoute;
         private ThreadSafeClientConnManager mCm;
         private DefaultHttpClient mClient;
+        
+        private Log log = LogFactory.getLog(AudioBoxConnector.class);
+
 
         private AudioBoxConnector() {
 
             this.mAudioBoxRoute = new HttpRoute(new HttpHost(HOST, Integer.parseInt(PORT)));
+            
             SchemeRegistry schemeRegistry = new SchemeRegistry();
             schemeRegistry.register( new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
             schemeRegistry.register( new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
 
             HttpParams params = new BasicHttpParams();
-            params.setParameter(ConnManagerParams.TIMEOUT, sTimeout);
             params.setParameter(ClientPNames.HANDLE_REDIRECTS, false);
 
             this.mCm = new ThreadSafeClientConnManager(params, schemeRegistry);
@@ -453,9 +553,8 @@ public class AudioBoxClient {
          * 
          * @param timeout the milliseconds of the timeout limit
          */
-
         public void setTimeout(long timeout) {
-            sTimeout = timeout; 
+            mClient.getParams().setParameter(ConnManagerParams.TIMEOUT, timeout);
         }
 
 
@@ -464,9 +563,8 @@ public class AudioBoxClient {
          * 
          * @return timeout limit
          */
-
         public long getTimeout() {
-            return sTimeout;
+            return (Long) mClient.getParams().getParameter(ConnManagerParams.TIMEOUT);
         }
 
         /**
@@ -483,13 +581,12 @@ public class AudioBoxClient {
          * @param target usually reffers the Model that executes the method
          * @param httpVerb the HTTP method to use for the request (ie: GET, PUT, POST and DELETE)
          * 
-         * @return the result of the request, may be a response code, such as HTTP OK ("200") or the body of the response.
+         * @return String array containing the response code at position 0 and the response body at position 1
          * 
-         * @throws LoginException if user has not yet logged in
+         * @throws LoginException if user has not yet logged in.
          * @throws ServiceException if the connection to AudioBox.fm throws a {@link ClientProtocolException}, 
-         * {@link SocketTimeoutException} or {@link IOException} occurs.
+         * {@link SocketTimeoutException} or {@link IOException}.
          */
-
         public String[] execute(String path, String token, String action , Model target, String httpVerb) throws LoginException , ServiceException {
             return execute(path, token, action, target, httpVerb, XML_FORMAT);
         }
@@ -510,13 +607,12 @@ public class AudioBoxClient {
          * @param httpVerb the HTTP method to use for the request (ie: GET, PUT, POST and DELETE)
          * @param format the request format (xml or txt)
          * 
-         * @return the result of the request, may be a response code, such as HTTP OK ("200") or the body of the response.
+         * @return String array containing the response code at position 0 and the response body at position 1
          *
          * @throws LoginException if user has not yet logged in
          * @throws ServiceException if the connection to AudioBox.fm throws a {@link ClientProtocolException}, 
          * {@link SocketTimeoutException} or {@link IOException} occurs.
          */
-
         public String[] execute(String path, String token, String action , Model target, String httpVerb, String format) throws LoginException , ServiceException {
 
             token = ( token == null ) ? "" : token.startsWith("/") ? token : "/".concat(token);
@@ -562,8 +658,7 @@ public class AudioBoxClient {
 
         /**
          * This method is used to performs requests to AudioBox.fm service APIs.<br/>
-         * Once AudioBox.fm responds the response is parsed through the target {@link Model} only if the response returns
-         * with a 200 code.
+         * Once AudioBox.fm responds the response is parsed through the target {@link Model}.
          * 
          * <p>
          * 
@@ -577,7 +672,7 @@ public class AudioBoxClient {
          * @param target the model to use to parse the response
          * @param httpVerb the HTTP method to use for the request
          * 
-         * @return the response code or the stream Location (in case of a {@link Track} model)
+         * @return String array containing the response code at position 0 and the response body at position 1
          * 
          * @throws LoginException if user has not yet logged in
          * @throws ServiceException if the connection to AudioBox.fm throws a {@link ClientProtocolException}, 

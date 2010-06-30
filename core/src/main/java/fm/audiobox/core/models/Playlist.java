@@ -37,17 +37,14 @@ import fm.audiobox.core.api.ModelItem;
  * </playlist>
  * }
  * </pre>
- * 
- * 
+ *
  * @author Valerio Chiodino
  * @author Fabio Tunno
- * 
  * @version 0.0.1
- * 
  */
-
 public class Playlist extends ModelItem {
     
+    /** Constant <code>TAG_NAME="playlist"</code> */
     public static final String TAG_NAME = "playlist";
     
     protected int id;
@@ -57,6 +54,9 @@ public class Playlist extends ModelItem {
     
     
 
+    /**
+     * <p>Constructor for Playlist.</p>
+     */
     protected Playlist() {
         this.endPoint = Playlists.END_POINT;
     }
@@ -64,11 +64,18 @@ public class Playlist extends ModelItem {
     
     
     
+    /**
+     * <p>Setter for the field <code>id</code>.</p>
+     *
+     * @param id a {@link java.lang.String} object.
+     */
     public void setId(String id) {
         this.id = Integer.parseInt(id);
     }
 
     /**
+     * <p>Getter for the field <code>id</code>.</p>
+     *
      * @return the id
      */
     public int getId() {
@@ -78,11 +85,18 @@ public class Playlist extends ModelItem {
 
     
     
+    /**
+     * <p>Setter for the field <code>playlistTracksCount</code>.</p>
+     *
+     * @param tracksCount a {@link java.lang.String} object.
+     */
     public void setPlaylistTracksCount(String tracksCount) {
         this.playlistTracksCount = Integer.parseInt( tracksCount );
     }
 
     /**
+     * <p>Getter for the field <code>playlistTracksCount</code>.</p>
+     *
      * @return the playlistTracksCount
      */
     public int getPlaylistTracksCount() {
@@ -92,11 +106,18 @@ public class Playlist extends ModelItem {
     
     
 
+    /**
+     * <p>Setter for the field <code>playlistType</code>.</p>
+     *
+     * @param type a {@link java.lang.String} object.
+     */
     public void setPlaylistType(String type) {
         this.playlistType = type;
     }
 
     /**
+     * <p>Getter for the field <code>playlistType</code>.</p>
+     *
      * @return the playlistType
      */
     public String getPlaylistType() {
@@ -107,11 +128,18 @@ public class Playlist extends ModelItem {
     
     
 
+    /**
+     * <p>Setter for the field <code>position</code>.</p>
+     *
+     * @param position a {@link java.lang.String} object.
+     */
     public void setPosition(String position) {
         this.position = Integer.parseInt(position);
     }
 
     /**
+     * <p>Getter for the field <code>position</code>.</p>
+     *
      * @return the position
      */
     public int getPosition() {

@@ -31,26 +31,43 @@ import fm.audiobox.core.models.Tracks;
 
 
 /**
- * 
+ * <p>Abstract ModelItem class.</p>
+ *
  * @author Valerio Chiodino
  * @author Fabio Tunno
- * 
  * @version 0.0.1
- * 
  */
-
 public abstract class ModelItem extends Model {
 
     public Tracks tracks;
     
+    /**
+     * <p>getTrack</p>
+     *
+     * @param uuid a {@link java.lang.String} object.
+     * @return a {@link fm.audiobox.core.models.Track} object.
+     */
     public Track getTrack(String uuid) {
         return this.tracks.get(uuid);
     }
 
+    /**
+     * <p>Setter for the field <code>tracks</code>.</p>
+     *
+     * @param tracks a {@link fm.audiobox.core.models.Tracks} object.
+     */
     public void setTracks(Tracks tracks) {
         this.tracks = tracks;
     }
     
+    /**
+     * <p>Getter for the field <code>tracks</code>.</p>
+     *
+     * @return a {@link fm.audiobox.core.models.Tracks} object.
+     * @throws fm.audiobox.core.exceptions.ServiceException if any.
+     * @throws fm.audiobox.core.exceptions.LoginException if any.
+     * @throws fm.audiobox.core.exceptions.ModelException if any.
+     */
     public Tracks getTracks() throws ServiceException, LoginException, ModelException {
         
 		this.tracks = (Tracks) AudioBoxClient.getModelInstance(AudioBoxClient.TRACKS_KEY, this.getConnector());

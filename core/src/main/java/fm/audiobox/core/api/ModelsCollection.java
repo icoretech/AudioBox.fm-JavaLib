@@ -30,32 +30,63 @@ import fm.audiobox.core.interfaces.CollectionListener;
 
 
 /**
- * 
+ * <p>Abstract ModelsCollection class.</p>
+ *
  * @author Valerio Chiodino
  * @author Fabio Tunno
- * 
  * @version 0.0.1
- * 
  */
-
 public abstract class ModelsCollection extends Model {
 
 	protected CollectionListener collectionListener = null;
 	
+	/**
+	 * <p>getTagName</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected abstract String getTagName();
     
+    /**
+     * <p>setCollection</p>
+     *
+     * @param collection a {@link java.util.List} object.
+     */
     public abstract void setCollection(List<?> collection);
     
+    /**
+     * <p>getCollection</p>
+     *
+     * @return a {@link java.util.List} object.
+     */
     public abstract List<?> getCollection();
     
+    /**
+     * <p>get</p>
+     *
+     * @param index a int.
+     * @return a {@link fm.audiobox.core.api.ModelItem} object.
+     */
     public abstract ModelItem get(int index);
 
+    /**
+     * <p>get</p>
+     *
+     * @param token a {@link java.lang.String} object.
+     * @return a {@link fm.audiobox.core.api.ModelItem} object.
+     */
     public abstract ModelItem get(String token);
     
+    /**
+     * <p>Setter for the field <code>collectionListener</code>.</p>
+     *
+     * @param cl a {@link fm.audiobox.core.interfaces.CollectionListener} object.
+     */
     public void setCollectionListener(CollectionListener cl){
         this.collectionListener = cl;
     }
     
+    /** {@inheritDoc} */
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         super.endElement(uri, localName, qName);
@@ -68,6 +99,7 @@ public abstract class ModelsCollection extends Model {
         }
     }
     
+    /** {@inheritDoc} */
     @Override
     public void endDocument() throws SAXException {
         this.collectionListener.onCollectionReady(CollectionListener.DOCUMENT_PARSED, this);
