@@ -1,3 +1,4 @@
+
 /***************************************************************************
  *   Copyright (C) 2010 iCoreTech research labs                            *
  *   Contributed code from:                                                *
@@ -27,6 +28,15 @@ import org.xml.sax.SAXException;
 
 import fm.audiobox.core.interfaces.CollectionListener;
 
+
+/**
+ * 
+ * @author Valerio Chiodino
+ * @author Fabio Tunno
+ * 
+ * @version 0.0.1
+ * 
+ */
 
 public abstract class ModelsCollection extends Model {
 

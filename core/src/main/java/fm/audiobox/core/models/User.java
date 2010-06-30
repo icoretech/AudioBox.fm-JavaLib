@@ -1,3 +1,4 @@
+
 /***************************************************************************
  *   Copyright (C) 2010 iCoreTech research labs                            *
  *   Contributed code from:                                                *
@@ -29,9 +30,9 @@ import fm.audiobox.core.api.ModelsCollection;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.interfaces.ResponseHandler;
 import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
 import fm.audiobox.core.util.Base64;
+
 
 /**
  * 
@@ -66,12 +67,15 @@ import fm.audiobox.core.util.Base64;
  * }
  * </pre>
  * 
+ * 
  * @author Valerio Chiodino
- * @version 0.2-beta
+ * @author Fabio Tunno
+ * 
+ * @version 0.0.1
  * 
  */
 
-public class User extends ModelItem implements ResponseHandler {
+public class User extends ModelItem {
 
     public static final String TAG_NAME = "user";
     public static final String PATH = TAG_NAME;
@@ -245,6 +249,25 @@ public class User extends ModelItem implements ResponseHandler {
         return Base64.encodeBytes( auth.getBytes() );
     }
 
+    
+    /**
+     * Given a known track UUID this method returns a valid {@link Track} object.
+     * 
+     * @param uuid the UUID of the track you are asking for.
+     * 
+     * @return the requested track if it exists.
+     * 
+     * @throws LoginException if user has not been authenticated 
+     * @throws ServiceException if the requested resource doesn't exists or any other ServiceException occur.
+     */
+
+    public Track getTrackByUuid(String uuid) throws ServiceException, LoginException {
+        Track tr = new Track();
+        this.getConnector().execute(Tracks.END_POINT, uuid, null, tr, HttpGet.METHOD_NAME);
+        return tr;
+    }
+    
+    
     /**
      * @return the playlists
      * @throws ModelException 
@@ -252,8 +275,8 @@ public class User extends ModelItem implements ResponseHandler {
     public Playlists getPlaylists() throws ModelException {
         return this.getPlaylists(false);
     }
-    
-    
+
+
     public Playlists getPlaylists(boolean async) throws ModelException {
         this.playlists = (Playlists) AudioBoxClient.getModelInstance(AudioBoxClient.PLAYLISTS_KEY, this.getConnector());
         Thread t = populateCollection( Playlists.END_POINT, this.playlists );
@@ -261,7 +284,7 @@ public class User extends ModelItem implements ResponseHandler {
             t.start();
         else
             t.run();
-        
+
         return playlists;
     }
 
@@ -272,7 +295,7 @@ public class User extends ModelItem implements ResponseHandler {
     public Genres getGenres() throws ModelException {
         return this.getGenres(false);
     }
-    
+
     public Genres getGenres(boolean async) throws ModelException {
         this.genres = (Genres) AudioBoxClient.getModelInstance(AudioBoxClient.GENRES_KEY, this.getConnector());
         Thread t = populateCollection( Genres.END_POINT, this.genres );
@@ -280,7 +303,7 @@ public class User extends ModelItem implements ResponseHandler {
             t.start();
         else
             t.run();
-        
+
         return this.genres;
     }
 
@@ -292,7 +315,7 @@ public class User extends ModelItem implements ResponseHandler {
     public Artists getArtists() throws ModelException {
         return this.getArtists(false);
     }
-    
+
     public Artists getArtists(boolean async) throws ModelException {
         this.artists = (Artists) AudioBoxClient.getModelInstance(AudioBoxClient.ARTISTS_KEY, this.getConnector());
         Thread t = populateCollection( Artists.END_POINT, this.artists );
@@ -311,7 +334,7 @@ public class User extends ModelItem implements ResponseHandler {
     public Albums getAlbums() throws ModelException {
         return this.getAlbums(false);
     }
-    
+
     public Albums getAlbums(boolean async) throws ModelException {
         this.albums = (Albums) AudioBoxClient.getModelInstance(AudioBoxClient.ALBUMS_KEY, this.getConnector());
         Thread t = populateCollection( Albums.END_POINT, this.albums );
@@ -324,23 +347,23 @@ public class User extends ModelItem implements ResponseHandler {
     }
 
     public String[] getUploadedTracks() throws ServiceException, LoginException {
-    	String[] result = this.getConnector().execute(Tracks.END_POINT, null, null, this, HttpGet.METHOD_NAME, AudioBoxConnector.TEXT_FORMAT);
-    	String response = result[ AudioBoxConnector.RESPONSE_BODY ];
-    	result = response.split( ";" , response.length() );
-    	this.tracks =  new String[ result.length ];
-    	int pos=0;
-    	for ( String hash : result )
-    		this.tracks[ pos++ ] = hash.trim();
+        String[] result = this.getConnector().execute(Tracks.END_POINT, null, null, this, HttpGet.METHOD_NAME, AudioBoxConnector.TEXT_FORMAT);
+        String response = result[ AudioBoxConnector.RESPONSE_BODY ];
+        result = response.split( ";" , response.length() );
+        this.tracks =  new String[ result.length ];
+        int pos=0;
+        for ( String hash : result )
+            this.tracks[ pos++ ] = hash.trim();
         return this.tracks;
     }
 
 
     private Thread populateCollection(final String endpoint, final ModelsCollection collection) {
-        
+
         final User user = this;
-        
+
         return new Thread() {
-            
+
             public void run() {
                 try {
                     user.getConnector().execute(endpoint, null, null, collection, null);
@@ -350,8 +373,9 @@ public class User extends ModelItem implements ResponseHandler {
                     e.printStackTrace();
                 }
             }
-            
+
         };
 
     }
+
 }

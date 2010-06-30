@@ -1,3 +1,4 @@
+
 /***************************************************************************
  *   Copyright (C) 2010 iCoreTech research labs                            *
  *   Contributed code from:                                                *
@@ -27,6 +28,16 @@ import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.AudioBoxClient;
 import fm.audiobox.core.models.Track;
 import fm.audiobox.core.models.Tracks;
+
+
+/**
+ * 
+ * @author Valerio Chiodino
+ * @author Fabio Tunno
+ * 
+ * @version 0.0.1
+ * 
+ */
 
 public abstract class ModelItem extends Model {
 

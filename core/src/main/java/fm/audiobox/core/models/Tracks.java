@@ -1,3 +1,4 @@
+
 /***************************************************************************
  *   Copyright (C) 2010 iCoreTech research labs                            *
  *   Contributed code from:                                                *
@@ -25,6 +26,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fm.audiobox.core.api.ModelsCollection;
+
+
+/**
+ * 
+ * @author Valerio Chiodino
+ * @author Fabio Tunno
+ * 
+ * @version 0.0.1
+ * 
+ */
 
 public class Tracks extends ModelsCollection {
 
@@ -60,6 +71,7 @@ public class Tracks extends ModelsCollection {
     
     public Track get(String token) {
         for (Track track : collection) {
+            // NOTE: Track#getToken() is equivalent to Track.getUuid()
             if ( token.equals( track.getToken() ) )
                 return track;
         }

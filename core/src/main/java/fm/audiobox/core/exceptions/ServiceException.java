@@ -1,3 +1,4 @@
+
 /***************************************************************************
  *   Copyright (C) 2010 iCoreTech research labs                            *
  *   Contributed code from:                                                *
@@ -21,6 +22,7 @@
 
 package fm.audiobox.core.exceptions;
 
+
 /**
  * ServiceException is thrown whenever a connection exception occurs while
  * performing a request to AudioBox.fm services.
@@ -31,7 +33,7 @@ package fm.audiobox.core.exceptions;
  * 
  * 
  * @author Valerio Chiodino
- * @version 0.1
+ * @version 0.0.1
  */
 
 public class ServiceException extends java.net.ConnectException {

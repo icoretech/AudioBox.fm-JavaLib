@@ -55,6 +55,7 @@ import org.apache.http.HttpRequest;
 import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -85,6 +86,7 @@ import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.interfaces.CollectionListener;
 import fm.audiobox.core.util.Inflector;
+
 
 /**
  * AudioBoxClient is the main library class. Every request to AudioBox.fm are made through this object.
@@ -144,7 +146,7 @@ import fm.audiobox.core.util.Inflector;
  * @author Valerio Chiodino
  * @author Fabio Tunno
  * 
- * @version 0.1
+ * @version 0.0.1
  * 
  */
 
@@ -200,7 +202,7 @@ public class AudioBoxClient {
 
     public AudioBoxClient() {
 
-        this.connector = this.new AudioBoxConnector();	// setup connection
+        this.connector = new AudioBoxConnector();	// setup connection
 
         String version = "unattended";
 
@@ -607,17 +609,19 @@ public class AudioBoxClient {
                 }
 
                 log.info("Requesting resource: " + url);
-                HttpResponse resp = mClient.execute(method, new BasicHttpContext());
-                String response = null;
-                if ( target != null )
-                    response = target.handleResponse( resp, httpVerb );
-
-                HttpEntity responseEntity = resp.getEntity(); 
-                if (responseEntity != null) responseEntity.consumeContent();
-
-                return new String[]{ String.valueOf( resp.getStatusLine().getStatusCode() ) , response };
+                return mClient.execute(method, target, new BasicHttpContext());
 
             } catch( ClientProtocolException e ) {
+
+                try {
+                    // LoginException is not handled by the response handler
+                    int status = Integer.parseInt(e.getMessage());
+                    if ( status == HttpStatus.SC_FORBIDDEN || status == HttpStatus.SC_UNAUTHORIZED ) {
+                        throw new LoginException("Unauthorized user", status);
+                    }
+
+                } catch(NumberFormatException ex) { /* Response is a real ClientProtocolException */ }
+                
                 throw new ServiceException( "Client protocol exception: " + e.getMessage(), ServiceException.CLIENT_ERROR );
 
             } catch( SocketTimeoutException e ) {

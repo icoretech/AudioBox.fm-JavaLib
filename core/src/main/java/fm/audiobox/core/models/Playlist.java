@@ -1,3 +1,4 @@
+
 /***************************************************************************
  *   Copyright (C) 2010 iCoreTech research labs                            *
  *   Contributed code from:                                                *
@@ -23,6 +24,7 @@ package fm.audiobox.core.models;
 
 import fm.audiobox.core.api.ModelItem;
 
+
 /**
  * <pre>
  * {@code
@@ -36,8 +38,12 @@ import fm.audiobox.core.api.ModelItem;
  * }
  * </pre>
  * 
+ * 
  * @author Valerio Chiodino
- * @version 0.2-beta
+ * @author Fabio Tunno
+ * 
+ * @version 0.0.1
+ * 
  */
 
 public class Playlist extends ModelItem {

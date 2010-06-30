@@ -88,9 +88,16 @@ public class ThreadedCollections extends junit.framework.TestCase {
             };
 
             AudioBoxClient.setCollectionListenerFor(AudioBoxClient.PLAYLISTS_KEY, cl1);
+            assertSame(cl1, AudioBoxClient.getCollectionListenerFor(AudioBoxClient.PLAYLISTS_KEY));
+            
             AudioBoxClient.setCollectionListenerFor(AudioBoxClient.ARTISTS_KEY, cl2);
+            assertSame(cl2, AudioBoxClient.getCollectionListenerFor(AudioBoxClient.ARTISTS_KEY));
+            
             AudioBoxClient.setCollectionListenerFor(AudioBoxClient.GENRES_KEY, cl3);
+            assertSame(cl3, AudioBoxClient.getCollectionListenerFor(AudioBoxClient.GENRES_KEY));
+            
             AudioBoxClient.setCollectionListenerFor(AudioBoxClient.ALBUMS_KEY, cl4);
+            assertSame(cl4, AudioBoxClient.getCollectionListenerFor(AudioBoxClient.ALBUMS_KEY));
 
             Playlists pls = user.getPlaylists(true);
 

@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import fm.audiobox.core.StaticAudioBox;
+import fm.audiobox.core.api.Model;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
@@ -58,8 +59,11 @@ public class AlbumsTest extends junit.framework.TestCase {
             loadAlbums();
             
             assertNotNull(albums);
-            Album al = (Album) albums.get(0);
-            assertNotNull(al);
+            for (Model al : albums.getCollection()) {
+                Album alb = (Album) al;
+                assertNotNull(alb);
+            }
+            
 
         } catch (LoginException e) {
             e.printStackTrace();
@@ -91,14 +95,10 @@ public class AlbumsTest extends junit.framework.TestCase {
             Tracks trs = (Tracks) al.getTracks();
             assertNotNull(trs);
             
-            //trs.invoke();
-            
             Track tr = (Track) trs.get(0);
             assertNotNull(tr.getTest());
             assertNotNull(tr);
             
-            System.out.println( tr.getStreamUrl() );
-
         } catch (LoginException e) {
             e.printStackTrace();
         } catch (SocketException e) {

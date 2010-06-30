@@ -1,3 +1,4 @@
+
 /***************************************************************************
  *   Copyright (C) 2010 iCoreTech research labs                            *
  *   Contributed code from:                                                *
@@ -21,12 +22,13 @@
 
 package fm.audiobox.core.exceptions;
 
+
 /**
- * This exception is thrown whenever an InstantiationException, IllegalAccessException or
- * a ClassNotFoundException occurs on a Model instantiation. 
+ * This exception is thrown whenever an {@link InstantiationException}, {@link IllegalAccessException} or
+ * a {@link ClassNotFoundException} occurs on a Model instantiation. 
  * 
  * @author Valerio Chiodino
- * @version 0.1
+ * @version 0.0.1
  */
 
 public class ModelException extends Exception {

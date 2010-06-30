@@ -1,3 +1,4 @@
+
 /***************************************************************************
  *   Copyright (C) 2010 iCoreTech research labs                            *
  *   Contributed code from:                                                *
@@ -20,6 +21,7 @@
  ***************************************************************************/
 
 package fm.audiobox.core.interfaces;
+
 
 /**
  * CollectionListener provides a usefull interface to easily implement
@@ -46,7 +48,7 @@ package fm.audiobox.core.interfaces;
  * </ul>
  * 
  * @author Valerio Chiodino
- * @version 0.1
+ * @version 0.0.1
  * 
  */
 

@@ -1,3 +1,4 @@
+
 /***************************************************************************
  *   Copyright (C) 2010 iCoreTech research labs                            *
  *   Contributed code from:                                                *
@@ -34,24 +35,34 @@ import javax.xml.parsers.SAXParserFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.ResponseHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
-import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.interfaces.ResponseHandler;
 import fm.audiobox.core.models.AudioBoxClient;
 import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
 import fm.audiobox.core.util.Inflector;
 
-public abstract class Model extends DefaultHandler implements ResponseHandler {
+
+/**
+ * 
+ * @author Valerio Chiodino
+ * @author Fabio Tunno
+ * 
+ * @version 0.0.1
+ * 
+ */
+
+public abstract class Model extends DefaultHandler implements ResponseHandler<String[]> {
 
     private static final String ADD_PREFIX = "add";
     private static final String SET_PREFIX = "set";
@@ -76,13 +87,13 @@ public abstract class Model extends DefaultHandler implements ResponseHandler {
 
 
     public void setConnector(AudioBoxConnector conn){
-    	this.connector = conn;
+        this.connector = conn;
     }
-    
+
     public AudioBoxConnector getConnector(){
-    	return this.connector;
+        return this.connector;
     }
-    
+
     public String toString() {
         return this.getName();
     }
@@ -111,64 +122,78 @@ public abstract class Model extends DefaultHandler implements ResponseHandler {
         this.token = token;
     }
 
-    public final String handleResponse(HttpResponse response, String httpVerb) throws ClientProtocolException, IOException, IllegalStateException, LoginException {
+
+    @Override
+    public String[] handleResponse(HttpResponse response) throws ClientProtocolException, IOException {
 
         int responseCode = response.getStatusLine().getStatusCode();
         String responseString = "";//String.valueOf( responseCode );
 
         switch( responseCode ) {
 
-	        case HttpStatus.SC_OK:
-	            InputStream input = response.getEntity().getContent();
-	            responseString = this.parseResponse( input , response.getEntity().getContentType() );
-	            response.getEntity().consumeContent();
-	            break;
-	
-	        case HttpStatus.SC_SEE_OTHER:
-	            responseString = response.getFirstHeader("Location").getValue();
-	            break;
-	
-	        case HttpStatus.SC_FORBIDDEN:
-	        case HttpStatus.SC_UNAUTHORIZED:
-	            throw new LoginException("Unauthorized user", responseCode);
-	
-	        default:
-	            throw new ServiceException( "An error occurred", ServiceException.GENERIC_SERVICE_ERROR );
+        case HttpStatus.SC_CREATED:
+        case HttpStatus.SC_OK:
+            InputStream input = response.getEntity().getContent();
+            responseString = this.parseResponse( input , response.getEntity().getContentType() );
+            break;
+
+        case HttpStatus.SC_SEE_OTHER:
+            responseString = response.getFirstHeader("Location").getValue();
+            break;
+
+        case HttpStatus.SC_FORBIDDEN:
+        case HttpStatus.SC_UNAUTHORIZED:
+            throw new ClientProtocolException(String.valueOf(responseCode));
+
+        case HttpStatus.SC_UNPROCESSABLE_ENTITY:
+            throw new ServiceException( "Unprocessable entity", ServiceException.GENERIC_SERVICE_ERROR );
+
+        case HttpStatus.SC_NOT_FOUND:
+            throw new ServiceException( "Resource not found", ServiceException.GENERIC_SERVICE_ERROR );
+
+        default:
+            throw new ServiceException( "An error occurred", ServiceException.GENERIC_SERVICE_ERROR );
 
         }
 
-        return responseString;
+
+        HttpEntity responseEntity = response.getEntity(); 
+        if (responseEntity != null) 
+            responseEntity.consumeContent();
+
+        return new String[]{ String.valueOf( response.getStatusLine().getStatusCode() ) , responseString };
+
     }
 
     public String parseResponse( InputStream input, Header contentType ) throws IOException {
-    	String response = "";
+        String response = "";
         try {
-        	
-        	if ( contentType.getValue().contains(AudioBoxConnector.XML_FORMAT) ){
 
-	            // Instanciate new SaxParser from InputStream
-	            SAXParserFactory spf = SAXParserFactory.newInstance();
-	            SAXParser sp = spf.newSAXParser();
-	
-	            /* Get the XMLReader of the SAXParser we created. */
-	            XMLReader xr = sp.getXMLReader();
-	
-	            /* Create a new ContentHandler and apply it to the XML-Reader */
-	            xr.setContentHandler( this );
-	
-	            xr.parse( new InputSource( input ) );
-	
-	            input.close();
-	            
-        	} else {
-        		/* read response content */
-        		int read;
-        		byte[] bytes = new byte[ CHUNK ];
-        		StringBuffer sb = new StringBuffer();
-        		while(  ( read = input.read( bytes) ) != -1 )
-        			sb.append( new String( bytes, 0, read ));
-        		response =  sb.toString().trim();
-        	}
+            if ( contentType.getValue().contains(AudioBoxConnector.XML_FORMAT) ){
+
+                // Instanciate new SaxParser from InputStream
+                SAXParserFactory spf = SAXParserFactory.newInstance();
+                SAXParser sp = spf.newSAXParser();
+
+                /* Get the XMLReader of the SAXParser we created. */
+                XMLReader xr = sp.getXMLReader();
+
+                /* Create a new ContentHandler and apply it to the XML-Reader */
+                xr.setContentHandler( this );
+
+                xr.parse( new InputSource( input ) );
+
+                input.close();
+
+            } else {
+                /* read response content */
+                int read;
+                byte[] bytes = new byte[ CHUNK ];
+                StringBuffer sb = new StringBuffer();
+                while(  ( read = input.read( bytes) ) != -1 )
+                    sb.append( new String( bytes, 0, read ));
+                response =  sb.toString().trim();
+            }
 
         } catch (IllegalStateException e) {
             e.printStackTrace();
@@ -179,15 +204,6 @@ public abstract class Model extends DefaultHandler implements ResponseHandler {
         }
         return response;
     }
-
-
-//    public void setAudioBoxModelLoader(AudioBoxModelLoader abml) {
-//        this.abml = abml;
-//    }
-
-//    public void invoke() throws ServiceException, LoginException {
-//        AudioBoxClient.execute( this.getEndPoint(), this.getToken(), null, this, HttpGet.METHOD_NAME);
-//    }
 
 
     /* --------- */
@@ -259,9 +275,9 @@ public abstract class Model extends DefaultHandler implements ResponseHandler {
                         this.mStack.push( subClass );
                     } catch (ModelException e) {
                         e.printStackTrace();
-                        
+
                     }
-					
+
                 } else {
                     this.mStack.push( method );
                 }

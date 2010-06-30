@@ -1,3 +1,4 @@
+
 /***************************************************************************
  *   Copyright (C) 2010 iCoreTech research labs                            *
  *   Contributed code from:                                                *
@@ -34,6 +35,7 @@ import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
 
+
 /**
  * The XML response looks like this:
  * 
@@ -62,169 +64,169 @@ import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
  * }
  * </pre>
  * 
+ * 
  * @author Valerio Chiodino
- * @version 0.2-beta
+ * @author Fabio Tunno
+ * 
+ * @version 0.0.1
+ * 
  */
 
-
 public class Track extends ModelItem {
-	
-	// Constants
-	public static final String TAG_NAME = "track";
-	
-	private static final String PATH = "tracks";
-	private static final String STREAM_ACTION = "stream";
-	private static final String SCROBBLE_ACTION = "scrobble";
-	private static final String LOVE_ACTION = "love";
-	private static final String UNLOVE_ACTION = "unlove";
 
-	// Customized fields
-	private String uuid;
-	
-	// XML model fields
-	protected String duration;
-	protected long durationInSeconds;
-	protected boolean loved;
-	protected int playCount;
-	protected String title;
-	protected int year;
-	protected String fileHash;
-	
-	protected String streamUrl;
-	protected long audioFileSize;
-	protected Artist artist;
-	protected Album album;
-	
+    // Constants
+    public static final String TAG_NAME = "track";
 
-	// Utility fields
-	public enum State { IDLE, PLAYING, ERROR, BUFFERING, PAUSED }
-	protected State trackState = Track.State.IDLE;
-	protected FileEntity entity;
-	
-	
-	protected Track() {
-	    this.endPoint = Tracks.END_POINT;
-	}
-	
-	public Track(FileEntity file) {
-		super();
-		this.entity = file;
-	}
-	
-	@Override
-	public String getToken() {
-	    return getUuid();
-	}
-	
-	public void setUuid(String uuid) {
-	    this.uuid = uuid;
-	}
-	
-	/**
-	 * @return the unique id of the track
-	 */
-	public String getUuid() {
+    private static final String PATH = "tracks";
+    private static final String STREAM_ACTION = "stream";
+    private static final String SCROBBLE_ACTION = "scrobble";
+    private static final String LOVE_ACTION = "love";
+    private static final String UNLOVE_ACTION = "unlove";
 
-		if (uuid == null) {
-			String	regex = "^" + AudioBoxClient.AudioBoxConnector.API_PATH.replace(".", "\\.") + PATH + "/([^\\s]+)/stream$";
-			java.util.regex.Matcher m = java.util.regex.Pattern.compile(regex).matcher(streamUrl);
-			m.find();
-			uuid = m.group(1);
-		}
-		
-		return uuid;		
-	}
-	
-	
-	public void setDuration(String duration) {
-	    this.duration = duration;
-	}
-	
-	/**
-	 * @return the duration
-	 */
-	public String getDuration() {
-		return duration;
-	}
-	
-	
-	public void setTitle(String title) {
-	    this.title = title;
-	}
-	
-	
-	/**
-	 * @return the title
-	 */
-	public String getTitle() {
-		return title;
-	}
-	
-	
-	
-	
-	public void setStreamUrl(String url) {
-	    this.streamUrl = url;
-	}
-	
-	
-	/**
-	 * @return the streamUrl
-	 */
-	public String getStreamUrl() throws LoginException , SocketException {
-		String[] result = this.getConnector().execute( this.endPoint, this.getUuid(), STREAM_ACTION, this, null);
-		return result[ AudioBoxConnector.RESPONSE_BODY ];
-	}
-	
-	public void setLoved(String loved) {
+    // Customized fields
+    private String uuid;
+
+    // XML model fields
+    protected String duration;
+    protected long durationInSeconds;
+    protected boolean loved;
+    protected int playCount;
+    protected String title;
+    protected int year;
+    protected String fileHash;
+
+    protected String streamUrl;
+    protected long audioFileSize;
+    protected Artist artist;
+    protected Album album;
+
+
+    // Utility fields
+    public enum State { IDLE, PLAYING, ERROR, BUFFERING, PAUSED }
+    protected State trackState = Track.State.IDLE;
+    protected FileEntity entity;
+
+
+    protected Track() {
+        this.endPoint = Tracks.END_POINT;
+    }
+
+    public Track(FileEntity file) {
+        super();
+        this.entity = file;
+    }
+
+    @Override
+    public String getToken() {
+        return getUuid();
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    /**
+     * @return the unique id of the track
+     */
+    public String getUuid() {
+
+        if (this.uuid == null) {
+            String	regex = "^" + AudioBoxClient.AudioBoxConnector.API_PATH.replace(".", "\\.") + PATH + "/([^\\s]+)/stream$";
+            java.util.regex.Matcher m = java.util.regex.Pattern.compile(regex).matcher(streamUrl);
+            m.find();
+            this.setUuid( m.group(1) );
+        }
+
+        return this.uuid;		
+    }
+
+
+    public void setDuration(String duration) {
+        this.duration = duration;
+    }
+
+    /**
+     * @return the duration
+     */
+    public String getDuration() {
+        return duration;
+    }
+
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+
+    /**
+     * @return the title
+     */
+    public String getTitle() {
+        return title;
+    }
+
+    public void setStreamUrl(String url) {
+        this.streamUrl = url;
+    }
+
+
+    /**
+     * @return the streamUrl
+     */
+    public String getStreamUrl() throws LoginException , SocketException {
+        String[] result = this.getConnector().execute( this.endPoint, this.getUuid(), STREAM_ACTION, this, null);
+        return result[ AudioBoxConnector.RESPONSE_BODY ];
+    }
+
+    public void setLoved(String loved) {
         this.loved = Boolean.parseBoolean( loved );
     }
-	
-	public void setLoved(boolean loved) {
-	    this.loved = loved;
-	}
-	
-	/**
-	 * @return the loved
-	 */
-	public boolean isLoved() {
-		return loved;
-	}
-	
-	
-	public void setPlayCount(String playCount) {
-	    this.playCount = Integer.parseInt( playCount );
-	}
-	
+
+    public void setLoved(boolean loved) {
+        this.loved = loved;
+    }
+
+    /**
+     * @return the loved
+     */
+    public boolean isLoved() {
+        return loved;
+    }
+
+
+    public void setPlayCount(String playCount) {
+        this.playCount = Integer.parseInt( playCount );
+    }
+
 
     public void setPlayCount(int playCount) {
         this.playCount = playCount;
     }
-	
-	/**
-	 * @return the playCount
-	 */
-	public int getPlayCount() {
-		return playCount;
-	}
 
-	
-	
-	public void setYear(String year) {
-	    this.year = Integer.parseInt( year );
-	}
-	
-	/**
-	 * @return the loved
-	 */
-	public int getYear() {
-		return year;
-	}
-	
-	
-	
-	
-	/**
+    /**
+     * @return the playCount
+     */
+    public int getPlayCount() {
+        return playCount;
+    }
+
+
+
+    public void setYear(String year) {
+        this.year = Integer.parseInt( year );
+    }
+
+    /**
+     * @return the loved
+     */
+    public int getYear() {
+        return year;
+    }
+
+
+
+
+    /**
      * @param fileHash the fileHash to set
      */
     public void setFileHash(String fileHash) {
@@ -239,152 +241,156 @@ public class Track extends ModelItem {
     }
 
     public void setAudioFileSize(String fileSize) {
-	    this.audioFileSize = Long.parseLong( fileSize );
-	}
-	
-	/**
-	 * @return the audioFileSize
-	 */
-	public long getAudioFileSize() {
-		return audioFileSize;
-	}
-	
-	
-	
-	public void setArtist(Artist artist) {
-	    this.artist = artist;
-	}
-	
-	
-	/**
-	 * @return the artist
-	 */
-	public Artist getArtist() {
-		return artist;
-	}
-	
-	
-	
-	public void setAlbum(Album album) {
-	    this.album = album;
-	}
-	
-	/**
-	 * @return the album
-	 */
-	public Album getAlbum() {
-		return album;
-	}
+        this.audioFileSize = Long.parseLong( fileSize );
+    }
 
-	
-	
-	public void setDurationInSeconds(String durationInSeconds) {
-	    this.durationInSeconds = Long.parseLong( durationInSeconds );
-	}
-	
-	/**
-	 * @return the durationInSeconds
-	 */
-	public long getDurationInSeconds() {
-		return durationInSeconds;
-	}
-	
-	/**
-	 * @return the file to upload
-	 */
-	public FileEntity getFileEntity(){
-		return this.entity;
-	}
-	
-	
-	/* ------- */
-	/* Actions */
-	/* ------- */
-	
-	public void scrobble() throws ServiceException, LoginException {
-		this.getConnector().execute( this.endPoint, this.getUuid(), SCROBBLE_ACTION, null, HttpPost.METHOD_NAME);
-	}
-	
-	public boolean love() throws ServiceException, LoginException  {
-		String[] result = this.getConnector().execute( this.endPoint, this.getUuid(), LOVE_ACTION, null, HttpPut.METHOD_NAME);
-	    return HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
-	}
-	
-	public boolean unlove() throws ServiceException, LoginException {
-		String[] result = this.getConnector().execute( this.endPoint, this.getUuid(), UNLOVE_ACTION, null, HttpPut.METHOD_NAME);
-	    return HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
-	}
-	
-	public boolean delete() throws ServiceException, LoginException {
-		String[] result = this.getConnector().execute( this.endPoint, this.getUuid(), null, null, HttpDelete.METHOD_NAME);
-	    return HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
-	}
-	
-	
-	@Override
+    /**
+     * @return the audioFileSize
+     */
+    public long getAudioFileSize() {
+        return audioFileSize;
+    }
+
+
+
+    public void setArtist(Artist artist) {
+        this.artist = artist;
+    }
+
+
+    /**
+     * @return the artist
+     */
+    public Artist getArtist() {
+        return artist;
+    }
+
+
+
+    public void setAlbum(Album album) {
+        this.album = album;
+    }
+
+    /**
+     * @return the album
+     */
+    public Album getAlbum() {
+        return album;
+    }
+
+
+
+    public void setDurationInSeconds(String durationInSeconds) {
+        this.durationInSeconds = Long.parseLong( durationInSeconds );
+    }
+
+    /**
+     * @return the durationInSeconds
+     */
+    public long getDurationInSeconds() {
+        return durationInSeconds;
+    }
+
+    /**
+     * @return the file to upload
+     */
+    public FileEntity getFileEntity(){
+        return this.entity;
+    }
+
+
+    /* ------- */
+    /* Actions */
+    /* ------- */
+
+    public void scrobble() throws ServiceException, LoginException {
+        this.getConnector().execute( this.endPoint, this.getUuid(), SCROBBLE_ACTION, this, HttpPost.METHOD_NAME);
+    }
+
+    public boolean love() throws ServiceException, LoginException  {
+        String[] result = this.getConnector().execute( this.endPoint, this.getUuid(), LOVE_ACTION, this, HttpPut.METHOD_NAME);
+        boolean markLoved = HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
+        this.setLoved( markLoved );
+        return markLoved;
+    }
+
+    public boolean unlove() throws ServiceException, LoginException {
+        String[] result = this.getConnector().execute( this.endPoint, this.getUuid(), UNLOVE_ACTION, this, HttpPut.METHOD_NAME);
+        boolean markLoved = HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
+        this.setLoved( !markLoved );
+        return markLoved;
+    }
+
+    public boolean delete() throws ServiceException, LoginException {
+        String[] result = this.getConnector().execute( this.endPoint, this.getUuid(), null, this, HttpDelete.METHOD_NAME);
+        return HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
+    }
+
+
+    @Override
     public String getName() {
         return this.title + " - " + this.artist.getName() + " (" + this.duration + ")";
     }
-	
-	
-	/* ----- */
-	/* State */
-	/* ----- */
-	
-	/**
-	 * @param trackState the trackState to set
-	 */
-	public void setState(State trackState) {
-		this.trackState = trackState;
-	}
 
-	/**
-	 * @return the  track status
-	 */
-	public State getState() {
-		return trackState;
-	}
 
-	/**
-	 * @return true if the track contains errors
-	 */
-	public boolean hasErrors() {
-		return getState() == Track.State.ERROR;
-	}
+    /* ----- */
+    /* State */
+    /* ----- */
 
-	/**
-	 * @return true if the track in in playing
-	 */
-	public boolean isPlaying() {
-		return getState() == Track.State.PLAYING;
-	}
-	
-	/**
-	 * @return true if the track in in playing
-	 */
-	public boolean isPaused() {
-		return getState() == Track.State.PAUSED;
-	}
+    /**
+     * @param trackState the trackState to set
+     */
+    public void setState(State trackState) {
+        this.trackState = trackState;
+    }
 
-	/**
-	 * @return true if the track is currently buffering from network
-	 */
-	public boolean isBuffering() {
-		return getState() == Track.State.BUFFERING;
-	}
-	
-	
-	/* Overrides */
-	@Override
-	public Track getTrack(String uuid) {
-	    if ( this.getUuid().equals( uuid ) )
-	        return this;
-	    else return null;
-	}
+    /**
+     * @return the  track status
+     */
+    public State getState() {
+        return trackState;
+    }
 
-	@Override
+    /**
+     * @return true if the track contains errors
+     */
+    public boolean hasErrors() {
+        return getState() == Track.State.ERROR;
+    }
+
+    /**
+     * @return true if the track in in playing
+     */
+    public boolean isPlaying() {
+        return getState() == Track.State.PLAYING;
+    }
+
+    /**
+     * @return true if the track in in playing
+     */
+    public boolean isPaused() {
+        return getState() == Track.State.PAUSED;
+    }
+
+    /**
+     * @return true if the track is currently buffering from network
+     */
+    public boolean isBuffering() {
+        return getState() == Track.State.BUFFERING;
+    }
+
+
+    /* Overrides */
+    @Override
+    public Track getTrack(String uuid) {
+        if ( this.getUuid().equals( uuid ) )
+            return this;
+        else return null;
+    }
+
+    @Override
     public void setTracks(Tracks tracks) { }
-    
+
     @Override
     public Tracks getTracks() { return null; }
 
