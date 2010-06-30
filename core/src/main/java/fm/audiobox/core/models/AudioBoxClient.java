@@ -80,7 +80,6 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 
-import fm.audiobox.core.StaticAudioBox;
 import fm.audiobox.core.api.Model;
 import fm.audiobox.core.api.ModelsCollection;
 import fm.audiobox.core.exceptions.LoginException;
@@ -95,7 +94,11 @@ import fm.audiobox.core.util.Inflector;
  * AudioBoxClient is the main library class. Every request to AudioBox.fm should pass through this object.
  * This class is used mainly to configure every aspect of the library itself.<br/>
  * To populate and get informations about user library use the {@link User} (or an extended User) model instead.
- *
+ * <p>
+ * 
+ * Keep in mind that this library provides only the common browsing actions and some other few feature.<br/>
+ * AudioBoxClient does not streams, nor play or provide a BitmapFactory for albums covers.
+ * 
  * <p>
  *
  * As many other libraries out there AudioBox.fm-JavaLib allows you to extends default models and use them in place

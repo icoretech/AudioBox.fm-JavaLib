@@ -44,13 +44,8 @@ public class UserTest extends junit.framework.TestCase {
     }
     
     @Test
-    public void testPreconditions() {
-        assertNotNull( abc );
-    }
-
-    @Test
     public void testLoginShouldThrowsLoginExceptionOnWrongPassword() {
-        
+        assertNotNull( abc );
         try {
             user = (User) abc.login( UserFixture.LOGIN , UserFixture.WRONG_PASS );
         } catch (LoginException e) {
@@ -64,7 +59,7 @@ public class UserTest extends junit.framework.TestCase {
     
     @Test
     public void testLoginShouldThrowsLoginExceptionOnWrongCredentials() {
-        
+        assertNotNull( abc );
         try {
             user = (User) abc.login( "wrong_user" , UserFixture.WRONG_PASS );
         } catch (LoginException e) {
@@ -78,6 +73,7 @@ public class UserTest extends junit.framework.TestCase {
     
     @Test
     public void testUserShouldBePopulatedWithRightCredentials() {
+        assertNotNull( abc );
         loginCatched();
         assertNotNull( user.getTest() );
         assertEquals("test", user.getTest() );
@@ -90,18 +86,23 @@ public class UserTest extends junit.framework.TestCase {
     
     @Test
     public void testUserLoginFailsOnUserNotActive() {
+        assertNotNull( abc );
         
         try {
             loginInactiveUser();
+            assertFalse( ! User.ACTIVE_STATE.equals( user.getState() ) ); // Make test fails
         } catch (LoginException e) {
             assertEquals( LoginException.INACTIVE_USER_STATE, e.getErrorCode() );
         } catch (SocketException e) {
+            e.printStackTrace();
+        } catch (ModelException e) {
             e.printStackTrace();
         }
     }
     
     @Test
     public void testUserGetUploadedTracks() {
+        assertNotNull( abc );
         loginCatched();
         
         try {
@@ -122,8 +123,8 @@ public class UserTest extends junit.framework.TestCase {
     }
     
     
-    private void loginInactiveUser() throws LoginException, ServiceException {
-        
+    private void loginInactiveUser() throws LoginException, ServiceException, ModelException {
+        user = (User) abc.login( UserFixture.INACTIVE_LOGIN, UserFixture.INACTIVE_RIGHT_PASS );
     }
     
     
