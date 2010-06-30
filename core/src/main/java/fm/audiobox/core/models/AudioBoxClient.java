@@ -89,22 +89,12 @@ import fm.audiobox.core.util.Inflector;
 /**
  * AudioBoxClient is the main library class. Every request to AudioBox.fm are made through this object.
  * This class is used mainly to configure every aspect of the library itself.<br/>
- * To populate and get informations  about user library use the {@link User} (or an extended User) model instead.
+ * To populate and get informations about user library use the {@link User} (or an extended User) model instead.
  *
  * <p>
  * 
  * As many other libraries out there AudioBox.fm-JavaLib allows you to extends default models and use them in place 
  * of default ones.
- * 
- * <p>
- * 
- * For this purpose we embrace the "convention over configuration" phylosophy this is why you will need to store all 
- * your extended models in the same package.
- * 
- * <p>
- * 
- * If you dislike this phylosophy or you have special needs you can bypass it by overwriting the default 
- * {@link AudioBoxModelLoader} providing your implementation.
  * 
  * <p>
  * 
@@ -165,60 +155,58 @@ public class AudioBoxClient {
     /** Specifies the models package (default: fm.audiobox.core.models) */
     public static final String DEFAULT_MODELS_PACKAGE = AudioBoxClient.class.getPackage().getName();
     public static final String TRACK_ID_PLACEHOLDER = "[track_id]";
-
-    
-    private User sUser;
-    private AudioBoxConnector connector;
-
-    private static Map<String,Class<? extends Model>> mapper = null;
-    private String mUserAgent;
-    private static Inflector sI = Inflector.getInstance();
-    
     public static final String 
-	    USER_KEY      = User.TAG_NAME,  PROFILE_KEY  = Profile.TAG_NAME, 
-	    PLAYLISTS_KEY = "Playlists",    PLAYLIST_KEY = Playlist.TAG_NAME,
-	    GENRES_KEY    = "Genres",       GENRE_KEY    = Genre.TAG_NAME,
-	    ARTISTS_KEY   = "Artists",      ARTIST_KEY   = Artist.TAG_NAME,
-	    ALBUMS_KEY    = "Albums",       ALBUM_KEY    = Album.TAG_NAME,
-	    TRACKS_KEY    = "Tracks",       TRACK_KEY    = Track.TAG_NAME;
+    USER_KEY      = User.TAG_NAME,  PROFILE_KEY  = Profile.TAG_NAME, 
+    PLAYLISTS_KEY = "Playlists",    PLAYLIST_KEY = Playlist.TAG_NAME,
+    GENRES_KEY    = "Genres",       GENRE_KEY    = Genre.TAG_NAME,
+    ARTISTS_KEY   = "Artists",      ARTIST_KEY   = Artist.TAG_NAME,
+    ALBUMS_KEY    = "Albums",       ALBUM_KEY    = Album.TAG_NAME,
+    TRACKS_KEY    = "Tracks",       TRACK_KEY    = Track.TAG_NAME;
 
+    private static Inflector sI = Inflector.getInstance();
+
+    private static Map<String, CollectionListener> sCollectionListenersMap = new HashMap<String , CollectionListener>();
+    private static Map<String, Class<? extends Model>> sModelsMap;
     static {
-        mapper = new HashMap<String , Class<? extends Model>>();
-        mapper.put( USER_KEY,      User.class ); 
-        mapper.put( PROFILE_KEY ,  Profile.class );
-        mapper.put( PLAYLISTS_KEY, Playlists.class ); 
-        mapper.put( PLAYLIST_KEY,  Playlist.class );
-        mapper.put( GENRES_KEY,    Genres.class ); 
-        mapper.put( GENRE_KEY,     Genre.class );
-        mapper.put( ARTISTS_KEY,   Artists.class ); 
-        mapper.put( ARTIST_KEY,    Artist.class );
-        mapper.put( ALBUMS_KEY,    Albums.class ); 
-        mapper.put( ALBUM_KEY ,    Album.class );
-        mapper.put( TRACKS_KEY,    Tracks.class ); 
-        mapper.put( TRACK_KEY ,    Track.class );
+        sModelsMap = new HashMap<String , Class<? extends Model>>();
+        sModelsMap.put( USER_KEY,      User.class ); 
+        sModelsMap.put( PROFILE_KEY ,  Profile.class );
+        sModelsMap.put( PLAYLISTS_KEY, Playlists.class ); 
+        sModelsMap.put( PLAYLIST_KEY,  Playlist.class );
+        sModelsMap.put( GENRES_KEY,    Genres.class ); 
+        sModelsMap.put( GENRE_KEY,     Genre.class );
+        sModelsMap.put( ARTISTS_KEY,   Artists.class ); 
+        sModelsMap.put( ARTIST_KEY,    Artist.class );
+        sModelsMap.put( ALBUMS_KEY,    Albums.class ); 
+        sModelsMap.put( ALBUM_KEY ,    Album.class );
+        sModelsMap.put( TRACKS_KEY,    Tracks.class ); 
+        sModelsMap.put( TRACK_KEY ,    Track.class );
     }
 
+    private User sUser;
+    private AudioBoxConnector connector;
+    private String mUserAgent;
 
     /* ------------------ */
     /* Default Interfaces */
     /* ------------------ */
 
     /** @see {@link CollectionListener} */
-    private static CollectionListener sCollectionListener = new CollectionListener() {
+    private static CollectionListener sDefaultCollectionListener = new CollectionListener() {
         public void onCollectionReady(int message, Object result) { }
         public void onItemReady(int item, Object obj) { }
     };
 
 
     public AudioBoxClient() {
-        
+
         this.connector = this.new AudioBoxConnector();	// setup connection
 
         String version = "unattended";
 
         try {
             Properties ps = new Properties();
-            ps.load(AudioBoxClient.class.getResourceAsStream("../config/env.properties"));
+            ps.load(AudioBoxClient.class.getResourceAsStream("/fm/audiobox/core/config/env.properties"));
             version = ps.getProperty("libaudioboxfm-core.version");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -227,12 +215,12 @@ public class AudioBoxClient {
         }
 
         mUserAgent = "AudioBox.fm/" + version + " (Java; U; " +
-	        System.getProperty("os.name") + " " +
-	        System.getProperty("os.arch") + "; " + 
-	        System.getProperty("user.language") + "; " +
-	        System.getProperty("java.runtime.version") +  ") " +
-	        System.getProperty("java.vm.name") + "/" + 
-	        System.getProperty("java.vm.version") + 
+        System.getProperty("os.name") + " " +
+        System.getProperty("os.arch") + "; " + 
+        System.getProperty("user.language") + "; " +
+        System.getProperty("java.runtime.version") +  ") " +
+        System.getProperty("java.vm.name") + "/" + 
+        System.getProperty("java.vm.version") + 
         " AudioBoxClient/" + version;
     }
 
@@ -242,23 +230,26 @@ public class AudioBoxClient {
     }
 
 
-    public static void initClass(String key, Class<? extends Model> klass){
-        Class<? extends Model> _klass = mapper.get( key );
+    public static void setModelClassFor(String key, Class<? extends Model> klass){
+        Class<? extends Model> _klass = sModelsMap.get( key );
         if ( _klass != null ){
-            mapper.put( key , klass );
+            sModelsMap.put( key , klass );
         }
     }
 
+    public static void setCollectionListenerFor(String key, CollectionListener cl) {
+        sCollectionListenersMap.put( key, cl );
+    }
 
     @SuppressWarnings("unchecked")
     public static Model getModelInstance(String key, AudioBoxConnector connector) throws ModelException {
-        
+
         Model model = null;
-        Class<? extends Model> klass = mapper.get( key );
-        
+        Class<? extends Model> klass = sModelsMap.get( key );
+
         if ( klass == null ) {
-            String className = DEFAULT_MODELS_PACKAGE + "." + sI.upperCamelCase( key, '-');
-            
+            String className = DEFAULT_MODELS_PACKAGE + "." + sI.upperCamelCase( key, '-' );
+
             try {
                 klass = (Class<? extends Model>) Class.forName( className );
             } catch (ClassNotFoundException e) {
@@ -267,26 +258,29 @@ public class AudioBoxClient {
         }
 
         try {
-            
+
             log.debug("New model instance: " + klass.getName() );
             model = klass.newInstance();
-            
+
         } catch (InstantiationException e) {
             throw new ModelException("Instantiation Exception: " + klass.getName() );
-            
+
         } catch (IllegalAccessException e) {
             throw new ModelException("Illegal Access Exception: " + klass.getName() );
-            
+
         }
 
         model.setConnector( connector );
-        
-        if ( model instanceof ModelsCollection )
-            ((ModelsCollection)model).setCollectionListener(sCollectionListener);
+
+        if ( model instanceof ModelsCollection ) {
+            CollectionListener cl = sCollectionListenersMap.get( model.getClass().getSimpleName() );
+            ( (ModelsCollection) model ).setCollectionListener( cl == null ? sDefaultCollectionListener : cl );
+        }
+
         return model;
     }
 
-    
+
     /**
      * This method should be called before any other call to AudioBox.fm.<br/>
      * It tries to perform a login. If succeeds a User object is returned otherwise a {@link LoginException} is thrown.<br/>
@@ -332,13 +326,14 @@ public class AudioBoxClient {
 
 
     /**
-     * Use this method to override the default {@link CollectionListener}.
+     * Use this method to get the configured {@link CollectionListener}.
      * 
-     * @param collectionListener the CollectionListener to use for parser callbacks
+     * @param key the name of the ModelsCollection associated with the collection listener.
+     * @return the current collection listener AudioBoxClient is using.
      */
 
-    public static void setCollectionListener(CollectionListener collectionListener) {
-        sCollectionListener = collectionListener;
+    public static CollectionListener getCollectionListenerFor(String key) {
+        return sCollectionListenersMap.get(key);
     }
 
 
@@ -354,18 +349,6 @@ public class AudioBoxClient {
     public void setForceTrust(boolean force) {
         this.getMainConnector().setForceTrust(force);
     }
-
-
-    /**
-     * Use this method to get the configured {@link CollectionListener}.
-     * 
-     * @return the current collection listener AudioBoxClient is using.
-     */
-
-    public static CollectionListener getCollectionListener() {
-        return sCollectionListener;
-    }
-
 
     public class AudioBoxConnector implements Serializable {
 
@@ -384,7 +367,7 @@ public class AudioBoxClient {
         private static final String ACTION_PARAMETER = "${action}";
 
         private static final String PROTOCOL = "https";
-        private static final String HOST = "audiobox.fm";
+        private static final String HOST = "audiobox.dev";
         private static final String PORT = "443";
         private static final String API_PREFIX = "/api/";
         public static final String API_PATH = PROTOCOL + "://" + HOST + API_PREFIX;
@@ -395,9 +378,6 @@ public class AudioBoxClient {
         private HttpRoute mAudioBoxRoute;
         private ThreadSafeClientConnManager mCm;
         private DefaultHttpClient mClient;
-        private boolean mForceTrust = false;
-
-
 
         private AudioBoxConnector() {
 
@@ -422,9 +402,6 @@ public class AudioBoxClient {
             // Increase max connections for audiobox.fm:443 to 50
             connPerRoute.setMaxForRoute(mAudioBoxRoute, 50);
             ConnManagerParams.setMaxConnectionsPerRoute(params, connPerRoute);
-
-            if (mForceTrust)
-                this.forceTrustCertificate();
 
 
             this.mClient.addRequestInterceptor(new HttpRequestInterceptor() {
@@ -505,6 +482,10 @@ public class AudioBoxClient {
          * @param httpVerb the HTTP method to use for the request (ie: GET, PUT, POST and DELETE)
          * 
          * @return the result of the request, may be a response code, such as HTTP OK ("200") or the body of the response.
+         * 
+         * @throws LoginException if user has not yet logged in
+         * @throws ServiceException if the connection to AudioBox.fm throws a {@link ClientProtocolException}, 
+         * {@link SocketTimeoutException} or {@link IOException} occurs.
          */
 
         public String[] execute(String path, String token, String action , Model target, String httpVerb) throws LoginException , ServiceException {
@@ -528,6 +509,10 @@ public class AudioBoxClient {
          * @param format the request format (xml or txt)
          * 
          * @return the result of the request, may be a response code, such as HTTP OK ("200") or the body of the response.
+         *
+         * @throws LoginException if user has not yet logged in
+         * @throws ServiceException if the connection to AudioBox.fm throws a {@link ClientProtocolException}, 
+         * {@link SocketTimeoutException} or {@link IOException} occurs.
          */
 
         public String[] execute(String path, String token, String action , Model target, String httpVerb, String format) throws LoginException , ServiceException {
@@ -562,7 +547,8 @@ public class AudioBoxClient {
 
         @Deprecated
         protected void setForceTrust(boolean force){
-            this.mForceTrust = force;
+            if (force)
+                this.forceTrustCertificate();
         }
 
 
@@ -591,6 +577,9 @@ public class AudioBoxClient {
          * 
          * @return the response code or the stream Location (in case of a {@link Track} model)
          * 
+         * @throws LoginException if user has not yet logged in
+         * @throws ServiceException if the connection to AudioBox.fm throws a {@link ClientProtocolException}, 
+         * {@link SocketTimeoutException} or {@link IOException} occurs.
          */
 
         private String[] request(String url, Model target, String httpVerb) throws LoginException, ServiceException {
@@ -600,8 +589,6 @@ public class AudioBoxClient {
 
 
             try {
-
-                log.info("Requesting resource: " + url);
 
                 HttpRequestBase method = null; 
                 if ( HttpPost.METHOD_NAME.equals( httpVerb ) ) {
@@ -619,6 +606,7 @@ public class AudioBoxClient {
                     post.setEntity( ((Track)target).getFileEntity() );
                 }
 
+                log.info("Requesting resource: " + url);
                 HttpResponse resp = mClient.execute(method, new BasicHttpContext());
                 String response = null;
                 if ( target != null )
@@ -655,8 +643,6 @@ public class AudioBoxClient {
          * 
          * Note that if {@link NoSuchAlgorithmException} or {@link KeyManagementException} occurs this method fails silently
          * with only warn log message. 
-         * 
-         * @param client HttpClient to set the SSL interfaces to
          */
 
         @Deprecated

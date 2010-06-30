@@ -34,9 +34,9 @@ public class AlbumsTest extends junit.framework.TestCase {
     @SuppressWarnings("deprecation")
     @Before
     public void setUp() throws Exception {
-        StaticAudioBox.initClass( StaticAudioBox.ALBUM_KEY, Album.class );
-        StaticAudioBox.initClass( StaticAudioBox.TRACKS_KEY, Tracks.class );
-        StaticAudioBox.initClass( StaticAudioBox.TRACK_KEY, Track.class );
+        StaticAudioBox.setModelClassFor( StaticAudioBox.ALBUM_KEY, Album.class );
+        StaticAudioBox.setModelClassFor( StaticAudioBox.TRACKS_KEY, Tracks.class );
+        StaticAudioBox.setModelClassFor( StaticAudioBox.TRACK_KEY, Track.class );
         abc = new StaticAudioBox();
         abc.setForceTrust(true);
         user = abc.login(UserFixture.LOGIN, UserFixture.RIGHT_PASS);

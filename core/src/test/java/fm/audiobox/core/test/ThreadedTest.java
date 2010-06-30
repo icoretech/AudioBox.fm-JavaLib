@@ -36,7 +36,7 @@ public class ThreadedTest extends junit.framework.TestCase {
 
         System.setProperty("org.apache.commons.logging.simplelog.log.fm.audiobox.api", "debug");
 
-        StaticAudioBox.initClass(StaticAudioBox.USER_KEY , User.class );
+        StaticAudioBox.setModelClassFor(StaticAudioBox.USER_KEY , User.class );
         //AudioBoxClient.setUserClass(User.class);
         abc = new StaticAudioBox();
         abc.setForceTrust(true);

@@ -42,6 +42,10 @@ public abstract class ModelsCollection extends Model {
 
     public abstract ModelItem get(String token);
     
+    public void setCollectionListener(CollectionListener cl){
+        this.collectionListener = cl;
+    }
+    
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         super.endElement(uri, localName, qName);
@@ -54,8 +58,9 @@ public abstract class ModelsCollection extends Model {
         }
     }
     
-    public void setCollectionListener(CollectionListener cl){
-    	this.collectionListener = cl;
+    @Override
+    public void endDocument() throws SAXException {
+        this.collectionListener.onCollectionReady(CollectionListener.DOCUMENT_PARSED, this);
     }
-
+    
 }

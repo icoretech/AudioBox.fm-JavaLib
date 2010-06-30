@@ -57,6 +57,7 @@ public class ServiceException extends java.net.ConnectException {
 	}
 	
 	public ServiceException(String message, int errorCode) {
+	    this(message);
 	    this.errorCode = errorCode;
 	}
 	

@@ -35,10 +35,10 @@ public class UserTest extends junit.framework.TestCase {
         System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire.header", "debug");
         System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http.impl", "debug");
         
-        System.setProperty("org.apache.commons.logging.simplelog.log.fm.audiobox.api", "debug");
+        System.setProperty("org.apache.commons.logging.simplelog.log.fm.audiobox.core", "debug");
         
         abc = new StaticAudioBox();
-        StaticAudioBox.initClass(StaticAudioBox.USER_KEY , User.class );
+        StaticAudioBox.setModelClassFor(StaticAudioBox.USER_KEY , User.class );
         abc.setForceTrust(true);
         
     }
