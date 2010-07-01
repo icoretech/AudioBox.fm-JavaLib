@@ -8,6 +8,7 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -166,7 +167,7 @@ public class TrackTest extends junit.framework.TestCase {
                 Track t = user.getTrackByUuid( "aaa ");
                 assertNull( t );
             } catch( ServiceException e ) {
-                assertEquals( ServiceException.RESOURCE_NOT_FOUND, e.getErrorCode() );
+                assertEquals( HttpStatus.SC_NOT_FOUND, e.getErrorCode() );
             }
             
             List<Track> list = new ArrayList<Track>();

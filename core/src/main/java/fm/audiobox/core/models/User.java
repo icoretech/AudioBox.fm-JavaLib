@@ -31,7 +31,6 @@ import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
-import fm.audiobox.core.util.Base64;
 
 
 /**
@@ -322,17 +321,6 @@ public class User extends ModelItem {
     }
 
 
-    /**
-     * <p>getAuth</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    public String getAuth() {
-        String auth = ( email == null ? username : email ) + ":" + password;
-        return Base64.encodeBytes( auth.getBytes() );
-    }
-
-    
     /**
      * Given a known track UUID this method returns a valid {@link Track} object.
      *

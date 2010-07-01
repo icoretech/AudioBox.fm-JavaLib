@@ -166,7 +166,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
     public String[] handleResponse(HttpResponse response) throws ClientProtocolException, IOException {
 
         int responseCode = response.getStatusLine().getStatusCode();
-        String responseString = "";//String.valueOf( responseCode );
+        String responseString = "";
 
         switch( responseCode ) {
 
@@ -180,18 +180,17 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
             responseString = response.getFirstHeader("Location").getValue();
             break;
 
-        case HttpStatus.SC_FORBIDDEN:
         case HttpStatus.SC_UNAUTHORIZED:
             throw new ClientProtocolException(String.valueOf(responseCode));
 
         case HttpStatus.SC_UNPROCESSABLE_ENTITY:
-            throw new ServiceException( "Unprocessable entity", ServiceException.UNPROCESSABLE_ENTITY );
+            throw new ServiceException( "Unprocessable entity", responseCode );
 
         case HttpStatus.SC_NOT_FOUND:
-            throw new ServiceException( "Resource not found", ServiceException.RESOURCE_NOT_FOUND );
+            throw new ServiceException( "Resource not found", responseCode );
 
         default:
-            throw new ServiceException( "An error occurred", ServiceException.GENERIC_SERVICE_ERROR );
+            throw new ServiceException( "Response code not managed (" + responseCode + ")", responseCode );
 
         }
 

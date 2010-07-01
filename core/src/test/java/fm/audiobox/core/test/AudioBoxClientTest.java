@@ -37,23 +37,22 @@ public class AudioBoxClientTest extends junit.framework.TestCase {
 
 
     @Test
-    public void testCL() {
+    public void testModelLoading() {
         
         assertNotNull( abc );
         loginCatched();
         assertNotNull( user );
-        
         try {
             
             Track tr = (Track) AudioBoxClient.getModelInstance(AudioBoxClient.TRACK_KEY, null);
             assertTrue(tr instanceof Track);
             
+            AudioBoxClient.setModelClassFor("ABC", null);
             AudioBoxClient.getModelInstance("ABC", null);
             
         } catch (ModelException e) {
             assertEquals( ModelException.CLASS_NOT_FOUND, e.getErrorCode());
         }
-        
         
         try {
             
@@ -64,6 +63,7 @@ public class AudioBoxClientTest extends junit.framework.TestCase {
             
         } catch (ModelException e) {
             assertEquals( ModelException.INSTANTIATION_FAILED, e.getErrorCode());
+            AudioBoxClient.setModelClassFor(AudioBoxClient.TRACK_KEY, null); // <-- resets the key
         }
     }
 

@@ -57,6 +57,7 @@ import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.HttpStatus;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -73,6 +74,7 @@ import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.entity.HttpEntityWrapper;
+import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
@@ -121,7 +123,8 @@ import fm.audiobox.core.util.Inflector;
  * // Creating the new AudioBoxClient instance
  * abc = new AudioBoxClient();
  *
- * // If you extended the {@link User} model AudioBoxClient should be informed before the login take place.
+ * // If you extended the {@link User} model AudioBoxClient should 
+ * // be informed before the login take place.
  * AudioBoxClient.setModelClassFor(AudioBoxClient.USER_KEY , MyUser.class );
  * 
  * // Suppose we want to limit requests timeout to 5 seconds
@@ -130,7 +133,8 @@ import fm.audiobox.core.util.Inflector;
  * // Now we can try to perform a login...
  * try {
  *
- *    // Should perform a login before anything else is done with the AudioBoxClient object
+ *    // Should perform a login before anything else is done with 
+ *    // the AudioBoxClient object
  *    MyUser user = (MyUser) abc.login( "user@email.com" , "password" );
  *
  *    // To browse user library we have some nice utils methods
@@ -329,7 +333,8 @@ public class AudioBoxClient {
      * @param klass your extended {@link Model} {@link Class}.
      */
     public static void setModelClassFor(String key, Class<? extends Model> klass) {
-        if ( sModelsMap.get( key ) != null && klass != null ) {
+        // Allow only existings keys
+        if ( sModelsMap.containsKey( key ) ) {
             sModelsMap.put( key , klass );
         }
     }
@@ -355,6 +360,7 @@ public class AudioBoxClient {
 
             try {
                 klass = (Class<? extends Model>) Class.forName( className );
+                AudioBoxClient.setModelClassFor( key, klass ); // Reset the key
             } catch (ClassNotFoundException e) {
                 throw new ModelException("No model class found: " + className, ModelException.CLASS_NOT_FOUND );
             }
@@ -403,12 +409,14 @@ public class AudioBoxClient {
      */
     public User login(String username, String password) throws LoginException, ServiceException, ModelException {
 
-        log.info("Starting AudioBoxClient: " + mUserAgent);
+        log.debug("Starting AudioBoxClient: " + mUserAgent);
 
         this.mUser = (User) getModelInstance( USER_KEY , this.getMainConnector() );
         this.mUser.setUsername(username);
         this.mUser.setPassword(password);
 
+        this.getMainConnector().setCredential( new UsernamePasswordCredentials(username, password) );
+        
         this.getMainConnector().execute( User.PATH, null, null, this.mUser, null);
 
         if ( ! User.ACTIVE_STATE.equalsIgnoreCase( this.mUser.getState() ) )
@@ -479,6 +487,8 @@ public class AudioBoxClient {
         private HttpRoute mAudioBoxRoute;
         private ThreadSafeClientConnManager mCm;
         private DefaultHttpClient mClient;
+        private UsernamePasswordCredentials mCredentials;
+        private BasicScheme mScheme = new BasicScheme();
         
         private Log log = LogFactory.getLog(AudioBoxConnector.class);
 
@@ -507,15 +517,14 @@ public class AudioBoxClient {
             connPerRoute.setMaxForRoute(mAudioBoxRoute, 50);
             ConnManagerParams.setMaxConnectionsPerRoute(params, connPerRoute);
 
-
             this.mClient.addRequestInterceptor(new HttpRequestInterceptor() {
 
                 public void process( final HttpRequest request,  final HttpContext context) throws HttpException, IOException {
                     if (!request.containsHeader("Accept-Encoding")) {
                         request.addHeader("Accept-Encoding", "gzip");
                     }
-                    request.addHeader("Authorization" , "Basic " + mUser.getAuth() );
                     request.addHeader("User-Agent", mUserAgent);
+                    request.addHeader( mScheme.authenticate(mCredentials,  request) );
                 }
 
             });
@@ -549,6 +558,15 @@ public class AudioBoxClient {
             });
         }
 
+        
+        /**
+         * Set up HTTP Basic Authentication credentials for HTTP authenticated requests.
+         * 
+         * @param credential the basic scheme credentials object to use.
+         */
+        public void setCredential(UsernamePasswordCredentials credential) {
+            this.mCredentials = credential;
+        }
 
         /**
          * Use this method to configure the timeout limit for reqests made against AudioBox.fm.
@@ -570,7 +588,7 @@ public class AudioBoxClient {
         }
 
         /**
-         * This method is used by the {@link Model} class by running the {@link Model#invoke()} method.<br/>
+         * This method is used by the {@link Model} class.<br/>
          * Avoid direct execution of this method if you don't know what you are doing.
          * 
          * <p>
@@ -595,7 +613,7 @@ public class AudioBoxClient {
 
 
         /**
-         * This method is used by the {@link Model} class by running the {@link Model#invoke()} method.<br/>
+         * This method is used by the {@link Model} class.<br/>
          * Avoid direct execution of this method if you don't know what you are doing.
          * 
          * <p>
@@ -705,7 +723,7 @@ public class AudioBoxClient {
                     post.setEntity( ((Track)target).getFileEntity() );
                 }
 
-                log.info("Requesting resource: " + url);
+                log.debug("Requesting resource: " + url);
                 return mClient.execute(method, target, new BasicHttpContext());
 
             } catch( ClientProtocolException e ) {
@@ -713,7 +731,7 @@ public class AudioBoxClient {
                 try {
                     // LoginException is not handled by the response handler
                     int status = Integer.parseInt(e.getMessage());
-                    if ( status == HttpStatus.SC_FORBIDDEN || status == HttpStatus.SC_UNAUTHORIZED ) {
+                    if ( status == HttpStatus.SC_UNAUTHORIZED ) {
                         throw new LoginException("Unauthorized user", status);
                     }
 

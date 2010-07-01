@@ -8,7 +8,6 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -42,20 +41,13 @@ public class AlbumsTest extends junit.framework.TestCase {
         StaticAudioBox.setModelClassFor( StaticAudioBox.TRACK_KEY, Track.class );
         abc = new StaticAudioBox();
         abc.setForceTrust(true);
-        user = abc.login(UserFixture.LOGIN, UserFixture.RIGHT_PASS);
     }
-
-
-    @Test
-    public void testPreconditions() {
-        assertNotNull( abc );
-        assertNotNull( user );
-    }
-
 
     @Test
     public void testAlbumsShouldBePopulated() {
+        assertNotNull( abc );
         loginCatched();
+        assertNotNull( user );
         try {
 
             loadAlbums();
@@ -104,7 +96,10 @@ public class AlbumsTest extends junit.framework.TestCase {
 
     @Test
     public void testAlbumShouldBePopulatedAndContainsTracks() {
+        
+        assertNotNull( abc );
         loginCatched();
+        assertNotNull( user );
         try {
 
             loadAlbums();
@@ -136,14 +131,8 @@ public class AlbumsTest extends junit.framework.TestCase {
     }
 
 
-    @After
-    public void tearDown() throws Exception {
-
-    }
-
     private void loadAlbums() throws ServiceException, LoginException, InstantiationException, IllegalAccessException, ClassNotFoundException, ModelException {
         albums = (Albums) user.getAlbums(false);
-        //albums.invoke();
     }
 
     private void loginCatched() {

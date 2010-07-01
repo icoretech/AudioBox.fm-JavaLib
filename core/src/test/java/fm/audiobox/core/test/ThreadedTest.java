@@ -51,13 +51,10 @@ public class ThreadedTest extends junit.framework.TestCase {
     }
 
     @Test
-    public void testPreconditions() {
+    public void testTrhead() throws InterruptedException {
+        
         assertNotNull( abc );
         assertNotNull( user );
-    }
-
-    @Test
-    public void testTrhead() throws InterruptedException {
         
         final Log logger = LogFactory.getLog(ThreadedTest.class);
         final Handle h1 = new Handle();
@@ -69,7 +66,7 @@ public class ThreadedTest extends junit.framework.TestCase {
             public void run() {
                 try {
                     
-                    logger.info("\nStarted thread #1\n");
+                    logger.debug("Started thread #1");
                     
                     String[] tracks = user.getUploadedTracks();
                     assertNotNull(tracks);
@@ -78,7 +75,7 @@ public class ThreadedTest extends junit.framework.TestCase {
                         assertTrue( tracks[i].length() == 32 );
                     h1.setDone(true);
                     
-                    logger.info("\nEnded thread #1\n");
+                    logger.debug("Ended thread #1");
                     
                 } catch (ServiceException e) {
                     e.printStackTrace();
@@ -93,7 +90,7 @@ public class ThreadedTest extends junit.framework.TestCase {
             @Override
             public void run() {
                 try {
-                    logger.info("\nStarted thread #2\n");
+                    logger.debug("Started thread #2");
                     
                     Playlists pls = (Playlists) user.getPlaylists(false);
                     assertNotNull(pls.getCollection());
@@ -123,7 +120,7 @@ public class ThreadedTest extends junit.framework.TestCase {
                     
                     h2.setDone(true);
                     
-                    logger.info("\nEnded thread #2\n");
+                    logger.debug("Ended thread #2");
                 } catch (ServiceException e) {
                     e.printStackTrace();
                 } catch (LoginException e) {
@@ -140,7 +137,7 @@ public class ThreadedTest extends junit.framework.TestCase {
         
         while ( t1.isAlive() || t2.isAlive() ) {}
 
-        logger.info( "End: " +  (  System.currentTimeMillis() - _start  ) );
+        logger.debug( "End: " +  (  System.currentTimeMillis() - _start  ) );
         
         assertTrue( h1.getDone() && h2.getDone() );
     }
