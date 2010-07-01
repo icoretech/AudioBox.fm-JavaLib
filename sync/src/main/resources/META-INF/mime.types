@@ -1,0 +1,14 @@
+#
+# AudioBox.fm supported audio formats
+#   
+    
+audio/mpeg         mp3 mp2 MP3 MP2
+audio/aac          m4v m4r 3gp mp4 aac m4a M4V M4R 3GP MP4 AAC M4A
+audio/flac         flac spx FLAC SPX
+audio/vorbis       ogg OGG
+audio/x-ms-wma     wma WMA
+audio/x-realaudio  rm ram RM RAM
+audio/x-wav        wav WAV
+audio/x-musepack   mpc mp+ mpp MPC MP+ MPP
+audio/x-aiff       aiff aif aifc AIFF AIF AIFC
+audio/x-tta        tta TTA

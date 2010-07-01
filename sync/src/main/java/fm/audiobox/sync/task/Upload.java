@@ -29,25 +29,25 @@ import java.io.OutputStream;
 
 import javax.activation.MimetypesFileTypeMap;
 
-import org.apache.http.Header;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.FileEntity;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.models.Track;
-import fm.audiobox.core.models.Tracks;
+import fm.audiobox.core.models.AudioBoxClient;
+import fm.audiobox.core.models.UploadTrack;
 import fm.audiobox.sync.interfaces.ThreadListener;
 import fm.audiobox.sync.util.AsyncTask;
 
 public class Upload extends AsyncTask {
 
+    private AudioBoxClient mAbc;
     private UploadTrack mTrack;
     private FileEntity mFileEntity;
     private File mFile;
 
-    public Upload(File file){
+    public Upload(File file, AudioBoxClient abc){
         this.mFile = file;
+        this.mAbc = abc;
     }
 
 
@@ -113,42 +113,10 @@ public class Upload extends AsyncTask {
 
         };
 
-        this.mTrack = this.new UploadTrack( this.mFileEntity );
+        this.mTrack = new UploadTrack( this.mFileEntity, this.mAbc );
 
     }
-
-    private class UploadTrack extends Track {
-
-        @SuppressWarnings("unused")
-        public UploadTrack(){
-            super();
-        }
-
-        public UploadTrack( FileEntity fe ){
-            super(fe);
-        }
-
-        public void upload() throws ServiceException, LoginException{
-            connector.execute(Tracks.END_POINT , null, null, this, HttpPost.METHOD_NAME);
-        }
-        
-        
-        @Override
-        public String parseResponse( InputStream input, Header contentType ) throws IOException {
-            
-            String response = "";
-            
-            byte[] bytes = new byte[CHUNK];
-            int read;
-            StringBuffer result = new StringBuffer();
-            while( ( read = input.read(bytes) ) != -1  ){
-                result.append( new String( bytes, 0 ,read )  );
-            }
-            this.setUuid( result.toString().trim() );
-            
-            return response;
-        }
-    }
+    
 
 
 }
