@@ -105,16 +105,19 @@ public class ArtistsTest extends junit.framework.TestCase {
             loadArtists();
             
             assertNotNull(artists);
-            Artist al = (Artist) artists.get(0);
-            assertNotNull(al);
+            Artist ar = (Artist) artists.get(0);
+            assertNotNull(ar);
             
-            Tracks trs = (Tracks) al.getTracks();
+            Tracks trs = (Tracks) ar.getTracks();
             assertNotNull(trs);
-            
-            //trs.invoke();
             
             Track tr = (Track) trs.get(0);
             assertNotNull(tr);
+            
+            Track tr2 = ar.getTrack(tr.getUuid());
+            
+            assertNotNull( tr2 );
+            assertSame(tr, tr2);
 
         } catch (LoginException e) {
             e.printStackTrace();

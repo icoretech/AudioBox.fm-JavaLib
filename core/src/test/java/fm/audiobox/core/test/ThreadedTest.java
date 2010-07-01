@@ -74,10 +74,8 @@ public class ThreadedTest extends junit.framework.TestCase {
                     String[] tracks = user.getUploadedTracks();
                     assertNotNull(tracks);
                     assertTrue(tracks.length > 0);
-                    /*
                     for (int i = 0; i < tracks.length; i++)
-                        assertTrue( tracks[i].length() == 40 );
-                    */
+                        assertTrue( tracks[i].length() == 32 );
                     h1.setDone(true);
                     
                     logger.info("\nEnded thread #1\n");
@@ -98,11 +96,9 @@ public class ThreadedTest extends junit.framework.TestCase {
                     logger.info("\nStarted thread #2\n");
                     
                     Playlists pls = (Playlists) user.getPlaylists(false);
-                    //pls.invoke();
                     assertNotNull(pls.getCollection());
                     
                     Playlist pl = pls.get(0);
-                    //pl.invoke();
                     
                     assertNotNull(pl);
                     

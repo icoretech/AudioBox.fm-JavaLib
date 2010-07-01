@@ -116,15 +116,6 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
     }
 
     /**
-     * <p>Setter for the field <code>endPoint</code>.</p>
-     *
-     * @param endPoint a {@link java.lang.String} object.
-     */
-    public final void setEndPoint(String endPoint){
-        this.endPoint = endPoint;
-    }
-
-    /**
      * <p>Getter for the field <code>endPoint</code>.</p>
      *
      * @return a {@link java.lang.String} object.

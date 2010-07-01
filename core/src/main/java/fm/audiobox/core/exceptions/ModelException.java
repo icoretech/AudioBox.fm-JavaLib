@@ -32,19 +32,16 @@ package fm.audiobox.core.exceptions;
  */
 public class ModelException extends Exception {
 
+    public static final int CLASS_NOT_FOUND = 0;
+    
+    public static final int INSTANTIATION_FAILED = 1;
+    
+    public static final int ILLEGAL_ACCESS = 2;
+    
 	private static final long serialVersionUID = 1L;
 	
 	private int errorCode;
-	
-	/**
-	 * <p>Constructor for ModelException.</p>
-	 *
-	 * @param message a {@link java.lang.String} object.
-	 */
-	public ModelException(String message) {
-		super(message);
-	}
-	
+
 	/**
 	 * <p>Constructor for ModelException.</p>
 	 *

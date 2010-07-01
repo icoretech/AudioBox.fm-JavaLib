@@ -40,7 +40,7 @@ import fm.audiobox.core.models.Tracks;
 public abstract class ModelItem extends Model {
 
     public Tracks tracks;
-    
+
     /**
      * <p>getTrack</p>
      *
@@ -59,7 +59,7 @@ public abstract class ModelItem extends Model {
     public void setTracks(Tracks tracks) {
         this.tracks = tracks;
     }
-    
+
     /**
      * <p>Getter for the field <code>tracks</code>.</p>
      *
@@ -69,11 +69,11 @@ public abstract class ModelItem extends Model {
      * @throws fm.audiobox.core.exceptions.ModelException if any.
      */
     public Tracks getTracks() throws ServiceException, LoginException, ModelException {
-        
-		this.tracks = (Tracks) AudioBoxClient.getModelInstance(AudioBoxClient.TRACKS_KEY, this.getConnector());
-		this.getConnector().execute(this.getEndPoint(), this.getToken(), null, this.tracks, null);
-        
+
+        this.setTracks( (Tracks) AudioBoxClient.getModelInstance(AudioBoxClient.TRACKS_KEY, this.getConnector()) );
+        this.getConnector().execute(this.getEndPoint(), this.getToken(), null, this.tracks, null);
+
         return this.tracks;
     }
-    
+
 }

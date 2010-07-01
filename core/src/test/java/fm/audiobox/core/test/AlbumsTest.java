@@ -66,9 +66,10 @@ public class AlbumsTest extends junit.framework.TestCase {
             
             for (Model al : albums.getCollection()) {
                 Album alb = (Album) al;
-                assertNotNull(alb);
-                assertNotNull(alb.getCoverUrlAsThumb());
-                assertNotNull(alb.getCoverUrl());
+                assertNotNull( alb );
+                assertNotNull( alb.getCoverUrlAsThumb() );
+                assertNotNull( alb.getCoverUrl() );
+                assertNotNull( alb.getArtist() );
                 album = alb;
             }
 

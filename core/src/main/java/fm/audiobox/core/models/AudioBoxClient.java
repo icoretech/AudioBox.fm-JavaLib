@@ -118,7 +118,6 @@ import fm.audiobox.core.util.Inflector;
  * The usual execution flow can be demonstrated by the code snippet below:
  *
  * <pre>
- *
  * // Creating the new AudioBoxClient instance
  * abc = new AudioBoxClient();
  *
@@ -152,7 +151,6 @@ import fm.audiobox.core.util.Inflector;
  * } catch (ServiceException e) {
  *    // Handle {@link ServiceException}
  * }
- *
  * </pre>
  *
  * This is briefly the navigation loop. Moreover each model offer some action that can be performed. To know what a model
@@ -208,8 +206,8 @@ public class AudioBoxClient {
     /** Constant <code>TRACK_KEY="Track.TAG_NAME"</code> */
     public static final String TRACK_KEY     = Track.TAG_NAME;
 
+    
     private static Inflector sI = Inflector.getInstance();
-
     private static Map<String, CollectionListener> sCollectionListenersMap = new HashMap<String , CollectionListener>();
     private static Map<String, Class<? extends Model>> sModelsMap;
     static {
@@ -228,8 +226,8 @@ public class AudioBoxClient {
         sModelsMap.put( TRACK_KEY ,    Track.class );
     }
 
-    private User sUser;
-    private AudioBoxConnector connector;
+    private User mUser;
+    private AudioBoxConnector mConnector;
     private String mUserAgent;
 
     /* ------------------ */
@@ -251,8 +249,8 @@ public class AudioBoxClient {
      */
     public AudioBoxClient() {
 
-        this.connector = new AudioBoxConnector();	// setup connection
-        this.connector.setTimeout( 180 * 1000 );
+        this.mConnector = new AudioBoxConnector();
+        this.mConnector.setTimeout( 180 * 1000 );
         
         String version = "unattended";
 
@@ -261,8 +259,10 @@ public class AudioBoxClient {
             ps.load(AudioBoxClient.class.getResourceAsStream("/fm/audiobox/core/config/env.properties"));
             version = ps.getProperty("libaudioboxfm-core.version");
         } catch (FileNotFoundException e) {
+            log.error("Environment properties file not found: " + e.getMessage());
             e.printStackTrace();
         } catch (IOException e) {
+            log.error("Unable to access the environment properties file: " + e.getMessage());
             e.printStackTrace();
         }
 
@@ -283,23 +283,9 @@ public class AudioBoxClient {
      * @return the main {@link fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector} object.
      */
     protected AudioBoxConnector getMainConnector(){
-        return this.connector;
+        return this.mConnector;
     }
 
-
-    /**
-     * <p>If you need to customize or extend the default models classes you can set your own implementation through
-     * this method.</p>
-     * 
-     * @param key one of the key defined as AudioBoxClient model constants,
-     * @param klass your extended {@link Model} {@link Class}.
-     */
-    public static void setModelClassFor(String key, Class<? extends Model> klass){
-        Class<? extends Model> _klass = sModelsMap.get( key );
-        if ( _klass != null ){
-            sModelsMap.put( key , klass );
-        }
-    }
 
     /**
      * <p>{@link CollectionListener} is mainly used for async requests.</p>
@@ -320,6 +306,32 @@ public class AudioBoxClient {
     public static void setCollectionListenerFor(String key, CollectionListener cl) {
         if (cl != null)
             sCollectionListenersMap.put( key, cl );
+    }
+    
+    
+    /**
+     * Use this method to get the configured {@link CollectionListener} for the <em>key</em> specified {@link ModelsCollection}.
+     *
+     * @param key the name of the ModelsCollection associated with the collection listener.
+     * 
+     * @return the current collection listener AudioBoxClient is using.
+     */
+    public static CollectionListener getCollectionListenerFor(String key) {
+        return sCollectionListenersMap.get(key);
+    }
+    
+    
+    /**
+     * <p>If you need to customize or extend the default models classes you can set your own implementation through
+     * this method.</p>
+     * 
+     * @param key one of the key defined as AudioBoxClient model constants,
+     * @param klass your extended {@link Model} {@link Class}.
+     */
+    public static void setModelClassFor(String key, Class<? extends Model> klass) {
+        if ( sModelsMap.get( key ) != null && klass != null ) {
+            sModelsMap.put( key , klass );
+        }
     }
 
     /**
@@ -344,7 +356,7 @@ public class AudioBoxClient {
             try {
                 klass = (Class<? extends Model>) Class.forName( className );
             } catch (ClassNotFoundException e) {
-                throw new ModelException("No model class found: " + className );
+                throw new ModelException("No model class found: " + className, ModelException.CLASS_NOT_FOUND );
             }
         }
 
@@ -354,10 +366,10 @@ public class AudioBoxClient {
             model = klass.newInstance();
 
         } catch (InstantiationException e) {
-            throw new ModelException("Instantiation Exception: " + klass.getName() );
+            throw new ModelException("Instantiation Exception: " + klass.getName(), ModelException.INSTANTIATION_FAILED );
 
         } catch (IllegalAccessException e) {
-            throw new ModelException("Illegal Access Exception: " + klass.getName() );
+            throw new ModelException("Illegal Access Exception: " + klass.getName(), ModelException.ILLEGAL_ACCESS );
 
         }
 
@@ -393,16 +405,16 @@ public class AudioBoxClient {
 
         log.info("Starting AudioBoxClient: " + mUserAgent);
 
-        this.sUser = (User) getModelInstance( USER_KEY , this.getMainConnector() );
-        this.sUser.setUsername(username);
-        this.sUser.setPassword(password);
+        this.mUser = (User) getModelInstance( USER_KEY , this.getMainConnector() );
+        this.mUser.setUsername(username);
+        this.mUser.setPassword(password);
 
-        this.getMainConnector().execute( User.PATH, null, null, this.sUser, null);
+        this.getMainConnector().execute( User.PATH, null, null, this.mUser, null);
 
-        if ( ! User.ACTIVE_STATE.equalsIgnoreCase( this.sUser.getState() ) )
+        if ( ! User.ACTIVE_STATE.equalsIgnoreCase( this.mUser.getState() ) )
             throw new LoginException("User is not active", LoginException.INACTIVE_USER_STATE );
 
-        return this.sUser;
+        return this.mUser;
     }
 
 
@@ -416,19 +428,7 @@ public class AudioBoxClient {
      * @return {@link User} object
      */
     public User getUser() {
-        return sUser;
-    }
-
-
-    /**
-     * Use this method to get the configured {@link CollectionListener} for the <em>key</em> specified {@link ModelsCollection}.
-     *
-     * @param key the name of the ModelsCollection associated with the collection listener.
-     * 
-     * @return the current collection listener AudioBoxClient is using.
-     */
-    public static CollectionListener getCollectionListenerFor(String key) {
-        return sCollectionListenersMap.get(key);
+        return mUser;
     }
 
 
@@ -514,7 +514,7 @@ public class AudioBoxClient {
                     if (!request.containsHeader("Accept-Encoding")) {
                         request.addHeader("Accept-Encoding", "gzip");
                     }
-                    request.addHeader("Authorization" , "Basic " + sUser.getAuth() );
+                    request.addHeader("Authorization" , "Basic " + mUser.getAuth() );
                     request.addHeader("User-Agent", mUserAgent);
                 }
 
@@ -683,7 +683,7 @@ public class AudioBoxClient {
 
         private String[] request(String url, Model target, String httpVerb) throws LoginException, ServiceException {
 
-            if (sUser == null)
+            if (mUser == null)
                 throw new LoginException("Cannot execute API actions without credentials.", LoginException.NO_CREDENTIALS);
 
 
