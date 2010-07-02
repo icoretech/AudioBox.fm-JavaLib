@@ -13,15 +13,15 @@ import org.apache.commons.logging.LogFactory;
 
 import fm.audiobox.sync.util.AsyncTask;
 
-public class MD5Converter extends AsyncTask {
+public class MD5 extends AsyncTask {
 
     private File _file = null;
     private static final int CHUNK = 8192;
     private String result = null;
 
-    private static Log log = LogFactory.getLog( MD5Converter.class );
+    private static Log log = LogFactory.getLog( MD5.class );
 
-    public MD5Converter(File file){
+    public MD5(File file){
         this._file = file;
     }
 

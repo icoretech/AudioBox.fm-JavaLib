@@ -5,13 +5,10 @@ import java.io.InputStream;
 
 import org.apache.http.Header;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.FileEntity;
+import org.apache.http.entity.mime.content.FileBody;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.models.AudioBoxClient;
-import fm.audiobox.core.models.Track;
-import fm.audiobox.core.models.Tracks;
 
 public class UploadTrack extends Track {
 
@@ -19,8 +16,8 @@ public class UploadTrack extends Track {
         super();
     }
 
-    public UploadTrack( FileEntity fe, AudioBoxClient abc ){
-        super(fe);
+    public UploadTrack( FileBody fb, AudioBoxClient abc ){
+        super(fb);
         this.setConnector( abc.getMainConnector() );
     }
 

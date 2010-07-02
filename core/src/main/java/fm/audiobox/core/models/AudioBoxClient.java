@@ -74,6 +74,7 @@ import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.entity.HttpEntityWrapper;
+import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
@@ -170,47 +171,47 @@ public class AudioBoxClient {
 
     /** Specifies the models package (default: fm.audiobox.core.models) */
     public static final String DEFAULT_MODELS_PACKAGE = AudioBoxClient.class.getPackage().getName();
-    
+
     /** Constant <code>TRACK_ID_PLACEHOLDER="[track_id]"</code> */
     public static final String TRACK_ID_PLACEHOLDER = "[track_id]";
-    
+
     /** Constant <code>USER_KEY="User.TAG_NAME"</code> */
     public static final String USER_KEY      = User.TAG_NAME;
-    
+
     /** Constant <code>PROFILE_KEY="Profile.TAG_NAME"</code> */
     public static final String PROFILE_KEY   = Profile.TAG_NAME;
-    
+
     /** Constant <code>PLAYLISTS_KEY="Playlists"</code> */
     public static final String PLAYLISTS_KEY = "Playlists";
-    
+
     /** Constant <code>PLAYLIST_KEY="Playlist.TAG_NAME"</code> */
     public static final String PLAYLIST_KEY  = Playlist.TAG_NAME;
-    
+
     /** Constant <code>GENRES_KEY="Genres"</code> */
     public static final String GENRES_KEY    = "Genres";
-    
+
     /** Constant <code>GENRE_KEY="Genre.TAG_NAME"</code> */
     public static final String GENRE_KEY     = Genre.TAG_NAME;
-    
+
     /** Constant <code>ARTISTS_KEY="Artists"</code> */
     public static final String ARTISTS_KEY   = "Artists";
-    
+
     /** Constant <code>ARTIST_KEY="Artist.TAG_NAME"</code> */
     public static final String ARTIST_KEY    = Artist.TAG_NAME;
-    
+
     /** Constant <code>ALBUMS_KEY="Albums"</code> */
     public static final String ALBUMS_KEY    = "Albums";
-    
+
     /** Constant <code>ALBUM_KEY="Album.TAG_NAME"</code> */
     public static final String ALBUM_KEY     = Album.TAG_NAME;
-    
+
     /** Constant <code>TRACKS_KEY="Tracks"</code> */
     public static final String TRACKS_KEY    = "Tracks";
-    
+
     /** Constant <code>TRACK_KEY="Track.TAG_NAME"</code> */
     public static final String TRACK_KEY     = Track.TAG_NAME;
 
-    
+
     private static Inflector sI = Inflector.getInstance();
     private static Map<String, CollectionListener> sCollectionListenersMap = new HashMap<String , CollectionListener>();
     private static Map<String, Class<? extends Model>> sModelsMap;
@@ -255,7 +256,7 @@ public class AudioBoxClient {
 
         this.mConnector = new AudioBoxConnector();
         this.mConnector.setTimeout( 180 * 1000 );
-        
+
         String version = "unattended";
 
         try {
@@ -311,8 +312,8 @@ public class AudioBoxClient {
         if (cl != null)
             sCollectionListenersMap.put( key, cl );
     }
-    
-    
+
+
     /**
      * Use this method to get the configured {@link CollectionListener} for the <em>key</em> specified {@link ModelsCollection}.
      *
@@ -323,8 +324,8 @@ public class AudioBoxClient {
     public static CollectionListener getCollectionListenerFor(String key) {
         return sCollectionListenersMap.get(key);
     }
-    
-    
+
+
     /**
      * <p>If you need to customize or extend the default models classes you can set your own implementation through
      * this method.</p>
@@ -416,7 +417,7 @@ public class AudioBoxClient {
         this.mUser.setPassword(password);
 
         this.getMainConnector().setCredential( new UsernamePasswordCredentials(username, password) );
-        
+
         this.getMainConnector().execute( User.PATH, null, null, this.mUser, null);
 
         if ( ! User.ACTIVE_STATE.equalsIgnoreCase( this.mUser.getState() ) )
@@ -474,7 +475,7 @@ public class AudioBoxClient {
         private static final String HOST = "audiobox.dev";
         private static final String PORT = "443";
         private static final String API_PREFIX = "/api/";
-        
+
         public static final String API_PATH = PROTOCOL + "://" + HOST + API_PREFIX;
         public static final String TEXT_FORMAT = "txt";
         public static final String XML_FORMAT = "xml";
@@ -489,14 +490,14 @@ public class AudioBoxClient {
         private DefaultHttpClient mClient;
         private UsernamePasswordCredentials mCredentials;
         private BasicScheme mScheme = new BasicScheme();
-        
+
         private Log log = LogFactory.getLog(AudioBoxConnector.class);
 
 
         private AudioBoxConnector() {
 
             this.mAudioBoxRoute = new HttpRoute(new HttpHost(HOST, Integer.parseInt(PORT)));
-            
+
             SchemeRegistry schemeRegistry = new SchemeRegistry();
             schemeRegistry.register( new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
             schemeRegistry.register( new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
@@ -558,7 +559,7 @@ public class AudioBoxClient {
             });
         }
 
-        
+
         /**
          * Set up HTTP Basic Authentication credentials for HTTP authenticated requests.
          * 
@@ -718,11 +719,12 @@ public class AudioBoxClient {
                     method = new HttpGet(url);
                 }
 
-                if ( method instanceof HttpPost && target instanceof Track ){
-                    HttpPost post = ( HttpPost ) method;
-                    post.setEntity( ((Track)target).getFileEntity() );
+                if (method instanceof HttpPost && target instanceof Track) {
+                    MultipartEntity reqEntity = new MultipartEntity();
+                    reqEntity.addPart(Track.HTTP_PARAM, ((Track) target).getFileBody());
+                    ( (HttpPost) method).setEntity( reqEntity );
                 }
-
+                
                 log.debug("Requesting resource: " + url);
                 return mClient.execute(method, target, new BasicHttpContext());
 
@@ -736,16 +738,16 @@ public class AudioBoxClient {
                     }
 
                 } catch(NumberFormatException ex) { /* Response is a real ClientProtocolException */ }
-                
+
                 throw new ServiceException( "Client protocol exception: " + e.getMessage(), ServiceException.CLIENT_ERROR );
 
             } catch( SocketTimeoutException e ) {
                 throw new ServiceException( "Service does not respond: " + e.getMessage(), ServiceException.TIMEOUT_ERROR );
-                
+
             } catch( ServiceException e ) {
                 // Bypass IOException 
                 throw e;
-                
+
             } catch( IOException e ) {
                 throw new ServiceException( "IO exception: " + e.getMessage(), ServiceException.SOCKET_ERROR );
             } 

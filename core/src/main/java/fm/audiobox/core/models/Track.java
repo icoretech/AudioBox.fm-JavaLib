@@ -28,7 +28,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.FileEntity;
+import org.apache.http.entity.mime.content.FileBody;
 
 import fm.audiobox.core.api.ModelItem;
 import fm.audiobox.core.exceptions.LoginException;
@@ -73,6 +73,7 @@ public class Track extends ModelItem {
     // Constants
     /** Constant <code>TAG_NAME="track"</code> */
     public static final String TAG_NAME = "track";
+    public static final String HTTP_PARAM = "media";
 
     private static final String PATH = "tracks";
     private static final String STREAM_ACTION = "stream";
@@ -101,7 +102,7 @@ public class Track extends ModelItem {
     // Utility fields
     public enum State { IDLE, PLAYING, ERROR, BUFFERING, PAUSED }
     protected State trackState = Track.State.IDLE;
-    protected FileEntity entity;
+    protected FileBody fileBody;
 
 
     /**
@@ -114,11 +115,11 @@ public class Track extends ModelItem {
     /**
      * <p>Constructor for Track.</p>
      *
-     * @param file a {@link org.apache.http.entity.FileEntity} object.
+     * @param fileBody a {@link FileBody} object.
      */
-    public Track(FileEntity file) {
+    public Track(FileBody fileBody) {
         super();
-        this.entity = file;
+        this.fileBody = fileBody;
     }
 
     /** {@inheritDoc} */
@@ -391,12 +392,12 @@ public class Track extends ModelItem {
     }
 
     /**
-     * <p>getFileEntity</p>
+     * <p>getFileBody</p>
      *
-     * @return the file to upload
+     * @return the FileBody to upload
      */
-    public FileEntity getFileEntity(){
-        return this.entity;
+    public FileBody getFileBody(){
+        return this.fileBody;
     }
 
 

@@ -29,7 +29,7 @@ import java.io.OutputStream;
 
 import javax.activation.MimetypesFileTypeMap;
 
-import org.apache.http.entity.FileEntity;
+import org.apache.http.entity.mime.content.FileBody;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
@@ -42,7 +42,7 @@ public class Upload extends AsyncTask {
 
     private AudioBoxClient mAbc;
     private UploadTrack mTrack;
-    private FileEntity mFileEntity;
+    private FileBody mFileBody;
     private File mFile;
 
     public Upload(File file, AudioBoxClient abc){
@@ -83,7 +83,7 @@ public class Upload extends AsyncTask {
         final ThreadListener tl = this.getThreadListener();
         final File file = this.mFile;
 
-        this.mFileEntity = new FileEntity( file, new MimetypesFileTypeMap().getContentType(file) ) {
+        this.mFileBody = new FileBody( file, new MimetypesFileTypeMap().getContentType(file) ) {
 
             @Override
             public void writeTo(final OutputStream outstream) throws IOException {
@@ -111,12 +111,14 @@ public class Upload extends AsyncTask {
 
             }
 
-        };
+        }; 
 
-        this.mTrack = new UploadTrack( this.mFileEntity, this.mAbc );
+        this.mTrack = new UploadTrack( this.mFileBody, this.mAbc );
 
     }
-    
 
 
 }
+
+
+

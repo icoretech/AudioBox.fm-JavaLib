@@ -6,7 +6,7 @@ import java.util.Map;
 
 import fm.audiobox.sync.interfaces.ThreadListener;
 
-public abstract class AsyncTask implements Runnable{
+public abstract class AsyncTask implements Runnable {
 
     protected Map<String, Object> properties = new HashMap<String,Object>();
     private AsyncTaskManager threadManager = null;

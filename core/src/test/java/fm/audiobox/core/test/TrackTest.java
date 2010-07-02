@@ -91,7 +91,7 @@ public class TrackTest extends junit.framework.TestCase {
                 assertNotNull( tr.getEndPoint() );
                 assertNotNull( tr.getPlayCount() );
                 assertNotNull( tr.getYear() );
-                assertNull( tr.getFileEntity() );
+                assertNull( tr.getFileBody() );
                 assertNotNull( tr.getName() );
                 assertTrue( Track.State.IDLE == tr.getState() );
                 assertNotNull( tr.getTitle() );
