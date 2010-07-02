@@ -48,7 +48,7 @@ public class Genre extends ModelItem {
 	 * <p>Constructor for Genre.</p>
 	 */
 	protected Genre() {
-		this.endPoint = Genres.END_POINT;
+		this.pEndPoint = Genres.END_POINT;
 	}
 	
 }

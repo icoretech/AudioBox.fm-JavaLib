@@ -56,7 +56,7 @@ public class Playlist extends ModelItem {
      * <p>Constructor for Playlist.</p>
      */
     protected Playlist() {
-        this.endPoint = Playlists.END_POINT;
+        this.pEndPoint = Playlists.END_POINT;
     }
 
     

@@ -60,7 +60,7 @@ public class Album extends ModelItem {
 	 * <p>Constructor for Album.</p>
 	 */
 	protected Album() {
-		this.endPoint = Albums.END_POINT;
+		this.pEndPoint = Albums.END_POINT;
 	}
 	
 	

@@ -109,7 +109,7 @@ public class Track extends ModelItem {
      * <p>Constructor for Track.</p>
      */
     protected Track() {
-        this.endPoint = Tracks.END_POINT;
+        this.pEndPoint = Tracks.END_POINT;
     }
 
     /**
@@ -211,7 +211,7 @@ public class Track extends ModelItem {
      * @throws java.net.SocketException if any.
      */
     public String getStreamUrl() throws LoginException , SocketException {
-        String[] result = this.getConnector().execute( this.endPoint, this.getUuid(), STREAM_ACTION, this, null);
+        String[] result = this.getConnector().execute( this.pEndPoint, this.getUuid(), STREAM_ACTION, this, null);
         return result[ AudioBoxConnector.RESPONSE_BODY ];
     }
 
@@ -412,7 +412,7 @@ public class Track extends ModelItem {
      * @throws fm.audiobox.core.exceptions.LoginException if any.
      */
     public void scrobble() throws ServiceException, LoginException {
-        this.getConnector().execute( this.endPoint, this.getUuid(), SCROBBLE_ACTION, this, HttpPost.METHOD_NAME);
+        this.getConnector().execute( this.pEndPoint, this.getUuid(), SCROBBLE_ACTION, this, HttpPost.METHOD_NAME);
     }
 
     /**
@@ -423,7 +423,7 @@ public class Track extends ModelItem {
      * @throws fm.audiobox.core.exceptions.LoginException if any.
      */
     public boolean love() throws ServiceException, LoginException  {
-        String[] result = this.getConnector().execute( this.endPoint, this.getUuid(), LOVE_ACTION, this, HttpPut.METHOD_NAME);
+        String[] result = this.getConnector().execute( this.pEndPoint, this.getUuid(), LOVE_ACTION, this, HttpPut.METHOD_NAME);
         boolean markLoved = HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
         this.setLoved( markLoved );
         return markLoved;
@@ -437,7 +437,7 @@ public class Track extends ModelItem {
      * @throws fm.audiobox.core.exceptions.LoginException if any.
      */
     public boolean unlove() throws ServiceException, LoginException {
-        String[] result = this.getConnector().execute( this.endPoint, this.getUuid(), UNLOVE_ACTION, this, HttpPut.METHOD_NAME);
+        String[] result = this.getConnector().execute( this.pEndPoint, this.getUuid(), UNLOVE_ACTION, this, HttpPut.METHOD_NAME);
         boolean markLoved = HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
         this.setLoved( !markLoved );
         return markLoved;
@@ -451,7 +451,7 @@ public class Track extends ModelItem {
      * @throws fm.audiobox.core.exceptions.LoginException if any.
      */
     public boolean delete() throws ServiceException, LoginException {
-        String[] result = this.getConnector().execute( this.endPoint, this.getUuid(), null, this, HttpDelete.METHOD_NAME);
+        String[] result = this.getConnector().execute( this.pEndPoint, this.getUuid(), null, this, HttpDelete.METHOD_NAME);
         return HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
     }
 

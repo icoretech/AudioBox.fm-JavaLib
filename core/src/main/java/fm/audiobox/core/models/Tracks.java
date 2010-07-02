@@ -46,7 +46,7 @@ public class Tracks extends ModelsCollection {
      * <p>Constructor for Tracks.</p>
      */
     protected Tracks(){
-        this.endPoint = END_POINT;
+        this.pEndPoint = END_POINT;
     }
     
     /**

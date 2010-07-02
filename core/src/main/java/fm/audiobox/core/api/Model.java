@@ -54,7 +54,17 @@ import fm.audiobox.core.util.Inflector;
 
 
 /**
- * <p>Abstract Model class.</p>
+ * Model is an abstract class that provides the RESTful API parser for each 
+ * XML AudioBox.fm response.
+ * 
+ * <p>
+ * 
+ * It basically transforms XML responses into comfortable Java objects.
+ * 
+ * <p>
+ * 
+ * It implements a {@link ResponseHandler} called back from the HttpClient object.
+ * 
  *
  * @author Valerio Chiodino
  * @author Fabio Tunno
@@ -62,18 +72,13 @@ import fm.audiobox.core.util.Inflector;
  */
 public abstract class Model extends DefaultHandler implements ResponseHandler<String[]> {
 
-    private static final String ADD_PREFIX = "add";
-    private static final String SET_PREFIX = "set";
 
-    /** Constant <code>SAX_ERROR_CODE=-1000</code> */
-    public static final int SAX_ERROR_CODE = -1000;
-    /** Constant <code>PARSER_CONFIGURATION_ERROR_CODE=-1001</code> */
-    public static final int PARSER_CONFIGURATION_ERROR_CODE = -1001;
-    /** Constant <code>IO_ERROR_CODE=-1002</code> */
-    public static final int IO_ERROR_CODE = -1002;
-    /** Constant <code>CHUNK=4096</code> */
+    /** Constant that defines bytes dimention to be read from responses {@link InputStream} */
     protected static final int CHUNK = 4096;
 
+    private static final String ADD_PREFIX = "add";
+    private static final String SET_PREFIX = "set";
+    
     private static Log log = LogFactory.getLog(Model.class);
 
     private boolean mSkipField = false;
@@ -82,10 +87,10 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
     private StringBuffer mStringBuffer = new StringBuffer();
 
     // Default models variables
-    protected String name;
-    protected String token;
-    protected String endPoint;
-    protected AudioBoxConnector connector;
+    protected String pName;
+    protected String pToken;
+    protected String pEndPoint;
+    protected AudioBoxConnector pConnector;
 
 
     /**
@@ -94,7 +99,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
      * @param conn a {@link fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector} object.
      */
     public void setConnector(AudioBoxConnector conn){
-        this.connector = conn;
+        this.pConnector = conn;
     }
 
     /**
@@ -103,7 +108,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
      * @return a {@link fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector} object.
      */
     public AudioBoxConnector getConnector(){
-        return this.connector;
+        return this.pConnector;
     }
 
     /**
@@ -116,48 +121,48 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
     }
 
     /**
-     * <p>Getter for the field <code>endPoint</code>.</p>
+     * <p>Getter for the field <code>pEndPoint</code>.</p>
      *
      * @return a {@link java.lang.String} object.
      */
     public final String getEndPoint(){
-        return this.endPoint;
+        return this.pEndPoint;
     }
 
     /**
-     * <p>Getter for the field <code>name</code>.</p>
+     * <p>Getter for the field <code>pName</code>.</p>
      *
      * @return a {@link java.lang.String} object.
      */
     public String getName() {
-        return this.name;
+        return this.pName;
     }
 
     /**
-     * <p>Setter for the field <code>name</code>.</p>
+     * <p>Setter for the field <code>pName</code>.</p>
      *
      * @param name a {@link java.lang.String} object.
      */
     public void setName(String name) {
-        this.name = name;
+        this.pName = name;
     }
 
     /**
-     * <p>Getter for the field <code>token</code>.</p>
+     * <p>Getter for the field <code>pToken</code>.</p>
      *
      * @return a {@link java.lang.String} object.
      */
     public String getToken() {
-        return this.token;
+        return this.pToken;
     }
 
     /**
-     * <p>Setter for the field <code>token</code>.</p>
+     * <p>Setter for the field <code>pToken</code>.</p>
      *
      * @param token a {@link java.lang.String} object.
      */
     public final void setToken(String token) {
-        this.token = token;
+        this.pToken = token;
     }
 
 

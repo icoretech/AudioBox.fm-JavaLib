@@ -46,7 +46,7 @@ public class Albums extends ModelsCollection {
      * <p>Constructor for Albums.</p>
      */
     protected Albums(){
-        this.endPoint = END_POINT;
+        this.pEndPoint = END_POINT;
     }
     
     /**

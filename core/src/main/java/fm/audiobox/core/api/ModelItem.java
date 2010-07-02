@@ -31,7 +31,16 @@ import fm.audiobox.core.models.Tracks;
 
 
 /**
- * <p>Abstract ModelItem class.</p>
+ * ModelItem class is an abstract extension of {@link Model}.
+ * 
+ * <p>
+ * 
+ * It provides common methods for those XML that represent some single element.
+ * 
+ * <p>
+ * 
+ * Each ModelItem inherit a {@link Tracks} object that represents the collection 
+ * of tracks that this particular model offers.
  *
  * @author Valerio Chiodino
  * @author Fabio Tunno
@@ -39,41 +48,44 @@ import fm.audiobox.core.models.Tracks;
  */
 public abstract class ModelItem extends Model {
 
-    public Tracks tracks;
+    /** The collection of tracks for this object */
+    private Tracks mTracks;
 
     /**
-     * <p>getTrack</p>
+     * <p>Getter method for a particular {@link Track} of the ModelItem {@link Tracks} collection.</p>
      *
-     * @param uuid a {@link java.lang.String} object.
-     * @return a {@link fm.audiobox.core.models.Track} object.
+     * @param uuid the uuid of the desired track.
+     * 
+     * @return a {@link Track} object.
      */
     public Track getTrack(String uuid) {
-        return this.tracks.get(uuid);
+        return this.mTracks.get(uuid);
     }
 
     /**
-     * <p>Setter for the field <code>tracks</code>.</p>
+     * <p>Setter for the {@link Tracks} collection.</p>
      *
-     * @param tracks a {@link fm.audiobox.core.models.Tracks} object.
+     * @param tracks a {@link Tracks} ModelsCollection object.
      */
     public void setTracks(Tracks tracks) {
-        this.tracks = tracks;
+        this.mTracks = tracks;
     }
 
     /**
-     * <p>Getter for the field <code>tracks</code>.</p>
-     *
-     * @return a {@link fm.audiobox.core.models.Tracks} object.
-     * @throws fm.audiobox.core.exceptions.ServiceException if any.
-     * @throws fm.audiobox.core.exceptions.LoginException if any.
-     * @throws fm.audiobox.core.exceptions.ModelException if any.
+     * Getter for the {@link Tracks} collection.
+     * 
+     * @return this item {@link Tracks} collection.
+     * 
+     * @throws ServiceException if any connection problem to AudioBox.fm occurs.
+     * @throws LoginException if any authentication problem occurs.
+     * @throws ModelException if any custom model is specified and an exception occurs while trying to use it.
      */
     public Tracks getTracks() throws ServiceException, LoginException, ModelException {
 
         this.setTracks( (Tracks) AudioBoxClient.getModelInstance(AudioBoxClient.TRACKS_KEY, this.getConnector()) );
-        this.getConnector().execute(this.getEndPoint(), this.getToken(), null, this.tracks, null);
+        this.getConnector().execute(this.getEndPoint(), this.getToken(), null, this.mTracks, null);
 
-        return this.tracks;
+        return this.mTracks;
     }
 
 }

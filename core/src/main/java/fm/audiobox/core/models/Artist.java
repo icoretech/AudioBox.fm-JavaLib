@@ -48,7 +48,7 @@ public class Artist extends ModelItem {
 	 * <p>Constructor for Artist.</p>
 	 */
 	protected Artist() {
-		this.endPoint = Artists.END_POINT;
+		this.pEndPoint = Artists.END_POINT;
 	}
 	
 }

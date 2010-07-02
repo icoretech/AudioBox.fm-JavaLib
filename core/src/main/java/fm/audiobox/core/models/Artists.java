@@ -46,7 +46,7 @@ public class Artists extends ModelsCollection {
      * <p>Constructor for Artists.</p>
      */
     protected Artists(){
-        this.endPoint = END_POINT;
+        this.pEndPoint = END_POINT;
     }
     
     /**

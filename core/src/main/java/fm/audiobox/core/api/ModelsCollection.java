@@ -30,7 +30,12 @@ import fm.audiobox.core.interfaces.CollectionListener;
 
 
 /**
- * <p>Abstract ModelsCollection class.</p>
+ * ModelsCollection is an abstract extension of {@link Model} class that provide useful methods for those XML objects
+ * that represents a collection of some sort.
+ * 
+ * <p>
+ * 
+ * It acts seemingly like a {@link List} though it does not implement it.
  *
  * @author Valerio Chiodino
  * @author Fabio Tunno
@@ -38,52 +43,52 @@ import fm.audiobox.core.interfaces.CollectionListener;
  */
 public abstract class ModelsCollection extends Model {
 
-	protected CollectionListener collectionListener = null;
+	protected CollectionListener pCollectionListener = null;
 	
 	/**
-	 * <p>getTagName</p>
+	 * <p>Getter method for the tag name.</p>
 	 *
-	 * @return a {@link java.lang.String} object.
+	 * @return the XML tag name for this ModelsCollection.
 	 */
 	protected abstract String getTagName();
     
     /**
-     * <p>setCollection</p>
+     * <p>Setter method for the collection list.</p>
      *
-     * @param collection a {@link java.util.List} object.
+     * @param collection a {@link List} object that represents the collection.
      */
     public abstract void setCollection(List<?> collection);
     
     /**
-     * <p>getCollection</p>
+     * <p>Getter method for the collection of this ModelsCollection</p>
      *
-     * @return a {@link java.util.List} object.
+     * @return the list of {@link ModelItem} that this ModelsCollection contains.
      */
     public abstract List<?> getCollection();
     
     /**
-     * <p>get</p>
+     * <p>Getter method for a single {@link ModelItem} contained in the collection.</p>
      *
-     * @param index a int.
-     * @return a {@link fm.audiobox.core.api.ModelItem} object.
+     * @param index the index of the desired item.
+     * @return a {@link ModelItem} object.
      */
     public abstract ModelItem get(int index);
 
     /**
-     * <p>get</p>
+     * <p>Getter method for a single {@link ModelItem} contained in the collection.</p>
      *
-     * @param token a {@link java.lang.String} object.
-     * @return a {@link fm.audiobox.core.api.ModelItem} object.
+     * @param token the token of the desired ModelItem.
+     * @return a {@link ModelItem} object.
      */
     public abstract ModelItem get(String token);
     
     /**
-     * <p>Setter for the field <code>collectionListener</code>.</p>
+     * <p>Setter method for a custom {@link CollectionListener} </p>
      *
-     * @param cl a {@link fm.audiobox.core.interfaces.CollectionListener} object.
+     * @param cl a {@link CollectionListener} implementation.
      */
-    public void setCollectionListener(CollectionListener cl){
-        this.collectionListener = cl;
+    public void setCollectionListener(CollectionListener cl) {
+        this.pCollectionListener = cl;
     }
     
     /** {@inheritDoc} */
@@ -95,14 +100,14 @@ public abstract class ModelsCollection extends Model {
         }
         if ( this.getTagName().equals(localName) ) {
             int index = this.getCollection().size() -1;
-            this.collectionListener.onItemReady( index, this.getCollection().get(index));
+            this.pCollectionListener.onItemReady( index, this.getCollection().get(index));
         }
     }
     
     /** {@inheritDoc} */
     @Override
     public void endDocument() throws SAXException {
-        this.collectionListener.onCollectionReady(CollectionListener.DOCUMENT_PARSED, this);
+        this.pCollectionListener.onCollectionReady(CollectionListener.DOCUMENT_PARSED, this);
     }
     
 }

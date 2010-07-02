@@ -46,7 +46,7 @@ public class Genres extends ModelsCollection {
      * <p>Constructor for Genres.</p>
      */
     protected Genres(){
-        this.endPoint = END_POINT;
+        this.pEndPoint = END_POINT;
     }
     
     /**

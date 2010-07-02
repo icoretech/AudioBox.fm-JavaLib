@@ -46,7 +46,7 @@ public class Playlists extends ModelsCollection {
      * <p>Constructor for Playlists.</p>
      */
     protected Playlists(){
-        this.endPoint = END_POINT;
+        this.pEndPoint = END_POINT;
     }
     
     /**

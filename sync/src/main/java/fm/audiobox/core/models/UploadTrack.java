@@ -22,7 +22,7 @@ public class UploadTrack extends Track {
     }
 
     public void upload() throws ServiceException, LoginException {
-        connector.execute(Tracks.END_POINT , null, null, this, HttpPost.METHOD_NAME);
+        pConnector.execute(Tracks.END_POINT , null, null, this, HttpPost.METHOD_NAME);
     }
 
 

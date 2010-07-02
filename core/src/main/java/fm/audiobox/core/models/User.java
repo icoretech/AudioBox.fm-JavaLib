@@ -104,9 +104,9 @@ public class User extends ModelItem {
      * <p>Constructor for User.</p>
      */
     protected User() {
-        this.endPoint = PATH;
-        this.name = TAG_NAME;
-        this.token = null;
+        this.pEndPoint = PATH;
+        this.pName = TAG_NAME;
+        this.pToken = null;
     }
 
 
