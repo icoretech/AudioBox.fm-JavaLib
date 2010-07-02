@@ -68,7 +68,7 @@ public interface CollectionListener {
      * You can use parameters passed as argument to make decisions on what to do in your callback.
      *
      * @param index the position of the ready element
-     * @param item the item itself
+     * @param item the ready element itself
      */
     public void onItemReady(int index, Object item);
     
@@ -80,7 +80,7 @@ public interface CollectionListener {
      * <p>
      *
      * Actually the only message sent by this callback is the negative value represented by
-     * {@link CollectionListener#DOCUMENT_PARSED}.
+     * {@link CollectionListener#DOCUMENT_PARSED DOCUMENT_PARSED}.
      *
      * @param message the {@link CollectionListener#DOCUMENT_PARSED DOCUMENT_PARSED} value.
      * @param result the object obtained from the operation

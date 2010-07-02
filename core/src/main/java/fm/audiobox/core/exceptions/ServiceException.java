@@ -25,7 +25,7 @@ package fm.audiobox.core.exceptions;
 
 /**
  * ServiceException is thrown whenever a connection exception occurs while
- * performing a request to AudioBox.fm services.
+ * performing requests to AudioBox.fm services.
  *
  * <p>
  *

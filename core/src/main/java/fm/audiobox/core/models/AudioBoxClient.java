@@ -418,7 +418,7 @@ public class AudioBoxClient {
 
         this.getMainConnector().setCredential( new UsernamePasswordCredentials(username, password) );
 
-        this.getMainConnector().execute( User.PATH, null, null, this.mUser, null);
+        this.getMainConnector().execute( this.mUser.getEndPoint(), null, null, this.mUser, null );
 
         if ( ! User.ACTIVE_STATE.equalsIgnoreCase( this.mUser.getState() ) )
             throw new LoginException("User is not active", LoginException.INACTIVE_USER_STATE );

@@ -72,13 +72,12 @@ import fm.audiobox.core.util.Inflector;
  */
 public abstract class Model extends DefaultHandler implements ResponseHandler<String[]> {
 
-
     /** Constant that defines bytes dimention to be read from responses {@link InputStream} */
     protected static final int CHUNK = 4096;
 
     private static final String ADD_PREFIX = "add";
     private static final String SET_PREFIX = "set";
-    
+
     private static Log log = LogFactory.getLog(Model.class);
 
     private boolean mSkipField = false;
@@ -94,77 +93,67 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
 
 
     /**
-     * <p>Setter for the field <code>connector</code>.</p>
+     * <p>Getter for the end point of this model.</p>
      *
-     * @param conn a {@link fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector} object.
-     */
-    public void setConnector(AudioBoxConnector conn){
-        this.pConnector = conn;
-    }
-
-    /**
-     * <p>Getter for the field <code>connector</code>.</p>
-     *
-     * @return a {@link fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector} object.
-     */
-    public AudioBoxConnector getConnector(){
-        return this.pConnector;
-    }
-
-    /**
-     * <p>toString</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    public String toString() {
-        return this.getName();
-    }
-
-    /**
-     * <p>Getter for the field <code>pEndPoint</code>.</p>
-     *
-     * @return a {@link java.lang.String} object.
+     * @return the model specific API end point.
      */
     public final String getEndPoint(){
         return this.pEndPoint;
     }
 
     /**
-     * <p>Getter for the field <code>pName</code>.</p>
+     * <p>Getter for this model {@link AudioBoxConnector connector}.</p>
      *
-     * @return a {@link java.lang.String} object.
+     * @return the {@link AudioBoxConnector} object used by this model.
+     */
+    public AudioBoxConnector getConnector(){
+        return this.pConnector;
+    }
+
+    /**
+     * <p>Setter for the {@link AudioBoxConnector connector}.</p>
+     *
+     * @param connector a {@link AudioBoxConnector} object.
+     */
+    public void setConnector(AudioBoxConnector connector){
+        this.pConnector = connector;
+    }
+
+    /**
+     * <p>Getter for the name of this model, may be vary depending the Model extension.</p>
+     *
+     * @return the name of the model.
      */
     public String getName() {
         return this.pName;
     }
 
     /**
-     * <p>Setter for the field <code>pName</code>.</p>
+     * <p>Setter for the model name: used by the parser.</p>
      *
-     * @param name a {@link java.lang.String} object.
+     * @param name the name of the model.
      */
     public void setName(String name) {
         this.pName = name;
     }
 
     /**
-     * <p>Getter for the field <code>pToken</code>.</p>
+     * <p>Getter for the model token.</p>
      *
-     * @return a {@link java.lang.String} object.
+     * @return the unique token of the model.
      */
     public String getToken() {
         return this.pToken;
     }
 
     /**
-     * <p>Setter for the field <code>pToken</code>.</p>
+     * <p>Setter for the model token: used by the parser.</p>
      *
-     * @param token a {@link java.lang.String} object.
+     * @param token the unique token of the model.
      */
     public final void setToken(String token) {
         this.pToken = token;
     }
-
 
     /** {@inheritDoc} */
     @Override
@@ -175,20 +164,23 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
 
         switch( responseCode ) {
 
+        // 20*
         case HttpStatus.SC_CREATED:
         case HttpStatus.SC_OK:
             InputStream input = response.getEntity().getContent();
             responseString = this.parseResponse( input , response.getEntity().getContentType() );
             break;
-            
+
         case HttpStatus.SC_NO_CONTENT:
             responseString = "Resource not ready";
             break;
-            
+
+            // 30*
         case HttpStatus.SC_SEE_OTHER:
             responseString = response.getFirstHeader("Location").getValue();
             break;
 
+            // 40*
         case HttpStatus.SC_UNAUTHORIZED:
             throw new ClientProtocolException(String.valueOf(responseCode));
 
@@ -197,7 +189,8 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
 
         case HttpStatus.SC_NOT_FOUND:
             throw new ServiceException( "Resource not found", responseCode );
-
+            
+            // 50*
         default:
             throw new ServiceException( "Response code not recognized (" + responseCode + ")", responseCode );
 
@@ -213,12 +206,18 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
     }
 
     /**
-     * <p>parseResponse</p>
+     * This method is used to parse the HTTP response content if any.
+     * 
+     * <p>
+     * 
+     * Returns an empty string if the content type is in XML format, the body of the response otherwise.
      *
-     * @param input a {@link java.io.InputStream} object.
-     * @param contentType a {@link org.apache.http.Header} object.
-     * @return a {@link java.lang.String} object.
-     * @throws java.io.IOException if any.
+     * @param input the {@link HttpEntity} content
+     * @param contentType the response content type
+     * 
+     * @return the text of the response content  
+     * 
+     * @throws IOException if the parse process fails for some reason.
      */
     public String parseResponse( InputStream input, Header contentType ) throws IOException {
         String response = "";
@@ -241,6 +240,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
                 input.close();
 
             } else {
+
                 /* read response content */
                 int read;
                 byte[] bytes = new byte[ CHUNK ];
@@ -257,6 +257,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
         }
+
         return response;
     }
 
@@ -264,7 +265,13 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
     /* --------- */
     /* Overrides */
     /* --------- */
-
+    
+    
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return this.getName();
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -340,18 +347,23 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
                     this.mStack.push( method );
                 }
             }
+            
         } catch (IllegalArgumentException e) {
             log.error("Illegal Argument Exception @" + localName + ": " + e.getMessage());
             e.printStackTrace();
+            
         } catch (IllegalAccessException e) {
             log.error("Illegal AccessException @" + localName + ": " + e.getMessage());
             e.printStackTrace();
+            
         } catch (SecurityException e) {
             log.error("Security Exception @" + localName + ": " + e.getMessage());
             e.printStackTrace();
+            
         } catch (InvocationTargetException e) {
             log.error("Invocation Target Exception @" + localName + ": " + e.getMessage());
             e.printStackTrace();
+            
         } 
 
         super.startElement(uri, localName, qName, attributes);

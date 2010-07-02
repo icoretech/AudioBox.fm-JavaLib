@@ -30,16 +30,18 @@ import fm.audiobox.core.api.ModelsCollection;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
+import fm.audiobox.core.interfaces.CollectionListener;
 import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
 
 
 /**
- *
  * User model is a special {@link Model} just because almost every library browse action is performed through this
  * object.
  *
  * <p>
  *
+ * When a login is successfully performed an XML like the following is received and parsed:
+ * 
  * <pre>
  * {@code
  * <user>
@@ -66,18 +68,42 @@ import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
  * }
  * </pre>
  *
+ * Through the User object you have access to its library that can be browsed by:
+ * <ul>
+ *  <li>Playlists</li>
+ *  <li>Genres</li>
+ *  <li>Artists</li>
+ *  <li>Albums</li>
+ * </ul>
+ * 
+ * using its respective getter method.
+ * 
+ * <p>
+ * 
+ * Once obtained the desired collection you can get the tracks collection of each contained element 
+ * by getting its tracks:
+ * 
+ * <pre>
+ * Artists artists = user.getPlaylists();
+ * Artists artist = artists.get( "token" or "index" );
+ * Tracks trs = artist.getTracks();
+ * </pre>
+ * 
+ * Or you can get informations about a specific, UUID known track's, by calling {@link User#getTrackByUuid(String)}
+ * 
  * @author Valerio Chiodino
  * @author Fabio Tunno
  * @version 0.0.1
  */
 public class User extends ModelItem {
 
-    /** Constant <code>TAG_NAME="user"</code> */
+    /** The XML tag name for the User element */
     public static final String TAG_NAME = "user";
-    /** Constant <code>PATH="TAG_NAME"</code> */
-    public static final String PATH = TAG_NAME;
 
-    /** Constant <code>ACTIVE_STATE="active"</code> */
+    /** API end point */
+    public static final String END_POINT = TAG_NAME;
+
+    /** Active user state */
     public static final String ACTIVE_STATE = "active";
 
     protected long bytesServed;
@@ -98,50 +124,51 @@ public class User extends ModelItem {
     protected Artists artists;
     protected Albums albums;
 
-    private String[] tracks;
+    private String[] md5Hashes;
 
     /**
      * <p>Constructor for User.</p>
      */
     protected User() {
-        this.pEndPoint = PATH;
+        this.pEndPoint = END_POINT;
         this.pName = TAG_NAME;
-        this.pToken = null;
     }
 
 
+
     /**
-     * <p>Setter for the field <code>bytesServed</code>.</p>
+     * <p>Setter for the user bytes served: used by the parser.</p>
      *
-     * @param bytes a {@link java.lang.String} object.
+     * @param bytes the String value of the bytes served.
      */
     public void setBytesServed(String bytes) {
         this.bytesServed = Long.parseLong( bytes );
     }
 
     /**
-     * <p>Getter for the field <code>bytesServed</code>.</p>
+     * <p>Getter for the user bytes served.</p>
      *
-     * @return the bytesServed
+     * @return the user bytes served
      */
     public long getBytesServed() {
         return this.bytesServed;
     }
 
 
+
     /**
-     * <p>Setter for the field <code>email</code>.</p>
+     * <p>Setter for the user email: used by the parser.<p>
      *
-     * @param email a {@link java.lang.String} object.
+     * @param email the user email
      */
     public void setEmail(String email) {
         this.email = email;
     }
 
     /**
-     * <p>Getter for the field <code>email</code>.</p>
+     * <p>Getter for the user email.</p>
      *
-     * @return the email
+     * @return the user email
      */
     public String getEmail() {
         return this.email;
@@ -150,37 +177,38 @@ public class User extends ModelItem {
 
 
     /**
-     * <p>Setter for the field <code>playCount</code>.</p>
+     * <p>Setter for the user played song count: used by the parser.<p>
      *
-     * @param playCount a {@link java.lang.String} object.
+     * @param playCount the String value of the plays count.
      */
     public void setPlayCount(String playCount) {
         this.playCount = Integer.parseInt( playCount );
     }
 
     /**
-     * <p>Getter for the field <code>playCount</code>.</p>
+     * <p>Getter for the user played song count.</p>
      *
-     * @return the playCount
+     * @return the user plays count
      */
     public int getPlayCount() {
         return this.playCount;
     }
 
 
+
     /**
-     * <p>Setter for the field <code>quota</code>.</p>
+     * <p>Setter for the user quota in bytes: used by the parser.</p>
      *
-     * @param quota a {@link java.lang.String} object.
+     * @param quota the String representing the user quota bytes
      */
     public void setQuota(String quota) {
         this.quota = Long.parseLong( quota );
     }
 
     /**
-     * <p>Getter for the field <code>quota</code>.</p>
+     * <p>Getter for the user quota bytes.</p>
      *
-     * @return the quota
+     * @return the user quota bytes
      */
     public long getQuota() {
         return this.quota;
@@ -189,37 +217,38 @@ public class User extends ModelItem {
 
 
     /**
-     * <p>Setter for the field <code>state</code>.</p>
+     * <p>Setter for the user state: used by the parser.</p>
      *
-     * @param state a {@link java.lang.String} object.
+     * @param state the user state.
      */
     public void setState(String state) {
         this.state = state;
     }
 
     /**
-     * <p>Getter for the field <code>state</code>.</p>
+     * <p>Getter for the user state.</p>
      *
-     * @return the state
+     * @return the user state
      */
     public String getState() {
         return this.state;
     }
 
 
+
     /**
-     * <p>Setter for the field <code>tracksCount</code>.</p>
+     * <p>Setter for the user total tracks count: used by the parser..</p>
      *
-     * @param tracksCount a {@link java.lang.String} object.
+     * @param tracksCount the user total tracks count.
      */
     public void setTracksCount(String tracksCount) {
         this.tracksCount = Integer.parseInt( tracksCount );
     }
 
     /**
-     * <p>Getter for the field <code>tracksCount</code>.</p>
+     * <p>Getter for the user total tracks count.</p>
      *
-     * @return the tracksCount
+     * @return the user total tracks count
      */
     public int getTracksCount() {
         return this.tracksCount;
@@ -227,47 +256,49 @@ public class User extends ModelItem {
 
 
     /**
-     * <p>Setter for the field <code>username</code>.</p>
+     * <p>Setter for the user nickname: used by the parser.</p>
      *
-     * @param username a {@link java.lang.String} object.
+     * @param username the user nickname
      */
     public void setUsername(String username) {
         this.username = username;
     }
 
     /**
-     * <p>Getter for the field <code>username</code>.</p>
+     * <p>Getter for the nickname.</p>
      *
-     * @return the username
+     * @return the user nickname
      */
     public String getUsername() {
         return this.username;
     }
 
 
+
     /**
-     * <p>Setter for the field <code>password</code>.</p>
+     * <p>Setter for the user password.</p>
      *
-     * @param password a {@link java.lang.String} object.
+     * @param password the user password
      */
     public void setPassword(String password) {
         this.password = password;
     }
 
 
+
     /**
-     * <p>setAvalableStorage</p>
+     * <p>Setter for the user remote available storage: used by the parser.</p>
      *
-     * @param availableStorage a {@link java.lang.String} object.
+     * @param availableStorage a {@link String} representing numbers of available storage bytes.
      */
     public void setAvailableStorage(String availableStorage) {
         this.availableStorage = Long.parseLong( availableStorage );
     }
 
     /**
-     * <p>Getter for the field <code>availableStorage</code>.</p>
+     * <p>Getter for the user remote available storage.</p>
      *
-     * @return the availableStorage
+     * @return the user available storage
      */
     public long getAvailableStorage() {
         return this.availableStorage;
@@ -276,18 +307,18 @@ public class User extends ModelItem {
 
 
     /**
-     * <p>Setter for the field <code>avatarUrl</code>.</p>
+     * <p>Setter for the user avatar image link: used by the parser.</p>
      *
-     * @param url a {@link java.lang.String} object.
+     * @param url the url of the user avatar
      */
     public void setAvatarUrl(String url) {
         this.avatarUrl = url;
     }
 
     /**
-     * <p>Getter for the field <code>avatarUrl</code>.</p>
+     * <p>Getter for user avatar url.</p>
      *
-     * @return the avatarUrl
+     * @return the user avatar url
      */
     public String getAvatarUrl() {
         return this.avatarUrl;
@@ -296,38 +327,38 @@ public class User extends ModelItem {
 
 
     /**
-     * <p>Setter for the field <code>profile</code>.</p>
+     * <p>Setter for the user profile: used by the parser.</p>
      *
-     * @param profile a {@link fm.audiobox.core.models.Profile} object.
+     * @param profile the user {@link Profile} object.
      */
     public void setProfile(Profile profile) {
         this.profile = profile;
     }
 
-
     /**
-     * <p>Getter for the field <code>profile</code>.</p>
+     * <p>Getter for the user {@link Profile}.</p>
      *
-     * @return the profile
+     * @return the user profile
      */
     public Profile getProfile() {
         return this.profile;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public String getName() {
-        return this.username;
-    }
+
+    /* ------------------- */
+    /* Collection Browsing */
+    /* ------------------- */
 
 
     /**
-     * Given a known track UUID this method returns a valid {@link Track} object.
+     * Given a known track UUID this method will requests AudioBox.fm and returns a valid {@link Track} object.
      *
      * @param uuid the UUID of the track you are asking for.
+     * 
      * @return the requested track if it exists.
-     * @throws fm.audiobox.core.exceptions.LoginException if user has not been authenticated
-     * @throws fm.audiobox.core.exceptions.ServiceException if the requested resource doesn't exists or any other fm.audiobox.core.exceptions.ServiceException occur.
+     * 
+     * @throws LoginException if user has not been authenticated
+     * @throws ServiceException if the requested resource doesn't exists or any other ServiceException occur.
      * @throws ModelException 
      */
     public Track getTrackByUuid(String uuid) throws ServiceException, LoginException, ModelException {
@@ -335,25 +366,23 @@ public class User extends ModelItem {
         this.getConnector().execute(Tracks.END_POINT, uuid, null, tr, HttpGet.METHOD_NAME);
         return tr;
     }
-    
-    
-    /**
-     * <p>Getter for the field <code>playlists</code>.</p>
-     *
-     * @return the playlists
-     * @throws fm.audiobox.core.exceptions.ModelException if any.
-     */
-    public Playlists getPlaylists() throws ModelException {
-        return this.getPlaylists(false);
-    }
 
 
+    
     /**
-     * <p>Getter for the field <code>playlists</code>.</p>
+     * Use this method to get the {@link Playlists} user collection.
+     * 
+     * <p>
+     * 
+     * This method accept the parameter <code>async</code>. If <code>true</code> the collection is populated 
+     * asynchronously; in this case it may be necessary to specify a {@link CollectionListener} to keep track 
+     * of what is happening to the collection.
      *
-     * @param async a boolean.
-     * @return a {@link fm.audiobox.core.models.Playlists} object.
-     * @throws fm.audiobox.core.exceptions.ModelException if any.
+     * @param async whether to make the request asynchronously.
+     * 
+     * @return the user {@link Playlists} collection
+     * 
+     * @throws ModelException if a custom model class was specified and an error while using it occurs.
      */
     public Playlists getPlaylists(boolean async) throws ModelException {
         this.playlists = (Playlists) AudioBoxClient.getModelInstance(AudioBoxClient.PLAYLISTS_KEY, this.getConnector());
@@ -367,21 +396,32 @@ public class User extends ModelItem {
     }
 
     /**
-     * <p>Getter for the field <code>genres</code>.</p>
+     * <p>Same as calling {@link User#getPlaylists(boolean) User.getPlaylists(false)}.</p>
      *
-     * @return the genres
-     * @throws fm.audiobox.core.exceptions.ModelException if any.
+     * @return the user {@link Playlists} collection
+     * 
+     * @throws ModelException if a custom model was specified and an error while using occurs.
      */
-    public Genres getGenres() throws ModelException {
-        return this.getGenres(false);
+    public Playlists getPlaylists() throws ModelException {
+        return this.getPlaylists(false);
     }
 
+
+
     /**
-     * <p>Getter for the field <code>genres</code>.</p>
+     * Use this method to get the {@link Genres} user collection.
+     * 
+     * <p>
+     * 
+     * This method accept the parameter <code>async</code>. If <code>true</code> the collection is populated 
+     * asynchronously; in this case it may be necessary to specify a {@link CollectionListener} to keep track 
+     * of what is happening to the collection.
      *
-     * @param async a boolean.
-     * @return a {@link fm.audiobox.core.models.Genres} object.
-     * @throws fm.audiobox.core.exceptions.ModelException if any.
+     * @param async whether to make the request asynchronously.
+     * 
+     * @return the user {@link Genres} collection
+     * 
+     * @throws ModelException if a custom model class was specified and an error while using it occurs.
      */
     public Genres getGenres(boolean async) throws ModelException {
         this.genres = (Genres) AudioBoxClient.getModelInstance(AudioBoxClient.GENRES_KEY, this.getConnector());
@@ -394,23 +434,33 @@ public class User extends ModelItem {
         return this.genres;
     }
 
-
     /**
-     * <p>Getter for the field <code>artists</code>.</p>
+     * <p>Same as calling {@link User#getGenres(boolean) User.getGenres(false)}.</p>
      *
-     * @return the artists
-     * @throws fm.audiobox.core.exceptions.ModelException if any.
+     * @return the user {@link Genres} collection
+     * 
+     * @throws ModelException if a custom model was specified and an error while using occurs.
      */
-    public Artists getArtists() throws ModelException {
-        return this.getArtists(false);
+    public Genres getGenres() throws ModelException {
+        return this.getGenres(false);
     }
 
+
+
     /**
-     * <p>Getter for the field <code>artists</code>.</p>
+     * Use this method to get the {@link Artists} user collection.
+     * 
+     * <p>
+     * 
+     * This method accept the parameter <code>async</code>. If <code>true</code> the collection is populated 
+     * asynchronously; in this case it may be necessary to specify a {@link CollectionListener} to keep track 
+     * of what is happening to the collection.
      *
-     * @param async a boolean.
-     * @return a {@link fm.audiobox.core.models.Artists} object.
-     * @throws fm.audiobox.core.exceptions.ModelException if any.
+     * @param async whether to make the request asynchronously.
+     * 
+     * @return the user {@link Artists} collection
+     * 
+     * @throws ModelException if a custom model class was specified and an error while using it occurs.
      */
     public Artists getArtists(boolean async) throws ModelException {
         this.artists = (Artists) AudioBoxClient.getModelInstance(AudioBoxClient.ARTISTS_KEY, this.getConnector());
@@ -424,21 +474,32 @@ public class User extends ModelItem {
     }
 
     /**
-     * <p>Getter for the field <code>albums</code>.</p>
+     * <p>Same as calling {@link User#getArtists(boolean) User.getArtists(false)}.</p>
      *
-     * @return the albums
-     * @throws fm.audiobox.core.exceptions.ModelException if any.
+     * @return the user {@link Artists} collection
+     * 
+     * @throws ModelException if a custom model was specified and an error while using occurs.
      */
-    public Albums getAlbums() throws ModelException {
-        return this.getAlbums(false);
+    public Artists getArtists() throws ModelException {
+        return this.getArtists(false);
     }
 
+   
+
     /**
-     * <p>Getter for the field <code>albums</code>.</p>
+     * Use this method to get the {@link Albums} user collection.
+     * 
+     * <p>
+     * 
+     * This method accept the parameter <code>async</code>. If <code>true</code> the collection is populated 
+     * asynchronously; in this case it may be necessary to specify a {@link CollectionListener} to keep track 
+     * of what is happening to the collection.
      *
-     * @param async a boolean.
-     * @return a {@link fm.audiobox.core.models.Albums} object.
-     * @throws fm.audiobox.core.exceptions.ModelException if any.
+     * @param async whether to make the request asynchronously.
+     * 
+     * @return the user {@link Albums} collection
+     * 
+     * @throws ModelException if a custom model class was specified and an error while using it occurs.
      */
     public Albums getAlbums(boolean async) throws ModelException {
         this.albums = (Albums) AudioBoxClient.getModelInstance(AudioBoxClient.ALBUMS_KEY, this.getConnector());
@@ -450,28 +511,72 @@ public class User extends ModelItem {
 
         return this.albums;
     }
+    
+    /**
+     * <p>Same as calling {@link User#getAlbums(boolean) User.getAlbums(false)}.</p>
+     *
+     * @return the user {@link Albums} collection
+     * 
+     * @throws ModelException if a custom model was specified and an error while using occurs.
+     */
+    public Albums getAlbums() throws ModelException {
+        return this.getAlbums(false);
+    }
+    
+    
 
     /**
-     * <p>getUploadedTracks</p>
+     * Use this method to get a String array of MD5 hashes of user's already uploaded and ready media files.
+     * 
+     * <p>
+     * 
+     * This method is useful for sync tools.
      *
-     * @return an array of {@link java.lang.String} objects.
-     * @throws fm.audiobox.core.exceptions.ServiceException if any.
-     * @throws fm.audiobox.core.exceptions.LoginException if any.
+     * @return an array of {@link String} objects containing MD5 hashes of every user uploaded track.
+     * 
+     * @throws ServiceException if any connection problem to AudioBox.fm services occurs.
+     * @throws LoginException if any authentication problem occurs.
      */
     public String[] getUploadedTracks() throws ServiceException, LoginException {
+        
         String[] result = this.getConnector().execute(Tracks.END_POINT, null, null, this, HttpGet.METHOD_NAME, AudioBoxConnector.TEXT_FORMAT);
         String response = result[ AudioBoxConnector.RESPONSE_BODY ];
+        
         result = response.split( ";" , response.length() );
-        this.tracks =  new String[ result.length ];
-        int pos=0;
+        this.md5Hashes = new String[ result.length ];
+        int pos = 0;
         for ( String hash : result )
-            this.tracks[ pos++ ] = hash.trim();
-        return this.tracks;
+            this.md5Hashes[ pos++ ] = hash.trim();
+        
+        return this.md5Hashes;
     }
 
 
+    /* --------- */
+    /* Overrides */
+    /* --------- */
+
+
+    /** {@inheritDoc} */
+    @Override
+    public String getName() {
+        return this.getUsername();
+    }
+    
+    
+    /* --------------- */
+    /* Private methods */
+    /* --------------- */
+    
+    /**
+     * This method is used to make asynchronous requests to AudioBox.fm collections API end points.
+     *   
+     * @param endpoint the collection API end point to make request to 
+     * @param collection the collection ({@link ModelsCollection}) to populate
+     */
     private Thread populateCollection(final String endpoint, final ModelsCollection collection) {
 
+        // Final reference to user object
         final User user = this;
 
         return new Thread() {

@@ -25,7 +25,7 @@ package fm.audiobox.core.exceptions;
 
 /**
  * This exception is thrown whenever an {@link InstantiationException}, {@link IllegalAccessException} or
- * a {@link ClassNotFoundException} occurs on a Model instantiation.
+ * a {@link ClassNotFoundException} occurs on a custom specified Model instantiation.
  *
  * @author Valerio Chiodino
  * @version 0.0.1
