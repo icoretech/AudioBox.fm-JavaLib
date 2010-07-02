@@ -44,7 +44,7 @@ import fm.audiobox.core.api.ModelItem;
  */
 public class Playlist extends ModelItem {
     
-    /** Constant <code>TAG_NAME="playlist"</code> */
+    /** The XML tag name for the Playlist element */
     public static final String TAG_NAME = "playlist";
     
     protected int playlistTracksCount;

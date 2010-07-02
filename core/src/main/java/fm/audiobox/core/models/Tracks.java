@@ -29,7 +29,7 @@ import fm.audiobox.core.api.ModelsCollection;
 
 
 /**
- * <p>Tracks is a {@link ModelsCollection} specialization.</p>
+ * <p>Tracks is a {@link ModelsCollection} specialization for {@link Track} collections.</p>
  *
  * @author Valerio Chiodino
  * @author Fabio Tunno

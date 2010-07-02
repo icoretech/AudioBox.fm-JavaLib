@@ -47,14 +47,13 @@ import fm.audiobox.core.api.ModelItem;
  */
 public class Album extends ModelItem {
 
-    // Name and token are inherited from Model
+    /** The XML tag name for the Album element */
+	public static final String TAG_NAME = "album";
+	
+	// Name and token are inherited from Model
     protected String coverUrlAsThumb;
     protected String coverUrl;
     protected Artist artist;
-	
-	
-	/** Constant <code>TAG_NAME="album"</code> */
-	public static final String TAG_NAME = "album";
 	
 	/**
 	 * <p>Constructor for Album.</p>

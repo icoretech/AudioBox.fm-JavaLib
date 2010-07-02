@@ -41,7 +41,7 @@ import fm.audiobox.core.api.ModelItem;
  */
 public class Genre extends ModelItem {
 	
-	/** Constant <code>TAG_NAME="genre"</code> */
+    /** The XML tag name for the Genre element */
 	public static final String TAG_NAME = "genre";
 	
 	/**

@@ -30,20 +30,26 @@ import fm.audiobox.core.api.ModelItem;
 
 
 /**
+ * Profile is linked to the {@link User} and specify more user's aspects and options.
+ * 
+ * <p>
+ * 
+ * Profile XML looks like this: 
+ * 
  * <pre>
  * {@code
  * <profile>
  *   <autoplay type="boolean">false</autoplay>
- *   <birth-date type="date">1982-04-20</birth-date>
- *   <country>IT</country>
+ *   <birth-date type="date">1980-01-01</birth-date>
+ *   <country>US</country>
  *   <gender>m</gender>
- *   <home-page>http://www.keytwo.net</home-page>
- *   <real-name>Valerio Chiodino</real-name>
- *   <time-zone>Rome</time-zone>
+ *   <home-page>http://www.myBlog.com</home-page>
+ *   <real-name>Real Name</real-name>
+ *   <time-zone>New York</time-zone>
  * </profile>
  * }
  * </pre>
- *
+ * 
  * @author Valerio Chiodino
  * @author Fabio Tunno
  * @version 0.0.1
@@ -73,135 +79,152 @@ public class Profile extends ModelItem {
 
 
     /**
-     * <p>Setter for the field <code>autoplay</code>.</p>
+     * This method is used by the parser. Please use {@link Profile#setAutoplay(boolean)} instead.
+     * 
+     * <p>Setter for the autoplay option: used by the parser.</p>
      *
-     * @param autoplay a {@link java.lang.String} object.
+     * @param autoplay String representing the boolean value, true to enable false to disable.
      */
+    @Deprecated
     public void setAutoplay(String autoplay) {
-        this.autoplay = Boolean.parseBoolean( autoplay );
+        this.setAutoplay( Boolean.parseBoolean( autoplay ) );
+    }
+    
+    /**
+     * <p>Setter for the autoplay option.</p>
+     *
+     * @param autoplay String representing the boolean value, true to enable false to disable.
+     */
+    public void setAutoplay(boolean autoplay) {
+        this.autoplay = autoplay;
     }
 
     /**
-     * <p>hasAutoplay</p>
+     * Checks whether the user has enabled autoplay or not.
      *
-     * @return the autoplay
+     * @return the autoplay user option value
      */
     public boolean hasAutoplay() {
         return this.autoplay;
     }
 
 
+    
     /**
-     * <p>Setter for the field <code>birthDate</code>.</p>
+     * <p>Setter for the user birthDate: used by the parser.</p>
      *
-     * @param date a {@link java.lang.String} object.
-     * @throws java.text.ParseException if any.
+     * @param date the birthdate String in format yyyy-MM-dd.
+     * 
+     * @throws ParseException if the date format is not respected.
      */
     public void setBirthDate(String date) throws ParseException {
         this.birthDate = new SimpleDateFormat( "yyyy-MM-dd" ).parse( date );
     }
 
     /**
-     * <p>Getter for the field <code>birthDate</code>.</p>
+     * <p>Getter for the user's birthdate.</p>
      *
-     * @return the birthDate
+     * @return the user's birthdate {@link Date}
      */
     public Date getBirthDate() {
         return this.birthDate;
     }
 
 
+    
     /**
-     * <p>Setter for the field <code>country</code>.</p>
+     * <p>Setter for the user country: used by the parser.</p>
      *
-     * @param country a {@link java.lang.String} object.
+     * @param country the country {@link String}.
      */
     public void setCountry(String country) {
         this.country = country;
     }
 
-
     /**
-     * <p>Getter for the field <code>country</code>.</p>
+     * <p>Getter for the user country.</p>
      *
-     * @return the country
+     * @return the user country
      */
     public String getCountry() {
         return this.country;
     }
 
+    
 
     /**
-     * <p>Setter for the field <code>gender</code>.</p>
+     * <p>Setter for the user gender: used by the parser.</p>
      *
-     * @param gender a {@link java.lang.String} object.
+     * @param gender the gender {@link String}.
      */
     public void setGender(String gender) {
         this.gender = gender;
     }
 
     /**
-     * <p>Getter for the field <code>gender</code>.</p>
+     * <p>Getter for the user gender.</p>
      *
-     * @return the gender
+     * @return the user gender
      */
     public String getGender() {
         return this.gender;
     }
 
+    
 
     /**
-     * <p>Setter for the field <code>homePage</code>.</p>
+     * <p>Setter for the user home page: used by the parser.</p>
      *
-     * @param homePage a {@link java.lang.String} object.
+     * @param homePage the user home page url {@link String}.
      */
     public void setHomePage(String homePage) {
         this.homePage = homePage;
     }
 
-
     /**
-     * <p>Getter for the field <code>homePage</code>.</p>
+     * <p>Getter for the user home page.</p>
      *
-     * @return the homePage
+     * @return the user home page
      */
     public String getHomePage() {
         return this.homePage;
     }
 
 
+    
     /**
-     * <p>Setter for the field <code>realName</code>.</p>
+     * <p>Setter for the user real name: used by the parser.</p>
      *
-     * @param realName a {@link java.lang.String} object.
+     * @param realName the real name {@link String}.
      */
     public void setRealName(String realName) {
         this.realName = realName;
     }
 
     /**
-     * <p>Getter for the field <code>realName</code>.</p>
+     * <p>Getter for the user real name.</p>
      *
-     * @return the realName
+     * @return the user real name
      */
     public String getRealName() {
         return this.realName;
     }
 
+    
 
     /**
-     * <p>Setter for the field <code>timeZone</code>.</p>
+     * <p>Setter for the user time zone: used by the parser.</p>
      *
-     * @param timeZone a {@link java.lang.String} object.
+     * @param timeZone the time zone {@link String}.
      */
     public void setTimeZone(String timeZone) {
         this.timeZone = timeZone;
     }
 
     /**
-     * <p>Getter for the field <code>timeZone</code>.</p>
+     * <p>Getter for the user time zone.</p>
      *
-     * @return the timeZone
+     * @return the user time zone
      */
     public String getTimeZone() {
         return this.timeZone;
@@ -212,10 +235,11 @@ public class Profile extends ModelItem {
     /* Utils methods */
     /* ============= */
 
+    
     /** {@inheritDoc} */
     @Override
     public String getName() {
-        return this.realName;
+        return this.getRealName();
     }
 
 }

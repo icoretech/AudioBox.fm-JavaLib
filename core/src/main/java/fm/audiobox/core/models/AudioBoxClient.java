@@ -285,7 +285,7 @@ public class AudioBoxClient {
     /**
      * <p>Getter method for the default connector Object<p>
      *
-     * @return the main {@link fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector} object.
+     * @return the main {@link AudioBoxConnector} object.
      */
     protected AudioBoxConnector getMainConnector(){
         return this.mConnector;

@@ -41,7 +41,7 @@ import fm.audiobox.core.api.ModelItem;
  */
 public class Artist extends ModelItem {
 	
-	/** Constant <code>TAG_NAME="artist"</code> */
+    /** The XML tag name for the Artist element */
 	public static final String TAG_NAME = "artist";
 	
 	/**
