@@ -29,7 +29,7 @@ import fm.audiobox.core.api.ModelsCollection;
 
 
 /**
- * <p>Albums class.</p>
+ * <p>Albums is a {@link ModelsCollection} specialization for {@link Album} collections.</p>
  *
  * @author Valerio Chiodino
  * @author Fabio Tunno
@@ -50,49 +50,60 @@ public class Albums extends ModelsCollection {
     }
     
     /**
-     * <p>getTagName</p>
-     *
-     * @return a {@link java.lang.String} object.
+     * Getter method for the XML tag name of collection's elements.
+     * 
+     * @return the XML tag name {@link String} for Albums collection elements.
      */
     public String getTagName() {
         return Album.TAG_NAME;
     }
     
     /**
-     * <p>Getter for the field <code>collection</code>.</p>
+     * <p>Getter method for the Album collection.</p>
      *
-     * @return a {@link java.util.List} object.
+     * @return the {@link List} of {@link Album} of this collection.
      */
     public List<? extends Album> getCollection() {
         return this.collection;
     }
     
     /**
-     * <p>addAlbum</p>
+     * Adds a Album to the collection: this is mainly used by the parser.
      *
-     * @param album a {@link fm.audiobox.core.models.Album} object.
+     * @param album a {@link Album} to add to the collection.
      */
     public void addAlbum(Album album) {
         this.collection.add( album );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * <p>Setter method for the collection list of {@link Album}.</p>
+     *
+     * @param collection a {@link List} of {@link Album} that represents the collection.
+     */
     @SuppressWarnings("unchecked")
     @Override
     public void setCollection(List<?> collection) {
         this.collection = (List<Album>) collection;
     }
     
-    /** {@inheritDoc} */
+    /**
+     * <p>Getter method for a single {@link Album} contained in the collection.</p>
+     *
+     * @param index the index of the desired Album.
+     * 
+     * @return a {@link Album} object.
+     */
     public Album get(int index) {
         return collection.get(index);
     }
     
     /**
-     * <p>get</p>
+     * <p>Getter method for a single {@link Album} contained in the collection.</p>
      *
-     * @param token a {@link java.lang.String} object.
-     * @return a {@link fm.audiobox.core.models.Album} object.
+     * @param uuid the uuid of the desired Album.
+     * 
+     * @return a {@link Album} object.
      */
     public Album get(String token) {
         for (Album album : collection) {

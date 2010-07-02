@@ -29,7 +29,7 @@ import fm.audiobox.core.api.ModelsCollection;
 
 
 /**
- * <p>Genres class.</p>
+ * <p>Genres is a {@link ModelsCollection} specialization for {@link Genre} collections.</p>
  *
  * @author Valerio Chiodino
  * @author Fabio Tunno
@@ -50,49 +50,60 @@ public class Genres extends ModelsCollection {
     }
     
     /**
-     * <p>getTagName</p>
-     *
-     * @return a {@link java.lang.String} object.
+     * Getter method for the XML tag name of collection's elements.
+     * 
+     * @return the XML tag name {@link String} for Genres collection elements.
      */
     public String getTagName() {
         return Genre.TAG_NAME;
     }
     
     /**
-     * <p>Getter for the field <code>collection</code>.</p>
+     * <p>Getter method for the Genres collection.</p>
      *
-     * @return a {@link java.util.List} object.
+     * @return the {@link List} of {@link Genre} of this collection.
      */
     public List<? extends Genre> getCollection() {
         return this.collection;
     }
     
     /**
-     * <p>addGenre</p>
+     * Adds a Genre to the collection: this is mainly used by the parser.
      *
-     * @param genre a {@link fm.audiobox.core.models.Genre} object.
+     * @param genre a {@link Genre} to add to the collection.
      */
     public void addGenre(Genre genre) {
         this.collection.add(genre);
     }
     
-    /** {@inheritDoc} */
+    /**
+     * <p>Setter method for the collection list of {@link Genre}.</p>
+     *
+     * @param collection a {@link List} of {@link Genre} that represents the collection.
+     */
     @SuppressWarnings("unchecked")
     @Override
     public void setCollection(List<?> collection) {
         this.collection = (List<Genre>) collection;
     }
     
-    /** {@inheritDoc} */
+    /**
+     * <p>Getter method for a single {@link Genre} contained in the collection.</p>
+     *
+     * @param index the index of the desired Genre.
+     * 
+     * @return a {@link Genre} object.
+     */
     public Genre get(int index) {
         return collection.get(index);
     }
     
     /**
-     * <p>get</p>
+     * <p>Getter method for a single {@link Genre} contained in the collection.</p>
      *
-     * @param token a {@link java.lang.String} object.
-     * @return a {@link fm.audiobox.core.models.Genre} object.
+     * @param uuid the uuid of the desired Genre.
+     * 
+     * @return a {@link Genre} object.
      */
     public Genre get(String token) {
         for (Genre genre : collection) {

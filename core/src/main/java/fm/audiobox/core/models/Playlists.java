@@ -29,7 +29,7 @@ import fm.audiobox.core.api.ModelsCollection;
 
 
 /**
- * <p>Playlists class.</p>
+ * <p>Playlists is a {@link ModelsCollection} specialization for {@link Playlist} collections.</p>
  *
  * @author Valerio Chiodino
  * @author Fabio Tunno
@@ -50,49 +50,60 @@ public class Playlists extends ModelsCollection {
     }
     
     /**
-     * <p>getTagName</p>
-     *
-     * @return a {@link java.lang.String} object.
+     * Getter method for the XML tag name of collection's elements.
+     * 
+     * @return the XML tag name {@link String} for Playlists collection elements.
      */
     public String getTagName() {
         return Playlist.TAG_NAME;
     }
 
     /**
-     * <p>Getter for the field <code>collection</code>.</p>
+     * <p>Getter method for the Playlists collection.</p>
      *
-     * @return a {@link java.util.List} object.
+     * @return the {@link List} of {@link Playlist} of this collection.
      */
     public List<? extends Playlist> getCollection() {
         return this.collection;
     }
     
     /**
-     * <p>addPlaylist</p>
+     * Adds a Playlist to the collection: this is mainly used by the parser.
      *
-     * @param playlist a {@link fm.audiobox.core.models.Playlist} object.
+     * @param playlist a {@link Playlist} to add to the collection.
      */
     public void addPlaylist(Playlist playlist) {
         this.collection.add(playlist);
     }
     
-    /** {@inheritDoc} */
+    /**
+     * <p>Setter method for the collection list of {@link Playlist}.</p>
+     *
+     * @param collection a {@link List} of {@link Playlist} that represents the collection.
+     */
     @SuppressWarnings("unchecked")
     @Override
     public void setCollection(List<?> collection) {
         this.collection = (List<Playlist>) collection;
     }
     
-    /** {@inheritDoc} */
+    /**
+     * <p>Getter method for a single {@link Playlist} contained in the collection.</p>
+     *
+     * @param index the index of the desired Playlist.
+     * 
+     * @return a {@link Playlist} object.
+     */
     public Playlist get(int index) {
         return collection.get(index);
     }
     
     /**
-     * <p>get</p>
+     * <p>Getter method for a single {@link Playlist} contained in the collection.</p>
      *
-     * @param token a {@link java.lang.String} object.
-     * @return a {@link fm.audiobox.core.models.Playlist} object.
+     * @param uuid the uuid of the desired Playlist.
+     * 
+     * @return a {@link Playlist} object.
      */
     public Playlist get(String token) {
         for (Playlist playlist : collection) {

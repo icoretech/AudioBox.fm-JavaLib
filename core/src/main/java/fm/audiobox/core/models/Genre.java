@@ -26,6 +26,12 @@ import fm.audiobox.core.api.ModelItem;
 
 
 /**
+ * Genre class is one of the lighter models and offers defaults informations only.
+ * 
+ * <p>
+ * 
+ * Genre XML looks like this: 
+ * 
  * <pre>
  * {@code
  * <genre>

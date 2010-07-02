@@ -68,7 +68,7 @@ public class Tracks extends ModelsCollection {
     }
     
     /**
-     * Adds a track to the collection: this is mainly used by the parser.
+     * Adds a Track to the collection: this is mainly used by the parser.
      *
      * @param track a {@link Track} to add to the collection.
      */

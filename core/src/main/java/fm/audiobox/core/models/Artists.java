@@ -29,7 +29,7 @@ import fm.audiobox.core.api.ModelsCollection;
 
 
 /**
- * <p>Artists class.</p>
+ * <p>Artists is a {@link ModelsCollection} specialization for {@link Artist} collections.</p>
  *
  * @author Valerio Chiodino
  * @author Fabio Tunno
@@ -50,49 +50,60 @@ public class Artists extends ModelsCollection {
     }
     
     /**
-     * <p>getTagName</p>
-     *
-     * @return a {@link java.lang.String} object.
+     * Getter method for the XML tag name of collection's elements.
+     * 
+     * @return the XML tag name {@link String} for Artists collection elements.
      */
     public String getTagName() {
         return Artist.TAG_NAME;
     }
     
     /**
-     * <p>Getter for the field <code>collection</code>.</p>
+     * <p>Getter method for the Artist collection.</p>
      *
-     * @return a {@link java.util.List} object.
+     * @return the {@link List} of {@link Artist} of this collection.
      */
     public List<? extends Artist> getCollection() {
         return this.collection;
     }
     
     /**
-     * <p>addArtist</p>
+     * Adds a Artist to the collection: this is mainly used by the parser.
      *
-     * @param artist a {@link fm.audiobox.core.models.Artist} object.
+     * @param artist a {@link Artist} to add to the collection.
      */
     public void addArtist(Artist artist) {
         this.collection.add(artist);
     }
     
-    /** {@inheritDoc} */
+    /**
+     * <p>Setter method for the collection list of {@link Artist}.</p>
+     *
+     * @param collection a {@link List} of {@link Artist} that represents the collection.
+     */
     @SuppressWarnings("unchecked")
     @Override
     public void setCollection(List<?> collection) {
         this.collection = (List<Artist>) collection;
     }
     
-    /** {@inheritDoc} */
+    /**
+     * <p>Getter method for a single {@link Artist} contained in the collection.</p>
+     *
+     * @param index the index of the desired Artist.
+     * 
+     * @return a {@link Artist} object.
+     */
     public Artist get(int index) {
         return collection.get(index);
     }
     
     /**
-     * <p>get</p>
+     * <p>Getter method for a single {@link Artist} contained in the collection.</p>
      *
-     * @param token a {@link java.lang.String} object.
-     * @return a {@link fm.audiobox.core.models.Artist} object.
+     * @param uuid the uuid of the desired Artist.
+     * 
+     * @return a {@link Artist} object.
      */
     public Artist get(String token) {
         for (Artist artist : collection) {

@@ -26,6 +26,8 @@ import fm.audiobox.core.api.ModelItem;
 
 
 /**
+ * Album XML looks like this:
+ *  
  * <pre>
  * {@code
  * <album>

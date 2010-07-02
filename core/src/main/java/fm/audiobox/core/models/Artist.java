@@ -26,6 +26,12 @@ import fm.audiobox.core.api.ModelItem;
 
 
 /**
+ * Artist class is one of the lighter models and offers defaults informations only.
+ * 
+ * <p>
+ * 
+ * Artist XML looks like this: 
+ * 
  * <pre>
  * {@code
  * <artist>
