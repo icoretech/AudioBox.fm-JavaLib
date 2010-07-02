@@ -100,7 +100,7 @@ public class User extends ModelItem {
     /** The XML tag name for the User element */
     public static final String TAG_NAME = "user";
 
-    /** API end point */
+    /** User API end point */
     public static final String END_POINT = TAG_NAME;
 
     /** Active user state */

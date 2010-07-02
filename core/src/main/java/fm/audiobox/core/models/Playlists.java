@@ -37,7 +37,7 @@ import fm.audiobox.core.api.ModelsCollection;
  */
 public class Playlists extends ModelsCollection {
 
-    /** Constant <code>END_POINT="playlists"</code> */
+    /** Tracks API end point */
     public static final String END_POINT = "playlists";
     
     protected List<Playlist> collection = new ArrayList<Playlist>();

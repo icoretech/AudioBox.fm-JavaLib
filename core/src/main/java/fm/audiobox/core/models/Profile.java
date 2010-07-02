@@ -50,7 +50,7 @@ import fm.audiobox.core.api.ModelItem;
  */
 public class Profile extends ModelItem {
 
-    /** Constant <code>TAG_NAME="profile"</code> */
+    /** The XML tag name for the Profile element */
     public static final String TAG_NAME = "profile";
     
     protected boolean autoplay;
@@ -61,7 +61,6 @@ public class Profile extends ModelItem {
     protected String realName;
     protected String timeZone;
 
-    // Override default constructor
     /**
      * <p>Constructor for Profile.</p>
      */

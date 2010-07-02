@@ -46,8 +46,15 @@ public abstract class ModelsCollection extends Model {
 	protected CollectionListener pCollectionListener = null;
 	
 	/**
-	 * <p>Getter method for the tag name.</p>
-	 *
+	 * Getter method for the XML tag name of collection's elements.
+	 * 
+	 * <p>
+	 * 
+	 * For instance:
+	 * <pre>
+	 *     Tracks.getTagName() => "track"
+	 * </pre>
+	 * 
 	 * @return the XML tag name for this ModelsCollection.
 	 */
 	protected abstract String getTagName();
@@ -62,7 +69,7 @@ public abstract class ModelsCollection extends Model {
     /**
      * <p>Getter method for the collection of this ModelsCollection</p>
      *
-     * @return the list of {@link ModelItem} that this ModelsCollection contains.
+     * @return the {@link List} of {@link ModelItem} that this ModelsCollection contains.
      */
     public abstract List<?> getCollection();
     

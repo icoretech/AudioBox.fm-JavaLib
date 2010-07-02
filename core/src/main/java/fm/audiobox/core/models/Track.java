@@ -79,7 +79,7 @@ public class Track extends ModelItem {
     // Constants
     /** The XML tag name for the Track element */
     public static final String TAG_NAME = "track";
-    
+
     /** The HTTP Parameter to use when uploading a track */
     public static final String HTTP_PARAM = "media";
 
@@ -107,9 +107,40 @@ public class Track extends ModelItem {
 
 
     // Utility fields
-    public enum State { IDLE, PLAYING, ERROR, BUFFERING, PAUSED }
+    /**
+     * During the lifecycle a Track can be put in differents states.
+     * 
+     * <p>
+     * 
+     * Note though that this is an util element.<br/> 
+     * <strong>Playing of the song is out of these libraries scope.</strong>
+     * 
+     * <ul>
+     *  <li>IDLE state: track is ready for any action. It is equivalent to "Stopped".</li>
+     *  <li>PLAYING state: the track is being played.</li>
+     *  <li>ERROR state: any error occurred while trying to playing the track.</li>
+     *  <li>BUFFERING state: track is currently downloading.</li>
+     *  <li>PAUSED state: track has been paused.</li>
+     * </ul>
+     */
+    public enum State { 
+        /** Idle state: track is ready for any action. It is equivalent to "Stopped". */
+        IDLE, 
+        
+        /** Playing state: the track is being played. */
+        PLAYING, 
+        
+        /** Error state: any error occurred while trying to playing the track. */
+        ERROR, 
+        
+        /** Buffering state: track is currently downloading. */
+        BUFFERING, 
+        
+        /** Paused state: track has been paused. */
+        PAUSED
+    }
     protected State trackState = Track.State.IDLE;
-    
+
     // Used for upload purpose
     protected FileBody fileBody;
 
@@ -131,12 +162,12 @@ public class Track extends ModelItem {
         this.fileBody = fileBody;
     }
 
-    
+
     /* ------------------- */
     /* Getters and setters */
     /* ------------------- */
-    
-    
+
+
     /**
      * <p>Setter for the track's uuid.</p>
      *
@@ -164,7 +195,7 @@ public class Track extends ModelItem {
     }
 
 
-    
+
     /**
      * <p>Setter for the track duration: used by the parser.</p>
      *
@@ -184,7 +215,7 @@ public class Track extends ModelItem {
     }
 
 
-    
+
     /**
      * <p>Setter for the track title: used by the parser.</p>
      *
@@ -203,8 +234,8 @@ public class Track extends ModelItem {
         return title;
     }
 
-    
-    
+
+
     /**
      * <p>Setter for the URL of the streaming: used by the parser.</p>
      *
@@ -218,6 +249,7 @@ public class Track extends ModelItem {
      * <p>Getter for the track streaming url.</p>
      *
      * @return the track streamUrl
+     * 
      * @throws LoginException if any authentication problem during the request occurs.
      * @throws ServiceException if any connection problem to AudioBox.fm occurs.
      */
@@ -226,8 +258,8 @@ public class Track extends ModelItem {
         return result[ AudioBoxConnector.RESPONSE_BODY ];
     }
 
-    
-    
+
+
     /**
      * This method is used by the parser. Please use {@link Track#setLoved(boolean)} instead.
      * 
@@ -250,7 +282,7 @@ public class Track extends ModelItem {
     public void setLoved(boolean loved) {
         this.loved = loved;
     }
-    
+
     /**
      * <p>Check whether the track is loved or not</p>
      *
@@ -260,7 +292,7 @@ public class Track extends ModelItem {
         return loved;
     }
 
-    
+
 
     /**
      * This method is used by the parser. Please use {@link Track#setPlayCount(int)} instead.
@@ -326,7 +358,7 @@ public class Track extends ModelItem {
     }
 
     /**
-     * <p>Getter for the field <code>fileHash</code>.</p>
+     * <p>Getter for the track's file hash.</p>
      *
      * @return the track's file MD5 hash
      */
@@ -334,21 +366,21 @@ public class Track extends ModelItem {
         return fileHash;
     }
 
-    
-    
+
+
     /**
-     * <p>Setter for the field <code>audioFileSize</code>.</p>
+     * <p>Setter for the track's file size in bytes: used by the parser.</p>
      *
-     * @param fileSize a {@link java.lang.String} object.
+     * @param fileSize the String of the size in bytes.
      */
     public void setAudioFileSize(String fileSize) {
         this.audioFileSize = Long.parseLong( fileSize );
     }
 
     /**
-     * <p>Getter for the field <code>audioFileSize</code>.</p>
+     * <p>Getter for the audio file size</p>
      *
-     * @return the audioFileSize
+     * @return the track's file size in bytes
      */
     public long getAudioFileSize() {
         return audioFileSize;
@@ -357,38 +389,38 @@ public class Track extends ModelItem {
 
 
     /**
-     * <p>Setter for the field <code>durationInSeconds</code>.</p>
+     * <p>Setter for the track's duration in seconds: used by the parser.</p>
      *
-     * @param durationInSeconds a {@link java.lang.String} object.
+     * @param durationInSeconds the String representing the number of seconds of the track's duration
      */
     public void setDurationInSeconds(String durationInSeconds) {
         this.durationInSeconds = Long.parseLong( durationInSeconds );
     }
 
     /**
-     * <p>Getter for the field <code>durationInSeconds</code>.</p>
+     * <p>Getter for the track's duration in seconds.</p>
      *
-     * @return the durationInSeconds
+     * @return the number of seconds of the track's duration
      */
     public long getDurationInSeconds() {
         return durationInSeconds;
     }
 
-    
-    
+
+
     /**
-     * <p>Setter for the field <code>artist</code>.</p>
+     * <p>Setter for the track's artist: used by the parser.</p>
      *
-     * @param artist a {@link fm.audiobox.core.models.Artist} object.
+     * @param artist the track's artist.
      */
     public void setArtist(Artist artist) {
         this.artist = artist;
     }
 
     /**
-     * <p>Getter for the field <code>artist</code>.</p>
+     * <p>Getter for the track's artist.</p>
      *
-     * @return the artist
+     * @return the artist of this track
      */
     public Artist getArtist() {
         return artist;
@@ -397,27 +429,27 @@ public class Track extends ModelItem {
 
 
     /**
-     * <p>Setter for the field <code>album</code>.</p>
+     * <p>Setter for track's album: used by the parser.</p>
      *
-     * @param album a {@link fm.audiobox.core.models.Album} object.
+     * @param album the track's album to set
      */
     public void setAlbum(Album album) {
         this.album = album;
     }
 
     /**
-     * <p>Getter for the field <code>album</code>.</p>
+     * <p>Getter for the album of the track.</p>
      *
-     * @return the album
+     * @return the track's album
      */
     public Album getAlbum() {
         return album;
     }
-    
-    
-    
+
+
+
     /**
-     * <p>getFileBody</p>
+     * <p>Use this method to get the file content for upload process.</p>
      *
      * @return the FileBody to upload
      */
@@ -430,51 +462,88 @@ public class Track extends ModelItem {
     /* Remote Actions */
     /* -------------- */
 
-    
+
     /**
-     * <p>scrobble</p>
+     * Use this method at the end of a "just listened" song to scrobble it to Last.fm and to keep track of the
+     * plays count to AudioBox.fm
      *
-     * @throws fm.audiobox.core.exceptions.ServiceException if any.
-     * @throws fm.audiobox.core.exceptions.LoginException if any.
+     * <p>
+     * 
+     * Remember that scrobbles have to be done at least one for listening and at 96% of the listening progres or
+     * at the end.
+     * 
+     * <p>
+     * 
+     * This method also increment the track's playcount if the scrobble is correctly received by AudioBox.fm.
+     *
+     * @throws LoginException if any authentication problem during the request occurs.
+     * @throws ServiceException if any connection problem to AudioBox.fm occurs.
      */
     public void scrobble() throws ServiceException, LoginException {
-        this.getConnector().execute( this.pEndPoint, this.getUuid(), SCROBBLE_ACTION, this, HttpPost.METHOD_NAME);
+        String[] response = this.getConnector().execute( this.pEndPoint, this.getUuid(), SCROBBLE_ACTION, this, HttpPost.METHOD_NAME);
+        if ( Integer.parseInt( response[ AudioBoxConnector.RESPONSE_CODE ] ) == HttpStatus.SC_OK)
+            this.setPlayCount( this.getPlayCount() + 1 );
     }
 
     /**
-     * <p>love</p>
+     * Use this method to mark the track as loved.
+     * 
+     * <p>
+     * 
+     * Note that calling this method on an already "loved" track will have no effect.
+     * 
+     * <p>
+     * 
+     * This method also sets to <code>true</code> the loved state.
      *
-     * @return a boolean.
-     * @throws fm.audiobox.core.exceptions.ServiceException if any.
-     * @throws fm.audiobox.core.exceptions.LoginException if any.
+     * @return true if the request is succesfully done, false otherwise.
+     * 
+     * @throws LoginException if any authentication problem during the request occurs.
+     * @throws ServiceException if any connection problem to AudioBox.fm occurs.
      */
     public boolean love() throws ServiceException, LoginException  {
-        String[] result = this.getConnector().execute( this.pEndPoint, this.getUuid(), LOVE_ACTION, this, HttpPut.METHOD_NAME);
-        boolean markLoved = HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
-        this.setLoved( markLoved );
+        boolean markLoved = true;
+        if ( ! this.isLoved()) {
+            String[] result = this.getConnector().execute( this.pEndPoint, this.getUuid(), LOVE_ACTION, this, HttpPut.METHOD_NAME);
+            markLoved = HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
+            this.setLoved( markLoved );
+        }
         return markLoved;
     }
 
     /**
-     * <p>unlove</p>
+     * Use this method to mark the track as no more loved.
+     * 
+     * <p>
+     * 
+     * Note that calling this method on an "unloved" track will have no effect.
+     * 
+     * <p>
+     * 
+     * This method also sets to <code>false</code> the loved state.
      *
-     * @return a boolean.
-     * @throws fm.audiobox.core.exceptions.ServiceException if any.
-     * @throws fm.audiobox.core.exceptions.LoginException if any.
+     * @return true if the request is succesfully done, false otherwise.
+     * 
+     * @throws LoginException if any authentication problem during the request occurs.
+     * @throws ServiceException if any connection problem to AudioBox.fm occurs.
      */
     public boolean unlove() throws ServiceException, LoginException {
-        String[] result = this.getConnector().execute( this.pEndPoint, this.getUuid(), UNLOVE_ACTION, this, HttpPut.METHOD_NAME);
-        boolean markLoved = HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
-        this.setLoved( !markLoved );
+        boolean markLoved = true;
+        if (this.isLoved()) {
+            String[] result = this.getConnector().execute( this.pEndPoint, this.getUuid(), UNLOVE_ACTION, this, HttpPut.METHOD_NAME);
+            markLoved = HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
+            this.setLoved( !markLoved );
+        }
         return markLoved;
     }
 
     /**
-     * <p>delete</p>
+     * <p>Permanently destroy a media file. <strong>This operation cannot be reverted</strong>.</p>
      *
-     * @return a boolean.
-     * @throws fm.audiobox.core.exceptions.ServiceException if any.
-     * @throws fm.audiobox.core.exceptions.LoginException if any.
+     * @return true if the request is succesfully done, false otherwise.
+     * 
+     * @throws LoginException if any authentication problem during the request occurs.
+     * @throws ServiceException if any connection problem to AudioBox.fm occurs.
      */
     public boolean delete() throws ServiceException, LoginException {
         String[] result = this.getConnector().execute( this.pEndPoint, this.getUuid(), null, this, HttpDelete.METHOD_NAME);
@@ -485,28 +554,32 @@ public class Track extends ModelItem {
     /* ----- */
     /* State */
     /* ----- */
-    
+
 
     /**
-     * <p>setState</p>
+     * Changes the states of the track.
+     * 
+     * <p>
      *
-     * @param trackState the trackState to set
+     * Useful for media player and sync tools.
+     * 
+     * @param trackState the {@link State} to put the track in
      */
     public void setState(State trackState) {
         this.trackState = trackState;
     }
 
     /**
-     * <p>getState</p>
+     * <p>Use this method to get the {@link State} of the track.</p>
      *
-     * @return the  track status
+     * @return the track {@link State}
      */
     public State getState() {
         return trackState;
     }
 
     /**
-     * <p>hasErrors</p>
+     * <p>Util method to know if the track contains errors.</p>
      *
      * @return true if the track contains errors
      */
@@ -515,7 +588,7 @@ public class Track extends ModelItem {
     }
 
     /**
-     * <p>isPlaying</p>
+     * <p>Util method to know if the track is currently playing.</p>
      *
      * @return true if the track in in playing
      */
@@ -524,7 +597,7 @@ public class Track extends ModelItem {
     }
 
     /**
-     * <p>isPaused</p>
+     * <p>Util method to know if the track is currently paused.</p>
      *
      * @return true if the track in in playing
      */
@@ -533,7 +606,7 @@ public class Track extends ModelItem {
     }
 
     /**
-     * <p>isBuffering</p>
+     * <p>Util method to know if the track is currently buffering.</p>
      *
      * @return true if the track is currently buffering from network
      */
@@ -546,18 +619,19 @@ public class Track extends ModelItem {
     /* Overrides */
     /* --------- */
     
+
     /** {@inheritDoc} */
     @Override
     public String getName() {
         return this.title + " - " + this.artist.getName() + " (" + this.duration + ")";
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public String getToken() {
         return getUuid();
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public Track getTrack(String uuid) {
@@ -566,11 +640,15 @@ public class Track extends ModelItem {
         else return null;
     }
 
-    /** {@inheritDoc} */
+    /** Does nothing: prevent undesired behaviours. */
     @Override
     public void setTracks(Tracks tracks) { }
 
-    /** {@inheritDoc} */
+    /** 
+     * Returns <code>null</code>: prevent undesired behaviours.
+     * 
+     * @return null
+     */
     @Override
     public Tracks getTracks() { return null; }
 

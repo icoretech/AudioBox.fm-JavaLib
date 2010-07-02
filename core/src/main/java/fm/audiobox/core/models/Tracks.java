@@ -37,7 +37,7 @@ import fm.audiobox.core.api.ModelsCollection;
  */
 public class Tracks extends ModelsCollection {
 
-    /** Constant <code>END_POINT="tracks"</code> */
+    /** Tracks API end point */
     public static final String END_POINT = "tracks";
     
     protected List<Track> collection = new ArrayList<Track>();
@@ -50,50 +50,60 @@ public class Tracks extends ModelsCollection {
     }
     
     /**
-     * <p>getTagName</p>
-     *
-     * @return a {@link java.lang.String} object.
+     * Getter method for the XML tag name of collection's elements.
+     * 
+     * @return the XML tag name {@link String} for Tracks collection elements.
      */
     public String getTagName() {
         return Track.TAG_NAME;
     }
     
     /**
-     * <p>Getter for the field <code>collection</code>.</p>
+     * <p>Getter method for the Tracks collection.</p>
      *
-     * @return a {@link java.util.List} object.
+     * @return the {@link List} of {@link Track} of this collection.
      */
     public List<? extends Track> getCollection() {
         return this.collection;
     }
     
     /**
-     * <p>addTrack</p>
+     * Adds a track to the collection: this is mainly used by the parser.
      *
-     * @param track a {@link fm.audiobox.core.models.Track} object.
+     * @param track a {@link Track} to add to the collection.
      */
     public void addTrack(Track track) {
         this.collection.add(track);
     }
     
-    /** {@inheritDoc} */
+    /**
+     * <p>Setter method for the collection list of {@link Track}.</p>
+     *
+     * @param collection a {@link List} of {@link Track} that represents the collection.
+     */
     @SuppressWarnings("unchecked")
     @Override
     public void setCollection(List<?> collection) {
         this.collection = (List<Track>) collection;
     }
     
-    /** {@inheritDoc} */
+    /**
+     * <p>Getter method for a single {@link Track} contained in the collection.</p>
+     *
+     * @param index the index of the desired Track.
+     * 
+     * @return a {@link Track} object.
+     */
     public Track get(int index) {
         return collection.get(index);
     }
     
     /**
-     * <p>get</p>
+     * <p>Getter method for a single {@link Track} contained in the collection.</p>
      *
-     * @param uuid the UUID of the track you are looking for.
+     * @param uuid the uuid of the desired Track.
      * 
-     * @return a {@link fm.audiobox.core.models.Track} object.
+     * @return a {@link Track} object.
      */
     public Track get(String uuid) {
         for (Track track : collection) {
