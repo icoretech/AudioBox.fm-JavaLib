@@ -135,6 +135,10 @@ public class User extends ModelItem {
     }
 
 
+    /* ------------------- */
+    /* Getters and setters */
+    /* ------------------- */
+    
 
     /**
      * <p>Setter for the user bytes served: used by the parser.</p>

@@ -22,8 +22,6 @@
 
 package fm.audiobox.core.models;
 
-import java.net.SocketException;
-
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpPost;
@@ -37,6 +35,14 @@ import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
 
 
 /**
+ * Track is the main subject of the scope of these libraries.
+ * 
+ * <p>
+ * 
+ * Once browsed till arriving to a Track, many operations can be done with it.
+ * 
+ * <p>
+ * 
  * The XML response looks like this:
  *
  * <pre>
@@ -58,7 +64,7 @@ import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
  *     <name>Album name</name>
  *     <token>DUoSAAoN</token>
  *     <cover-url-as-thumb>http://url.to/thumb.png</cover-url-as-thumb>
- *     <cover-url>http://url.to/original.jpg?1269960151</cover-url>
+ *     <cover-url>http://url.to/original.jpg</cover-url>
  *   </album>
  * </track>
  * }
@@ -71,8 +77,10 @@ import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
 public class Track extends ModelItem {
 
     // Constants
-    /** Constant <code>TAG_NAME="track"</code> */
+    /** The XML tag name for the Track element */
     public static final String TAG_NAME = "track";
+    
+    /** The HTTP Parameter to use when uploading a track */
     public static final String HTTP_PARAM = "media";
 
     private static final String PATH = "tracks";
@@ -92,7 +100,6 @@ public class Track extends ModelItem {
     protected String title;
     protected int year;
     protected String fileHash;
-
     protected String streamUrl;
     protected long audioFileSize;
     protected Artist artist;
@@ -102,6 +109,8 @@ public class Track extends ModelItem {
     // Utility fields
     public enum State { IDLE, PLAYING, ERROR, BUFFERING, PAUSED }
     protected State trackState = Track.State.IDLE;
+    
+    // Used for upload purpose
     protected FileBody fileBody;
 
 
@@ -122,23 +131,23 @@ public class Track extends ModelItem {
         this.fileBody = fileBody;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public String getToken() {
-        return getUuid();
-    }
-
+    
+    /* ------------------- */
+    /* Getters and setters */
+    /* ------------------- */
+    
+    
     /**
-     * <p>Setter for the field <code>uuid</code>.</p>
+     * <p>Setter for the track's uuid.</p>
      *
-     * @param uuid a {@link java.lang.String} object.
+     * @param uuid the track's UUID String.
      */
     public void setUuid(String uuid) {
         this.uuid = uuid;
     }
 
     /**
-     * <p>Getter for the field <code>uuid</code>.</p>
+     * <p>Getter for the track's uuid.</p>
      *
      * @return the unique id of the track
      */
@@ -155,117 +164,131 @@ public class Track extends ModelItem {
     }
 
 
+    
     /**
-     * <p>Setter for the field <code>duration</code>.</p>
+     * <p>Setter for the track duration: used by the parser.</p>
      *
-     * @param duration a {@link java.lang.String} object.
+     * @param duration the String of the duration in MM:SS format.
      */
     public void setDuration(String duration) {
         this.duration = duration;
     }
 
     /**
-     * <p>Getter for the field <code>duration</code>.</p>
+     * <p>Getter for the track duration.</p>
      *
-     * @return the duration
+     * @return the duration of the track in MM:SS format
      */
     public String getDuration() {
         return duration;
     }
 
 
+    
     /**
-     * <p>Setter for the field <code>title</code>.</p>
+     * <p>Setter for the track title: used by the parser.</p>
      *
-     * @param title a {@link java.lang.String} object.
+     * @param title the track title.
      */
     public void setTitle(String title) {
         this.title = title;
     }
 
-
     /**
-     * <p>Getter for the field <code>title</code>.</p>
+     * <p>Getter for the track title.</p>
      *
-     * @return the title
+     * @return the title of the track
      */
     public String getTitle() {
         return title;
     }
 
+    
+    
     /**
-     * <p>Setter for the field <code>streamUrl</code>.</p>
+     * <p>Setter for the URL of the streaming: used by the parser.</p>
      *
-     * @param url a {@link java.lang.String} object.
+     * @param url the String of the url
      */
     public void setStreamUrl(String url) {
         this.streamUrl = url;
     }
 
-
     /**
-     * <p>Getter for the field <code>streamUrl</code>.</p>
+     * <p>Getter for the track streaming url.</p>
      *
-     * @return the streamUrl
-     * @throws fm.audiobox.core.exceptions.LoginException if any.
-     * @throws java.net.SocketException if any.
+     * @return the track streamUrl
+     * @throws LoginException if any authentication problem during the request occurs.
+     * @throws ServiceException if any connection problem to AudioBox.fm occurs.
      */
-    public String getStreamUrl() throws LoginException , SocketException {
+    public String getStreamUrl() throws LoginException, ServiceException {
         String[] result = this.getConnector().execute( this.pEndPoint, this.getUuid(), STREAM_ACTION, this, null);
         return result[ AudioBoxConnector.RESPONSE_BODY ];
     }
 
+    
+    
     /**
-     * <p>Setter for the field <code>loved</code>.</p>
-     *
-     * @param loved a {@link java.lang.String} object.
+     * This method is used by the parser. Please use {@link Track#setLoved(boolean)} instead.
+     * 
+     * <p>
+     * 
+     * Setter for the field <code>loved</code>: used by the parser.
+     * 
+     * @param loved a String representing the "loved state" of the track.
      */
+    @Deprecated
     public void setLoved(String loved) {
-        this.loved = Boolean.parseBoolean( loved );
+        this.setLoved( Boolean.parseBoolean( loved ) );
     }
 
     /**
      * <p>Setter for the field <code>loved</code>.</p>
      *
-     * @param loved a boolean.
+     * @param loved true if the track is loved, false otherwise.
      */
     public void setLoved(boolean loved) {
         this.loved = loved;
     }
-
+    
     /**
-     * <p>isLoved</p>
+     * <p>Check whether the track is loved or not</p>
      *
-     * @return the loved
+     * @return the loved state of the track
      */
     public boolean isLoved() {
         return loved;
     }
 
+    
 
     /**
-     * <p>Setter for the field <code>playCount</code>.</p>
-     *
-     * @param playCount a {@link java.lang.String} object.
+     * This method is used by the parser. Please use {@link Track#setPlayCount(int)} instead.
+     * 
+     * <p>
+     * 
+     * Setter for the numbers of plays for this song: used by the parser.
+     * 
+     * @param playCount String of the number of this track's plays
      */
+    @Deprecated
     public void setPlayCount(String playCount) {
-        this.playCount = Integer.parseInt( playCount );
+        this.setPlayCount( Integer.parseInt( playCount ) );
     }
 
-
     /**
-     * <p>Setter for the field <code>playCount</code>.</p>
+     * <p>Setter for the numbers of plays for this song.</p>
      *
-     * @param playCount a int.
+     * @param playCount int of the number of plays
      */
     public void setPlayCount(int playCount) {
         this.playCount = playCount;
     }
 
     /**
-     * <p>Getter for the field <code>playCount</code>.</p>
+     * <p>Getter for the track total plays.</p>
      *
-     * @return the playCount
+     * @return the track plays count
      */
     public int getPlayCount() {
         return playCount;
@@ -274,18 +297,18 @@ public class Track extends ModelItem {
 
 
     /**
-     * <p>Setter for the field <code>year</code>.</p>
+     * <p>Setter for the year of the track: used by the parser.</p>
      *
-     * @param year a {@link java.lang.String} object.
+     * @param year the String representing the year of the track.
      */
     public void setYear(String year) {
         this.year = Integer.parseInt( year );
     }
 
     /**
-     * <p>Getter for the field <code>year</code>.</p>
+     * <p>Getter for the track's year.</p>
      *
-     * @return the loved
+     * @return the year of the track
      */
     public int getYear() {
         return year;
@@ -293,11 +316,10 @@ public class Track extends ModelItem {
 
 
 
-
     /**
-     * <p>Setter for the field <code>fileHash</code>.</p>
+     * <p>Setter for the track's file MD5 hash: used by the parser.</p>
      *
-     * @param fileHash the fileHash to set
+     * @param fileHash the MD5 file hash to set
      */
     public void setFileHash(String fileHash) {
         this.fileHash = fileHash;
@@ -306,12 +328,14 @@ public class Track extends ModelItem {
     /**
      * <p>Getter for the field <code>fileHash</code>.</p>
      *
-     * @return the fileHash
+     * @return the track's file MD5 hash
      */
     public String getFileHash() {
         return fileHash;
     }
 
+    
+    
     /**
      * <p>Setter for the field <code>audioFileSize</code>.</p>
      *
@@ -333,6 +357,26 @@ public class Track extends ModelItem {
 
 
     /**
+     * <p>Setter for the field <code>durationInSeconds</code>.</p>
+     *
+     * @param durationInSeconds a {@link java.lang.String} object.
+     */
+    public void setDurationInSeconds(String durationInSeconds) {
+        this.durationInSeconds = Long.parseLong( durationInSeconds );
+    }
+
+    /**
+     * <p>Getter for the field <code>durationInSeconds</code>.</p>
+     *
+     * @return the durationInSeconds
+     */
+    public long getDurationInSeconds() {
+        return durationInSeconds;
+    }
+
+    
+    
+    /**
      * <p>Setter for the field <code>artist</code>.</p>
      *
      * @param artist a {@link fm.audiobox.core.models.Artist} object.
@@ -340,7 +384,6 @@ public class Track extends ModelItem {
     public void setArtist(Artist artist) {
         this.artist = artist;
     }
-
 
     /**
      * <p>Getter for the field <code>artist</code>.</p>
@@ -370,27 +413,9 @@ public class Track extends ModelItem {
     public Album getAlbum() {
         return album;
     }
-
-
-
-    /**
-     * <p>Setter for the field <code>durationInSeconds</code>.</p>
-     *
-     * @param durationInSeconds a {@link java.lang.String} object.
-     */
-    public void setDurationInSeconds(String durationInSeconds) {
-        this.durationInSeconds = Long.parseLong( durationInSeconds );
-    }
-
-    /**
-     * <p>Getter for the field <code>durationInSeconds</code>.</p>
-     *
-     * @return the durationInSeconds
-     */
-    public long getDurationInSeconds() {
-        return durationInSeconds;
-    }
-
+    
+    
+    
     /**
      * <p>getFileBody</p>
      *
@@ -401,10 +426,11 @@ public class Track extends ModelItem {
     }
 
 
-    /* ------- */
-    /* Actions */
-    /* ------- */
+    /* -------------- */
+    /* Remote Actions */
+    /* -------------- */
 
+    
     /**
      * <p>scrobble</p>
      *
@@ -456,16 +482,10 @@ public class Track extends ModelItem {
     }
 
 
-    /** {@inheritDoc} */
-    @Override
-    public String getName() {
-        return this.title + " - " + this.artist.getName() + " (" + this.duration + ")";
-    }
-
-
     /* ----- */
     /* State */
     /* ----- */
+    
 
     /**
      * <p>setState</p>
@@ -522,7 +542,22 @@ public class Track extends ModelItem {
     }
 
 
+    /* --------- */
     /* Overrides */
+    /* --------- */
+    
+    /** {@inheritDoc} */
+    @Override
+    public String getName() {
+        return this.title + " - " + this.artist.getName() + " (" + this.duration + ")";
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public String getToken() {
+        return getUuid();
+    }
+    
     /** {@inheritDoc} */
     @Override
     public Track getTrack(String uuid) {
