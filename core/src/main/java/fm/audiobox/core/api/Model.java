@@ -175,7 +175,11 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
             InputStream input = response.getEntity().getContent();
             responseString = this.parseResponse( input , response.getEntity().getContentType() );
             break;
-
+            
+        case HttpStatus.SC_NO_CONTENT:
+            responseString = "Resource not ready";
+            break;
+            
         case HttpStatus.SC_SEE_OTHER:
             responseString = response.getFirstHeader("Location").getValue();
             break;
@@ -190,7 +194,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
             throw new ServiceException( "Resource not found", responseCode );
 
         default:
-            throw new ServiceException( "Response code not managed (" + responseCode + ")", responseCode );
+            throw new ServiceException( "Response code not recognized (" + responseCode + ")", responseCode );
 
         }
 

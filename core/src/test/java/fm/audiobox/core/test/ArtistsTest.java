@@ -37,6 +37,14 @@ public class ArtistsTest extends junit.framework.TestCase {
     @SuppressWarnings("deprecation")
     @Before
     public void setUp() throws Exception {
+        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
+        System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire", "debug");
+        System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "debug");
+        System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire.header", "debug");
+        System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http.impl", "debug");
+
+        System.setProperty("org.apache.commons.logging.simplelog.log.fm.audiobox.core", "debug");
+        
     	abc = new StaticAudioBox();
         abc.setForceTrust(true);
         

@@ -534,24 +534,26 @@ public class AudioBoxClient {
 
                 public void process( final HttpResponse response, final HttpContext context) throws HttpException, IOException {
                     HttpEntity entity = response.getEntity();
-                    Header ceheader = entity.getContentEncoding();
-                    if (ceheader != null) {
-                        HeaderElement[] codecs = ceheader.getElements();
-                        for (int i = 0; i < codecs.length; i++) {
-                            if (codecs[i].getName().equalsIgnoreCase("gzip")) {
-                                response.setEntity( new HttpEntityWrapper(entity){
-                                    @Override
-                                    public InputStream getContent() throws IOException, IllegalStateException {
-                                        // the wrapped entity's getContent() decides about repeatability
-                                        InputStream wrappedin = wrappedEntity.getContent();
-                                        return new GZIPInputStream(wrappedin);
-                                    }
+                    if (entity != null) {
+                        Header ceheader = entity.getContentEncoding();
+                        if (ceheader != null) {
+                            HeaderElement[] codecs = ceheader.getElements();
+                            for (int i = 0; i < codecs.length; i++) {
+                                if (codecs[i].getName().equalsIgnoreCase("gzip")) {
+                                    response.setEntity( new HttpEntityWrapper(entity){
+                                        @Override
+                                        public InputStream getContent() throws IOException, IllegalStateException {
+                                            // the wrapped entity's getContent() decides about repeatability
+                                            InputStream wrappedin = wrappedEntity.getContent();
+                                            return new GZIPInputStream(wrappedin);
+                                        }
 
-                                    @Override
-                                    public long getContentLength() { return -1; }
+                                        @Override
+                                        public long getContentLength() { return -1; }
 
-                                }); 
-                                return;
+                                    }); 
+                                    return;
+                                }
                             }
                         }
                     }
@@ -724,7 +726,7 @@ public class AudioBoxClient {
                     reqEntity.addPart(Track.HTTP_PARAM, ((Track) target).getFileBody());
                     ( (HttpPost) method).setEntity( reqEntity );
                 }
-                
+
                 log.debug("Requesting resource: " + url);
                 return mClient.execute(method, target, new BasicHttpContext());
 
