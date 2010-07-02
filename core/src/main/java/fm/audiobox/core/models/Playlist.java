@@ -26,6 +26,12 @@ import fm.audiobox.core.api.ModelItem;
 
 
 /**
+ * Playlist class is a {@link ModelItem} specialization for playlists XML elements.
+ * 
+ * <p>
+ * 
+ * Profile XML looks like this: 
+ * 
  * <pre>
  * {@code
  * <playlist>
@@ -60,19 +66,24 @@ public class Playlist extends ModelItem {
     }
 
     
+    /* ------------------- */
+    /* Getters and setters */
+    /* ------------------- */
+    
+    
     /**
-     * <p>Setter for the field <code>playlistTracksCount</code>.</p>
+     * <p>Setter for the playlist tracks count: used by the parser.</p>
      *
-     * @param tracksCount a {@link java.lang.String} object.
+     * @param tracksCount the tracks count {@link String} to set.
      */
     public void setPlaylistTracksCount(String tracksCount) {
         this.playlistTracksCount = Integer.parseInt( tracksCount );
     }
 
     /**
-     * <p>Getter for the field <code>playlistTracksCount</code>.</p>
+     * <p>Getter for the playlist tracks count.</p>
      *
-     * @return the playlistTracksCount
+     * @return the playlist tracks count
      */
     public int getPlaylistTracksCount() {
         return playlistTracksCount;
@@ -80,42 +91,39 @@ public class Playlist extends ModelItem {
 
     
     
-
     /**
-     * <p>Setter for the field <code>playlistType</code>.</p>
+     * <p>Setter for the playlist type: used by the parser.</p>
      *
-     * @param type a {@link java.lang.String} object.
+     * @param type the playlist type {@link String} to set.
      */
     public void setPlaylistType(String type) {
         this.playlistType = type;
     }
 
     /**
-     * <p>Getter for the field <code>playlistType</code>.</p>
+     * <p>Getter for the playlist type.</p>
      *
-     * @return the playlistType
+     * @return the playlist type
      */
     public String getPlaylistType() {
         return playlistType;
     }
-
-    
     
     
 
     /**
-     * <p>Setter for the field <code>position</code>.</p>
+     * <p>Setter for the playlist position: used by the parser.</p>
      *
-     * @param position a {@link java.lang.String} object.
+     * @param position the playlist position {@link java.lang.String} to set.
      */
     public void setPosition(String position) {
         this.position = Integer.parseInt(position);
     }
 
     /**
-     * <p>Getter for the field <code>position</code>.</p>
+     * <p>Getter for the playlist position.</p>
      *
-     * @return the position
+     * @return the playlist position
      */
     public int getPosition() {
         return position;

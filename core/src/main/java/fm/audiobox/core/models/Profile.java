@@ -73,9 +73,9 @@ public class Profile extends ModelItem {
     protected Profile() { }
 
 
-    /* =================== */
-    /* Getters and Setters */
-    /* =================== */
+    /* ------------------- */
+    /* Getters and setters */
+    /* ------------------- */
 
 
     /**
@@ -231,9 +231,9 @@ public class Profile extends ModelItem {
     }
 
 
-    /* ============= */
-    /* Utils methods */
-    /* ============= */
+    /* --------- */
+    /* Overrides */
+    /* --------- */
 
     
     /** {@inheritDoc} */

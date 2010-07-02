@@ -26,8 +26,12 @@ import fm.audiobox.core.api.ModelItem;
 
 
 /**
- * Album XML looks like this:
- *  
+ * Album class is a {@link ModelItem} specialization for albums XML elements.
+ * 
+ * <p>
+ * 
+ * Album XML looks like this: 
+ * 
  * <pre>
  * {@code
  * <album>
