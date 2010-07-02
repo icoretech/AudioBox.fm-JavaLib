@@ -472,7 +472,7 @@ public class AudioBoxClient {
         private static final String TOKEN_PARAMETER = "${token}";
         private static final String ACTION_PARAMETER = "${action}";
         private static final String PROTOCOL = "https";
-        private static final String HOST = "audiobox.dev";
+        private static final String HOST = "audiobox.fm";
         private static final String PORT = "443";
         private static final String API_PREFIX = "/api/";
 
