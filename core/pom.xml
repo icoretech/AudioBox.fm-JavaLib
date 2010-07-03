@@ -109,22 +109,19 @@
 							<exclude>**/core/util/*.class</exclude>
 						</excludes>
 					</instrumentation>
-					<!-- 
 					<check>
-						<branchRate>85</branchRate>
-						<lineRate>85</lineRate>
+						<branchRate>15</branchRate>
+						<lineRate>15</lineRate>
 						<haltOnFailure>true</haltOnFailure>
-						<totalBranchRate>85</totalBranchRate>
-						<totalLineRate>85</totalLineRate>
-						<packageLineRate>85</packageLineRate>
-						<packageBranchRate>85</packageBranchRate>
+						<totalBranchRate>15</totalBranchRate>
+						<totalLineRate>15</totalLineRate>
+						<packageLineRate>15</packageLineRate>
+						<packageBranchRate>15</packageBranchRate>
 					</check>
-					-->
 				</configuration>
 				<executions>
 					<execution>
 						<goals>
-							<goal>clean</goal>
 							<goal>check</goal>
 						</goals>
 					</execution>
