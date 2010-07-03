@@ -109,6 +109,7 @@
 							<exclude>**/core/util/*.class</exclude>
 						</excludes>
 					</instrumentation>
+					<!-- 
 					<check>
 						<branchRate>85</branchRate>
 						<lineRate>85</lineRate>
@@ -118,6 +119,7 @@
 						<packageLineRate>85</packageLineRate>
 						<packageBranchRate>85</packageBranchRate>
 					</check>
+					-->
 				</configuration>
 				<executions>
 					<execution>
