@@ -1,10 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>fm.audiobox</groupId>
 	<artifactId>libaudioboxfm-core</artifactId>
 	<name>AudioBox.fm-JavaLib</name>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<description>AudioBox.fm JavaLib offers full access to the RESTful
@@ -108,19 +109,22 @@
 							<exclude>**/core/util/*.class</exclude>
 						</excludes>
 					</instrumentation>
+					<!-- 
 					<check>
-						<branchRate>15</branchRate>
-						<lineRate>15</lineRate>
+						<branchRate>85</branchRate>
+						<lineRate>85</lineRate>
 						<haltOnFailure>true</haltOnFailure>
-						<totalBranchRate>15</totalBranchRate>
-						<totalLineRate>15</totalLineRate>
-						<packageLineRate>15</packageLineRate>
-						<packageBranchRate>15</packageBranchRate>
+						<totalBranchRate>85</totalBranchRate>
+						<totalLineRate>85</totalLineRate>
+						<packageLineRate>85</packageLineRate>
+						<packageBranchRate>85</packageBranchRate>
 					</check>
+					-->
 				</configuration>
 				<executions>
 					<execution>
 						<goals>
+							<goal>clean</goal>
 							<goal>check</goal>
 						</goals>
 					</execution>
