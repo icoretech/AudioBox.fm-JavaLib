@@ -110,8 +110,6 @@ public class GenresTest extends junit.framework.TestCase {
             Tracks trs = (Tracks) al.getTracks();
             assertNotNull(trs);
             
-            //trs.invoke();
-            
             Track tr = (Track) trs.get(0);
             assertNotNull(tr);
 
