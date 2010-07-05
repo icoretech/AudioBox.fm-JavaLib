@@ -31,5 +31,6 @@ manifest.mf
 **/target
 
 # Project spcifics
-/core/**/fixtures/*
-/core/src/docbkx
+*/core/**/fixtures/*
+core/src/docbkx
+*/sync/**/fixtures/*
