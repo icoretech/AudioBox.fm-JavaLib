@@ -101,7 +101,7 @@ public class Playlists extends ModelsCollection {
     /**
      * <p>Getter method for a single {@link Playlist} contained in the collection.</p>
      *
-     * @param uuid the uuid of the desired Playlist.
+     * @param token the uuid of the desired Playlist.
      * 
      * @return a {@link Playlist} object.
      */

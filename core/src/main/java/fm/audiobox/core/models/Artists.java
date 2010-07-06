@@ -101,7 +101,7 @@ public class Artists extends ModelsCollection {
     /**
      * <p>Getter method for a single {@link Artist} contained in the collection.</p>
      *
-     * @param uuid the uuid of the desired Artist.
+     * @param token the uuid of the desired Artist.
      * 
      * @return a {@link Artist} object.
      */

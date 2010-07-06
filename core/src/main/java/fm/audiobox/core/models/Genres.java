@@ -101,7 +101,7 @@ public class Genres extends ModelsCollection {
     /**
      * <p>Getter method for a single {@link Genre} contained in the collection.</p>
      *
-     * @param uuid the uuid of the desired Genre.
+     * @param token the uuid of the desired Genre.
      * 
      * @return a {@link Genre} object.
      */

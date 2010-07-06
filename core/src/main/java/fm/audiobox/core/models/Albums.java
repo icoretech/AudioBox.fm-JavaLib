@@ -101,7 +101,7 @@ public class Albums extends ModelsCollection {
     /**
      * <p>Getter method for a single {@link Album} contained in the collection.</p>
      *
-     * @param uuid the uuid of the desired Album.
+     * @param token the uuid of the desired Album.
      * 
      * @return a {@link Album} object.
      */
