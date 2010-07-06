@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fm.audiobox.core.test;
+package fm.audiobox.core;
 
 
 import java.net.SocketException;
@@ -11,17 +11,16 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import fm.audiobox.core.StaticAudioBox;
 import fm.audiobox.core.api.Model;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Albums;
 import fm.audiobox.core.models.User;
-import fm.audiobox.core.test.mocks.fixtures.Fixtures;
-import fm.audiobox.core.test.mocks.models.Album;
-import fm.audiobox.core.test.mocks.models.Track;
-import fm.audiobox.core.test.mocks.models.Tracks;
+import fm.audiobox.core.mocks.fixtures.Fixtures;
+import fm.audiobox.core.mocks.models.Album;
+import fm.audiobox.core.mocks.models.Track;
+import fm.audiobox.core.mocks.models.Tracks;
 
 /**
  * @author keytwo

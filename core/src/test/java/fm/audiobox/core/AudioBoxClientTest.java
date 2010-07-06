@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fm.audiobox.core.test;
+package fm.audiobox.core;
 
 
 import java.net.SocketException;
@@ -16,7 +16,7 @@ import fm.audiobox.core.models.Albums;
 import fm.audiobox.core.models.AudioBoxClient;
 import fm.audiobox.core.models.Track;
 import fm.audiobox.core.models.User;
-import fm.audiobox.core.test.mocks.fixtures.Fixtures;
+import fm.audiobox.core.mocks.fixtures.Fixtures;
 
 /**
  * @author keytwo

@@ -1,4 +1,4 @@
-package fm.audiobox.core.test.mocks.fixtures;
+package fm.audiobox.core.mocks.fixtures;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

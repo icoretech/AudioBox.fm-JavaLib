@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>components</artifactId>
 		<groupId>fm.audiobox</groupId>
-		<version>1.0-beta2-SNAPSHOT</version>
+		<version>1.0-SNAPSHOT</version>
 	</parent>
 	
 	<groupId>fm.audiobox</groupId>
@@ -13,7 +13,7 @@
 	<packaging>jar</packaging>
 
 	
-	<version>1.0-beta2-SNAPSHOT</version>
+	<version>1.0-SNAPSHOT</version>
 	<description>AudioBox.fm JavaLib sync is inteded to be used for syncing tools.</description>
 	<url>http://github.com/audiobox/AudioBox.fm-JavaLib</url>
 
@@ -23,7 +23,7 @@
 		<dependency>
 			<groupId>fm.audiobox</groupId>
 			<artifactId>core</artifactId>
-			<version>1.0-beta2-SNAPSHOT</version>
+			<version>1.0-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>

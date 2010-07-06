@@ -1,4 +1,4 @@
-package fm.audiobox.core.test;
+package fm.audiobox.core;
 
 
 import java.net.SocketException;
@@ -8,7 +8,6 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Before;
 import org.junit.Test;
 
-import fm.audiobox.core.StaticAudioBox;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
@@ -17,8 +16,8 @@ import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
 import fm.audiobox.core.models.Track;
 import fm.audiobox.core.models.Tracks;
-import fm.audiobox.core.test.mocks.fixtures.Fixtures;
-import fm.audiobox.core.test.mocks.models.User;
+import fm.audiobox.core.mocks.fixtures.Fixtures;
+import fm.audiobox.core.mocks.models.User;
 
 public class ThreadedTest extends junit.framework.TestCase {
 

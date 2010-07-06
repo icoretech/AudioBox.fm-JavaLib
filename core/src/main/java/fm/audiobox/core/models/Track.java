@@ -53,6 +53,7 @@ import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
  *   <loved type="boolean">true</loved>
  *   <play-count type="integer">3</play-count>
  *   <title>Track title</title>
+ *   <track-number type="integer">7</track-number>
  *   <year type="integer">2001</year>
  *   <stream-url>http://url.to/<uuid>/stream</stream-url>
  *   <audio-file-size>12313124432</audio-file-size>
@@ -98,6 +99,7 @@ public class Track extends ModelItem {
     protected boolean loved;
     protected int playCount;
     protected String title;
+    protected String trackNumber;
     protected int year;
     protected String fileHash;
     protected String streamUrl;
@@ -185,7 +187,7 @@ public class Track extends ModelItem {
     public String getUuid() {
 
         if (this.uuid == null) {
-            String	regex = "^" + AudioBoxClient.AudioBoxConnector.API_PATH.replace(".", "\\.") + PATH + "/([^\\s]+)/stream$";
+            String	regex = "^" + pConnector.getApiPath().replace(".", "\\.") + PATH + "/([^\\s]+)/stream$";
             java.util.regex.Matcher m = java.util.regex.Pattern.compile(regex).matcher(streamUrl);
             m.find();
             this.setUuid( m.group(1) );
@@ -231,6 +233,26 @@ public class Track extends ModelItem {
      * @return the title of the track
      */
     public String getTitle() {
+        return title;
+    }
+    
+    
+    
+    /**
+     * <p>Setter for the track number: used by the parser.</p>
+     *
+     * @param number the track.
+     */
+    public void setTrackNumber(String number) {
+        this.trackNumber = number;
+    }
+
+    /**
+     * <p>Getter for the track number.</p>
+     *
+     * @return the number of the track
+     */
+    public String getTrackNumber() {
         return title;
     }
 

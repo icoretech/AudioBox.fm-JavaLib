@@ -1,4 +1,4 @@
-package fm.audiobox.core.test.mocks.models;
+package fm.audiobox.core.mocks.models;
 
 import fm.audiobox.core.StaticAudioBox;
 import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;

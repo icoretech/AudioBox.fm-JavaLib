@@ -1,4 +1,4 @@
-package fm.audiobox.sync.test.mocks.fixtures;
+package fm.audiobox.sync.mocks.fixtures;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
