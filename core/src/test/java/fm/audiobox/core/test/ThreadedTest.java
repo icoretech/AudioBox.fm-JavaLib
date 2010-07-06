@@ -1,4 +1,4 @@
-package fm.audiobox.core;
+package fm.audiobox.core.test;
 
 
 import java.net.SocketException;
@@ -16,8 +16,8 @@ import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
 import fm.audiobox.core.models.Track;
 import fm.audiobox.core.models.Tracks;
-import fm.audiobox.core.mocks.fixtures.Fixtures;
-import fm.audiobox.core.mocks.models.User;
+import fm.audiobox.core.test.mocks.fixtures.Fixtures;
+import fm.audiobox.core.test.mocks.models.User;
 
 public class ThreadedTest extends junit.framework.TestCase {
 

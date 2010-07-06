@@ -1,4 +1,4 @@
-package fm.audiobox.sync;
+package fm.audiobox.sync.test;
 
 import java.io.File;
 
@@ -10,8 +10,8 @@ import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.AudioBoxClient;
 import fm.audiobox.core.models.Track;
 import fm.audiobox.core.models.User;
-import fm.audiobox.sync.mocks.fixtures.Fixtures;
 import fm.audiobox.sync.task.Upload;
+import fm.audiobox.sync.test.mocks.fixtures.Fixtures;
 
 /**
  * Unit test for simple App.

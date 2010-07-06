@@ -1,4 +1,4 @@
-package fm.audiobox.core;
+package fm.audiobox.core.test;
 
 
 import org.junit.Before;
@@ -14,7 +14,7 @@ import fm.audiobox.core.models.AudioBoxClient;
 import fm.audiobox.core.models.Genres;
 import fm.audiobox.core.models.Playlists;
 import fm.audiobox.core.models.User;
-import fm.audiobox.core.mocks.fixtures.Fixtures;
+import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 
 public class ThreadedCollectionsTest extends junit.framework.TestCase {
 

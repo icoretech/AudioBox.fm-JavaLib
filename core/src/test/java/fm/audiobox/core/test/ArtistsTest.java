@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fm.audiobox.core;
+package fm.audiobox.core.test;
 
 
 import java.net.SocketException;
@@ -16,31 +16,39 @@ import fm.audiobox.core.api.Model;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.models.Genre;
-import fm.audiobox.core.models.Genres;
+import fm.audiobox.core.models.Artist;
+import fm.audiobox.core.models.Artists;
 import fm.audiobox.core.models.Track;
 import fm.audiobox.core.models.Tracks;
 import fm.audiobox.core.models.User;
-import fm.audiobox.core.mocks.fixtures.Fixtures;
+import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 
 /**
  * @author keytwo
  *
  */
-public class GenresTest extends junit.framework.TestCase {
+public class ArtistsTest extends junit.framework.TestCase {
 
 	StaticAudioBox abc;
     User user;
-    Genres genres;
+    Artists artists;
     Fixtures fx = new Fixtures();
     
     @SuppressWarnings("deprecation")
     @Before
     public void setUp() throws Exception {
-    	abc = new StaticAudioBox();
-    	abc.setForceTrust(true);
+        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
+        System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire", "debug");
+        System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "debug");
+        System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire.header", "debug");
+        System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http.impl", "debug");
+
+        System.setProperty("org.apache.commons.logging.simplelog.log.fm.audiobox.core", "debug");
         
-        user = abc.login( fx.get( Fixtures.LOGIN ), fx.get( Fixtures.RIGHT_PASS ) );
+    	abc = new StaticAudioBox();
+        abc.setForceTrust(true);
+        
+        user = abc.login(fx.get( Fixtures.LOGIN ), fx.get( Fixtures.RIGHT_PASS ));
     }
     
     @Test
@@ -51,35 +59,36 @@ public class GenresTest extends junit.framework.TestCase {
 
    
     @Test
-    public void testGenresShouldBePopulated() {
+    public void testArtistsShouldBePopulated() {
         loginCatched();
         try {
             
-            loadGenres();
+            loadArtists();
             
-            assertNotNull(genres);
+            assertNotNull(artists);
             
-            Genre genre = null;
+            Artist artist = null;
             
-            for (Model g : genres.getCollection()) {
-                Genre gnr = (Genre) g;
-                assertNotNull(gnr);
-                genre = gnr;
+            for (Model ar : artists.getCollection()) {
+                Artist art = (Artist) ar;
+                assertNotNull(art);
+                artist = art;
             }
 
-            Genre g = (Genre) genres.get(genre.getToken());
-            assertNotNull( g );
-            assertSame( g, genre);
+            assertNotNull(artist);
             
-            List<Genre> list = new ArrayList<Genre>();
-            genres.setCollection( list );
+            Artist ar = (Artist) artists.get(artist.getToken());
+            assertNotNull( ar );
+            assertSame( ar, artist );
             
-            assertNotNull( genres.getCollection() );
-            assertSame( list, genres.getCollection() );
+            List<Artist> list = new ArrayList<Artist>();
+            artists.setCollection( list );
             
-            genre = (Genre) genres.get(genre.getToken());
-            assertNull( genre );
+            assertNotNull( artists.getCollection() );
+            assertSame( list, artists.getCollection() );
             
+            ar = (Artist) artists.get(ar.getToken());
+            assertNull( ar );
 
         } catch (LoginException e) {
             e.printStackTrace();
@@ -97,21 +106,26 @@ public class GenresTest extends junit.framework.TestCase {
     }
     
     @Test
-    public void testGenreShouldBePopulatedAndContainsTracks() {
+    public void testArtistshouldBePopulatedAndContainsTracks() {
         loginCatched();
         try {
             
-            loadGenres();
+            loadArtists();
             
-            assertNotNull(genres);
-            Genre al = (Genre) genres.get(0);
-            assertNotNull(al);
+            assertNotNull(artists);
+            Artist ar = (Artist) artists.get(0);
+            assertNotNull(ar);
             
-            Tracks trs = (Tracks) al.getTracks();
+            Tracks trs = (Tracks) ar.getTracks();
             assertNotNull(trs);
             
             Track tr = (Track) trs.get(0);
             assertNotNull(tr);
+            
+            Track tr2 = ar.getTrack(tr.getUuid());
+            
+            assertNotNull( tr2 );
+            assertSame(tr, tr2);
 
         } catch (LoginException e) {
             e.printStackTrace();
@@ -134,14 +148,14 @@ public class GenresTest extends junit.framework.TestCase {
         
     }
     
-    private void loadGenres() throws ServiceException, LoginException, InstantiationException, IllegalAccessException, ClassNotFoundException, ModelException {
-        genres = (Genres) user.getGenres(false);
-        //genres.invoke();
+    private void loadArtists() throws ServiceException, LoginException, InstantiationException, IllegalAccessException, ClassNotFoundException, ModelException {
+        artists = (Artists) user.getArtists(false);
+        //artists.invoke();
     }
     
     private void loginCatched() {
         try {
-            user = abc.login( fx.get( Fixtures.LOGIN ), fx.get( Fixtures.RIGHT_PASS ) );
+            user = abc.login(fx.get( Fixtures.LOGIN ), fx.get( Fixtures.RIGHT_PASS ));
         } catch (LoginException e) {
             e.printStackTrace();
         } catch (SocketException e) {

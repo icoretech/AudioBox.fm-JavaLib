@@ -1,4 +1,4 @@
-package fm.audiobox.core;
+package fm.audiobox.core.test;
 
 import fm.audiobox.core.models.AudioBoxClient;
 
