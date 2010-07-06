@@ -134,7 +134,6 @@ public class UserTest extends junit.framework.TestCase {
         assertEquals( fx.get( Fixtures.USERNAME ), user.getUsername());
     }
 
-    /*
     @Test
     public void testUserLoginFailsOnUserNotActive() {
         assertNotNull( abc );
@@ -150,7 +149,6 @@ public class UserTest extends junit.framework.TestCase {
             e.printStackTrace();
         }
     }
-    */
     
     @Test
     public void testUserCollections() {
