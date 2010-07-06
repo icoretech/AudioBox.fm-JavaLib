@@ -20,7 +20,7 @@ import fm.audiobox.core.models.Artists;
 import fm.audiobox.core.models.Genres;
 import fm.audiobox.core.models.Playlists;
 import fm.audiobox.core.models.Profile;
-import fm.audiobox.core.test.mocks.fixtures.UserFixture;
+import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 import fm.audiobox.core.test.mocks.models.User;
 
 /**
@@ -31,6 +31,7 @@ public class UserTest extends junit.framework.TestCase {
 
 	StaticAudioBox abc;
     User user;
+    Fixtures fx = new Fixtures();
     
     @SuppressWarnings("deprecation")
     @Before
@@ -55,7 +56,7 @@ public class UserTest extends junit.framework.TestCase {
             StaticAudioBox.getConnector().setTimeout(5000);
             assertEquals( 5000, StaticAudioBox.getConnector().getTimeout());
             
-            user = (User) abc.login( UserFixture.LOGIN , UserFixture.RIGHT_PASS );
+            user = (User) abc.login( fx.get( Fixtures.LOGIN ), fx.get( Fixtures.RIGHT_PASS ) );
             assertSame( user, abc.getUser() );
             
             assertNotNull( user.getBytesServed() );
@@ -97,7 +98,7 @@ public class UserTest extends junit.framework.TestCase {
     public void testLoginShouldThrowsLoginExceptionOnWrongPassword() {
         assertNotNull( abc );
         try {
-            user = (User) abc.login( UserFixture.LOGIN , UserFixture.WRONG_PASS );
+            user = (User) abc.login( fx.get( Fixtures.LOGIN ), fx.get( Fixtures.WRONG_PASS ) );
         } catch (LoginException e) {
            assertEquals( HttpStatus.SC_UNAUTHORIZED, e.getErrorCode());
         } catch (SocketException e) {
@@ -111,7 +112,7 @@ public class UserTest extends junit.framework.TestCase {
     public void testLoginShouldThrowsLoginExceptionOnWrongCredentials() {
         assertNotNull( abc );
         try {
-            user = (User) abc.login( "wrong_user" , UserFixture.WRONG_PASS );
+            user = (User) abc.login( "wrong_user" , fx.get( Fixtures.WRONG_PASS ));
         } catch (LoginException e) {
            assertEquals( 401, e.getErrorCode());
         } catch (SocketException e) {
@@ -130,7 +131,7 @@ public class UserTest extends junit.framework.TestCase {
         
         assertNotNull( user.getProfile() );
         assertNotNull( user.getProfile().getName() );
-        assertEquals( UserFixture.USERNAME , user.getUsername());
+        assertEquals( fx.get( Fixtures.USERNAME ), user.getUsername());
     }
 
     /*
@@ -197,13 +198,13 @@ public class UserTest extends junit.framework.TestCase {
     
     
     private void loginInactiveUser() throws LoginException, ServiceException, ModelException {
-        user = (User) abc.login( UserFixture.INACTIVE_LOGIN, UserFixture.INACTIVE_RIGHT_PASS );
+        user = (User) abc.login( fx.get( Fixtures.INACTIVE_LOGIN ), fx.get( Fixtures.INACTIVE_RIGHT_PASS ) );
     }
     
     
     private void loginCatched() {
         try {
-            user = (User) abc.login( UserFixture.LOGIN , UserFixture.RIGHT_PASS );
+            user = (User) abc.login( fx.get(Fixtures.LOGIN) , fx.get( Fixtures.RIGHT_PASS) );
         } catch (LoginException e) {
             e.printStackTrace();
         } catch (SocketException e) {

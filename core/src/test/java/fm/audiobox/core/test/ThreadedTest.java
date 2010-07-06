@@ -17,14 +17,15 @@ import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
 import fm.audiobox.core.models.Track;
 import fm.audiobox.core.models.Tracks;
-import fm.audiobox.core.test.mocks.fixtures.UserFixture;
+import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 import fm.audiobox.core.test.mocks.models.User;
 
 public class ThreadedTest extends junit.framework.TestCase {
 
 	StaticAudioBox abc;
     User user;
-
+    Fixtures fx = new Fixtures();
+    
     @SuppressWarnings("deprecation")
     @Before
     public void setUp() throws Exception {
@@ -42,7 +43,7 @@ public class ThreadedTest extends junit.framework.TestCase {
         abc.setForceTrust(true);
         
         try {
-            user = (User) abc.login( UserFixture.LOGIN , UserFixture.RIGHT_PASS );
+            user = (User) abc.login( fx.get( Fixtures.LOGIN ), fx.get( Fixtures.RIGHT_PASS ) );
         } catch (LoginException e) {
             e.printStackTrace();
         } catch (SocketException e) {

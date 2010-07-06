@@ -18,7 +18,7 @@ import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Albums;
 import fm.audiobox.core.models.User;
-import fm.audiobox.core.test.mocks.fixtures.UserFixture;
+import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 import fm.audiobox.core.test.mocks.models.Album;
 import fm.audiobox.core.test.mocks.models.Track;
 import fm.audiobox.core.test.mocks.models.Tracks;
@@ -32,7 +32,8 @@ public class AlbumsTest extends junit.framework.TestCase {
     StaticAudioBox abc;
     User user;
     Albums albums;
-
+    Fixtures fx = new Fixtures();
+    
     @SuppressWarnings("deprecation")
     @Before
     public void setUp() throws Exception {
@@ -41,6 +42,7 @@ public class AlbumsTest extends junit.framework.TestCase {
         StaticAudioBox.setModelClassFor( StaticAudioBox.TRACK_KEY, Track.class );
         abc = new StaticAudioBox();
         abc.setForceTrust(true);
+        
     }
 
     @Test
@@ -137,7 +139,7 @@ public class AlbumsTest extends junit.framework.TestCase {
 
     private void loginCatched() {
         try {
-            user = abc.login( UserFixture.LOGIN , UserFixture.RIGHT_PASS );
+            user = abc.login( fx.get( Fixtures.LOGIN ), fx.get( Fixtures.RIGHT_PASS ) );
         } catch (LoginException e) {
             e.printStackTrace();
         } catch (SocketException e) {

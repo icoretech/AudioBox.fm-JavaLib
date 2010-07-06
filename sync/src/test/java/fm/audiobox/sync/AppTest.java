@@ -2,8 +2,6 @@ package fm.audiobox.sync;
 
 import java.io.File;
 
-import fm.audiobox.sync.test.mocks.fixtures.UserFixture;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -14,12 +12,15 @@ import fm.audiobox.core.models.AudioBoxClient;
 import fm.audiobox.core.models.Track;
 import fm.audiobox.core.models.User;
 import fm.audiobox.sync.task.Upload;
-import fm.audiobox.sync.test.mocks.fixtures.TrackFixture;
+import fm.audiobox.sync.test.mocks.fixtures.Fixtures;
 
 /**
  * Unit test for simple App.
  */
 public class AppTest extends TestCase {
+    
+    Fixtures fx = new Fixtures(); 
+    
     /**
      * Create the test case
      *
@@ -50,15 +51,14 @@ public class AppTest extends TestCase {
         System.setProperty("org.apache.commons.logging.simplelog.log.fm.audiobox.core", "debug");
         
         assertTrue( true );
-        /*
         try {
             AudioBoxClient abc = new AudioBoxClient();
             abc.setForceTrust(true);
             
-            User user = abc.login(UserFixture.LOGIN, UserFixture.RIGHT_PASS);
+            User user = abc.login( fx.get( Fixtures.LOGIN), fx.get(Fixtures.RIGHT_PASS) );
             assertNotNull( user );
             
-            File f = new File(TrackFixture.TEST_FILE);
+            File f = new File( fx.get( Fixtures.TEST_FILE) );
             assertNotNull( f );
             assertTrue( f.exists() );
             
@@ -82,6 +82,5 @@ public class AppTest extends TestCase {
         } catch (ModelException e) {
             e.printStackTrace();
         }
-        */
     }
 }

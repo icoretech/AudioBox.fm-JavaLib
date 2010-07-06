@@ -16,7 +16,7 @@ import fm.audiobox.core.models.Albums;
 import fm.audiobox.core.models.AudioBoxClient;
 import fm.audiobox.core.models.Playlists;
 import fm.audiobox.core.models.User;
-import fm.audiobox.core.test.mocks.fixtures.UserFixture;
+import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 
 /**
  * @author keytwo
@@ -27,7 +27,8 @@ public class CollectionListenerTest extends junit.framework.TestCase {
     AudioBoxClient abc;
     User user;
     Albums albums;
-
+    Fixtures fx = new Fixtures();
+    
     @SuppressWarnings("deprecation")
     @Before
     public void setUp() throws Exception {
@@ -76,7 +77,7 @@ public class CollectionListenerTest extends junit.framework.TestCase {
 
     private void loginCatched() {
         try {
-            user = abc.login( UserFixture.LOGIN , UserFixture.RIGHT_PASS );
+            user = abc.login( fx.get( Fixtures.LOGIN ), fx.get( Fixtures.RIGHT_PASS ) );
         } catch (LoginException e) {
             e.printStackTrace();
         } catch (SocketException e) {
