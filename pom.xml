@@ -141,6 +141,15 @@
 			</plugin>
 
 		</plugins>
+
+		<extensions>
+			<!-- Enabling the use of FTP -->
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ftp</artifactId>
+				<version>1.0-beta-6</version>
+			</extension>
+		</extensions>
 	</build>
 
 
@@ -244,6 +253,15 @@
 			</snapshots>
 		</repository>
 	</repositories>
+
+
+	<distributionManagement>
+		<repository>
+			<id>keytwo.net</id>
+			<name>Keytwo.net Repository</name>
+			<url>ftp://ftp.keytwo.net</url>
+		</repository>
+	</distributionManagement>
 </project>
 
 
