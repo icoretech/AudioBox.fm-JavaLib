@@ -220,18 +220,16 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
      */
     public final String parseResponse( HttpResponse response ) throws IOException {
 
-        InputStream input = response.getEntity().getContent();
         Header contentType = response.getEntity().getContentType();
         
-        
         if ( contentType.getValue().contains(AudioBoxConnector.XML_FORMAT) )
-            return this.parseXMLResponse( input );
+            return this.parseXMLResponse( response.getEntity().getContent() );
 
-        else if (  contentType.getValue().contains( AudioBoxConnector.TEXT_CONTENT_TYPE )  )
-            return this.parsePlainResponse( input );
+        else if ( contentType.getValue().contains( AudioBoxConnector.TEXT_CONTENT_TYPE )  )
+            return this.parsePlainResponse( response.getEntity().getContent() );
         
         else
-        	return this.parseBinaryResponse( input );
+        	return this.parseBinaryResponse( response );
 
     }
 
@@ -292,11 +290,11 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
      * This method implementation does nothing. It must be overridden by each model that should contains
      * a binary response in the body. Tipically {@link Track} objects.
      * 
-     * @param input the {@link InputStram} of the entity content.
+     * @param response the {@link HttpResponse} object 
      * 
      * @return an empty String
      */
-    protected String parseBinaryResponse( InputStream input ) throws IOException {
+    protected String parseBinaryResponse( HttpResponse response ) throws IOException {
         return "";
     }
 

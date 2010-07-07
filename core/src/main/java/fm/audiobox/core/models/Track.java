@@ -27,7 +27,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpPost;
@@ -722,14 +722,16 @@ public class Track extends ModelItem {
      * 
      * Returns an empty string by default.
      *
-     * @param input the {@link HttpEntity} content ({@link InputStream})
+     * @param response the {@link HttpResponse} object.
      * 
      * @return an empty {@link String}
      * 
      * @throws IOException if the parse process fails for some reasons.
      */
     @Override
-    public String parseBinaryResponse( InputStream input ) throws IOException {
+    public String parseBinaryResponse( HttpResponse response ) throws IOException {
+    	
+    	InputStream input = response.getEntity().getContent();
     	
     	if ( this.fileOutputStream == null )
     		throw new IOException("No such output stream");
@@ -739,8 +741,9 @@ public class Track extends ModelItem {
     		int read;
 	    	byte[] bytes = new byte[CHUNK];
 	    	
-	    	while( (read = input.read(bytes)) != -1 )
+	    	while( (read = input.read(bytes)) != -1   )
 	    		this.fileOutputStream.write(bytes, 0, read);
+	    	
 	    	
 	    	this.fileOutputStream.flush();
 	    	
@@ -748,7 +751,7 @@ public class Track extends ModelItem {
     		this.fileOutputStream.close();
     	}
     	
-    	return super.parseBinaryResponse( input );
+    	return super.parseBinaryResponse(response);
     }
     
 
