@@ -503,7 +503,7 @@ public class AudioBoxClient {
             schemeRegistry.register( new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
 
             HttpParams params = new BasicHttpParams();
-            params.setParameter(ClientPNames.HANDLE_REDIRECTS, false);
+            //params.setParameter(ClientPNames.HANDLE_REDIRECTS, false);
 
             this.mCm = new ThreadSafeClientConnManager(params, schemeRegistry);
             this.mClient = new DefaultHttpClient( this.mCm, params );
@@ -611,7 +611,12 @@ public class AudioBoxClient {
          * {@link SocketTimeoutException} or {@link IOException}.
          */
         public String[] execute(String path, String token, String action , Model target, String httpVerb) throws LoginException , ServiceException {
-            return execute(path, token, action, target, httpVerb, XML_FORMAT);
+            return execute(path, token, action, target, httpVerb, false);
+        }
+        
+        
+        public String[] execute(String path, String token, String action , Model target, String httpVerb, boolean followRedirects) throws LoginException , ServiceException {
+            return execute(path, token, action, target, httpVerb, XML_FORMAT, followRedirects);
         }
 
 
@@ -636,7 +641,7 @@ public class AudioBoxClient {
          * @throws ServiceException if the connection to AudioBox.fm throws a {@link ClientProtocolException}, 
          * {@link SocketTimeoutException} or {@link IOException} occurs.
          */
-        public String[] execute(String path, String token, String action , Model target, String httpVerb, String format) throws LoginException , ServiceException {
+        public String[] execute(String path, String token, String action , Model target, String httpVerb, String format, boolean followRedirects) throws LoginException , ServiceException {
 
             token = ( ( token == null ) ? "" : token.startsWith("/") ? token : "/".concat(token) ).trim();
             action = ( ( action == null ) ? "" : action.startsWith("/") ? action : "/".concat(action) ).trim();
@@ -648,7 +653,7 @@ public class AudioBoxClient {
 
             if (HttpGet.METHOD_NAME.equals(httpVerb) )
                 url += "." + format;
-            return request( url, target, httpVerb );
+            return request( url, target, httpVerb, followRedirects );
         }
 
 
@@ -702,7 +707,7 @@ public class AudioBoxClient {
          * {@link SocketTimeoutException} or {@link IOException} occurs.
          */
 
-        private String[] request(String url, Model target, String httpVerb) throws LoginException, ServiceException {
+        private String[] request(String url, Model target, String httpVerb, boolean followRedirects) throws LoginException, ServiceException {
 
             if (mUser == null)
                 throw new LoginException("Cannot execute API actions without credentials.", LoginException.NO_CREDENTIALS);
@@ -726,6 +731,8 @@ public class AudioBoxClient {
                     reqEntity.addPart(Track.HTTP_PARAM, ((Track) target).getFileBody());
                     ( (HttpPost) method).setEntity( reqEntity );
                 }
+                
+                this.mClient.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, followRedirects);
 
                 log.debug("Requesting resource: " + url);
                 return mClient.execute(method, target, new BasicHttpContext());
