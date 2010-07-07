@@ -31,4 +31,4 @@ manifest.mf
 **/target
 
 # Project spcifics
-core/src/docbkx
+audiobox.fm-core/src/docbkx

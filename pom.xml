@@ -9,8 +9,8 @@
 	<name>components</name>
 
 	<modules>
-		<module>core</module>
-		<module>sync</module>
+		<module>audiobox.fm-core</module>
+		<module>audiobox.fm-sync</module>
 	</modules>
 
 	<version>1.0-SNAPSHOT</version>
