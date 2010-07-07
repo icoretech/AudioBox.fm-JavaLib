@@ -25,12 +25,7 @@ It's now time to clone the repos:
     git clone git@github.com:audiobox/AudioBox.fm-JavaLib.git .
     
     
-If everything goes fine you have now a copy of the master branch, to switch to the edge simply enter:
-
-    git checkout branch
-    
-    
-Now you should be into edge branch, you are ready to start:
+If everything goes fine you have now a copy of the master branch, you are ready to start:
 
 
     mvn install eclipse:eclipse
