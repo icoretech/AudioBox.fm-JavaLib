@@ -201,7 +201,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
         if (responseEntity != null) 
             responseEntity.consumeContent();
 
-        return new String[]{ String.valueOf( response.getStatusLine().getStatusCode() ) , responseString };
+        return new String[]{ String.valueOf( responseCode ) , responseString };
 
     }
 
@@ -231,7 +231,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
             return this.parsePlainResponse( input );
         
         else
-        	return this.parseBinaryResponse( response );
+        	return this.parseBinaryResponse( input );
 
     }
 
@@ -292,11 +292,11 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
      * This method implementation does nothing. It must be overridden by each model that should contains
      * a binary response in the body. Tipically {@link Track} objects.
      * 
-     * @param response the {@link HttpResponse} object 
+     * @param input the {@link InputStram} of the entity content.
      * 
      * @return an empty String
      */
-    protected String parseBinaryResponse( HttpResponse response ) throws IOException {
+    protected String parseBinaryResponse( InputStream input ) throws IOException {
         return "";
     }
 
