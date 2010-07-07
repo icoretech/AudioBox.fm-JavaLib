@@ -12,9 +12,7 @@ import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.AudioBoxClient;
 import fm.audiobox.core.models.Track;
-import fm.audiobox.core.models.UploadTrack;
 import fm.audiobox.core.models.User;
-import fm.audiobox.sync.task.Upload;
 import fm.audiobox.sync.test.mocks.fixtures.Fixtures;
 
 /**
@@ -60,17 +58,6 @@ public class DownloadTest extends junit.framework.TestCase {
 			
 			assertTrue( f.exists() );
 			
-            /*
-            Track up =  user.newTrack();
-            assertNotNull( up );
-            
-            Upload upload = new Upload( (UploadTrack)up, f);
-            
-            String uuid = upload.upload();
-            
-            assertNotNull( uuid );
-            assertTrue( uuid.length() > 0 );
-            */
             
             // get track and its information by a given UUID
             Track t = user.getTrackByUuid( fx.get( Fixtures.TRACK_TO_DOWNLOAD ) );
@@ -86,11 +73,9 @@ public class DownloadTest extends junit.framework.TestCase {
 				e.printStackTrace();
 			}
             
-            /*Track tr = user.getTrackByUuid( uuid );
-            
-            assertNotNull( tr );*/
-            
 			assertTrue( f.length() == total );
+			
+			System.out.println( "New file: " + f.getPath() );
             
         } catch (ServiceException e) {
             e.printStackTrace();
