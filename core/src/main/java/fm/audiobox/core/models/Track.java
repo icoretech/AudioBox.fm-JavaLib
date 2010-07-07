@@ -22,12 +22,16 @@
 
 package fm.audiobox.core.models;
 
+import java.io.File;
+
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.mime.content.FileBody;
 
+import fm.audiobox.core.api.Model;
 import fm.audiobox.core.api.ModelItem;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
@@ -57,6 +61,7 @@ import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
  *   <year type="integer">2001</year>
  *   <stream-url>http://url.to/<uuid>/stream</stream-url>
  *   <audio-file-size>12313124432</audio-file-size>
+ *   <original-file-name>song.mp3</original-file-name>
  *   <artist>
  *     <name>Artist name</name>
  *     <token>iq6ieJ9z</token>
@@ -84,14 +89,17 @@ public class Track extends ModelItem {
     /** The HTTP Parameter to use when uploading a track */
     public static final String HTTP_PARAM = "media";
 
+    protected static final String STREAM_ACTION = "stream";
+    protected static final String DOWNLOAD_ACTION = "download";
+
     private static final String PATH = "tracks";
-    private static final String STREAM_ACTION = "stream";
     private static final String SCROBBLE_ACTION = "scrobble";
     private static final String LOVE_ACTION = "love";
     private static final String UNLOVE_ACTION = "unlove";
-
+    
     // Customized fields
     private String uuid;
+    private File file;
 
     // XML model fields
     protected String duration;
@@ -104,6 +112,7 @@ public class Track extends ModelItem {
     protected String fileHash;
     protected String streamUrl;
     protected long audioFileSize;
+    protected String originalFileName;
     protected Artist artist;
     protected Album album;
 
@@ -198,6 +207,32 @@ public class Track extends ModelItem {
 
 
 
+    /**
+     * Setter method for the file of this track: used by the {@link Model#handleResponse(org.apache.http.HttpResponse)} 
+     * method.
+     * 
+     * @param file the file to set
+     */
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    /**
+     * Getter method for the file of this track.
+     * 
+     * <p>
+     * 
+     * This field is populated if a {@link Track#download(String)} is succesfully performed.
+     * 
+     * @return the file of this track.
+     */
+    public File getFile() {
+        return file;
+    }
+
+    
+    
+    
     /**
      * <p>Setter for the track duration: used by the parser.</p>
      *
@@ -409,7 +444,27 @@ public class Track extends ModelItem {
     }
 
 
+    
+    /**
+     * <p>Setter for the track's orginal file name: used by the parser.</p>
+     * 
+     * @param fileName the track's file name.
+     */
+    public void setOriginalFileName(String fileName) {
+        this.originalFileName = fileName;
+    }
+    
+    /**
+     * <p>Getter for the original track's file name</p>
+     * 
+     * @return the original file name String
+     */
+    public String getOriginalFileName() {
+        return this.originalFileName;
+    }
+    
 
+    
     /**
      * <p>Setter for the track's duration in seconds: used by the parser.</p>
      *
@@ -478,8 +533,8 @@ public class Track extends ModelItem {
     public FileBody getFileBody(){
         return this.fileBody;
     }
-
-
+    
+    
     /* -------------- */
     /* Remote Actions */
     /* -------------- */
@@ -572,7 +627,25 @@ public class Track extends ModelItem {
         return HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
     }
 
+    /**
+     * Download this track from AudioBox.fm
+     * 
+     * <p>
+     * 
+     * If the request is succesfully done, the field <code>file</code> is populated. 
+     * 
+     * @return true if the request is succesfully done, false otherwise.
+     * 
+     * @throws LoginException if any authentication problem during the request occurs.
+     * @throws ServiceException if any connection problem to AudioBox.fm occurs.
+     */
+    public boolean download(String path) throws ServiceException, LoginException {
+        String[] result = this.getConnector().execute( this.pEndPoint, this.getUuid(), DOWNLOAD_ACTION, this, HttpGet.METHOD_NAME);
+        return HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
+    }
 
+    
+    
     /* ----- */
     /* State */
     /* ----- */

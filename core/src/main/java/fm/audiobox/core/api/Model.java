@@ -167,8 +167,8 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
         // 20*
         case HttpStatus.SC_CREATED:
         case HttpStatus.SC_OK:
-            InputStream input = response.getEntity().getContent();
-            responseString = this.parseResponse( input , response.getEntity().getContentType() );
+            
+            responseString = this.parseResponse( response );
             break;
 
         case HttpStatus.SC_NO_CONTENT:
@@ -189,7 +189,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
 
         case HttpStatus.SC_NOT_FOUND:
             throw new ServiceException( "Resource not found", responseCode );
-            
+
             // 50*
         default:
             throw new ServiceException( "Response code not recognized (" + responseCode + ")", responseCode );
@@ -219,54 +219,73 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
      * 
      * @throws IOException if the parse process fails for some reason.
      */
-    public String parseResponse( InputStream input, Header contentType ) throws IOException {
+    public String parseResponse( HttpResponse response ) throws IOException {
+
+        InputStream input = response.getEntity().getContent();
+        Header contentType = response.getEntity().getContentType();
+        
+        if ( contentType.getValue().contains(AudioBoxConnector.XML_FORMAT) ){
+            return this.parseXMLResponse(input, contentType);
+
+        } else if ( contentType.getValue().contains( AudioBoxConnector.TEXT_CONTENT_TYPE )) {
+            return this.parsePlainResponse(input, contentType);
+            
+        }
+        
+        return parseBinaryResponse( response );
+
+    }
+
+    public String parseXMLResponse( InputStream input, Header contentType ) throws IOException {
         String response = "";
         try {
 
-            if ( contentType.getValue().contains(AudioBoxConnector.XML_FORMAT) ){
+            // Instanciate new SaxParser from InputStream
+            SAXParserFactory spf = SAXParserFactory.newInstance();
+            SAXParser sp = spf.newSAXParser();
 
-                // Instanciate new SaxParser from InputStream
-                SAXParserFactory spf = SAXParserFactory.newInstance();
-                SAXParser sp = spf.newSAXParser();
+            /* Get the XMLReader of the SAXParser we created. */
+            XMLReader xr = sp.getXMLReader();
 
-                /* Get the XMLReader of the SAXParser we created. */
-                XMLReader xr = sp.getXMLReader();
+            /* Create a new ContentHandler and apply it to the XML-Reader */
+            xr.setContentHandler( this );
 
-                /* Create a new ContentHandler and apply it to the XML-Reader */
-                xr.setContentHandler( this );
+            xr.parse( new InputSource( input ) );
 
-                xr.parse( new InputSource( input ) );
+            input.close();
 
-                input.close();
-
-            } else {
-
-                /* read response content */
-                int read;
-                byte[] bytes = new byte[ CHUNK ];
-                StringBuffer sb = new StringBuffer();
-                while(  ( read = input.read( bytes) ) != -1 )
-                    sb.append( new String( bytes, 0, read ));
-                response =  sb.toString().trim();
-            }
-
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
-        }
 
+        } catch (SAXException e) {
+            e.printStackTrace();
+
+        }
         return response;
     }
 
 
+    public String parsePlainResponse(InputStream input, Header contentType ) throws IOException {
+
+        int read;
+        byte[] bytes = new byte[ CHUNK ];
+        StringBuffer sb = new StringBuffer();
+        while(  ( read = input.read( bytes) ) != -1 )
+            sb.append( new String( bytes, 0, read ));
+        return sb.toString().trim();
+
+    }
+    
+    
+    public String parseBinaryResponse( HttpResponse response ) {
+        return "";
+    }
+
     /* --------- */
     /* Overrides */
     /* --------- */
-    
-    
+
+
     /** {@inheritDoc} */
     @Override
     public String toString() {
@@ -347,23 +366,23 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
                     this.mStack.push( method );
                 }
             }
-            
+
         } catch (IllegalArgumentException e) {
             log.error("Illegal Argument Exception @" + localName + ": " + e.getMessage());
             e.printStackTrace();
-            
+
         } catch (IllegalAccessException e) {
             log.error("Illegal AccessException @" + localName + ": " + e.getMessage());
             e.printStackTrace();
-            
+
         } catch (SecurityException e) {
             log.error("Security Exception @" + localName + ": " + e.getMessage());
             e.printStackTrace();
-            
+
         } catch (InvocationTargetException e) {
             log.error("Invocation Target Exception @" + localName + ": " + e.getMessage());
             e.printStackTrace();
-            
+
         } 
 
         super.startElement(uri, localName, qName, attributes);

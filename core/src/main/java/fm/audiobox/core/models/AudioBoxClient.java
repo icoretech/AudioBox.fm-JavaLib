@@ -494,6 +494,7 @@ public class AudioBoxClient {
         private static final String HOST = "audiobox.fm";
         private static final String API_PREFIX = "/api/";
         public static final String TEXT_FORMAT = "txt";
+        public static final String TEXT_CONTENT_TYPE = "text";
         public static final String XML_FORMAT = "xml";
 
         public static final int RESPONSE_CODE = 0;
@@ -688,7 +689,7 @@ public class AudioBoxClient {
             token = ( ( token == null ) ? "" : token.startsWith("/") ? token : "/".concat(token) ).trim();
             action = ( ( action == null ) ? "" : action.startsWith("/") ? action : "/".concat(action) ).trim();
 
-            // Replace the placeholder with the right values
+            // Replace the placeholder with right values
             String url = sApiPath.replace( PATH_PARAMETER , path ).replace( TOKEN_PARAMETER , token ).replace( ACTION_PARAMETER , action ); 
 
             httpVerb = httpVerb == null ? HttpGet.METHOD_NAME : httpVerb;
@@ -775,6 +776,7 @@ public class AudioBoxClient {
                 }
 
                 log.debug("Requesting resource: " + url);
+                
                 return mClient.execute(method, target, new BasicHttpContext());
 
             } catch( ClientProtocolException e ) {
