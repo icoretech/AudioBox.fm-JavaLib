@@ -648,11 +648,13 @@ public class Track extends ModelItem {
 
     
     /**
-     * <p>Upload track on AudioBox.fm</p>
+     * <p>Upload the track to AudioBox.fm</p>
      * 
-     * Method is empty, needs to be overwritten
+     * <b>Method is empty, must be overwritten</b>
      * 
-     * @throws IOException
+     * @throws IOException if any file exception occurs.
+     * @throws ServiceException if any connection problem to AudioBox.fm occurs.
+     * @throws LoginException if any authentication problem during the request occurs.
      */
     public void upload() throws IOException ,ServiceException, LoginException { }
     

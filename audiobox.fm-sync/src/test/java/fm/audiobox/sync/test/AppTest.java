@@ -31,6 +31,7 @@ public class AppTest extends junit.framework.TestCase {
         System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire.header", "debug");
         System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http.impl", "debug");
         System.setProperty("org.apache.commons.logging.simplelog.log.fm.audiobox.core", "debug");
+        System.setProperty("org.apache.commons.logging.simplelog.log.fm.audiobox.sync", "debug");
         
         assertTrue( true );
         try {
