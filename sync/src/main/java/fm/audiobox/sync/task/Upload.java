@@ -33,21 +33,18 @@ import org.apache.http.entity.mime.content.FileBody;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.models.AudioBoxClient;
 import fm.audiobox.core.models.UploadTrack;
 import fm.audiobox.sync.interfaces.ThreadListener;
 import fm.audiobox.sync.util.AsyncTask;
 
 public class Upload extends AsyncTask {
 
-    private AudioBoxClient mAbc;
     private UploadTrack mTrack;
-    private FileBody mFileBody;
     private File mFile;
 
-    public Upload(File file, AudioBoxClient abc){
+    public Upload(UploadTrack track, File file){
+        this.mTrack = track;
         this.mFile = file;
-        this.mAbc = abc;
     }
 
 
@@ -55,11 +52,13 @@ public class Upload extends AsyncTask {
     protected synchronized void doTask() {
 
         try {
-            this.mTrack.upload();
+			this.mTrack.upload();
         } catch (ServiceException e) {
             e.printStackTrace( System.out );
         } catch (LoginException e) {
             e.printStackTrace( System.out );
+        } catch (IOException e) {
+        	e.printStackTrace( System.out );
         }
 
     }
@@ -81,9 +80,9 @@ public class Upload extends AsyncTask {
 
         final Upload me = this;
         final ThreadListener tl = this.getThreadListener();
-        final File file = this.mFile;
+        final long total = this.mFile.length();
 
-        this.mFileBody = new FileBody( file, new MimetypesFileTypeMap().getContentType(file) ) {
+        FileBody mFileBody = new FileBody( this.mFile, new MimetypesFileTypeMap().getContentType(this.mFile) ) {
 
             @Override
             public void writeTo(final OutputStream outstream) throws IOException {
@@ -92,17 +91,16 @@ public class Upload extends AsyncTask {
                     throw new IllegalArgumentException("Output stream may not be null");
                 }
 
-                long total = file.length(),
-                completed = 0;
+                long completed = 0;
 
-                InputStream in = new FileInputStream(file);
+                InputStream in = new FileInputStream(mFile);
                 try {
                     byte[] tmp = new byte[4096];
                     int l;
                     while ((l = in.read(tmp)) != -1) {
                         outstream.write(tmp, 0, l);
                         completed += l;
-                        tl.onProgress(me, total, completed, total-completed, file);
+                        tl.onProgress(me, total, completed, (total - completed), mFile);
                     }
                     outstream.flush();
                 } finally {
@@ -113,7 +111,7 @@ public class Upload extends AsyncTask {
 
         }; 
 
-        this.mTrack = new UploadTrack( this.mFileBody, this.mAbc );
+        this.mTrack.setFileBody( mFileBody );
 
     }
 

@@ -372,6 +372,19 @@ public class User extends ModelItem {
     }
 
 
+    /**
+     * Instantiates a new Track. This method is used to upload a track
+     * 
+     * @return
+     * @throws ServiceException
+     * @throws LoginException
+     * @throws ModelException
+     */
+    public Track newTrack() throws ServiceException, LoginException, ModelException {
+    	return (Track) AudioBoxClient.getModelInstance( AudioBoxClient.NEW_TRACK_KEY , this.getConnector() );
+    }
+    
+    
     
     /**
      * Use this method to get the {@link Playlists} user collection.

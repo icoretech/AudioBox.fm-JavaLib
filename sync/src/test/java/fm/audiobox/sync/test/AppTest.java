@@ -9,6 +9,7 @@ import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.AudioBoxClient;
 import fm.audiobox.core.models.Track;
+import fm.audiobox.core.models.UploadTrack;
 import fm.audiobox.core.models.User;
 import fm.audiobox.sync.task.Upload;
 import fm.audiobox.sync.test.mocks.fixtures.Fixtures;
@@ -33,6 +34,7 @@ public class AppTest extends junit.framework.TestCase {
         
         assertTrue( true );
         try {
+        	AudioBoxClient.setModelClassFor( AudioBoxClient.NEW_TRACK_KEY , UploadTrack.class );
             AudioBoxClient abc = new AudioBoxClient();
             abc.setForceTrust(true);
             
@@ -43,17 +45,19 @@ public class AppTest extends junit.framework.TestCase {
             assertNotNull( f );
             assertTrue( f.exists() );
             
-            Upload up = new Upload( f, abc );
+            Track up =  user.newTrack();
             assertNotNull( up );
             
-            String uuid = up.upload();
+            Upload upload = new Upload( (UploadTrack)up, f);
+            
+            String uuid = upload.upload();
             
             assertNotNull( uuid );
             assertTrue( uuid.length() > 0 );
             
-            Track tr = user.getTrackByUuid( uuid );
+            /*Track tr = user.getTrackByUuid( uuid );
             
-            assertNotNull( tr );
+            assertNotNull( tr );*/
             
             
         } catch (ServiceException e) {

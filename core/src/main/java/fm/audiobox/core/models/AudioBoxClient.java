@@ -210,6 +210,9 @@ public class AudioBoxClient {
 
     /** Constant <code>TRACK_KEY="Track.TAG_NAME"</code> */
     public static final String TRACK_KEY     = Track.TAG_NAME;
+    
+    /** Constant <code>NEW_TRACK_KEY="Track.TAG_NAME"</code> */
+    public static final String NEW_TRACK_KEY     = "NewTrack";
 
     /** Prefix for properties keys */
     private static final String PROP_PREFIX = "libaudioboxfm-core.";
@@ -237,6 +240,7 @@ public class AudioBoxClient {
         sModelsMap.put( ALBUM_KEY ,    Album.class );
         sModelsMap.put( TRACKS_KEY,    Tracks.class ); 
         sModelsMap.put( TRACK_KEY ,    Track.class );
+        sModelsMap.put( NEW_TRACK_KEY , Track.class );
     }
 
     private User mUser;
