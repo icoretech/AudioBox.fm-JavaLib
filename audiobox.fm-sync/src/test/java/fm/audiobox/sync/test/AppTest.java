@@ -41,7 +41,7 @@ public class AppTest extends junit.framework.TestCase {
             User user = abc.login( fx.get( Fixtures.LOGIN), fx.get(Fixtures.RIGHT_PASS) );
             assertNotNull( user );
             
-            File f = new File( fx.get( Fixtures.TEST_FILE) );
+            File f = new File( fx.get( Fixtures.TEST_FILE ) );
             assertNotNull( f );
             assertTrue( f.exists() );
             

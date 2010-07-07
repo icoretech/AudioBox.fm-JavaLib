@@ -2,6 +2,7 @@ package fm.audiobox.core.models;
 
 import java.io.IOException;
 
+import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.content.FileBody;
 
@@ -24,6 +25,13 @@ public class UploadTrack extends Track {
     	String result[] = this.pConnector.execute(Tracks.END_POINT , null, null, this, HttpPost.METHOD_NAME);
     	this.setUuid( result[ AudioBoxConnector.RESPONSE_BODY ]  );
     }
+
+	@Override
+	public String parseBinaryResponse(HttpResponse response) throws IOException {
+		if ( this.fileOutputStream == null )
+			return super.parsePlainResponse( response.getEntity().getContent() );
+		return super.parseBinaryResponse(response);
+	}
     
     
 

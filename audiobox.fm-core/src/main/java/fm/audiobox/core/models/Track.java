@@ -744,7 +744,7 @@ public class Track extends ModelItem {
     	
     	if ( this.fileOutputStream == null )
     		throw new IOException("No such output stream");
-    	
+    		
     	try {
 	    	
     		int read;
