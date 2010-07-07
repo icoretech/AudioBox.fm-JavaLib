@@ -366,9 +366,10 @@ public class User extends ModelItem {
      * @throws ModelException 
      */
     public Track getTrackByUuid(String uuid) throws ServiceException, LoginException, ModelException {
-        Track tr = (Track) AudioBoxClient.getModelInstance(AudioBoxClient.TRACK_KEY, this.getConnector());
-        this.getConnector().execute(Tracks.END_POINT, uuid, null, tr, HttpGet.METHOD_NAME);
-        return tr;
+    	Track t = this.newTrack();
+        t.setUuid(uuid);
+        t.refresh();
+        return t;
     }
 
 

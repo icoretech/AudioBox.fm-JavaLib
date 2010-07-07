@@ -200,7 +200,7 @@ public class Track extends ModelItem {
      */
     public String getUuid() {
 
-        if (this.uuid == null) {
+        if (this.uuid == null && this.streamUrl != null) {
             String	regex = "^" + pConnector.getApiPath().replace(".", "\\.") + PATH + "/([^\\s]+)/stream$";
             java.util.regex.Matcher m = java.util.regex.Pattern.compile(regex).matcher(streamUrl);
             m.find();
@@ -657,6 +657,20 @@ public class Track extends ModelItem {
      * @throws LoginException if any authentication problem during the request occurs.
      */
     public void upload() throws IOException ,ServiceException, LoginException { }
+    
+    
+    
+    
+    
+    
+    public boolean refresh() throws ServiceException, LoginException {
+    	boolean result = false;
+    	if ( this.getUuid() != null ){
+    		String[] responses = this.pConnector.execute( this.pEndPoint, this.getUuid(), null, this, null);
+    		result = HttpStatus.SC_OK == Integer.parseInt( responses[ AudioBoxConnector.RESPONSE_CODE ] );
+    	}
+    	return result;
+    }
     
     
     /* ----- */
