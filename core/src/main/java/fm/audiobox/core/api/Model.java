@@ -219,7 +219,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
      * 
      * @throws IOException if the parse process fails for some reason.
      */
-    public String parseResponse( HttpResponse response ) throws IOException {
+    public final String parseResponse( HttpResponse response ) throws IOException {
 
         InputStream input = response.getEntity().getContent();
         Header contentType = response.getEntity().getContentType();

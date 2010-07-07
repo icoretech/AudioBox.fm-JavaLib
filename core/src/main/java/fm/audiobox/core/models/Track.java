@@ -94,7 +94,7 @@ public class Track extends ModelItem {
     public static final String HTTP_PARAM = "media";
 
     protected static final String STREAM_ACTION = "stream";
-    protected static final String DOWNLOAD_ACTION = "download";
+    protected static final String DOWNLOAD_ACTION = STREAM_ACTION;
 
     private static final String PATH = "tracks";
     private static final String SCROBBLE_ACTION = "scrobble";
@@ -637,13 +637,14 @@ public class Track extends ModelItem {
     /**
      * <p>Download track and put binary data into given {@link FileOutputStream}.
      * 
-     * @param fos the FileOutputStream to write binary data into
+     * @param fos the {@link FileOutputStream} to write binary data to
+     * 
      * @throws ServiceException	if any connection problem to AudioBox.fm occurs.
      * @throws LoginException if any authentication problem during the request occurs.
      */
     public void download(final FileOutputStream fos) throws ServiceException, LoginException {
     	this.fileOutputStream = fos;
-    	this.getConnector().execute( this.pEndPoint, this.getUuid(), STREAM_ACTION, this, null, true);
+    	this.getConnector().execute( this.pEndPoint, this.getUuid(), DOWNLOAD_ACTION, this, null, true);
     }
 
     
@@ -729,6 +730,7 @@ public class Track extends ModelItem {
      * 
      * @throws IOException if the parse process fails for some reasons.
      */
+    @Override
     public String parseBinaryResponse( HttpResponse response ) throws IOException {
     	
     	InputStream input = response.getEntity().getContent();
@@ -736,14 +738,12 @@ public class Track extends ModelItem {
     	if ( this.fileOutputStream == null )
     		throw new IOException("No such output stream");
     	
-    	final int CHUNK = 4096;
-    	
-    	try{
+    	try {
 	    	
     		int read;
 	    	byte[] bytes = new byte[CHUNK];
 	    	
-	    	while( (read=input.read(bytes)) != -1   )
+	    	while( (read = input.read(bytes)) != -1   )
 	    		this.fileOutputStream.write(bytes, 0, read);
 	    	
 	    	
