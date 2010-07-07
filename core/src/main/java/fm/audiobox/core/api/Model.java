@@ -201,42 +201,46 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
         if (responseEntity != null) 
             responseEntity.consumeContent();
 
-        return new String[]{ String.valueOf( response.getStatusLine().getStatusCode() ) , responseString };
+        return new String[]{ String.valueOf( responseCode ) , responseString };
 
     }
 
     /**
-     * This method is used to parse the HTTP response content if any.
+     * This method is used to determine the kind of response and parse the HTTP response content if any.
      * 
      * <p>
      * 
-     * Returns an empty string if the content type is in XML format, the body of the response otherwise.
+     * Returns an empty String if the content type is XML or binary, the body of the response otherwise.
      *
-     * @param input the {@link HttpEntity} content
-     * @param contentType the response content type
+     * @param response the {@link HttpResponse} object
      * 
      * @return the text of the response content  
      * 
      * @throws IOException if the parse process fails for some reason.
      */
-    public String parseResponse( HttpResponse response ) throws IOException {
+    public final String parseResponse( HttpResponse response ) throws IOException {
 
-        InputStream input = response.getEntity().getContent();
         Header contentType = response.getEntity().getContentType();
         
-        
         if ( contentType.getValue().contains(AudioBoxConnector.XML_FORMAT) )
-            return this.parseXMLResponse( input );
+            return this.parseXMLResponse( response.getEntity().getContent() );
 
-        else if (  contentType.getValue().contains( AudioBoxConnector.TEXT_CONTENT_TYPE )  )
-            return this.parsePlainResponse( input );
+        else if ( contentType.getValue().contains( AudioBoxConnector.TEXT_CONTENT_TYPE )  )
+            return this.parsePlainResponse( response.getEntity().getContent() );
         
         else
         	return this.parseBinaryResponse( response );
 
     }
 
-    public String parseXMLResponse( InputStream input ) throws IOException {
+    /**
+     * This method is used to parse XML responses
+     * 
+     * @param input the {@link InputStram} of the entity content.
+     * 
+     * @return an empty String
+     */
+    protected String parseXMLResponse( InputStream input ) throws IOException {
         String response = "";
         try {
 
@@ -264,8 +268,14 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
         return response;
     }
 
-
-    public String parsePlainResponse(InputStream input) throws IOException {
+    /**
+     * This method is used to parse plain text responses.
+     * 
+     * @param input the {@link InputStram} of the entity content.
+     * 
+     * @return a String representing the body of the response
+     */
+    protected String parsePlainResponse(InputStream input) throws IOException {
 
         int read;
         byte[] bytes = new byte[ CHUNK ];
@@ -276,11 +286,20 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
 
     }
     
-    
-    public String parseBinaryResponse( HttpResponse response ) throws IOException {
+    /**
+     * This method implementation does nothing. It must be overridden by each model that should contains
+     * a binary response in the body. Tipically {@link Track} objects.
+     * 
+     * @param response the {@link HttpResponse} object 
+     * 
+     * @return an empty String
+     */
+    protected String parseBinaryResponse( HttpResponse response ) throws IOException {
         return "";
     }
 
+    
+    
     /* --------- */
     /* Overrides */
     /* --------- */
