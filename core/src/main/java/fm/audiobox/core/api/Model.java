@@ -224,23 +224,23 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
         InputStream input = response.getEntity().getContent();
         Header contentType = response.getEntity().getContentType();
         
-        if ( contentType.getValue().contains(AudioBoxConnector.XML_FORMAT) ){
-            return this.parseXMLResponse(input, contentType);
-
-        } else if ( contentType.getValue().contains( AudioBoxConnector.TEXT_CONTENT_TYPE )) {
-            return this.parsePlainResponse(input, contentType);
-            
-        }
         
-        return parseBinaryResponse( response );
+        if ( contentType.getValue().contains(AudioBoxConnector.XML_FORMAT) )
+            return this.parseXMLResponse( input );
+
+        else if (  contentType.getValue().contains( AudioBoxConnector.TEXT_CONTENT_TYPE )  )
+            return this.parsePlainResponse( input );
+        
+        else
+        	return this.parseBinaryResponse( response );
 
     }
 
-    public String parseXMLResponse( InputStream input, Header contentType ) throws IOException {
+    public String parseXMLResponse( InputStream input ) throws IOException {
         String response = "";
         try {
 
-            // Instanciate new SaxParser from InputStream
+            // Instanciate new SaxParser
             SAXParserFactory spf = SAXParserFactory.newInstance();
             SAXParser sp = spf.newSAXParser();
 
@@ -265,7 +265,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
     }
 
 
-    public String parsePlainResponse(InputStream input, Header contentType ) throws IOException {
+    public String parsePlainResponse(InputStream input) throws IOException {
 
         int read;
         byte[] bytes = new byte[ CHUNK ];
@@ -277,7 +277,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
     }
     
     
-    public String parseBinaryResponse( HttpResponse response ) {
+    public String parseBinaryResponse( HttpResponse response ) throws IOException {
         return "";
     }
 

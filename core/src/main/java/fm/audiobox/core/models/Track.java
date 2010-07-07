@@ -28,9 +28,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.mime.content.FileBody;
@@ -646,29 +646,11 @@ public class Track extends ModelItem {
     	this.getConnector().execute( this.pEndPoint, this.getUuid(), STREAM_ACTION, this, null, true);
     }
 
-    /**
-     * Download this track from AudioBox.fm
-     * 
-     * <p>
-     * 
-     * If the request is succesfully done, the field <code>file</code> is populated. 
-     * 
-     * @return true if the request is succesfully done, false otherwise.
-     * 
-     * @throws LoginException if any authentication problem during the request occurs.
-     * @throws ServiceException if any connection problem to AudioBox.fm occurs.
-     */
-    public boolean download(String path) throws ServiceException, LoginException {
-        String[] result = this.getConnector().execute( this.pEndPoint, this.getUuid(), DOWNLOAD_ACTION, this, HttpGet.METHOD_NAME);
-        return HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
-    }
-
     
     
     /* ----- */
     /* State */
     /* ----- */
-
 
     /**
      * Changes the states of the track.
@@ -747,7 +729,10 @@ public class Track extends ModelItem {
      * 
      * @throws IOException if the parse process fails for some reasons.
      */
-    public String parseBinaryResponse( InputStream input, long contentLength ) throws IOException {
+    public String parseBinaryResponse( HttpResponse response ) throws IOException {
+    	
+    	InputStream input = response.getEntity().getContent();
+    	
     	if ( this.fileOutputStream == null )
     		throw new IOException("No such output stream");
     	
@@ -768,7 +753,7 @@ public class Track extends ModelItem {
     		this.fileOutputStream.close();
     	}
     	
-    	return "";
+    	return super.parseBinaryResponse(response);
     }
     
 
