@@ -210,19 +210,19 @@ public class AudioBoxClient {
 
     /** Constant <code>TRACK_KEY="Track.TAG_NAME"</code> */
     public static final String TRACK_KEY     = Track.TAG_NAME;
-    
+
     /** Constant <code>NEW_TRACK_KEY="Track.TAG_NAME"</code> */
     public static final String NEW_TRACK_KEY     = "NewTrack";
 
     /** Prefix for properties keys */
     private static final String PROP_PREFIX = "libaudioboxfm-core.";
-    
+
     /** Properties descriptor reader */
     private static Properties sProperties = new Properties();
 
-    
-    
-    
+
+
+
     private static Inflector sI = Inflector.getInstance();
     private static Map<String, CollectionListener> sCollectionListenersMap = new HashMap<String , CollectionListener>();
     private static Map<String, Class<? extends Model>> sModelsMap;
@@ -287,7 +287,7 @@ public class AudioBoxClient {
         System.getProperty("java.vm.name") + "/" + 
         System.getProperty("java.vm.version") + 
         " AudioBoxClient/" + version;
-        
+
         this.mConnector = new AudioBoxConnector();
         this.mConnector.setTimeout( 180 * 1000 );
     }
@@ -330,8 +330,7 @@ public class AudioBoxClient {
      * @param cl your CollectionListener implementation.
      */
     public static void setCollectionListenerFor(String key, CollectionListener cl) {
-        // Allow only existings keys
-        if ( sCollectionListenersMap.containsKey(key) && cl != null)
+        if ( cl != null )
             sCollectionListenersMap.put( key, cl );
     }
 
@@ -494,7 +493,7 @@ public class AudioBoxClient {
         private static final String TOKEN_PARAMETER = "${token}";
         private static final String ACTION_PARAMETER = "${action}";
         private static final String PROTOCOL = "https";
-        
+
         private static final String PORT = "443";
         private static final String HOST = "audiobox.fm";
         private static final String API_PREFIX = "/api/";
@@ -504,9 +503,9 @@ public class AudioBoxClient {
 
         public static final int RESPONSE_CODE = 0;
         public static final int RESPONSE_BODY = 1;
-        
+
         private String sApiPath;
-        
+
         private HttpRoute mAudioBoxRoute;
         private ThreadSafeClientConnManager mCm;
         private DefaultHttpClient mClient;
@@ -519,7 +518,7 @@ public class AudioBoxClient {
         private AudioBoxConnector() {
 
             sApiPath = this.getApiPath() + PATH_PARAMETER + TOKEN_PARAMETER + ACTION_PARAMETER;
-            
+
             this.mAudioBoxRoute = new HttpRoute(new HttpHost(this.getHost(), Integer.parseInt(PORT)));
 
             SchemeRegistry schemeRegistry = new SchemeRegistry();
@@ -598,14 +597,14 @@ public class AudioBoxClient {
         @Deprecated
         private String getHost() {
             String host = AudioBoxClient.getProperty("host");
-            
+
             if (host == null || host.startsWith("$"))
                 host = HOST;
-            
+
             return host;
         }
-        
-        
+
+
         /**
          * Use this method to get the full API url.
          * 
@@ -614,7 +613,7 @@ public class AudioBoxClient {
         public String getApiPath(){
             return PROTOCOL + "://" + getHost() + API_PREFIX;
         }
-        
+
         /**
          * Set up HTTP Basic Authentication credentials for HTTP authenticated requests.
          * 
@@ -671,7 +670,7 @@ public class AudioBoxClient {
         public String[] execute(String path, String token, String action , Model target, String httpVerb) throws LoginException , ServiceException {
             return execute(path, token, action, target, httpVerb, false);
         }
-        
+
         /**
          * This method is used by the {@link Model} class.<br/>
          * Avoid direct execution of this method if you don't know what you are doing.
@@ -811,11 +810,11 @@ public class AudioBoxClient {
                     reqEntity.addPart(Track.HTTP_PARAM, ((Track) target).getFileBody());
                     ( (HttpPost) method).setEntity( reqEntity );
                 }
-                
+
                 this.mClient.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, followRedirects);
 
                 log.debug("Requesting resource: " + url);
-                
+
                 return mClient.execute(method, target, new BasicHttpContext());
 
             } catch( ClientProtocolException e ) {
