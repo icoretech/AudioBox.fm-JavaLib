@@ -21,7 +21,11 @@ public class Fixtures {
     public static final String INACTIVE_USERNAME = "inactive_username";
     public static final String INACTIVE_WRONG_PASS = "inactive_wrong_pass";
     
-    public static final String TEST_FILE = "test_file";
+    public static final String UPLOAD_TEST_FILE = "upload_test_file";
+    public static final String DOWNLOAD_TEST_FILE = "download_test_file";
+    public static final String TRACK_TO_DOWNLOAD = "track_to_download";
+    
+    
     
     Properties ps = new Properties();
 

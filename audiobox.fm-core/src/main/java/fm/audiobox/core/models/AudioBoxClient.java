@@ -548,7 +548,9 @@ public class AudioBoxClient {
                         request.addHeader("Accept-Encoding", "gzip");
                     }
                     request.addHeader("User-Agent", mUserAgent);
-                    request.addHeader( mScheme.authenticate(mCredentials,  request) );
+                    Header hostHeader = request.getFirstHeader("HOST");
+                    if ( hostHeader.getValue().equals( HOST ) )
+                    	request.addHeader( mScheme.authenticate(mCredentials,  request) );
                 }
 
             });
