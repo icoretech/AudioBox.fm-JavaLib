@@ -722,10 +722,9 @@ public class Track extends ModelItem {
      * 
      * Returns an empty string by default.
      *
-     * @param input the {@link HttpEntity} content
-     * @param contentLength the Content-Length header value of response
+     * @param input the {@link HttpEntity} content ({@link InputStream})
      * 
-     * @return an empty string by default
+     * @return an empty {@link String}
      * 
      * @throws IOException if the parse process fails for some reasons.
      */
@@ -740,9 +739,8 @@ public class Track extends ModelItem {
     		int read;
 	    	byte[] bytes = new byte[CHUNK];
 	    	
-	    	while( (read = input.read(bytes)) != -1   )
+	    	while( (read = input.read(bytes)) != -1 )
 	    		this.fileOutputStream.write(bytes, 0, read);
-	    	
 	    	
 	    	this.fileOutputStream.flush();
 	    	
