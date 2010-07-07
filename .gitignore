@@ -1,26 +1,34 @@
-templates/*
-toolbars/*
+# Backup files
 *~
-*.cache
-*.log
-*.pid
-tmp/**/*
-tmp/*.txt
-.DS_Store
-doc/api
-doc/app
-doc/plugins
-doc/*.dot
-*.tmproj
-.loadpath
-.idea
 *.bak
+
+# OS files
+.DS_Store
 .directory
 *.session
-*.webprj
-*.class
-*.out
+
+# IDE files
+.loadpath
+.idea
 .metadata
 */.settings
 */.classpath
-libAudioBoxTest/src/fm/audiobox/api/mocks/fixtures/*
+target
+.classpath
+.project
+.settings
+.wtpmodules
+/bin 
+
+# Build files
+*.class
+*.out
+*/build/
+*/bin
+manifest.mf
+*/nbproject/
+*/build.xml
+**/target
+
+# Project spcifics
+core/src/docbkx
