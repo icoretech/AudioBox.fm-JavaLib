@@ -1,10 +1,9 @@
-package fm.audiobox.sync;
+package fm.audiobox.sync.test;
 
 import java.io.File;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
+
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
@@ -17,29 +16,11 @@ import fm.audiobox.sync.test.mocks.fixtures.Fixtures;
 /**
  * Unit test for simple App.
  */
-public class AppTest extends TestCase {
+public class AppTest extends junit.framework.TestCase {
     
     Fixtures fx = new Fixtures(); 
-    
-    /**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public AppTest( String testName ) {
-        super( testName );
-    }
 
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite() {
-        return new TestSuite( AppTest.class );
-    }
-
-    /**
-     * Rigourous Test :-)
-     */
+    @Test
     @SuppressWarnings("deprecation")
     public void testApp() {
         

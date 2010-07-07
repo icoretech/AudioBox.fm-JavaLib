@@ -4,7 +4,6 @@ package fm.audiobox.core.test;
 import org.junit.Before;
 import org.junit.Test;
 
-import fm.audiobox.core.StaticAudioBox;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
@@ -17,7 +16,7 @@ import fm.audiobox.core.models.Playlists;
 import fm.audiobox.core.models.User;
 import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 
-public class ThreadedCollections extends junit.framework.TestCase {
+public class ThreadedCollectionsTest extends junit.framework.TestCase {
 
     StaticAudioBox abc;
     User user;

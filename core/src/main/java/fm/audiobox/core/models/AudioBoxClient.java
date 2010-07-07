@@ -211,7 +211,15 @@ public class AudioBoxClient {
     /** Constant <code>TRACK_KEY="Track.TAG_NAME"</code> */
     public static final String TRACK_KEY     = Track.TAG_NAME;
 
+    /** Prefix for properties keys */
+    private static final String PROP_PREFIX = "libaudioboxfm-core.";
+    
+    /** Properties descriptor reader */
+    private static Properties sProperties = new Properties();
 
+    
+    
+    
     private static Inflector sI = Inflector.getInstance();
     private static Map<String, CollectionListener> sCollectionListenersMap = new HashMap<String , CollectionListener>();
     private static Map<String, Class<? extends Model>> sModelsMap;
@@ -254,15 +262,11 @@ public class AudioBoxClient {
      */
     public AudioBoxClient() {
 
-        this.mConnector = new AudioBoxConnector();
-        this.mConnector.setTimeout( 180 * 1000 );
-
         String version = "unattended";
 
         try {
-            Properties ps = new Properties();
-            ps.load(AudioBoxClient.class.getResourceAsStream("/fm/audiobox/core/config/env.properties"));
-            version = ps.getProperty("libaudioboxfm-core.version");
+            sProperties.load(AudioBoxClient.class.getResourceAsStream("/fm/audiobox/core/config/env.properties"));
+            version = AudioBoxClient.getProperty("version");
         } catch (FileNotFoundException e) {
             log.error("Environment properties file not found: " + e.getMessage());
             e.printStackTrace();
@@ -279,8 +283,21 @@ public class AudioBoxClient {
         System.getProperty("java.vm.name") + "/" + 
         System.getProperty("java.vm.version") + 
         " AudioBoxClient/" + version;
+        
+        this.mConnector = new AudioBoxConnector();
+        this.mConnector.setTimeout( 180 * 1000 );
     }
 
+    /**
+     * This method returns the AudioBox.fm properties file reader.
+     * 
+     * <p>
+     * 
+     * It has to be used for internal logics only.
+     */
+    protected static String getProperty(String key) {
+        return sProperties.getProperty(PROP_PREFIX + key);
+    }
 
     /**
      * <p>Getter method for the default connector Object<p>
@@ -472,19 +489,18 @@ public class AudioBoxClient {
         private static final String TOKEN_PARAMETER = "${token}";
         private static final String ACTION_PARAMETER = "${action}";
         private static final String PROTOCOL = "https";
-        private static final String HOST = "audiobox.fm";
+        
         private static final String PORT = "443";
+        private static final String HOST = "audiobox.fm";
         private static final String API_PREFIX = "/api/";
-
-        public static final String API_PATH = PROTOCOL + "://" + HOST + API_PREFIX;
         public static final String TEXT_FORMAT = "txt";
         public static final String XML_FORMAT = "xml";
 
         public static final int RESPONSE_CODE = 0;
         public static final int RESPONSE_BODY = 1;
-
-        private String sApiPath = API_PATH + PATH_PARAMETER + TOKEN_PARAMETER + ACTION_PARAMETER;
-
+        
+        private String sApiPath;
+        
         private HttpRoute mAudioBoxRoute;
         private ThreadSafeClientConnManager mCm;
         private DefaultHttpClient mClient;
@@ -496,7 +512,9 @@ public class AudioBoxClient {
 
         private AudioBoxConnector() {
 
-            this.mAudioBoxRoute = new HttpRoute(new HttpHost(HOST, Integer.parseInt(PORT)));
+            sApiPath = this.getApiPath() + PATH_PARAMETER + TOKEN_PARAMETER + ACTION_PARAMETER;
+            
+            this.mAudioBoxRoute = new HttpRoute(new HttpHost(this.getHost(), Integer.parseInt(PORT)));
 
             SchemeRegistry schemeRegistry = new SchemeRegistry();
             schemeRegistry.register( new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
@@ -562,6 +580,35 @@ public class AudioBoxClient {
         }
 
 
+        /**
+         * Returns the right audiobox.fm host to call.
+         * 
+         * <p>
+         * 
+         * This method exists for development purpose only
+         * 
+         * @return the right AudioBox.fm host String
+         */
+        @Deprecated
+        private String getHost() {
+            String host = AudioBoxClient.getProperty("host");
+            
+            if (host == null || host.startsWith("$"))
+                host = HOST;
+            
+            return host;
+        }
+        
+        
+        /**
+         * Use this method to get the full API url.
+         * 
+         * @return the right API url
+         */
+        public String getApiPath(){
+            return PROTOCOL + "://" + getHost() + API_PREFIX;
+        }
+        
         /**
          * Set up HTTP Basic Authentication credentials for HTTP authenticated requests.
          * 

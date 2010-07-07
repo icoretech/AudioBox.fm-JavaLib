@@ -12,7 +12,6 @@ import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
 
-import fm.audiobox.core.StaticAudioBox;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
@@ -96,6 +95,7 @@ public class TrackTest extends junit.framework.TestCase {
                 assertNotNull( tr.getName() );
                 assertTrue( Track.State.IDLE == tr.getState() );
                 assertNotNull( tr.getTitle() );
+                assertNotNull( tr.getTrackNumber() );
                 assertNotNull( tr.getTrack( tr.getUuid() ) );
                 assertSame( tr, tr.getTrack( tr.getUuid() ) );
                 assertNull( tr.getTrack( "aaa" ) );

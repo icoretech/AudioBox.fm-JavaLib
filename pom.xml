@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>fm.audiobox</groupId>
@@ -12,18 +13,32 @@
 		<module>sync</module>
 	</modules>
 
-	<version>1.0-beta2-SNAPSHOT</version>
-	<description>AudioBox.fm JavaLib offers full access to the RESTful AudioBox.fm API, giving the developer the ability to make use of the native API XML through comfortable Java objects.</description>
-	<url>http://github.com/audiobox/AudioBox.fm-JavaLib</url>
+	<version>1.0-SNAPSHOT</version>
+	<description>AudioBox.fm JavaLib offers full access to the RESTful
+		AudioBox.fm API, giving the developer the ability to make use of the
+		native API XML through comfortable Java objects.</description>
+	<url>http://maven.keytwo.net/</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.host>${fm.audiobox.host}</project.host>
 	</properties>
 
 	<organization>
 		<name>iCoreTech Research Labs</name>
 		<url>http://www.icoretech.org/</url>
 	</organization>
+
+	<licenses>
+		<license>
+			<name>GNU GPL 3</name>
+			<url>http://www.gnu.org/licenses/gpl.html</url>
+			<distribution>repo</distribution>
+			<comments>The GNU General Public License (GNU GPL or simply GPL) is
+				the most widely used free software license, originally written by
+				Richard Stallman for the GNU project.</comments>
+		</license>
+	</licenses>
 
 	<scm>
 		<connection>scm:git:git@github.com:audiobox/AudioBox.fm-JavaLib.git</connection>
@@ -36,6 +51,8 @@
 		<system>GitHub Issues</system>
 		<url>http://github.com/audiobox/AudioBox.fm-JavaLib/issues</url>
 	</issueManagement>
+
+	<inceptionYear>2010</inceptionYear>
 
 	<developers>
 		<developer>
@@ -68,7 +85,46 @@
 				</includes>
 			</resource>
 		</resources>
+
 		<plugins>
+
+
+			<!-- Testing framework -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<skipTests>${fm.audiobox.skipTests}</skipTests>
+				</configuration>
+			</plugin>
+
+			<!-- Test coverage reports -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<instrumentation>
+						<ignores>
+							<ignore>fm.audiobox.core.util.*</ignore>
+							<ignore>fm.audiobox.sync.*</ignore>
+							<ignore>com.twmacinta.*</ignore>
+						</ignores>
+						<excludes>
+							<exclude>com/twmacinta/**/*.class</exclude>
+							<exclude>**/util/*.class</exclude>
+						</excludes>
+					</instrumentation>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 
 			<!-- Javadoc -->
 			<plugin>
@@ -76,7 +132,7 @@
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>2.7</version>
 				<configuration>
-					<excludePackageNames>*.util.*</excludePackageNames>
+					<excludePackageNames>*.test.*:*.util.*:com.twmacinta.*</excludePackageNames>
 				</configuration>
 				<executions>
 					<execution>
@@ -86,7 +142,6 @@
 						</goals>
 					</execution>
 				</executions>
-
 			</plugin>
 
 			<!-- Compiler (used to set the JDK version) -->
@@ -109,22 +164,6 @@
 				<version>2.0</version>
 			</plugin>
 
-			<!-- Test coverage reports -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>cobertura-maven-plugin</artifactId>
-				<version>2.4</version>
-				<configuration>
-					<instrumentation>
-						<ignores>
-							<ignore>fm.audiobox.core.util.*;fm.audiobox.sync.*;com.twmacinta.*</ignore>
-						</ignores>
-						<excludes>
-							<exclude>**/util/*.class</exclude>
-						</excludes>
-					</instrumentation>
-				</configuration>
-			</plugin>
 
 			<!-- Manifest -->
 			<plugin>
@@ -145,15 +184,6 @@
 							</Implementation-Version>
 						</manifestEntries>
 					</archive>
-				</configuration>
-			</plugin>
-			
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.5</version>
-				<configuration>
-					<skipTests>true</skipTests>
 				</configuration>
 			</plugin>
 
@@ -186,19 +216,51 @@
 				</configuration>
 			</plugin>
 
-
 			<!-- Changelog reports -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-changelog-plugin</artifactId>
 				<version>2.2</version>
+				<reportSets>
+					<reportSet>
+						<configuration>
+							<type>range</type>
+							<range>30</range>
+						</configuration>
+						<reports>
+							<report>changelog</report>
+							<report>file-activity</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+
+			<!-- Reporting site -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.1.1</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>index</report>
+							<report>dependencies</report>
+							<report>project-team</report>
+							<report>issue-tracking</report>
+							<report>license</report>
+							<report>scm</report>
+							<report>summary</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+
 			</plugin>
 
 			<!-- APIviz -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.5</version>
+				<version>2.7</version>
 				<configuration>
 					<doclet>org.jboss.apiviz.APIviz</doclet>
 					<docletArtifact>
@@ -214,10 +276,25 @@
 					<version>true</version>
 					<author>true</author>
 					<keywords>true</keywords>
-					<additionalparam>-sourceclasspath ${project.build.outputDirectory}</additionalparam>
+					<excludePackageNames>*.test.*:*.util.*:com.twmacinta.*</excludePackageNames>
 				</configuration>
-			</plugin>
 
+				<reportSets>
+					<reportSet>
+						<id>default</id>
+						<reports>
+							<report>javadoc</report>
+						</reports>
+					</reportSet>
+					<reportSet>
+						<id>aggregate</id>
+						<reports>
+							<report>aggregate</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+
+			</plugin>
 		</plugins>
 	</reporting>
 
@@ -246,18 +323,48 @@
 		</dependency>
 	</dependencies>
 
+	<distributionManagement>
+		<repository>
+			<id>keytwo.net</id>
+			<name>Keytwo.net Repository</name>
+			<url>ftp://ftp.keytwo.net</url>
+		</repository>
+		<site>
+			<id>keytwo.net</id>
+			<name>maven.keytwo.net doc site</name>
+			<url>ftp://ftp.keytwo.net</url>
+		</site>
+	</distributionManagement>
 
+	<profiles>
+		<profile>
+			<id>default-profile</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<fm.audiobox.host>audiobox.fm</fm.audiobox.host>
+				<fm.audiobox.skipTests>true</fm.audiobox.skipTests>
+			</properties>
+		</profile>
 
-	<pluginRepositories>
-		<pluginRepository>
-			<id>maven-replacer-plugin reposoitory</id>
-			<url>http://maven-replacer-plugin.googlecode.com/svn/release-repo
-			</url>
-		</pluginRepository>
-	</pluginRepositories>
+		<profile>
+			<id>test-profile</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>test</value>
+				</property>
+			</activation>
+			<properties>
+				<fm.audiobox.host>audiobox.dev</fm.audiobox.host>
+				<fm.audiobox.skipTests>false</fm.audiobox.skipTests>
+			</properties>
+		</profile>
+	</profiles>
 
 	<repositories>
-		<!-- JBoss.org repository -->
+		<!-- JBoss.org repository (used of APIviz) -->
 		<repository>
 			<id>jboss.releases</id>
 			<name>JBoss releases</name>
@@ -271,14 +378,6 @@
 		</repository>
 	</repositories>
 
-
-	<distributionManagement>
-		<repository>
-			<id>keytwo.net</id>
-			<name>Keytwo.net Repository</name>
-			<url>ftp://ftp.keytwo.net</url>
-		</repository>
-	</distributionManagement>
 </project>
 
 
