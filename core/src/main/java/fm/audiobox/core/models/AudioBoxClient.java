@@ -644,6 +644,11 @@ public class AudioBoxClient {
          * 
          * <p>
          * 
+         * Calling this method is the same as calling 
+         * {@link AudioBoxConnector#execute(String, String, String, Model, String, boolean) execute( ... , false) }
+         * 
+         * <p>
+         * 
          * Some of the parameter may be null other cannot.
          * 
          * @param path the partial url to call. Tipically this is a Model end point ({@link Model#getEndPoint()})
@@ -662,7 +667,27 @@ public class AudioBoxClient {
             return execute(path, token, action, target, httpVerb, false);
         }
         
-        
+        /**
+         * This method is used by the {@link Model} class.<br/>
+         * Avoid direct execution of this method if you don't know what you are doing.
+         * 
+         * <p>
+         * 
+         * Some of the parameter may be null other cannot.
+         * 
+         * @param path the partial url to call. Tipically this is a Model end point ({@link Model#getEndPoint()})
+         * @param token the token of the Model if any, may be null or empty ({@link Model#getToken()})
+         * @param action the remote action to execute on the model that executes the action (ie. "scrobble")
+         * @param target usually reffers the Model that executes the method
+         * @param httpVerb the HTTP method to use for the request (ie: GET, PUT, POST and DELETE)
+         * @param followRedirects whether to follow redirects or not
+         * 
+         * @return String array containing the response code at position 0 and the response body at position 1
+         * 
+         * @throws LoginException if user has not yet logged in.
+         * @throws ServiceException if the connection to AudioBox.fm throws a {@link ClientProtocolException}, 
+         * {@link SocketTimeoutException} or {@link IOException}.
+         */
         public String[] execute(String path, String token, String action , Model target, String httpVerb, boolean followRedirects) throws LoginException , ServiceException {
             return execute(path, token, action, target, httpVerb, XML_FORMAT, followRedirects);
         }
@@ -682,6 +707,7 @@ public class AudioBoxClient {
          * @param target usually reffers the Model that executes the method
          * @param httpVerb the HTTP method to use for the request (ie: GET, PUT, POST and DELETE)
          * @param format the request format (xml or txt)
+         * @param followRedirects whether to follow redirects or not
          * 
          * @return String array containing the response code at position 0 and the response body at position 1
          *
@@ -747,6 +773,7 @@ public class AudioBoxClient {
          * @param url the full url where to make the request
          * @param target the model to use to parse the response
          * @param httpVerb the HTTP method to use for the request
+         * @param followRedirects whether to follow redirects or not
          * 
          * @return String array containing the response code at position 0 and the response body at position 1
          * 
