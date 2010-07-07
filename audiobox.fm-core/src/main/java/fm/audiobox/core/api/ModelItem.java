@@ -25,6 +25,7 @@ package fm.audiobox.core.api;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
+import fm.audiobox.core.interfaces.CollectionListener;
 import fm.audiobox.core.models.AudioBoxClient;
 import fm.audiobox.core.models.Track;
 import fm.audiobox.core.models.Tracks;
@@ -71,21 +72,73 @@ public abstract class ModelItem extends Model {
         this.mTracks = tracks;
     }
 
+    
     /**
-     * Getter for the {@link Tracks} collection.
+     * Use this method to get the {@link Tracks} collection of this ModelItem.
      * 
-     * @return this item {@link Tracks} collection.
+     * <p>
      * 
-     * @throws ServiceException if any connection problem to AudioBox.fm occurs.
-     * @throws LoginException if any authentication problem occurs.
-     * @throws ModelException if any custom model is specified and an exception occurs while trying to use it.
+     * This method accept the parameter <code>async</code>. If <code>true</code> the collection is populated 
+     * asynchronously; in this case it may be necessary to specify a {@link CollectionListener} to keep track 
+     * of what is happening to the collection.
+     *
+     * @param async whether to make the request asynchronously.
+     * 
+     * @return this ModelItems {@link Tracks} collection
+     * 
+     * @throws ModelException if a custom model class was specified and an error while using it occurs.
      */
-    public Tracks getTracks() throws ServiceException, LoginException, ModelException {
-
-        this.setTracks( (Tracks) AudioBoxClient.getModelInstance(AudioBoxClient.TRACKS_KEY, this.getConnector()) );
-        this.getConnector().execute(this.getEndPoint(), this.getToken(), null, this.mTracks, null);
+    public Tracks getTracks(boolean async) throws ModelException {
+        this.mTracks = (Tracks) AudioBoxClient.getModelInstance(AudioBoxClient.TRACKS_KEY, this.getConnector());
+        Thread t = populateCollection( this.mTracks );
+        if (async)
+            t.start();
+        else
+            t.run();
 
         return this.mTracks;
     }
+    
+    /**
+     * <p>Same as calling {@link ModelItem#getTracks(boolean) ModelItem.getTracks(false)}.</p>
+     *
+     * @return this ModelItems {@link Tracks} collection
+     * 
+     * @throws ModelException if a custom model was specified and an error while using occurs.
+     */
+    public Tracks getTracks() throws ModelException {
+        return this.getTracks(false);
+    }
+    
+    
+    /* --------------- */
+    /* Private methods */
+    /* --------------- */
+    
+    /**
+     * This method is used to make asynchronous requests to AudioBox.fm collections API end points.
+     *   
+     * @param endpoint the collection API end point to make request to 
+     * @param collection the collection ({@link ModelsCollection}) to populate
+     */
+    private Thread populateCollection( final ModelsCollection collection ) {
 
+        // Final reference to user object
+        final ModelItem mi = this;
+
+        return new Thread() {
+
+            public void run() {
+                try {
+                    mi.getConnector().execute(Tracks.END_POINT, mi.getToken(), null, collection, null);
+                } catch (ServiceException e) {
+                    e.printStackTrace();
+                } catch (LoginException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        };
+
+    }
 }

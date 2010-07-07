@@ -330,7 +330,8 @@ public class AudioBoxClient {
      * @param cl your CollectionListener implementation.
      */
     public static void setCollectionListenerFor(String key, CollectionListener cl) {
-        if (cl != null)
+        // Allow only existings keys
+        if ( sCollectionListenersMap.containsKey(key) && cl != null)
             sCollectionListenersMap.put( key, cl );
     }
 

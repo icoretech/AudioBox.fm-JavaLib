@@ -121,10 +121,7 @@ public class ThreadedTest extends junit.framework.TestCase {
                     h2.setDone(true);
                     
                     logger.debug("Ended thread #2");
-                } catch (ServiceException e) {
-                    e.printStackTrace();
-                } catch (LoginException e) {
-                    e.printStackTrace();
+                    
                 } catch (ModelException e) {
                     e.printStackTrace();
                 }
