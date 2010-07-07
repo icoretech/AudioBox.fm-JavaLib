@@ -543,7 +543,7 @@ public class User extends ModelItem {
      */
     public String[] getUploadedTracks() throws ServiceException, LoginException {
         
-        String[] result = this.getConnector().execute(Tracks.END_POINT, null, null, this, HttpGet.METHOD_NAME, AudioBoxConnector.TEXT_FORMAT);
+        String[] result = this.getConnector().execute(Tracks.END_POINT, null, null, this, HttpGet.METHOD_NAME, AudioBoxConnector.TEXT_FORMAT, false);
         String response = result[ AudioBoxConnector.RESPONSE_BODY ];
         
         result = response.split( ";" , response.length() );

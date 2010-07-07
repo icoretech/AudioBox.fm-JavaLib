@@ -23,7 +23,11 @@
 package fm.audiobox.core.models;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -115,6 +119,8 @@ public class Track extends ModelItem {
     protected String originalFileName;
     protected Artist artist;
     protected Album album;
+    
+    protected FileOutputStream fileOutputStream;
 
 
     // Utility fields
@@ -626,6 +632,19 @@ public class Track extends ModelItem {
         String[] result = this.getConnector().execute( this.pEndPoint, this.getUuid(), null, this, HttpDelete.METHOD_NAME);
         return HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
     }
+    
+    
+    /**
+     * <p>Download track and put binary data into given {@link FileOutputStream}.
+     * 
+     * @param fos the FileOutputStream to write binary data into
+     * @throws ServiceException	if any connection problem to AudioBox.fm occurs.
+     * @throws LoginException if any authentication problem during the request occurs.
+     */
+    public void download(final FileOutputStream fos) throws ServiceException, LoginException {
+    	this.fileOutputStream = fos;
+    	this.getConnector().execute( this.pEndPoint, this.getUuid(), STREAM_ACTION, this, null, true);
+    }
 
     /**
      * Download this track from AudioBox.fm
@@ -713,6 +732,44 @@ public class Track extends ModelItem {
     /* --------- */
     /* Overrides */
     /* --------- */
+    
+    /**
+     * This method is used to parse the binary content of HTTP response.
+     * 
+     * <p>
+     * 
+     * Returns an empty string by default.
+     *
+     * @param input the {@link HttpEntity} content
+     * @param contentLength the Content-Length header value of response
+     * 
+     * @return an empty string by default
+     * 
+     * @throws IOException if the parse process fails for some reasons.
+     */
+    public String parseBinaryResponse( InputStream input, long contentLength ) throws IOException {
+    	if ( this.fileOutputStream == null )
+    		throw new IOException("No such output stream");
+    	
+    	final int CHUNK = 4096;
+    	
+    	try{
+	    	
+    		int read;
+	    	byte[] bytes = new byte[CHUNK];
+	    	
+	    	while( (read=input.read(bytes)) != -1   )
+	    		this.fileOutputStream.write(bytes, 0, read);
+	    	
+	    	
+	    	this.fileOutputStream.flush();
+	    	
+    	} finally {
+    		this.fileOutputStream.close();
+    	}
+    	
+    	return "";
+    }
     
 
     /** {@inheritDoc} */
