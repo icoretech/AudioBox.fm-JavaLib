@@ -237,7 +237,6 @@ public class Track extends ModelItem {
 
     
     
-    
     /**
      * <p>Setter for the track duration: used by the parser.</p>
      *
@@ -391,14 +390,32 @@ public class Track extends ModelItem {
 
 
     /**
-     * <p>Setter for the year of the track: used by the parser.</p>
+     * This method is used by the parser. Please use {@link Track#setYear(int)} instead.
+     * 
+     * <p>
+     * 
+     * Setter for the year of the track: used by the parser.
      *
      * @param year the String representing the year of the track.
      */
+    @Deprecated
     public void setYear(String year) {
-        this.year = Integer.parseInt( year );
+        this.setYear( Integer.parseInt( year ) );
     }
 
+    /**
+     * This method is used by the parser. Please use {@link Track#setYear(int)} instead.
+     * 
+     * <p>
+     * 
+     * Setter for the year of the track: used by the parser.
+     *
+     * @param year the String representing the year of the track.
+     */
+    public void setYear(int year) {
+        this.year = year;
+    }
+    
     /**
      * <p>Getter for the track's year.</p>
      *
@@ -471,12 +488,26 @@ public class Track extends ModelItem {
 
     
     /**
-     * <p>Setter for the track's duration in seconds: used by the parser.</p>
+     * This method is used by the parser. Please use {@link Track#setDurationInSeconds(long)} instead.
+     * 
+     * <p>
+     * 
+     * Setter for the track's duration in seconds: used by the parser.
      *
      * @param durationInSeconds the String representing the number of seconds of the track's duration
      */
+    @Deprecated
     public void setDurationInSeconds(String durationInSeconds) {
-        this.durationInSeconds = Long.parseLong( durationInSeconds );
+        this.setDurationInSeconds( Long.parseLong( durationInSeconds ) );
+    }
+    
+    /**
+     * Setter for the track's duration in seconds.
+     *
+     * @param durationInSeconds the String representing the number of seconds of the track's duration
+     */
+    public void setDurationInSeconds(long durationInSeconds) {
+        this.durationInSeconds = durationInSeconds;
     }
 
     /**
