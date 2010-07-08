@@ -237,7 +237,6 @@ public class Track extends ModelItem {
 
     
     
-    
     /**
      * <p>Setter for the track duration: used by the parser.</p>
      *

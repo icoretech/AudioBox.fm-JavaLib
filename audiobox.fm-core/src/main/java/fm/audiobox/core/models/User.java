@@ -371,19 +371,6 @@ public class User extends ModelItem {
         return tr;
     }
 
-
-    /**
-     * Instantiates a new Track. This method is used to upload a track
-     * 
-     * @return
-     * @throws ServiceException
-     * @throws LoginException
-     * @throws ModelException
-     */
-    public Track newTrack() throws ServiceException, LoginException, ModelException {
-    	return (Track) AudioBoxClient.getModelInstance( AudioBoxClient.NEW_TRACK_KEY , this.getConnector() );
-    }
-    
     
     
     /**
@@ -568,6 +555,26 @@ public class User extends ModelItem {
         return this.md5Hashes;
     }
 
+    
+    /* -------------------- */
+    /* New collection items */
+    /* -------------------- */
+    
+    
+    /**
+     * Instantiates a new Track. This method is used to upload a track
+     * 
+     * @return
+     * @throws ServiceException
+     * @throws LoginException
+     * @throws ModelException
+     */
+    public Track newTrack() throws ServiceException, LoginException, ModelException {
+        return (Track) AudioBoxClient.getModelInstance( AudioBoxClient.NEW_TRACK_KEY , this.getConnector() );
+    }
+    
+    
+    
 
     /* --------- */
     /* Overrides */

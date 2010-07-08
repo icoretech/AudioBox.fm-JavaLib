@@ -90,7 +90,7 @@ public abstract class ModelItem extends Model {
      */
     public Tracks getTracks(boolean async) throws ModelException {
         this.mTracks = (Tracks) AudioBoxClient.getModelInstance(AudioBoxClient.TRACKS_KEY, this.getConnector());
-        Thread t = populateCollection( this.mTracks );
+        Thread t = populateCollection( this.getEndPoint(), this.mTracks );
         if (async)
             t.start();
         else
@@ -121,7 +121,7 @@ public abstract class ModelItem extends Model {
      * @param endpoint the collection API end point to make request to 
      * @param collection the collection ({@link ModelsCollection}) to populate
      */
-    private Thread populateCollection( final ModelsCollection collection ) {
+    private Thread populateCollection( final String endpoint, final ModelsCollection collection ) {
 
         // Final reference to user object
         final ModelItem mi = this;
@@ -130,7 +130,7 @@ public abstract class ModelItem extends Model {
 
             public void run() {
                 try {
-                    mi.getConnector().execute(Tracks.END_POINT, mi.getToken(), null, collection, null);
+                    mi.getConnector().execute(endpoint, mi.getToken(), null, collection, null);
                 } catch (ServiceException e) {
                     e.printStackTrace();
                 } catch (LoginException e) {
