@@ -371,23 +371,6 @@ public class User extends ModelItem {
         t.refresh();
         return t;
     }
-
-<<<<<<< HEAD
-
-    /**
-     * Instantiates a new Track. Usually this method is used to upload a track
-     * 
-     * @return
-     * @throws ServiceException
-     * @throws LoginException
-     * @throws ModelException
-     */
-    public Track newTrack() throws ServiceException, LoginException, ModelException {
-    	return (Track) AudioBoxClient.getModelInstance( AudioBoxClient.NEW_TRACK_KEY , this.getConnector() );
-    }
-    
-=======
->>>>>>> master
     
     
     /**
