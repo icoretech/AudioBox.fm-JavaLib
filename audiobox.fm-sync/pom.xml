@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>components</artifactId>
 		<groupId>fm.audiobox</groupId>
-		<version>1.0</version>
+		<version>1.1-SNAPSHOT</version>
 	</parent>
 
 	<groupId>fm.audiobox</groupId>
@@ -12,7 +12,7 @@
 	<name>sync</name>
 	<packaging>jar</packaging>
 
-	<version>1.0</version>
+	<version>1.1-SNAPSHOT</version>
 	<description>AudioBox.fm JavaLib sync is inteded to be used for syncing tools.</description>
 	<url>http://maven.keytwo.net/sync</url>
 
@@ -32,7 +32,7 @@
 		<dependency>
 			<groupId>fm.audiobox</groupId>
 			<artifactId>audiobox.fm-core</artifactId>
-			<version>1.0</version>
+			<version>1.1-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
