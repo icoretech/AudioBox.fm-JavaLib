@@ -75,6 +75,7 @@ import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.entity.HttpEntityWrapper;
 import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
@@ -548,7 +549,9 @@ public class AudioBoxClient {
                         request.addHeader("Accept-Encoding", "gzip");
                     }
                     request.addHeader("User-Agent", mUserAgent);
-                    request.addHeader( mScheme.authenticate(mCredentials,  request) );
+                    Header hostHeader = request.getFirstHeader("HOST");
+                    if ( hostHeader.getValue().equals( HOST ) )
+                        request.addHeader( mScheme.authenticate(mCredentials,  request) );
                 }
 
             });
@@ -729,7 +732,7 @@ public class AudioBoxClient {
 
             httpVerb = httpVerb == null ? HttpGet.METHOD_NAME : httpVerb;
 
-            if (HttpGet.METHOD_NAME.equals(httpVerb) )
+            if ( HttpGet.METHOD_NAME.equals(httpVerb) )
                 url += "." + format;
             return request( url, target, httpVerb, followRedirects );
         }
@@ -806,9 +809,12 @@ public class AudioBoxClient {
                 }
 
                 if (method instanceof HttpPost && target instanceof Track) {
-                    MultipartEntity reqEntity = new MultipartEntity();
-                    reqEntity.addPart(Track.HTTP_PARAM, ((Track) target).getFileBody());
-                    ( (HttpPost) method).setEntity( reqEntity );
+                    FileBody fb = ((Track) target).getFileBody();
+                    if (fb != null ) {
+                        MultipartEntity reqEntity = new MultipartEntity();
+                        reqEntity.addPart(Track.HTTP_PARAM, fb);
+                        ( (HttpPost) method).setEntity( reqEntity );
+                    }
                 }
 
                 this.mClient.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, followRedirects);

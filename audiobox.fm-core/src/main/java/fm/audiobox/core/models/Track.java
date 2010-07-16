@@ -99,7 +99,7 @@ public class Track extends ModelItem {
     private static final String SCROBBLE_ACTION = "scrobble";
     private static final String LOVE_ACTION = "love";
     private static final String UNLOVE_ACTION = "unlove";
-    
+
     // Customized fields
     private String uuid;
     private File file;
@@ -118,7 +118,7 @@ public class Track extends ModelItem {
     protected String originalFileName;
     protected Artist artist;
     protected Album album;
-    
+
     protected FileOutputStream fileOutputStream;
 
 
@@ -142,16 +142,16 @@ public class Track extends ModelItem {
     public enum State { 
         /** Idle state: track is ready for any action. It is equivalent to "Stopped". */
         IDLE, 
-        
+
         /** Playing state: the track is being played. */
         PLAYING, 
-        
+
         /** Error state: any error occurred while trying to playing the track. */
         ERROR, 
-        
+
         /** Buffering state: track is currently downloading. */
         BUFFERING, 
-        
+
         /** Paused state: track has been paused. */
         PAUSED
     }
@@ -200,7 +200,7 @@ public class Track extends ModelItem {
      */
     public String getUuid() {
 
-        if (this.uuid == null) {
+        if (this.uuid == null && this.streamUrl != null) {
             String	regex = "^" + pConnector.getApiPath().replace(".", "\\.") + PATH + "/([^\\s]+)/stream$";
             java.util.regex.Matcher m = java.util.regex.Pattern.compile(regex).matcher(streamUrl);
             m.find();
@@ -235,8 +235,8 @@ public class Track extends ModelItem {
         return file;
     }
 
-    
-    
+
+
     /**
      * <p>Setter for the track duration: used by the parser.</p>
      *
@@ -274,9 +274,9 @@ public class Track extends ModelItem {
     public String getTitle() {
         return title;
     }
-    
-    
-    
+
+
+
     /**
      * <p>Setter for the track number: used by the parser.</p>
      *
@@ -415,7 +415,7 @@ public class Track extends ModelItem {
     public void setYear(int year) {
         this.year = year;
     }
-    
+
     /**
      * <p>Getter for the track's year.</p>
      *
@@ -466,7 +466,7 @@ public class Track extends ModelItem {
     }
 
 
-    
+
     /**
      * <p>Setter for the track's orginal file name: used by the parser.</p>
      * 
@@ -475,7 +475,7 @@ public class Track extends ModelItem {
     public void setOriginalFileName(String fileName) {
         this.originalFileName = fileName;
     }
-    
+
     /**
      * <p>Getter for the original track's file name</p>
      * 
@@ -484,9 +484,9 @@ public class Track extends ModelItem {
     public String getOriginalFileName() {
         return this.originalFileName;
     }
-    
 
-    
+
+
     /**
      * This method is used by the parser. Please use {@link Track#setDurationInSeconds(long)} instead.
      * 
@@ -500,7 +500,7 @@ public class Track extends ModelItem {
     public void setDurationInSeconds(String durationInSeconds) {
         this.setDurationInSeconds( Long.parseLong( durationInSeconds ) );
     }
-    
+
     /**
      * Setter for the track's duration in seconds.
      *
@@ -569,8 +569,8 @@ public class Track extends ModelItem {
     public FileBody getFileBody(){
         return this.fileBody;
     }
-    
-    
+
+
     /* -------------- */
     /* Remote Actions */
     /* -------------- */
@@ -662,8 +662,8 @@ public class Track extends ModelItem {
         String[] result = this.getConnector().execute( this.pEndPoint, this.getUuid(), null, this, HttpDelete.METHOD_NAME);
         return HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
     }
-    
-    
+
+
     /**
      * <p>Download track and put binary data into given {@link FileOutputStream}.
      * 
@@ -673,11 +673,11 @@ public class Track extends ModelItem {
      * @throws LoginException if any authentication problem during the request occurs.
      */
     public void download(final FileOutputStream fos) throws ServiceException, LoginException {
-    	this.fileOutputStream = fos;
-    	this.getConnector().execute( this.pEndPoint, this.getUuid(), DOWNLOAD_ACTION, this, null, true);
+        this.fileOutputStream = fos;
+        this.getConnector().execute( this.pEndPoint, this.getUuid(), DOWNLOAD_ACTION, this, null, true);
     }
 
-    
+
     /**
      * <p>Upload the track to AudioBox.fm</p>
      * 
@@ -688,8 +688,22 @@ public class Track extends ModelItem {
      * @throws LoginException if any authentication problem during the request occurs.
      */
     public void upload() throws IOException ,ServiceException, LoginException { }
-    
-    
+
+
+
+
+
+
+    public boolean refresh() throws ServiceException, LoginException {
+        boolean result = false;
+        if ( this.getUuid() != null ){
+            String[] responses = this.pConnector.execute( this.pEndPoint, this.getUuid(), null, this, null);
+            result = HttpStatus.SC_OK == Integer.parseInt( responses[ AudioBoxConnector.RESPONSE_CODE ] );
+        }
+        return result;
+    }
+
+
     /* ----- */
     /* State */
     /* ----- */
@@ -756,7 +770,7 @@ public class Track extends ModelItem {
     /* --------- */
     /* Overrides */
     /* --------- */
-    
+
     /**
      * This method is used to parse the binary content of HTTP response.
      * 
@@ -772,30 +786,30 @@ public class Track extends ModelItem {
      */
     @Override
     public String parseBinaryResponse( HttpResponse response ) throws IOException {
-    	
-    	InputStream input = response.getEntity().getContent();
-    	
-    	if ( this.fileOutputStream == null )
-    		throw new IOException("No such output stream");
-    		
-    	try {
-	    	
-    		int read;
-	    	byte[] bytes = new byte[CHUNK];
-	    	
-	    	while( (read = input.read(bytes)) != -1   )
-	    		this.fileOutputStream.write(bytes, 0, read);
-	    	
-	    	
-	    	this.fileOutputStream.flush();
-	    	
-    	} finally {
-    		this.fileOutputStream.close();
-    	}
-    	
-    	return super.parseBinaryResponse(response);
+
+        InputStream input = response.getEntity().getContent();
+
+        if ( this.fileOutputStream != null ) {
+
+            try {
+
+                int read;
+                byte[] bytes = new byte[CHUNK];
+
+                while( (read = input.read(bytes)) != -1   )
+                    this.fileOutputStream.write(bytes, 0, read);
+
+
+                this.fileOutputStream.flush();
+
+            } finally {
+                this.fileOutputStream.close();
+            }
+        }
+
+        return super.parseBinaryResponse(response);
     }
-    
+
 
     /** {@inheritDoc} */
     @Override

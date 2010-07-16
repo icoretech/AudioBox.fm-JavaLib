@@ -17,7 +17,7 @@ import fm.audiobox.sync.test.mocks.fixtures.Fixtures;
 /**
  * Unit test for simple App.
  */
-public class AppTest extends junit.framework.TestCase {
+public class UploadTest extends junit.framework.TestCase {
     
     Fixtures fx = new Fixtures(); 
 
@@ -42,7 +42,7 @@ public class AppTest extends junit.framework.TestCase {
             User user = abc.login( fx.get( Fixtures.LOGIN), fx.get(Fixtures.RIGHT_PASS) );
             assertNotNull( user );
             
-            File f = new File( fx.get( Fixtures.TEST_FILE ) );
+            File f = new File( fx.get( Fixtures.UPLOAD_TEST_FILE ) );
             assertNotNull( f );
             assertTrue( f.exists() );
             
