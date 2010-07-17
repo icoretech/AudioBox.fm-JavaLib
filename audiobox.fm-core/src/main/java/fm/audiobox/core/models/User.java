@@ -564,7 +564,7 @@ public class User extends ModelItem {
     /**
      * Instantiates a new Track. This method is used to upload a track
      * 
-     * @return
+     * @return a new {@link Track} instance
      * @throws ServiceException
      * @throws LoginException
      * @throws ModelException

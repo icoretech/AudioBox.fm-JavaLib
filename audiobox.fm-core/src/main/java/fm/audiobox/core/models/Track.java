@@ -227,7 +227,7 @@ public class Track extends ModelItem {
      * 
      * <p>
      * 
-     * This field is populated if a {@link Track#download(String)} is succesfully performed.
+     * This field is populated if a {@link Track#download(FileOutputStream)} is succesfully performed.
      * 
      * @return the file of this track.
      */
