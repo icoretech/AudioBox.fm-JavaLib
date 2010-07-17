@@ -787,10 +787,10 @@ public class Track extends ModelItem {
     @Override
     public String parseBinaryResponse( HttpResponse response ) throws IOException {
 
-        InputStream input = response.getEntity().getContent();
-
         if ( this.fileOutputStream != null ) {
-
+            
+            InputStream input = response.getEntity().getContent();
+            
             try {
 
                 int read;
