@@ -61,7 +61,9 @@ public class MD5 extends AsyncTask {
             byte[] bytes = digest.digest();
             this.result = "";
             for ( byte _byte : bytes ){
-                this.result += Integer.toHexString(0xFF & _byte);
+            	String _code = Integer.toHexString(0xFF & _byte);
+            	if (_code.length() < 2) _code = "0" + _code;
+                this.result += _code;
             }
 
         } catch ( NoSuchAlgorithmException nsae ) {
