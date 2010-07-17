@@ -17,7 +17,7 @@ public class MD5 extends AsyncTask {
 
     private File _file = null;
     private static final int CHUNK = 8192;
-    private String result = null;
+    private String result = "";
 
     private static Log log = LogFactory.getLog( MD5.class );
 
@@ -29,10 +29,17 @@ public class MD5 extends AsyncTask {
     @Override
     protected synchronized void doTask() {
 
+    	FileInputStream fis = null;
+		try {
+			fis = new FileInputStream( this._file );
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return;
+		}
+    	
         try {
             MessageDigest digest = MessageDigest.getInstance("MD5");
 
-            FileInputStream fis = new FileInputStream( this._file );
             long file_length = this._file.length();
             long completed = 0;
 
@@ -67,11 +74,17 @@ public class MD5 extends AsyncTask {
             }
 
         } catch ( NoSuchAlgorithmException nsae ) {
-            log.error( nsae );
+            log.error( "NoSuchAlgorithm for file: " + this._file.getPath() , nsae );
         } catch ( FileNotFoundException fnfe ) {
-            log.error( fnfe );
+        	log.error( "FileNotFound for file: " + this._file.getPath() , fnfe );
         } catch ( IOException ioe ) {
-            log.error( ioe );
+        	log.error( "IO for file: " + this._file.getPath() , ioe );
+        } finally {
+        	try {
+				fis.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
         }
 
     }
