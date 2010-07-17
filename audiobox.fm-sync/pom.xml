@@ -14,7 +14,7 @@
 
 	<version>1.2-SNAPSHOT</version>
 	<description>AudioBox.fm JavaLib sync is inteded to be used for syncing tools.</description>
-	<url>http://maven.keytwo.net/sync</url>
+	<url>http://maven.keytwo.net/audiobox.fm-sync</url>
 
 	<reporting>
 		<plugins>
