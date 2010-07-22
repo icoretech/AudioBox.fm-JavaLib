@@ -222,16 +222,21 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
     public final String parseResponse( HttpResponse response ) throws IOException {
 
         Header contentType = response.getEntity().getContentType();
-        
+        String rsp = "";
         if ( contentType.getValue().contains(AudioBoxConnector.XML_FORMAT) )
-            return this.parseXMLResponse( response.getEntity().getContent() );
+            rsp = this.parseXMLResponse( response.getEntity().getContent() );
 
         else if ( contentType.getValue().contains( AudioBoxConnector.TEXT_CONTENT_TYPE )  )
-            return this.parsePlainResponse( response.getEntity().getContent() );
+            rsp = this.parsePlainResponse( response.getEntity().getContent() );
         
         else
-        	return this.parseBinaryResponse( response );
+        	rsp = this.parseBinaryResponse( response );
 
+        HttpEntity ent = response.getEntity();
+        if (ent != null)
+            ent.consumeContent();
+        
+        return rsp;
     }
 
     /**
