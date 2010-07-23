@@ -227,7 +227,7 @@ public class Track extends ModelItem {
      * 
      * <p>
      * 
-     * This field is populated if a {@link Track#download(String)} is succesfully performed.
+     * This field is populated if a {@link Track#download(FileOutputStream)} is succesfully performed.
      * 
      * @return the file of this track.
      */
@@ -787,10 +787,10 @@ public class Track extends ModelItem {
     @Override
     public String parseBinaryResponse( HttpResponse response ) throws IOException {
 
-        InputStream input = response.getEntity().getContent();
-
         if ( this.fileOutputStream != null ) {
-
+            
+            InputStream input = response.getEntity().getContent();
+            
             try {
 
                 int read;
