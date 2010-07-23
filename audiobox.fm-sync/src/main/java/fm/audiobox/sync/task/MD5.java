@@ -44,6 +44,7 @@ public class MD5 extends AsyncTask {
             long completed = 0;
 
             while ( true ){
+            	if ( this.isStopped() ) return;
 
                 byte[] bytes = new byte[ CHUNK ];
 

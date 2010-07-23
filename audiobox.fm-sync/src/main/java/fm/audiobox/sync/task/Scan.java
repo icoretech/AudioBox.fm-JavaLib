@@ -23,7 +23,7 @@ public class Scan extends AsyncTask {
 	public Scan( File folder, boolean recursive , boolean hidden ){
 		this._folder = folder;
 		this._recursive = recursive;
-    this._hidden = hidden;
+		this._hidden = hidden;
 		
 		this.setFilter( new FileFilter() {
 			
@@ -31,7 +31,7 @@ public class Scan extends AsyncTask {
 			public boolean accept(File pathname) {
 				
 				if ( ! pathname.canRead() ) return false;
-        if ( pathname.isHidden() && ! _hidden ) return false;
+				if ( pathname.isHidden() && ! _hidden ) return false;
 				
 				if ( pathname.isDirectory() && ! _recursive ) return false;
 				
@@ -70,6 +70,7 @@ public class Scan extends AsyncTask {
 	private void _startScan( File folder ){
 		File[] files = folder.listFiles( this._ff );
 		for ( File file : files ){
+			if ( this.isStopped() ) return;
 			if ( file.isDirectory() ){
 				this._startScan( file );
 				continue;
