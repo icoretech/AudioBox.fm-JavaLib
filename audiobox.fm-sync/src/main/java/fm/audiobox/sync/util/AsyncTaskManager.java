@@ -64,7 +64,7 @@ public class AsyncTaskManager {
         this.current_thread_index++;
 
         AsyncTask item = this._threads.get(this.current_thread_index);
-        Thread thread = new Thread( item );
+        Thread thread = this.createThread(item);
 
         thread.start();
         this.started_thread++;
@@ -81,6 +81,8 @@ public class AsyncTaskManager {
 
     }
 
-
+    protected Thread createThread( AsyncTask item ) {
+        return new Thread(item);
+    }
 
 }
