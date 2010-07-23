@@ -57,6 +57,7 @@ public class AsyncTaskManager {
 
     private synchronized void _start(){
 
+    	if ( this._threads == null ) return;
         if ( this.started_thread == this.max_threads ) return;
         if ( (this.current_thread_index+1) >= this._threads.size() ) return;
 
