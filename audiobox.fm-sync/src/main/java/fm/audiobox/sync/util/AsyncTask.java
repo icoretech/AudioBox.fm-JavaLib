@@ -10,6 +10,7 @@ public abstract class AsyncTask implements Runnable {
 
     protected Map<String, Object> properties = new HashMap<String,Object>();
     private AsyncTaskManager threadManager = null;
+    private boolean stopped = false;
 
     private ThreadListener threadListener = new ThreadListener() {
         @Override
@@ -20,6 +21,9 @@ public abstract class AsyncTask implements Runnable {
 
         @Override
         public void onComplete(AsyncTask result , Object item) {}
+        
+        @Override
+        public void onStop(AsyncTask task) {}
     };
 
 
@@ -49,19 +53,33 @@ public abstract class AsyncTask implements Runnable {
 
     @Override
     public final void run() {
+    	this.stopped = false;
         this.threadManager.onStart( this );
         if ( this.threadListener.onStart( this ) ){
             this.start();
 
             this.doTask();
 
-            Object result = this.end();
-            this.threadListener.onComplete(this, result);
+            
+            if ( this.stopped )
+            	this.threadListener.onStop(this);
+            else {
+	            Object result = this.end();
+	            this.threadListener.onComplete(this, result);
+            }
         } else
             this.threadListener.onComplete(this, null);
 
         this.threadManager.onComplete( this );
 
+    }
+    
+    public final void stop(){
+    	this.stopped = true;
+    }
+    
+    public final boolean isStopped(){
+    	return this.stopped;
     }
 
 
