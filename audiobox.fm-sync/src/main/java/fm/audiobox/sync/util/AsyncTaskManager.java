@@ -55,7 +55,7 @@ public class AsyncTaskManager {
         }
     }
 
-    private synchronized void _start(){
+    private void _start(){
 
     	if ( this._threads == null ) return;
         if ( this.started_thread == this.max_threads ) return;
@@ -71,13 +71,13 @@ public class AsyncTaskManager {
 
     }
 
-    public synchronized void onComplete(AsyncTask item) {
+    public void onComplete(AsyncTask item) {
         this.started_thread--;
         this._start();
     }
 
 
-    public synchronized void onStart(AsyncTask item) {
+    public  void onStart(AsyncTask item) {
 
     }
 
