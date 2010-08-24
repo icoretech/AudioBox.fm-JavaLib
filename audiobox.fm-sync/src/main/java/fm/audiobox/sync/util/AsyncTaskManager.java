@@ -151,7 +151,7 @@ public class AsyncTaskManager {
     }
     
 
-    public synchronized void  onComplete(AsyncTask item) {
+    public synchronized void onComplete(AsyncTask item) {
         this.started_thread--;
         
         if ( (this.current_thread_index+1) >= this._threads.size() ){
