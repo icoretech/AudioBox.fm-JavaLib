@@ -673,6 +673,24 @@ public class AudioBoxClient {
         public String[] execute(String path, String token, String action , Model target, String httpVerb) throws LoginException , ServiceException {
             return execute(path, token, action, target, httpVerb, false);
         }
+        
+        
+        
+        
+        public HttpRequestBase createConnectionMethod(String path, String token, String action , Model target, String httpVerb) {
+        	token = ( ( token == null ) ? "" : token.startsWith("/") ? token : "/".concat(token) ).trim();
+            action = ( ( action == null ) ? "" : action.startsWith("/") ? action : "/".concat(action) ).trim();
+
+            // Replace the placeholder with right values
+            String url = sApiPath.replace( PATH_PARAMETER , path ).replace( TOKEN_PARAMETER , token ).replace( ACTION_PARAMETER , action ); 
+
+            httpVerb = httpVerb == null ? HttpGet.METHOD_NAME : httpVerb;
+
+            if ( HttpGet.METHOD_NAME.equals(httpVerb) )
+                url += "." + XML_FORMAT;
+            
+            return this.createConnectionMethod(url, target, httpVerb);
+        }
 
         /**
          * This method is used by the {@link Model} class.<br/>
@@ -763,7 +781,34 @@ public class AudioBoxClient {
         /* --------------- */
         /* Private methods */
         /* --------------- */
+        
+        
+        private HttpRequestBase createConnectionMethod(String url, Model target, String httpVerb) {
+        	HttpRequestBase method = null; 
+            if ( HttpPost.METHOD_NAME.equals( httpVerb ) ) {
+                method = new HttpPost(url);
+            } else if ( HttpPut.METHOD_NAME.equals( httpVerb ) ) {
+                method = new HttpPut(url);
+            } else if ( HttpDelete.METHOD_NAME.equals( httpVerb ) ) {
+                method = new HttpDelete(url);
+            } else {
+                method = new HttpGet(url);
+            }
 
+            if (method instanceof HttpPost && target instanceof Track) {
+                FileBody fb = ((Track) target).getFileBody();
+                if (fb != null ) {
+                    MultipartEntity reqEntity = new MultipartEntity();
+                    reqEntity.addPart(Track.HTTP_PARAM, fb);
+                    ( (HttpPost) method).setEntity( reqEntity );
+                }
+            }
+
+            log.debug("Requesting resource: " + url);
+        	
+        	return method;
+        }
+        
 
         /**
          * This method is used to performs requests to AudioBox.fm service APIs.<br/>
@@ -791,38 +836,77 @@ public class AudioBoxClient {
 
         private String[] request(String url, Model target, String httpVerb, boolean followRedirects) throws LoginException, ServiceException {
 
-            if (mUser == null)
+            HttpRequestBase method = this.createConnectionMethod(url, target, httpVerb);
+            
+            return this.request( method, target, followRedirects);
+            
+//            try {
+//
+//                HttpRequestBase method = null; 
+//                if ( HttpPost.METHOD_NAME.equals( httpVerb ) ) {
+//                    method = new HttpPost(url);
+//                } else if ( HttpPut.METHOD_NAME.equals( httpVerb ) ) {
+//                    method = new HttpPut(url);
+//                } else if ( HttpDelete.METHOD_NAME.equals( httpVerb ) ) {
+//                    method = new HttpDelete(url);
+//                } else {
+//                    method = new HttpGet(url);
+//                }
+//
+//                if (method instanceof HttpPost && target instanceof Track) {
+//                    FileBody fb = ((Track) target).getFileBody();
+//                    if (fb != null ) {
+//                        MultipartEntity reqEntity = new MultipartEntity();
+//                        reqEntity.addPart(Track.HTTP_PARAM, fb);
+//                        ( (HttpPost) method).setEntity( reqEntity );
+//                    }
+//                }
+//
+//                this.mClient.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, followRedirects);
+//
+//                log.debug("Requesting resource: " + url);
+//                
+//                return mClient.execute(method, target, new BasicHttpContext());
+//
+//            } catch( ClientProtocolException e ) {
+//
+//                try {
+//                    // LoginException is not handled by the response handler
+//                    int status = Integer.parseInt(e.getMessage());
+//                    if ( status == HttpStatus.SC_UNAUTHORIZED ) {
+//                        throw new LoginException("Unauthorized user", status);
+//                    }
+//
+//                } catch(NumberFormatException ex) { /* Response is a real ClientProtocolException */ }
+//
+//                throw new ServiceException( "Client protocol exception: " + e.getMessage(), ServiceException.CLIENT_ERROR );
+//
+//            } catch( SocketTimeoutException e ) {
+//                throw new ServiceException( "Service does not respond: " + e.getMessage(), ServiceException.TIMEOUT_ERROR );
+//
+//            } catch( ServiceException e ) {
+//                // Bypass IOException 
+//                throw e;
+//
+//            } catch( IOException e ) {
+//                throw new ServiceException( "IO exception: " + e.getMessage(), ServiceException.SOCKET_ERROR );
+//            } 
+        }
+        
+        
+        public String[] request(HttpRequestBase method, Model target, boolean followRedirects) throws LoginException, ServiceException {
+        	
+        	if (mUser == null)
                 throw new LoginException("Cannot execute API actions without credentials.", LoginException.NO_CREDENTIALS);
+        	
+        	this.mClient.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, followRedirects);
 
-
+            log.debug("Requesting resource: " + method.getURI() );
+            
             try {
-
-                HttpRequestBase method = null; 
-                if ( HttpPost.METHOD_NAME.equals( httpVerb ) ) {
-                    method = new HttpPost(url);
-                } else if ( HttpPut.METHOD_NAME.equals( httpVerb ) ) {
-                    method = new HttpPut(url);
-                } else if ( HttpDelete.METHOD_NAME.equals( httpVerb ) ) {
-                    method = new HttpDelete(url);
-                } else {
-                    method = new HttpGet(url);
-                }
-
-                if (method instanceof HttpPost && target instanceof Track) {
-                    FileBody fb = ((Track) target).getFileBody();
-                    if (fb != null ) {
-                        MultipartEntity reqEntity = new MultipartEntity();
-                        reqEntity.addPart(Track.HTTP_PARAM, fb);
-                        ( (HttpPost) method).setEntity( reqEntity );
-                    }
-                }
-
-                this.mClient.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, followRedirects);
-
-                log.debug("Requesting resource: " + url);
-
-                return mClient.execute(method, target, new BasicHttpContext());
-
+            
+            	return mClient.execute(method, target, new BasicHttpContext());
+            	
             } catch( ClientProtocolException e ) {
 
                 try {
@@ -845,8 +929,9 @@ public class AudioBoxClient {
 
             } catch( IOException e ) {
                 throw new ServiceException( "IO exception: " + e.getMessage(), ServiceException.SOCKET_ERROR );
-            } 
+            }
         }
+        
 
 
         /**
