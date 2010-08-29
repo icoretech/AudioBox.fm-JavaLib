@@ -80,6 +80,7 @@ import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
@@ -522,16 +523,28 @@ public class AudioBoxClient {
 
             this.mAudioBoxRoute = new HttpRoute(new HttpHost(this.getHost(), Integer.parseInt(PORT)));
 
+
+            buildClient();
+        }
+        
+
+        /**
+         * This method is used to build the HttpClient to use for connections
+         */
+        private void buildClient() {
+            
             SchemeRegistry schemeRegistry = new SchemeRegistry();
             schemeRegistry.register( new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
             schemeRegistry.register( new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
-
+            
             HttpParams params = new BasicHttpParams();
             //params.setParameter(ClientPNames.HANDLE_REDIRECTS, false);
-
+            HttpConnectionParams.setConnectionTimeout(params, 10000);
+            HttpConnectionParams.setSoTimeout(params, 10000);
+            
             this.mCm = new ThreadSafeClientConnManager(params, schemeRegistry);
             this.mClient = new DefaultHttpClient( this.mCm, params );
-
+            
             // Increase max total connection to 200
             ConnManagerParams.setMaxTotalConnections(params, 200);
 
@@ -585,6 +598,16 @@ public class AudioBoxClient {
                     }
                 }
             });
+            
+        }
+        
+        
+        /**
+         * This method is used to close all connections and reinstantiate the HttpClient.
+         */
+        public void abortAll() {
+            this.mCm.shutdown();
+            buildClient();
         }
 
 
