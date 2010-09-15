@@ -539,8 +539,8 @@ public class AudioBoxClient {
             
             HttpParams params = new BasicHttpParams();
             //params.setParameter(ClientPNames.HANDLE_REDIRECTS, false);
-            HttpConnectionParams.setConnectionTimeout(params, 10000);
-            HttpConnectionParams.setSoTimeout(params, 10000);
+            HttpConnectionParams.setConnectionTimeout(params, 30 * 1000);
+            HttpConnectionParams.setSoTimeout(params, 30 * 1000);
             
             this.mCm = new ThreadSafeClientConnManager(params, schemeRegistry);
             this.mClient = new DefaultHttpClient( this.mCm, params );

@@ -17,8 +17,10 @@ import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Albums;
 import fm.audiobox.core.models.Artists;
 import fm.audiobox.core.models.Genres;
+import fm.audiobox.core.models.Plan;
 import fm.audiobox.core.models.Playlists;
 import fm.audiobox.core.models.Profile;
+import fm.audiobox.core.models.Subscription;
 import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 import fm.audiobox.core.test.mocks.models.User;
 
@@ -83,6 +85,23 @@ public class UserTest extends junit.framework.TestCase {
             assertNull( p.getToken() );
             
             
+            Subscription s = user.getSubscription();
+            assertNotNull( s.getCreatedAt() );
+            assertEquals( s.getPlanName(), "ultra" );
+            assertNotNull( s.getPlan() );
+            
+            Plan plan = s.getPlan();
+            assertTrue( plan.hasDownload() );
+            assertTrue( plan.hasDropbox() );
+            assertTrue( plan.hasLibraryManager() );
+            assertTrue( plan.hasMarketplace() );
+            assertTrue( plan.hasMobile() );
+            assertTrue( plan.hasMultiformat() );
+            assertTrue( plan.hasSocial() );
+            assertTrue( plan.hasThirdParty() );
+            assertTrue( plan.hasWebPlayer() );
+            assertTrue( plan.hasYoutubeChannel() );
+            
         } catch (ServiceException e) {
             e.printStackTrace();
         } catch (LoginException e) {
@@ -141,7 +160,7 @@ public class UserTest extends junit.framework.TestCase {
             loginInactiveUser();
             assertFalse( ! User.ACTIVE_STATE.equals( user.getState() ) ); // Make test fails
         } catch (LoginException e) {
-            assertEquals( LoginException.INACTIVE_USER_STATE, e.getErrorCode() );
+            assertEquals( HttpStatus.SC_UNAUTHORIZED, e.getErrorCode() );
         } catch (SocketException e) {
             e.printStackTrace();
         } catch (ModelException e) {

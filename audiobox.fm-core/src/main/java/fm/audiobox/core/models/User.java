@@ -63,6 +63,22 @@ import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
  *      <real-name>Real User Name</real-name>
  *      <time-zone>New York</time-zone>
  *   </profile>
+ *   <subscription>
+ *      <created-at type="datetime">2010-02-12T15:43:21+01:00</created-at>
+ *      <plan-name>ultra</plan-name>
+ *      <plan>
+ *          <feat-third-party type="boolean">true</feat-third-party>
+ *          <feat-youtube-channel type="boolean">true</feat-youtube-channel>
+ *          <feat-mobile type="boolean">true</feat-mobile>
+ *          <feat-web-player type="boolean">true</feat-web-player>
+ *          <feat-dropbox type="boolean">true</feat-dropbox>
+ *          <feat-multiformat type="boolean">true</feat-multiformat>
+ *          <feat-library-manager type="boolean">true</feat-library-manager>
+ *          <feat-social type="boolean">true</feat-social>
+ *          <feat-download type="boolean">true</feat-download>
+ *          <feat-marketplace type="boolean">true</feat-marketplace>
+ *      </plan>
+ *   </subscription>
  * </user>
  *
  * }
@@ -117,6 +133,7 @@ public class User extends ModelItem {
     protected long availableStorage;
     protected String avatarUrl;
     protected Profile profile;
+    protected Subscription subscription;
 
     // User's collection relations
     protected Playlists playlists;
@@ -348,6 +365,25 @@ public class User extends ModelItem {
         return this.profile;
     }
 
+    
+    
+    /**
+     * <p>Setter for the user subscription: used by the parser.</p>
+     *
+     * @param subscription the user {@link Subscription} object.
+     */
+    public void setSubscription(Subscription subscription) {
+        this.subscription = subscription;
+    }
+
+    /**
+     * <p>Getter for the user {@link Subscription}.</p>
+     *
+     * @return the user subscription
+     */
+    public Subscription getSubscription() {
+        return this.subscription;
+    }
 
     /* ------------------- */
     /* Collection Browsing */
