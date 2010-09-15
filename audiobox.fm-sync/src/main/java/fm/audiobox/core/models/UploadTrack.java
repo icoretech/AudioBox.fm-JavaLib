@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.mime.content.FileBody;
 
 import fm.audiobox.core.exceptions.LoginException;
@@ -12,6 +13,8 @@ import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
 
 public class UploadTrack extends Track {
 
+	HttpRequestBase method;
+	
     public UploadTrack() {
         super();
     }
@@ -22,7 +25,8 @@ public class UploadTrack extends Track {
 
 
     public void upload() throws IOException, ServiceException, LoginException {
-    	String result[] = this.pConnector.execute(Tracks.END_POINT , null, null, this, HttpPost.METHOD_NAME);
+    	method = this.pConnector.createConnectionMethod(Tracks.END_POINT , null, null, this, HttpPost.METHOD_NAME);
+    	String result[] = this.pConnector.request(method, this, false);
     	this.setUuid( result[ AudioBoxConnector.RESPONSE_BODY ]  );
     }
 
@@ -33,6 +37,8 @@ public class UploadTrack extends Track {
 		return super.parseBinaryResponse(response);
 	}
     
-    
+    public HttpRequestBase getConnectionMethod(){
+    	return this.method;
+    }
 
 }

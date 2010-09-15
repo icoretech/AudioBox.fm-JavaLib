@@ -98,7 +98,10 @@ public class Upload extends AsyncTask {
                     byte[] tmp = new byte[4096];
                     int l;
                     while ((l = in.read(tmp)) != -1) {
-                    	if ( me.isStopped() ) return;
+                    	if ( me.isStopped() ){
+                    		mTrack.getConnectionMethod().abort();
+                    		break;
+                    	}
                         outstream.write(tmp, 0, l);
                         completed += l;
                         tl.onProgress(me, total, completed, (total - completed), mFile);
