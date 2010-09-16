@@ -224,8 +224,6 @@ public class AudioBoxClient {
     private static Properties sProperties = new Properties();
 
 
-
-
     private static Inflector sI = Inflector.getInstance();
     private static Map<String, CollectionListener> sCollectionListenersMap = new HashMap<String , CollectionListener>();
     private static Map<String, Class<? extends Model>> sModelsMap;
@@ -393,7 +391,7 @@ public class AudioBoxClient {
 
         try {
 
-            log.debug("New model instance: " + klass.getName() );
+            log.trace("New model instance: " + klass.getName() );
             model = klass.newInstance();
 
         } catch (InstantiationException e) {
@@ -434,7 +432,7 @@ public class AudioBoxClient {
      */
     public User login(String username, String password) throws LoginException, ServiceException, ModelException {
 
-        log.debug("Starting AudioBoxClient: " + mUserAgent);
+        log.info("Starting AudioBoxClient: " + mUserAgent);
 
         this.mUser = (User) getModelInstance( USER_KEY , this.getMainConnector() );
         this.mUser.setUsername(username);
@@ -498,7 +496,6 @@ public class AudioBoxClient {
         private static final String PROTOCOL = "https";
 
         private static final String PORT = "443";
-        private static final String HOST = "audiobox.fm";
         private static final String API_PREFIX = "/api/";
         public static final String TEXT_FORMAT = "txt";
         public static final String TEXT_CONTENT_TYPE = "text";
@@ -563,7 +560,7 @@ public class AudioBoxClient {
                     }
                     request.addHeader("User-Agent", mUserAgent);
                     Header hostHeader = request.getFirstHeader("HOST");
-                    if ( hostHeader.getValue().equals( HOST ) )
+                    if ( hostHeader.getValue().equals( AudioBoxClient.getProperty("host") ) )
                         request.addHeader( mScheme.authenticate(mCredentials,  request) );
                 }
 
@@ -622,12 +619,7 @@ public class AudioBoxClient {
          */
         @Deprecated
         private String getHost() {
-            String host = AudioBoxClient.getProperty("host");
-
-            if (host == null || host.startsWith("$"))
-                host = HOST;
-
-            return host;
+            return AudioBoxClient.getProperty("host");
         }
 
 
