@@ -84,6 +84,7 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
+import org.apache.log4j.Logger;
 
 import fm.audiobox.core.api.Model;
 import fm.audiobox.core.api.ModelsCollection;
@@ -169,7 +170,7 @@ import fm.audiobox.core.util.Inflector;
  */
 public class AudioBoxClient {
 
-    private static Log log = LogFactory.getLog(AudioBoxClient.class);
+    private static Logger log = Logger.getLogger(AudioBoxClient.class);
 
     /** Specifies the models package (default: fm.audiobox.core.models) */
     public static final String DEFAULT_MODELS_PACKAGE = AudioBoxClient.class.getPackage().getName();
