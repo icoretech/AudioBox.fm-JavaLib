@@ -18,7 +18,6 @@ public class ThreadTest extends junit.framework.TestCase {
 	
 	
 	@Test
-    @SuppressWarnings("deprecation")
     public void testApp() {
         
         System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");

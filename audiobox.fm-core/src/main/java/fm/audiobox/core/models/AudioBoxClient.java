@@ -523,7 +523,6 @@ public class AudioBoxClient {
 
             this.mAudioBoxRoute = new HttpRoute(new HttpHost(this.getHost(), Integer.parseInt(PORT)));
 
-
             buildClient();
         }
         
