@@ -351,7 +351,7 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
-				<fm.audiobox.host>audiobox.fm</fm.audiobox.host>
+				<fm.audiobox.host>audiobox.dev</fm.audiobox.host>
 				<fm.audiobox.skipTests>true</fm.audiobox.skipTests>
 			</properties>
 		</profile>

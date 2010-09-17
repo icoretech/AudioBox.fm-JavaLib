@@ -41,6 +41,9 @@ import fm.audiobox.core.api.ModelItem;
  * <subscription>
  *   <created-at type="datetime">2010-02-12T15:43:21+01:00</created-at>
  *   <plan-name>ultra</plan-name>
+ *   <allowed-formats>
+ *     mp3;mp2;m4v;m4r;3gp;mp4;aac;m4a;flac;ogg;spx;wma;rm;ram;wav;mpc;mp+;mpp;aiff;aif;aifc;tta
+ *   </allowed-formats>
  *   <plan>
  *      <feat-third-party type="boolean">true</feat-third-party>
  *      <feat-youtube-channel type="boolean">true</feat-youtube-channel>
@@ -65,10 +68,15 @@ public class Subscription extends ModelItem {
     
     /** The XML tag name for the Profile element */
     public static final String TAG_NAME = "subscription";
+
+    /** Separator used to split the allowed formats string */
+    public static final String ALLOWED_EXTENSIONS_SEPARATOR = ";";
     
     protected Date createdAt;
     protected String planName;
+    protected String allowedFormats;
     protected Plan plan;
+    
     
     /**
      * <p>Constructor for Subscription.</p>
@@ -119,6 +127,35 @@ public class Subscription extends ModelItem {
      */
     public String getPlanName() {
         return this.planName;
+    }
+    
+    
+    
+    /**
+     * <p>Setter for the user subscription plan allowed formats: used by the parser.</p>
+     *
+     * @param allowedFormats the allowed format semicolon-separated {@link String}.
+     */
+    public void setAllowedFormats(String allowedFormats) {
+        this.allowedFormats = allowedFormats;
+    }
+
+    /**
+     * <p>Getter for the subscription plan allowed formats string.</p>
+     *
+     * @return the subscription allowed formats original {@link String}
+     */
+    public String getAllowedFormatsString() {
+        return this.allowedFormats;
+    }
+    
+    /**
+     * <p>Getter for the subscription plan allowed formats.</p>
+     *
+     * @return the subscription allowed formats {@link String} array
+     */
+    public String[] getAllowedFormats() {
+        return this.allowedFormats.split(ALLOWED_EXTENSIONS_SEPARATOR);
     }
     
     
