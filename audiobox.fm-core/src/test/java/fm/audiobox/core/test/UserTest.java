@@ -88,6 +88,9 @@ public class UserTest extends junit.framework.TestCase {
             Subscription s = user.getSubscription();
             assertNotNull( s.getCreatedAt() );
             assertEquals( s.getPlanName(), "ultra" );
+            assertNotNull( s.getAllowedFormatsString() );
+            assertNotNull( s.getAllowedFormats() );
+            assertTrue( s.getAllowedFormatsString().length() > 0 );
             assertNotNull( s.getPlan() );
             
             Plan plan = s.getPlan();
