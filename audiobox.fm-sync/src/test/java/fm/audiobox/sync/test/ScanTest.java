@@ -43,14 +43,19 @@ public class ScanTest extends junit.framework.TestCase {
             User user = abc.login( fx.get( Fixtures.LOGIN), fx.get(Fixtures.RIGHT_PASS) );
             assertNotNull( user );
             
+            final String[] allowed_formats = user.getSubscription().getAllowedFormats();
             
-            Scan scan = new Scan( new File("/home/shotty/Dropbox/Public"), true, false);
+            Scan scan = new Scan( new File("/home/shotty/Dropbox/Public"), false, false);
             scan.setFilter(new FileFilter() {
-				public boolean accept(File arg0) {
-					
+				public boolean accept(File file) {
+					if ( ! file.isDirectory() && ! file.isHidden() )
+						for ( String ext : allowed_formats )
+							if ( file.getName().endsWith( ext ) )
+								return true;
 					return false;
 				}
 			});
+            System.out.println( "" + scan.scan().size() + " was found");
             
             
         } catch (ServiceException e) {
