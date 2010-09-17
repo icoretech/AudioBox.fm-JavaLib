@@ -28,27 +28,6 @@ public class Scan extends AsyncTask {
         this._recursive = recursive;
         this._hidden = hidden;
 
-        this.setFilter( new FileFilter() {
-
-            @Override
-            public boolean accept(File pathname) {
-
-                if ( ! pathname.canRead() ) return false;
-                
-                if ( pathname.isHidden() && ! _hidden ) return false;
-
-                if ( pathname.isDirectory() && ! _recursive ) return false;
-
-                /* TODO: check file type */
-                String[] nameParts = pathname.getName().split("\\.");
-                
-                if ( ! ALLOWED_MEDIA.contains( nameParts[ nameParts.length -1 ].toLowerCase() ) && ! pathname.isDirectory() ) return false;
-
-                return true;
-
-            }
-
-        });
     }
 
     public final void setFilter( FileFilter fileFilter ){
@@ -74,7 +53,34 @@ public class Scan extends AsyncTask {
     }
 
     private void _startScan( File folder ){
-        File[] files = folder.listFiles( this._ff );
+        File[] files = folder.listFiles( new FileFilter() {
+
+            @Override
+            public boolean accept(File pathname) {
+
+                if ( ! pathname.canRead() ) return false;
+                
+                if ( pathname.isHidden() && ! _hidden ) return false;
+
+                if ( pathname.isDirectory() && ! _recursive ) return false;
+                
+                if ( _ff != null ){
+                	return _ff.accept( pathname );
+                } else {
+                	for ( String ext : ALLOWED_MEDIA ) 
+                		if ( pathname.getName().endsWith( ext ) ) 
+                			return true;
+                }
+//                /* TODO: check file type */
+//                String[] nameParts = pathname.getName().split("\\.");
+//                
+//                if ( ! ALLOWED_MEDIA.contains( nameParts[ nameParts.length -1 ].toLowerCase() ) && ! pathname.isDirectory() ) return false;
+
+                return false;
+
+            }
+
+        });
         
         for ( File file : files ){
             
