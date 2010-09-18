@@ -21,6 +21,9 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.host>${fm.audiobox.host}</project.host>
+		<project.protocol>${fm.audiobox.protocol}</project.protocol>
+		<project.port>${fm.audiobox.port}</project.port>
+		<project.api_path>${fm.audiobox.api_path}</project.api_path>
 	</properties>
 
 	<organization>
@@ -351,7 +354,7 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
-				<fm.audiobox.protocol>http</fm.audiobox.protocol>
+				<fm.audiobox.protocol>https</fm.audiobox.protocol>
 				<fm.audiobox.host>audiobox.dev</fm.audiobox.host>
 				<fm.audiobox.port>80</fm.audiobox.port>
 				<fm.audiobox.api_path>/api/</fm.audiobox.api_path>
@@ -368,7 +371,7 @@
 				</property>
 			</activation>
 			<properties>
-				<fm.audiobox.protocol>http</fm.audiobox.protocol>
+				<fm.audiobox.protocol>https</fm.audiobox.protocol>
 				<fm.audiobox.host>audiobox.dev</fm.audiobox.host>
 				<fm.audiobox.port>80</fm.audiobox.port>
 				<fm.audiobox.api_path>/api/</fm.audiobox.api_path>
