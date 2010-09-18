@@ -300,7 +300,7 @@ public class AudioBoxClient {
      * 
      * It has to be used for internal logics only.
      */
-    protected static String getProperty(String key) {
+    public static String getProperty(String key) {
         return sProperties.getProperty(PROP_PREFIX + key);
     }
 
@@ -494,9 +494,12 @@ public class AudioBoxClient {
         private static final String PATH_PARAMETER = "${path}";
         private static final String TOKEN_PARAMETER = "${token}";
         private static final String ACTION_PARAMETER = "${action}";
-        private static final String PROTOCOL = "https";
-        private static final String PORT = "443";
-        private static final String API_PREFIX = "/api/";
+        
+        /** Get informations from configuration file */
+        private final String PROTOCOL = AudioBoxClient.getProperty("protocol");;
+        private final String HOST = AudioBoxClient.getProperty("host");
+        private final String PORT = AudioBoxClient.getProperty("port");
+        private final String API_PREFIX = AudioBoxClient.getProperty("api_path");
         
         public static final String TEXT_FORMAT = "txt";
         public static final String TEXT_CONTENT_TYPE = "text";
@@ -519,7 +522,7 @@ public class AudioBoxClient {
 
             mApiPath = this.getApiPath() + PATH_PARAMETER + TOKEN_PARAMETER + ACTION_PARAMETER;
 
-            this.mAudioBoxRoute = new HttpRoute(new HttpHost(this.getHost(), Integer.parseInt(PORT)));
+            this.mAudioBoxRoute = new HttpRoute(new HttpHost( HOST, Integer.parseInt(PORT)));
 
             buildClient();
         }
@@ -609,27 +612,12 @@ public class AudioBoxClient {
 
 
         /**
-         * Returns the right audiobox.fm host to call.
-         * 
-         * <p>
-         * 
-         * This method exists for development purpose only
-         * 
-         * @return the right AudioBox.fm host String
-         */
-        @Deprecated
-        private String getHost() {
-            return AudioBoxClient.getProperty("host");
-        }
-
-
-        /**
          * Use this method to get the full API url.
          * 
          * @return the right API url
          */
         public String getApiPath(){
-            return PROTOCOL + "://" + getHost() + API_PREFIX;
+            return PROTOCOL + "://" + HOST + API_PREFIX;
         }
 
         
@@ -914,7 +902,7 @@ public class AudioBoxClient {
                 }
             }
 
-            log.debug("Requesting resource: " + url);
+            log.debug("Build new Request Method for url: " + url);
         	
         	return method;
         }
