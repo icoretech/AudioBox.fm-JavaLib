@@ -212,30 +212,6 @@ public class Track extends ModelItem {
 
 
 
-    /**
-     * Setter method for the file of this track: used by the {@link Model#handleResponse(org.apache.http.HttpResponse)} 
-     * method.
-     * 
-     * @param file the file to set
-     */
-    public void setFile(File file) {
-        this.file = file;
-    }
-
-    /**
-     * Getter method for the file of this track.
-     * 
-     * <p>
-     * 
-     * This field is populated if a {@link Track#download(FileOutputStream)} is succesfully performed.
-     * 
-     * @return the file of this track.
-     */
-    public File getFile() {
-        return file;
-    }
-
-
 
     /**
      * <p>Setter for the track duration: used by the parser.</p>
