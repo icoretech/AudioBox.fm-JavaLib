@@ -22,7 +22,6 @@
 
 package fm.audiobox.core.models;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,7 +33,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.mime.content.FileBody;
 
-import fm.audiobox.core.api.Model;
 import fm.audiobox.core.api.ModelItem;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
@@ -102,7 +100,6 @@ public class Track extends ModelItem {
 
     // Customized fields
     private String uuid;
-    private File file;
 
     // XML model fields
     protected String duration;
@@ -201,10 +198,10 @@ public class Track extends ModelItem {
     public String getUuid() {
 
         if (this.uuid == null && this.streamUrl != null) {
-            String	regex = "^" + pConnector.getApiPath().replace(".", "\\.") + PATH + "/([^\\s]+)/stream$";
+            String	regex = "^(http|https)" + ( "://" + pConnector.HOST + pConnector.API_PREFIX   ).replace(".", "\\.") + PATH + "/([^\\s]+)/stream$";
             java.util.regex.Matcher m = java.util.regex.Pattern.compile(regex).matcher(streamUrl);
             m.find();
-            this.setUuid( m.group(1) );
+            this.setUuid( m.group(2) );
         }
 
         return this.uuid;		
