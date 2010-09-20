@@ -397,25 +397,6 @@
 			</properties>
 		</profile>
 		
-		
-		<profile>
-			<id>dev-profile</id>
-			<activation>
-				<property>
-					<name>env</name>
-					<value>dev</value>
-				</property>
-			</activation>
-			<properties>
-				<fm.audiobox.protocol>http</fm.audiobox.protocol>
-				<fm.audiobox.host>audiobox.dev</fm.audiobox.host>
-				<fm.audiobox.port>80</fm.audiobox.port>
-				<fm.audiobox.api_path>/api/</fm.audiobox.api_path>
-				<fm.audiobox.skipTests>true</fm.audiobox.skipTests>
-			</properties>
-		</profile>
-		
-		
 	</profiles>
 
 	<repositories>
