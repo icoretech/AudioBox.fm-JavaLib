@@ -23,7 +23,8 @@
 		<project.host>${fm.audiobox.host}</project.host>
 		<project.protocol>${fm.audiobox.protocol}</project.protocol>
 		<project.port>${fm.audiobox.port}</project.port>
-		<project.api_path>${fm.audiobox.api_path}</project.api_path>
+		<project.apiPath>/api/</project.apiPath>
+		<project.logLevel>${fm.audiobox.logLevel}</project.logLevel>
 	</properties>
 
 	<organization>
@@ -355,10 +356,27 @@
 			</activation>
 			<properties>
 				<fm.audiobox.protocol>https</fm.audiobox.protocol>
+				<fm.audiobox.host>audiobox.fm</fm.audiobox.host>
+				<fm.audiobox.port>443</fm.audiobox.port>
+				<fm.audiobox.skipTests>true</fm.audiobox.skipTests>
+				<fm.audiobox.logLevel>WARN</fm.audiobox.logLevel>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>dev-profile</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>dev</value>
+				</property>
+			</activation>
+			<properties>
+				<fm.audiobox.protocol>http</fm.audiobox.protocol>
 				<fm.audiobox.host>audiobox.dev</fm.audiobox.host>
 				<fm.audiobox.port>80</fm.audiobox.port>
-				<fm.audiobox.api_path>/api/</fm.audiobox.api_path>
-				<fm.audiobox.skipTests>true</fm.audiobox.skipTests>
+				<fm.audiobox.skipTests>false</fm.audiobox.skipTests>
+				<fm.audiobox.logLevel>DEBUG</fm.audiobox.logLevel>
 			</properties>
 		</profile>
 
@@ -373,9 +391,9 @@
 			<properties>
 				<fm.audiobox.protocol>https</fm.audiobox.protocol>
 				<fm.audiobox.host>audiobox.dev</fm.audiobox.host>
-				<fm.audiobox.port>80</fm.audiobox.port>
-				<fm.audiobox.api_path>/api/</fm.audiobox.api_path>
+				<fm.audiobox.port>443</fm.audiobox.port>
 				<fm.audiobox.skipTests>false</fm.audiobox.skipTests>
+				<fm.audiobox.logLevel>INFO</fm.audiobox.logLevel>
 			</properties>
 		</profile>
 	</profiles>

@@ -499,7 +499,7 @@ public class AudioBoxClient {
         private final String PROTOCOL = AudioBoxClient.getProperty("protocol");;
         private final String HOST = AudioBoxClient.getProperty("host");
         private final String PORT = AudioBoxClient.getProperty("port");
-        private final String API_PREFIX = AudioBoxClient.getProperty("api_path");
+        private final String API_PREFIX = AudioBoxClient.getProperty("apiPath");
         
         public static final String TEXT_FORMAT = "txt";
         public static final String TEXT_CONTENT_TYPE = "text";

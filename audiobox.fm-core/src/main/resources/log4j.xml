@@ -13,7 +13,7 @@
 	</logger>
 
 	<root>
-		<priority value="info" />
+		<priority value="${project.logLevel}" />
 		<appender-ref ref="console" />
 	</root>
 
