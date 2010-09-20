@@ -67,23 +67,4 @@ public class ScanTest extends junit.framework.TestCase {
         }
     }
     
-    private class testFileOutputStream extends FileOutputStream {
-
-    	private long total_bytes = -1;
-    	private long current_bytes = 0;
-    	
-		public testFileOutputStream(File file, long total) throws FileNotFoundException {
-			super(file);
-			this.total_bytes = total;
-		}
-		
-		public void write(byte[] bytes, int offset, int len) throws IOException{
-			super.write(bytes,offset,len);
-			this.current_bytes += len;
-			
-			System.out.println("Downloaded: " + ( (current_bytes * 100 )/ total_bytes ) + " %" );
-		}
-    	
-    }
-    
 }
