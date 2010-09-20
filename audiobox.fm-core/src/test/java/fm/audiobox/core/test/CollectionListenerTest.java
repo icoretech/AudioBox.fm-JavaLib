@@ -6,6 +6,7 @@ package fm.audiobox.core.test;
 
 import java.net.SocketException;
 
+import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -47,11 +48,14 @@ public class CollectionListenerTest extends junit.framework.TestCase {
         try {
 
             CollectionListener cl1 = new CollectionListener() {
+                
+                Logger log = Logger.getLogger(getClass());
+                
                 public void onItemReady(int index, Object item) { 
-                    System.out.println("Playlist item ready: " + item ); 
+                    log.trace("Playlist item ready: " + item ); 
                 }
                 public void onCollectionReady(int message, Object result) { 
-                    System.out.println("Playlists collection ready: " + message );
+                    log.trace("Playlists collection ready: " + message );
                 }
             };
             

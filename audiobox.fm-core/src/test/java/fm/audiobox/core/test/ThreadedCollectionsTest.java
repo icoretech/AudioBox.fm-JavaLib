@@ -1,6 +1,7 @@
 package fm.audiobox.core.test;
 
 
+import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,6 +19,8 @@ import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 
 public class ThreadedCollectionsTest extends junit.framework.TestCase {
 
+    private static Logger log = Logger.getLogger(ThreadedCollectionsTest.class);
+    
     StaticAudioBox abc;
     User user;
     Fixtures fx = new Fixtures();
@@ -25,13 +28,6 @@ public class ThreadedCollectionsTest extends junit.framework.TestCase {
     @SuppressWarnings("deprecation")
     @Before
     public void setUp() throws Exception {
-        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
-        System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire", "debug");
-        System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "debug");
-        System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire.header", "debug");
-        System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http.impl", "debug");
-
-        System.setProperty("org.apache.commons.logging.simplelog.log.fm.audiobox.core", "debug");
 
         abc = new StaticAudioBox();
         abc.setForceTrust(true);
@@ -41,7 +37,7 @@ public class ThreadedCollectionsTest extends junit.framework.TestCase {
         } catch (LoginException e) {
             e.printStackTrace();
         } catch (ServiceException e) {
-            System.out.println("Service exception: " + e.getMessage());
+            log.error("Service exception: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -63,28 +59,27 @@ public class ThreadedCollectionsTest extends junit.framework.TestCase {
         try {
 
             CollectionListener cl1 = new CollectionListener() {
-                public void onItemReady(int index, Object item) { 
-                    System.out.println("Playlist item ready: " + item ); 
-                }
-                public void onCollectionReady(int message, Object result) { 
-                    System.out.println("Playlists collection ready: " + message );
-                    h1.setDone(true);
-                }
+                Logger log = Logger.getLogger("fm.audiobox.core.test.CL1");
+                public void onItemReady(int index, Object item) {  log.trace("Playlist item ready: " + item ); }
+                public void onCollectionReady(int message, Object result) {  log.trace("Playlists collection ready: " + message ); h1.setDone(true); }
             };
 
             CollectionListener cl2 = new CollectionListener() {
-                public void onItemReady(int index, Object item) { System.out.println("Artist item ready: " + item ); }
-                public void onCollectionReady(int message, Object result) { System.out.println("Artists collection ready: " + message ); h2.setDone(true); }
+                Logger log = Logger.getLogger("fm.audiobox.core.test.CL2");
+                public void onItemReady(int index, Object item) { log.trace("Artist item ready: " + item ); }
+                public void onCollectionReady(int message, Object result) { log.trace("Artists collection ready: " + message ); h2.setDone(true); }
             };
 
             CollectionListener cl3 = new CollectionListener() {
-                public void onItemReady(int index, Object item) { System.out.println("Genre item ready: " + item ); }
-                public void onCollectionReady(int message, Object result) { System.out.println("Genres collection ready: " + message ); h3.setDone(true); }
+                Logger log = Logger.getLogger("fm.audiobox.core.test.CL3");
+                public void onItemReady(int index, Object item) { log.trace("Genre item ready: " + item ); }
+                public void onCollectionReady(int message, Object result) { log.trace("Genres collection ready: " + message ); h3.setDone(true); }
             };
 
             CollectionListener cl4 = new CollectionListener() {
-                public void onItemReady(int index, Object item) { System.out.println("Album item ready: " + item ); }
-                public void onCollectionReady(int message, Object result) { System.out.println("Albums collection ready: " + message ); h4.setDone(true); }
+                Logger log = Logger.getLogger("fm.audiobox.core.test.CL4");
+                public void onItemReady(int index, Object item) { log.trace("Album item ready: " + item ); }
+                public void onCollectionReady(int message, Object result) { log.trace("Albums collection ready: " + message ); h4.setDone(true); }
             };
 
             AudioBoxClient.setCollectionListenerFor(AudioBoxClient.PLAYLISTS_KEY, cl1);

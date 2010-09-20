@@ -11,6 +11,10 @@
 	<logger name="org.apache">
 		<level value="warn" />
 	</logger>
+	
+	<logger name="fm.audiobox.core.test">
+		<level value="trace" />
+	</logger>
 
 	<root>
 		<priority value="${project.logLevel}" />
