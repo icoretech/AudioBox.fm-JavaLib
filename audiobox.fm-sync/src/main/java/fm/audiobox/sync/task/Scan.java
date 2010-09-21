@@ -68,7 +68,7 @@ public class Scan extends AsyncTask {
                 	return _ff.accept( pathname );
                 } else {
                 	for ( String ext : ALLOWED_MEDIA ) 
-                		if ( pathname.getName().endsWith( ext ) ) 
+                		if ( pathname.getName().endsWith( "." + ext ) ) 
                 			return true;
                 }
 //                /* TODO: check file type */
