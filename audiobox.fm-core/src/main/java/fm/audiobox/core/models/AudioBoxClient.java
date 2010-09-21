@@ -563,7 +563,7 @@ public class AudioBoxClient {
                     }
                     request.addHeader("User-Agent", mUserAgent);
                     Header hostHeader = request.getFirstHeader("HOST");
-                    if ( hostHeader.getValue().equals( AudioBoxClient.getProperty("host") ) )
+                    if ( hostHeader.getValue().equals( HOST ) )
                         request.addHeader( mScheme.authenticate(mCredentials,  request) );
                 }
 
@@ -617,7 +617,7 @@ public class AudioBoxClient {
          * @return the right API url
          */
         public String getApiPath(){
-            return PROTOCOL + "://" + HOST + ":" + PORT + API_PREFIX;
+            return PROTOCOL + "://" + HOST + API_PREFIX;
         }
 
         
