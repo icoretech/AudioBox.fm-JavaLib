@@ -375,7 +375,7 @@
 				<fm.audiobox.protocol>http</fm.audiobox.protocol>
 				<fm.audiobox.host>127.0.0.1</fm.audiobox.host>
 				<fm.audiobox.port>3000</fm.audiobox.port>
-				<fm.audiobox.skipTests>false</fm.audiobox.skipTests>
+				<fm.audiobox.skipTests>true</fm.audiobox.skipTests>
 				<fm.audiobox.logLevel>DEBUG</fm.audiobox.logLevel>
 			</properties>
 		</profile>
