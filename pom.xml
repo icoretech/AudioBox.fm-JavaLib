@@ -373,8 +373,8 @@
 			</activation>
 			<properties>
 				<fm.audiobox.protocol>http</fm.audiobox.protocol>
-				<fm.audiobox.host>audiobox.dev</fm.audiobox.host>
-				<fm.audiobox.port>80</fm.audiobox.port>
+				<fm.audiobox.host>127.0.0.1</fm.audiobox.host>
+				<fm.audiobox.port>3000</fm.audiobox.port>
 				<fm.audiobox.skipTests>false</fm.audiobox.skipTests>
 				<fm.audiobox.logLevel>DEBUG</fm.audiobox.logLevel>
 			</properties>

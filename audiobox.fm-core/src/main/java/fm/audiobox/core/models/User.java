@@ -404,7 +404,6 @@ public class User extends ModelItem {
     public Track getTrackByUuid(String uuid) throws ServiceException, LoginException, ModelException {
     	Track t = this.newTrack();
         t.setUuid(uuid);
-        t.refresh();
         return t;
     }
     

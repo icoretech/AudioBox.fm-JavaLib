@@ -496,10 +496,10 @@ public class AudioBoxClient {
         private static final String ACTION_PARAMETER = "${action}";
         
         /** Get informations from configuration file */
-        protected final String PROTOCOL = AudioBoxClient.getProperty("protocol");
-        protected final String HOST = AudioBoxClient.getProperty("host");
-        protected final String PORT = AudioBoxClient.getProperty("port");
-        protected final String API_PREFIX = AudioBoxClient.getProperty("apiPath");
+        private final String PROTOCOL = AudioBoxClient.getProperty("protocol");
+        private final String HOST = AudioBoxClient.getProperty("host");
+        private final String PORT = AudioBoxClient.getProperty("port");
+        private final String API_PREFIX = AudioBoxClient.getProperty("apiPath");
         
         public static final String TEXT_FORMAT = "txt";
         public static final String TEXT_CONTENT_TYPE = "text";
@@ -534,7 +534,7 @@ public class AudioBoxClient {
         private void buildClient() {
             
             SchemeRegistry schemeRegistry = new SchemeRegistry();
-            schemeRegistry.register( new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
+            schemeRegistry.register( new Scheme("http", PlainSocketFactory.getSocketFactory(), Integer.parseInt( PORT ) ));
             schemeRegistry.register( new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
             
             HttpParams params = new BasicHttpParams();
@@ -617,7 +617,7 @@ public class AudioBoxClient {
          * @return the right API url
          */
         public String getApiPath(){
-            return PROTOCOL + "://" + HOST + API_PREFIX;
+            return PROTOCOL + "://" + HOST + ":" + PORT + API_PREFIX;
         }
 
         
