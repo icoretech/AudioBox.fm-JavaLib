@@ -242,7 +242,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
     /**
      * This method is used to parse XML responses
      * 
-     * @param input the {@link InputStram} of the entity content.
+     * @param input the {@link InputStream} of the entity content.
      * 
      * @return an empty String
      */
@@ -277,7 +277,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
     /**
      * This method is used to parse plain text responses.
      * 
-     * @param input the {@link InputStram} of the entity content.
+     * @param input the {@link InputStream} of the entity content.
      * 
      * @return a String representing the body of the response
      */
