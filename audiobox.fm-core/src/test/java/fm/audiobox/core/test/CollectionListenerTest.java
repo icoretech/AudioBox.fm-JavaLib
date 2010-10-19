@@ -6,9 +6,10 @@ package fm.audiobox.core.test;
 
 import java.net.SocketException;
 
-import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
@@ -49,7 +50,7 @@ public class CollectionListenerTest extends junit.framework.TestCase {
 
             CollectionListener cl1 = new CollectionListener() {
                 
-                Logger log = Logger.getLogger(getClass());
+                Logger log = LoggerFactory.getLogger(getClass());
                 
                 public void onItemReady(int index, Object item) { 
                     log.trace("Playlist item ready: " + item ); 

@@ -14,6 +14,7 @@ public class AsyncTaskManager {
     private boolean _autoStart = true;
     private boolean _stopped = false;
     private boolean _completed = true;
+    private boolean isRunning = false;
     
     protected ThreadGroup threadGroup = null;
     private ThreadListener threadListener = new ThreadListener(){
@@ -99,6 +100,9 @@ public class AsyncTaskManager {
         /* Check if there are any thread */
         if ( (this.current_thread_index+1) >= this._threads.size() ) return;
         
+
+	this.isRunning = true;
+
         /* Fire 'onStart' event if ThreadManager was completed or is at first call */
         if ( this._completed )
         	this.getThreadListener().onStart(null);
@@ -148,6 +152,7 @@ public class AsyncTaskManager {
 	    this.getThreadListener().onStop(null);
 	    
 		this._stopped = false;
+		this.isRunning = false;
     }
     
 
@@ -155,8 +160,9 @@ public class AsyncTaskManager {
         this.started_thread--;
         
         //if ( (this.current_thread_index+1) >= this._threads.size() ){
-        if ( this.started_thread== 0 ){
+        if ( this.started_thread == 0 ){
         	this.getThreadListener().onComplete(null, null);
+		this.isRunning = false;
         	return;
         }
         
