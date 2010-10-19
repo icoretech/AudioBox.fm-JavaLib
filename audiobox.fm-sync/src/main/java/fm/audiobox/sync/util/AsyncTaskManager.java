@@ -101,7 +101,7 @@ public class AsyncTaskManager {
         if ( (this.current_thread_index+1) >= this._threads.size() ) return;
         
 
-	this.isRunning = true;
+        this.isRunning = true;
 
         /* Fire 'onStart' event if ThreadManager was completed or is at first call */
         if ( this._completed )
@@ -162,7 +162,7 @@ public class AsyncTaskManager {
         //if ( (this.current_thread_index+1) >= this._threads.size() ){
         if ( this.started_thread == 0 ){
         	this.getThreadListener().onComplete(null, null);
-		this.isRunning = false;
+        	this.isRunning = false;
         	return;
         }
         
@@ -188,5 +188,10 @@ public class AsyncTaskManager {
     protected ThreadGroup getThreadGroup(){
     	return this.threadGroup;
     }
+    
+    public boolean isRunning(){
+    	return this.isRunning;
+    }
+    
 
 }
