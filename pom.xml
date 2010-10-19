@@ -311,14 +311,14 @@
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-android</artifactId>
-				<version>1.6.1-RC1</version>
+				<artifactId>slf4j-api</artifactId>
+				<version>1.6.1</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	
+
 	<distributionManagement>
 		<repository>
 			<id>keytwo.net</id>
@@ -397,6 +397,11 @@
 				</plugins>
 			</reporting>
 		</profile>
+
+		<!-- Android Profiles -->
+
+
+
 
 	</profiles>
 
