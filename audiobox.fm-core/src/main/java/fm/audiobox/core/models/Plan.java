@@ -35,16 +35,16 @@ import fm.audiobox.core.api.ModelItem;
  * <pre>
  * {@code
  * <plan>
- *    <feat-third-party type="boolean">true</feat-third-party>
- *    <feat-youtube-channel type="boolean">true</feat-youtube-channel>
- *    <feat-mobile type="boolean">true</feat-mobile>
- *    <feat-web-player type="boolean">true</feat-web-player>
- *    <feat-dropbox type="boolean">true</feat-dropbox>
- *    <feat-multiformat type="boolean">true</feat-multiformat>
- *    <feat-library-manager type="boolean">true</feat-library-manager>
- *    <feat-social type="boolean">true</feat-social>
- *    <feat-download type="boolean">true</feat-download>
- *    <feat-marketplace type="boolean">true</feat-marketplace>
+ *   <feat-download>true</feat-download>
+ *   <feat-dropbox>true</feat-dropbox>
+ *   <feat-lastfm>true</feat-lastfm>
+ *   <feat-manager>true</feat-manager>
+ *   <feat-multiformat>true</feat-multiformat>
+ *   <feat-social>true</feat-social>
+ *   <feat-third-party>true</feat-third-party>
+ *   <feat-web-player>true</feat-web-player>
+ *   <feat-youtube-channel>true</feat-youtube-channel>
+ *   <name>ultra</name>
  * </plan>
  * }
  * </pre>
@@ -60,14 +60,13 @@ public class Plan extends ModelItem {
     
     protected boolean featThirdParty;
     protected boolean featYoutubeChannel;
-    protected boolean featMobile;
     protected boolean featWebPlayer;
     protected boolean featDropbox;
     protected boolean featMultiformat;
-    protected boolean featLibraryManager;
+    protected boolean featManager;
     protected boolean featSocial;
     protected boolean featDownload;
-    protected boolean featMarketplace;
+    protected boolean featLastfm;
     
     /**
      * <p>Constructor for Plan.</p>
@@ -123,30 +122,6 @@ public class Plan extends ModelItem {
     public boolean hasYoutubeChannel() {
         return this.featYoutubeChannel;
     }
-    
-    
-    
-    /**
-     * This method is used by the parser.
-     * 
-     * <p>Setter for the "Mobile" option: used by the parser.</p>
-     *
-     * @param featMobile String representing the boolean value, true to enable false to disable.
-     */
-    @Deprecated
-    public void setFeatMobile(String featMobile) {
-        this.featMobile = Boolean.parseBoolean( featMobile );
-    }
-    
-    /**
-     * Checks whether the user has "Mobile" option enabled or not.
-     *
-     * @return true if "Mobile" option is available.
-     */
-    public boolean hasMobile() {
-        return this.featMobile;
-    }
-    
     
     
     
@@ -225,22 +200,22 @@ public class Plan extends ModelItem {
     /**
      * This method is used by the parser.
      * 
-     * <p>Setter for the "Library Manager" option: used by the parser.</p>
+     * <p>Setter for the "Manager" option: used by the parser.</p>
      *
-     * @param featLibraryManager String representing the boolean value, true to enable false to disable.
+     * @param featManager String representing the boolean value, true to enable false to disable.
      */
     @Deprecated
-    public void setFeatLibraryManager(String featLibraryManager) {
-        this.featLibraryManager = Boolean.parseBoolean( featLibraryManager );
+    public void setFeatManager(String featManager) {
+        this.featManager = Boolean.parseBoolean( featManager );
     }
     
     /**
-     * Checks whether the user has "Library Manager" option enabled or not.
+     * Checks whether the user has "Manager" option enabled or not.
      *
-     * @return true if "Library Manager" option is available.
+     * @return true if "Manager" option is available.
      */
-    public boolean hasLibraryManager() {
-        return this.featLibraryManager;
+    public boolean hasManager() {
+        return this.featManager;
     }
     
     
@@ -297,21 +272,21 @@ public class Plan extends ModelItem {
     /**
      * This method is used by the parser.
      * 
-     * <p>Setter for the "Marketplace" option: used by the parser.</p>
+     * <p>Setter for the "Last.fm" option: used by the parser.</p>
      *
-     * @param featMarketplace String representing the boolean value, true to enable false to disable.
+     * @param featLastfm String representing the boolean value, true to enable false to disable.
      */
     @Deprecated
-    public void setFeatMarketplace(String featMarketplace) {
-        this.featMarketplace = Boolean.parseBoolean( featMarketplace );
+    public void setFeatLastfm(String featLastfm) {
+        this.featLastfm = Boolean.parseBoolean( featLastfm );
     }
     
     /**
-     * Checks whether the user has "Marketplace" option enabled or not.
+     * Checks whether the user has "Last.fm" option enabled or not.
      *
-     * @return true if "Marketplace" option is available.
+     * @return true if "Last.fm" option is available.
      */
-    public boolean hasMarketplace() {
-        return this.featMarketplace;
+    public boolean hasLastfm() {
+        return this.featLastfm;
     }
 }

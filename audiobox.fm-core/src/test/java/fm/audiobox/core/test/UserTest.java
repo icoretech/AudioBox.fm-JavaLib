@@ -20,7 +20,6 @@ import fm.audiobox.core.models.Genres;
 import fm.audiobox.core.models.Plan;
 import fm.audiobox.core.models.Playlists;
 import fm.audiobox.core.models.Profile;
-import fm.audiobox.core.models.Subscription;
 import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 import fm.audiobox.core.test.mocks.models.User;
 
@@ -66,8 +65,8 @@ public class UserTest extends junit.framework.TestCase {
             assertNotNull( user.getQuota() );
             assertNotNull( user.getTracksCount() );
             assertNotNull( user.getAvailableStorage() );
-            assertNotNull( user.getAvatarUrl() );
             assertNotNull( user.getName() );
+            assertNotNull( user.getTimeZone() );
             
             
             assertTrue( user.getQuota() < user.getAvailableStorage() );
@@ -75,30 +74,17 @@ public class UserTest extends junit.framework.TestCase {
             // Profile
             Profile p = user.getProfile();
             assertNotNull( p.hasAutoplay() );
-            assertNotNull( p.getBirthDate() );
-            assertNotNull( p.getCountry() );
-            assertNotNull( p.getGender() );
-            assertNotNull( p.getHomePage() );
             assertNotNull( p.getRealName() );
-            assertNotNull( p.getTimeZone() );
             assertEquals( p.getName(), p.getRealName() );
             assertNull( p.getToken() );
-            
-            
-            Subscription s = user.getSubscription();
-            assertNotNull( s.getCreatedAt() );
-            assertEquals( s.getPlanName(), "ultra" );
-            assertNotNull( s.getAllowedFormatsString() );
-            assertNotNull( s.getAllowedFormats() );
-            assertTrue( s.getAllowedFormatsString().length() > 0 );
-            assertNotNull( s.getPlan() );
-            
-            Plan plan = s.getPlan();
+
+            // Plan
+            Plan plan = user.getPlan();
+            assertEquals( plan.getName(), "admin" );
             assertTrue( plan.hasDownload() );
             assertTrue( plan.hasDropbox() );
-            assertTrue( plan.hasLibraryManager() );
-            assertTrue( plan.hasMarketplace() );
-            assertTrue( plan.hasMobile() );
+            assertTrue( plan.hasManager() );
+            assertTrue( plan.hasLastfm() );
             assertTrue( plan.hasMultiformat() );
             assertTrue( plan.hasSocial() );
             assertTrue( plan.hasThirdParty() );

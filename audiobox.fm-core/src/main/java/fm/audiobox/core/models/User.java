@@ -47,38 +47,31 @@ import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
  * <user>
  *   <bytes-served>123456</bytes-served>
  *   <email>user@example.com</email>
- *   <play-count type="integer">1042</play-count>
+ *   <play-count>1042</play-count>
  *   <quota>984354165</quota>
  *   <state>active</state>
- *   <tracks-count type="integer">1490</tracks-count>
+ *   <tracks-count>1490</tracks-count>
  *   <username>Username</username>
- *   <available-storage type="integer">1232321123</available-storage>
- *   <avatar-url>http://url.to.avatar/avatar.png</avatar-url>
+ *   <available-storage>1232321123</available-storage>
+ *   <allowed-formats>aac;mp3;mp2;m4a;m4b;m4p;m4v;m4r;mp4;3gp;ogg;flac;spx;wma;rm;ram;wav;mpc;mp+;mpp;aiff;aif;aifc;tta</allowed-formats>
+ *   <time-zone>New York</time-zone>
  *   <profile>
- *      <autoplay type="boolean">false</autoplay>
- *      <birth-date type="date">1970-01-01</birth-date>
- *      <country>US</country>
- *      <gender>m</gender>
- *      <home-page>http://www.myblog.com</home-page>
+ *      <autoplay>false</autoplay>
  *      <real-name>Real User Name</real-name>
- *      <time-zone>New York</time-zone>
+ *      <maximum-portability>false</maximum-portability>
  *   </profile>
- *   <subscription>
- *      <created-at type="datetime">2010-02-12T15:43:21+01:00</created-at>
- *      <plan-name>ultra</plan-name>
- *      <plan>
- *          <feat-third-party type="boolean">true</feat-third-party>
- *          <feat-youtube-channel type="boolean">true</feat-youtube-channel>
- *          <feat-mobile type="boolean">true</feat-mobile>
- *          <feat-web-player type="boolean">true</feat-web-player>
- *          <feat-dropbox type="boolean">true</feat-dropbox>
- *          <feat-multiformat type="boolean">true</feat-multiformat>
- *          <feat-library-manager type="boolean">true</feat-library-manager>
- *          <feat-social type="boolean">true</feat-social>
- *          <feat-download type="boolean">true</feat-download>
- *          <feat-marketplace type="boolean">true</feat-marketplace>
- *      </plan>
- *   </subscription>
+ *   <plan>
+ *      <feat-download>true</feat-download>
+ *      <feat-dropbox>true</feat-dropbox>
+ *      <feat-lastfm>true</feat-lastfm>
+ *      <feat-manager>true</feat-manager>
+ *      <feat-multiformat>true</feat-multiformat>
+ *      <feat-social>true</feat-social>
+ *      <feat-third-party>true</feat-third-party>
+ *      <feat-web-player>true</feat-web-player>
+ *      <feat-youtube-channel>true</feat-youtube-channel>
+ *      <name>ultra</name>
+ *   </plan>
  * </user>
  *
  * }
@@ -131,9 +124,9 @@ public class User extends ModelItem {
     protected String username;
     protected String password;
     protected long availableStorage;
-    protected String avatarUrl;
+    protected String timeZone;
     protected Profile profile;
-    protected Subscription subscription;
+    protected Plan plan;
 
     // User's collection relations
     protected Playlists playlists;
@@ -326,25 +319,23 @@ public class User extends ModelItem {
     }
 
 
-
     /**
-     * <p>Setter for the user avatar image link: used by the parser.</p>
+     * <p>Setter for the user time zone: used by the parser.</p>
      *
-     * @param url the url of the user avatar
+     * @param timeZone the time zone {@link String}.
      */
-    public void setAvatarUrl(String url) {
-        this.avatarUrl = url;
+    public void setTimeZone(String timeZone) {
+        this.timeZone = timeZone;
     }
 
     /**
-     * <p>Getter for user avatar url.</p>
+     * <p>Getter for the user time zone.</p>
      *
-     * @return the user avatar url
+     * @return the user time zone
      */
-    public String getAvatarUrl() {
-        return this.avatarUrl;
+    public String getTimeZone() {
+        return this.timeZone;
     }
-
 
 
     /**
@@ -366,24 +357,24 @@ public class User extends ModelItem {
     }
 
     
-    
     /**
-     * <p>Setter for the user subscription: used by the parser.</p>
+     * <p>Setter for the user plan: used by the parser.</p>
      *
-     * @param subscription the user {@link Subscription} object.
+     * @param plan the user {@link Plan} object.
      */
-    public void setSubscription(Subscription subscription) {
-        this.subscription = subscription;
+    public void setPlan(Plan plan) {
+        this.plan = plan;
     }
 
     /**
-     * <p>Getter for the user {@link Subscription}.</p>
+     * <p>Getter for the user {@link Plan}.</p>
      *
-     * @return the user subscription
+     * @return the user plan
      */
-    public Subscription getSubscription() {
-        return this.subscription;
+    public Plan getPlan() {
+        return this.plan;
     }
+    
 
     /* ------------------- */
     /* Collection Browsing */

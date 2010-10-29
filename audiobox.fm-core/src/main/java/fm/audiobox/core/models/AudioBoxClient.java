@@ -441,9 +441,9 @@ public class AudioBoxClient {
 
         this.getMainConnector().setCredential( new UsernamePasswordCredentials(username, password) );
 
-        this.getMainConnector().execute( this.mUser.getEndPoint(), null, null, this.mUser, null );
+        String[] response = this.getMainConnector().execute( this.mUser.getEndPoint(), null, null, this.mUser, null );
 
-        if ( ! User.ACTIVE_STATE.equalsIgnoreCase( this.mUser.getState() ) )
+        if ( Integer.parseInt(response[AudioBoxConnector.RESPONSE_CODE], 10) != HttpStatus.SC_OK )
             throw new LoginException("User is not active", LoginException.INACTIVE_USER_STATE );
 
         return this.mUser;

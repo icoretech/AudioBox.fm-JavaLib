@@ -316,6 +316,20 @@
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
+			<dependency>
+				<groupId>log4j</groupId>
+				<artifactId>log4j</artifactId>
+				<version>1.2.15</version>
+				<type>jar</type>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-log4j12</artifactId>
+				<version>1.6.1</version>
+				<type>jar</type>
+				<scope>compile</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -357,7 +371,7 @@
 			</activation>
 			<properties>
 				<fm.audiobox.protocol>http</fm.audiobox.protocol>
-				<fm.audiobox.host>audiobox.dev</fm.audiobox.host>
+				<fm.audiobox.host>0.0.0.0</fm.audiobox.host>
 				<fm.audiobox.port>3000</fm.audiobox.port>
 				<fm.audiobox.skipTests>true</fm.audiobox.skipTests>
 				<fm.audiobox.logLevel>DEBUG</fm.audiobox.logLevel>
@@ -374,7 +388,7 @@
 			</activation>
 			<properties>
 				<fm.audiobox.protocol>https</fm.audiobox.protocol>
-				<fm.audiobox.host>audiobox.dev</fm.audiobox.host>
+				<fm.audiobox.host>0.0.0.0</fm.audiobox.host>
 				<fm.audiobox.port>443</fm.audiobox.port>
 				<fm.audiobox.skipTests>false</fm.audiobox.skipTests>
 				<fm.audiobox.logLevel>INFO</fm.audiobox.logLevel>
