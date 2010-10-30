@@ -131,9 +131,9 @@ public abstract class ModelItem extends Model {
             public void run() {
                 try {
                     mi.getConnector().execute(endpoint, mi.getToken(), null, collection, null);
-                } catch (ServiceException e) {
-                    e.printStackTrace();
                 } catch (LoginException e) {
+                    e.printStackTrace();
+                } catch (ServiceException e) {
                     e.printStackTrace();
                 }
             }
