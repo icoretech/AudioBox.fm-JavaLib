@@ -15,16 +15,6 @@ public class MD5Test extends junit.framework.TestCase {
 
     @Test
     public void testApp() {
-        
-        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
-        System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire", "debug");
-        System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "debug");
-        System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire.header", "debug");
-        System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http.impl", "debug");
-        System.setProperty("org.apache.commons.logging.simplelog.log.fm.audiobox.core", "debug");
-        System.setProperty("org.apache.commons.logging.simplelog.log.fm.audiobox.sync", "debug");
-        
-        
         File file = new File(fx.get( Fixtures.UPLOAD_TEST_FILE ));
         
         MD5 task = new MD5( file );

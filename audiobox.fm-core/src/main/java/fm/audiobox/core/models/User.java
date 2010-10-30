@@ -98,7 +98,7 @@ import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
  * Tracks trs = artist.getTracks();
  * </pre>
  * 
- * Or you can get informations about a specific, UUID known track's, by calling {@link User#getTrackByUuid(String)}
+ * Or you can get informations about a specific, UUID known track's, by calling {@link User#getTrackByToken(String)}
  * 
  * @author Valerio Chiodino
  * @author Fabio Tunno
@@ -125,7 +125,6 @@ public class User extends ModelItem {
     private String state;
     private int tracksCount;
     private String username;
-    private String password;
     private long availableStorage;
     private String timeZone;
     private Profile profile;
@@ -324,17 +323,6 @@ public class User extends ModelItem {
 
 
     /**
-     * <p>Setter for the user password.</p>
-     *
-     * @param password the user password
-     */
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-
-
-    /**
      * <p>Setter for the user remote available storage: used by the parser.</p>
      *
      * @param availableStorage a {@link String} representing numbers of available storage bytes.
@@ -418,7 +406,7 @@ public class User extends ModelItem {
     /**
      * Given a known track Token this method will requests AudioBox.fm and returns a valid {@link Track} object.
      *
-     * @param token the UUID of the track you are asking for.
+     * @param token the token of the track you are asking for.
      * 
      * @return the requested track if exists.
      * 

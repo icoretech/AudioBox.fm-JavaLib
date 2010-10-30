@@ -16,18 +16,10 @@ import fm.audiobox.sync.util.AsyncTaskManager;
 public class ThreadTest extends junit.framework.TestCase {
 
 	private boolean finish = false;
-	
+	Fixtures fx = new Fixtures(); 
 	
 	@Test
     public void testApp() {
-        
-        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
-        System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire", "debug");
-        System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "debug");
-        System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire.header", "debug");
-        System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http.impl", "debug");
-        System.setProperty("org.apache.commons.logging.simplelog.log.fm.audiobox.core", "debug");
-        System.setProperty("org.apache.commons.logging.simplelog.log.fm.audiobox.sync", "debug");
         
         assertTrue( true );
         
@@ -38,7 +30,6 @@ public class ThreadTest extends junit.framework.TestCase {
 			@Override
 			public void onStop(AsyncTask task) {
 				System.out.println("Stop event");
-				
 			}
 			
 			@Override
@@ -59,7 +50,7 @@ public class ThreadTest extends junit.framework.TestCase {
 			}
 		});
         
-        File[] _files = new File( Fixtures.get( Fixtures.SCAN_FOLDER ) ).listFiles(new FileFilter() {
+        File[] _files = new File( fx.get( Fixtures.SCAN_FOLDER ) ).listFiles(new FileFilter() {
 			public boolean accept(File pathname) {
 				return pathname.isDirectory();
 			}

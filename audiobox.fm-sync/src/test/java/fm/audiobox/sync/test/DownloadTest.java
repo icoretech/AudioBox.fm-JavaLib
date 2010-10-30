@@ -26,23 +26,14 @@ public class DownloadTest extends junit.framework.TestCase {
     @SuppressWarnings("deprecation")
     public void testApp() {
         
-        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
-        System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire", "debug");
-        System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "debug");
-        System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire.header", "debug");
-        System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http.impl", "debug");
-        System.setProperty("org.apache.commons.logging.simplelog.log.fm.audiobox.core", "debug");
-        System.setProperty("org.apache.commons.logging.simplelog.log.fm.audiobox.sync", "debug");
-        
-        assertTrue( true );
         try {
             AudioBoxClient abc = new AudioBoxClient();
             abc.setForceTrust(true);
             
-            User user = abc.login( Fixtures.get( Fixtures.LOGIN), Fixtures.get(Fixtures.RIGHT_PASS) );
+            User user = abc.login( fx.get( Fixtures.LOGIN), fx.get(Fixtures.RIGHT_PASS) );
             assertNotNull( user );
             
-            File f = new File ( Fixtures.get(Fixtures.DOWNLOAD_TEST_FILE) );
+            File f = new File ( fx.get(Fixtures.DOWNLOAD_TEST_FILE) );
             
             assertNotNull( f );
             
@@ -58,9 +49,8 @@ public class DownloadTest extends junit.framework.TestCase {
 			
 			assertTrue( f.exists() );
 			
-            
             // get track and its information by a given UUID
-            Track t = user.getTrackByToken( Fixtures.get( Fixtures.TRACK_TO_DOWNLOAD ) );
+            Track t = user.getTrackByToken( fx.get( Fixtures.TRACK_TO_DOWNLOAD ) );
             
             assertNotNull( t );
             

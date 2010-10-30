@@ -20,8 +20,6 @@ import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 
 public class ThreadedCollectionsTest extends junit.framework.TestCase {
 
-    private static Logger log = LoggerFactory.getLogger(ThreadedCollectionsTest.class);
-    
     StaticAudioBox abc;
     User user;
     Fixtures fx = new Fixtures();

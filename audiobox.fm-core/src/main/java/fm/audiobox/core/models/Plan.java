@@ -26,7 +26,7 @@ import fm.audiobox.core.api.ModelItem;
 
 
 /**
- * Plan is linked to the {@link Subscription} and specify user's plan details.
+ * Plan is linked to the {@link User} and specify user's plan details.
  * 
  * <p>
  * 

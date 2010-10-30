@@ -306,14 +306,14 @@ public class Track extends ModelItem {
     /**
      * <p>Getter for the track streaming url.</p>
      *
-     * @params boolean if true this methods executes a request and return the amazon stream url
-     * @return the track streamUrl
+     * @param remote if true this methods executes a request and return the stream url
+     * @return the track stream URL
      * 
      * @throws LoginException if any authentication problem during the request occurs.
      * @throws ServiceException if any connection problem to AudioBox.fm occurs.
      */
-    public String getStreamUrl(boolean s3) throws LoginException, ServiceException {
-        if ( s3 ){
+    public String getStreamUrl(boolean remote) throws LoginException, ServiceException {
+        if ( remote ){
 	    	String[] result = this.getConnector().execute( this.pEndPoint, this.getToken(), STREAM_ACTION, this, null);
 	        return result[ AudioBoxConnector.RESPONSE_BODY ];
 	    } else return this.streamUrl;

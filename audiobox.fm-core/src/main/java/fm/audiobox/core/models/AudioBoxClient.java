@@ -440,7 +440,6 @@ public class AudioBoxClient {
 
         this.mUser = (User) getModelInstance( USER_KEY , this.getMainConnector() );
         this.mUser.setUsername(username);
-        this.mUser.setPassword(password);
 
         this.getMainConnector().setCredential( new UsernamePasswordCredentials(username, password) );
 
@@ -664,8 +663,7 @@ public class AudioBoxClient {
          * @return the HttpRequestBase 
          * 
          * @throws LoginException if user has not yet logged in.
-         * @throws ServiceException if the connection to AudioBox.fm throws a {@link ClientProtocolException}, 
-         * {@link SocketTimeoutException} or {@link IOException}.
+         * @throws ServiceException if the connection to AudioBox.fm throws a {@link SocketTimeoutException} or {@link IOException}.
          */
         public HttpRequestBase createConnectionMethod(String path, String token, String action , Model target, String httpVerb) {
         	token = ( ( token == null ) ? "" : token.startsWith("/") ? token : "/".concat(token) ).trim();
@@ -707,8 +705,7 @@ public class AudioBoxClient {
          * @return String array containing the response code at position 0 and the response body at position 1
          * 
          * @throws LoginException if user has not yet logged in.
-         * @throws ServiceException if the connection to AudioBox.fm throws a {@link ClientProtocolException}, 
-         * {@link SocketTimeoutException} or {@link IOException}.
+         * @throws ServiceException if the connection to AudioBox.fm throws a {@link SocketTimeoutException} or {@link IOException}.
          */
         public String[] execute(String path, String token, String action , Model target, String httpVerb) throws LoginException , ServiceException {
             return execute(path, token, action, target, httpVerb, false);
@@ -736,8 +733,7 @@ public class AudioBoxClient {
          * @return String array containing the response code at position 0 and the response body at position 1
          * 
          * @throws LoginException if user has not yet logged in.
-         * @throws ServiceException if the connection to AudioBox.fm throws a {@link ClientProtocolException}, 
-         * {@link SocketTimeoutException} or {@link IOException}.
+         * @throws ServiceException if the connection to AudioBox.fm throws a {@link SocketTimeoutException} or {@link IOException}.
          */
         public String[] execute(String path, String token, String action , Model target, String httpVerb, boolean followRedirects) throws LoginException , ServiceException {
             return execute(path, token, action, target, httpVerb, XML_FORMAT, followRedirects);
@@ -765,8 +761,7 @@ public class AudioBoxClient {
          * @return String array containing the response code at position 0 and the response body at position 1
          *
          * @throws LoginException if user has not yet logged in
-         * @throws ServiceException if the connection to AudioBox.fm throws a {@link ClientProtocolException}, 
-         * {@link SocketTimeoutException} or {@link IOException} occurs.
+         * @throws ServiceException if the connection to AudioBox.fm throws a {@link SocketTimeoutException} or {@link IOException} occurs.
          */
         public String[] execute(String path, String token, String action , Model target, String httpVerb, String format, boolean followRedirects) throws LoginException , ServiceException {
 
@@ -804,8 +799,7 @@ public class AudioBoxClient {
          * @return String array containing the response code at position 0 and the response body at position 1
          * 
          * @throws LoginException if user has not yet logged in
-         * @throws ServiceException if the connection to AudioBox.fm throws a {@link ClientProtocolException}, 
-         * {@link SocketTimeoutException} or {@link IOException} occurs.
+         * @throws ServiceException if the connection to AudioBox.fm throws a {@link SocketTimeoutException} or {@link IOException} occurs.
          */
         public String[] request(HttpRequestBase method, Model target, boolean followRedirects) throws LoginException, ServiceException {
             
@@ -917,8 +911,7 @@ public class AudioBoxClient {
          * @return String array containing the response code at position 0 and the response body at position 1
          * 
          * @throws LoginException if user has not yet logged in
-         * @throws ServiceException if the connection to AudioBox.fm throws a {@link ClientProtocolException}, 
-         * {@link SocketTimeoutException} or {@link IOException} occurs.
+         * @throws ServiceException if the connection to AudioBox.fm throws a {@link SocketTimeoutException} or {@link IOException} occurs.
          */
         private String[] request(String url, Model target, String httpVerb, boolean followRedirects) throws LoginException, ServiceException {
 

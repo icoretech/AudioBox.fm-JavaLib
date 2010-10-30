@@ -15,7 +15,8 @@ public class Fixtures {
     public static final String RIGHT_PASS = "right_pass";
     public static final String USERNAME = "username";
     public static final String WRONG_PASS = "wrong_pass";
-
+    public static final String REAL_NAME = "real_name";
+    
     public static final String INACTIVE_LOGIN = "inactive_login";
     public static final String INACTIVE_RIGHT_PASS = "inactive_right_pass";
     public static final String INACTIVE_USERNAME = "inactive_username";

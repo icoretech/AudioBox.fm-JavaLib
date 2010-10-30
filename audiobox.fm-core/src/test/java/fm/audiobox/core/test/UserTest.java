@@ -36,18 +36,9 @@ public class UserTest extends junit.framework.TestCase {
     @SuppressWarnings("deprecation")
     @Before
     public void setUp() throws Exception {
-        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
-        System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire", "debug");
-        System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "debug");
-        System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire.header", "debug");
-        System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http.impl", "debug");
-        
-        System.setProperty("org.apache.commons.logging.simplelog.log.fm.audiobox.core", "debug");
-        
         abc = new StaticAudioBox();
         StaticAudioBox.setModelClassFor(StaticAudioBox.USER_KEY , User.class );
         abc.setForceTrust(true);
-        
     }
     
     @Test
@@ -61,13 +52,15 @@ public class UserTest extends junit.framework.TestCase {
             
             assertNotNull( user.getBytesServed() );
             assertNotNull( user.getEmail() );
+            assertEquals( fx.get( Fixtures.LOGIN ), user.getEmail() );
             assertNotNull( user.getPlayCount() );
             assertNotNull( user.getQuota() );
             assertNotNull( user.getTracksCount() );
             assertNotNull( user.getAvailableStorage() );
+            assertEquals( 162135015424L, user.getAvailableStorage() );
             assertNotNull( user.getName() );
+            assertEquals( fx.get( Fixtures.USERNAME ), user.getName() );
             assertNotNull( user.getTimeZone() );
-            
             
             assertTrue( user.getQuota() < user.getAvailableStorage() );
             
@@ -75,6 +68,7 @@ public class UserTest extends junit.framework.TestCase {
             Profile p = user.getProfile();
             assertNotNull( p.hasAutoplay() );
             assertNotNull( p.getRealName() );
+            assertEquals( fx.get( Fixtures.REAL_NAME ), p.getRealName() );
             assertEquals( p.getName(), p.getRealName() );
             assertNull( p.getToken() );
 

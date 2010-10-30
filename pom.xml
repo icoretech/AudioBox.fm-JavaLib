@@ -47,7 +47,7 @@
 	<scm>
 		<connection>scm:git:git@github.com:audiobox/AudioBox.fm-JavaLib.git</connection>
 		<developerConnection>scm:git:git@github.com:audiobox/AudioBox.fm-JavaLib.git</developerConnection>
-		<url>http://github.com/audiobox/AudioBox.fm-JavaLib/tree/edge</url>
+		<url>http://github.com/audiobox/AudioBox.fm-JavaLib/tree/master</url>
 	</scm>
 
 
@@ -321,14 +321,14 @@
 				<artifactId>log4j</artifactId>
 				<version>1.2.15</version>
 				<type>jar</type>
-				<scope>compile</scope>
+				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-log4j12</artifactId>
 				<version>1.6.1</version>
 				<type>jar</type>
-				<scope>compile</scope>
+				<scope>test</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
