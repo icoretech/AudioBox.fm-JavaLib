@@ -112,4 +112,19 @@ public class Playlists extends ModelsCollection {
         }
         return null;
     }
+    
+    /**
+     * <p>Getter method for a single {@link Playlist} contained in the collection.</p>
+     *
+     * @param name the name (case insensitive) of the desired Playlist.
+     * 
+     * @return a {@link Playlist} object if the playlist is in pool <code>null</code> otherwise.
+     */
+    public Playlist getPlaylistByName(String name) {
+        for (Playlist playlist : collection) {
+            if ( name.equalsIgnoreCase( playlist.getName() ) )
+                return playlist;
+        }
+        return null;
+    }
 }
