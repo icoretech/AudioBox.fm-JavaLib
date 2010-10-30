@@ -58,7 +58,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.HttpStatus;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -441,10 +440,7 @@ public class AudioBoxClient {
 
         this.getMainConnector().setCredential( new UsernamePasswordCredentials(username, password) );
 
-        String[] response = this.getMainConnector().execute( this.mUser.getEndPoint(), null, null, this.mUser, null );
-
-        if ( Integer.parseInt(response[AudioBoxConnector.RESPONSE_CODE], 10) != HttpStatus.SC_OK )
-            throw new LoginException("User is not active", LoginException.INACTIVE_USER_STATE );
+        this.getMainConnector().execute( this.mUser.getEndPoint(), null, null, this.mUser, null );
 
         return this.mUser;
     }
@@ -810,7 +806,7 @@ public class AudioBoxClient {
         public String[] request(HttpRequestBase method, Model target, boolean followRedirects) throws LoginException, ServiceException {
             
             if (mUser == null)
-                throw new LoginException("Cannot execute API actions without credentials.", LoginException.NO_CREDENTIALS);
+                throw new LoginException( "User is not recognized" , HttpStatus.SC_UNAUTHORIZED );
             
             this.mClient.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, followRedirects);
 
@@ -820,19 +816,6 @@ public class AudioBoxClient {
             
                 return mClient.execute(method, target, new BasicHttpContext());
                 
-            } catch( ClientProtocolException e ) {
-
-                try {
-                    // LoginException is not handled by the response handler
-                    int status = Integer.parseInt(e.getMessage());
-                    if ( status == HttpStatus.SC_UNAUTHORIZED ) {
-                        throw new LoginException("Unauthorized user", status);
-                    }
-
-                } catch(NumberFormatException ex) { /* Response is a real ClientProtocolException */ }
-
-                throw new ServiceException( "Client protocol exception: " + e.getMessage(), ServiceException.CLIENT_ERROR );
-
             } catch( SocketTimeoutException e ) {
                 throw new ServiceException( "Service does not respond: " + e.getMessage(), ServiceException.TIMEOUT_ERROR );
 

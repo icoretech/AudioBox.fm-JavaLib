@@ -634,9 +634,9 @@ public class User extends ModelItem {
             public void run() {
                 try {
                     user.getConnector().execute(endpoint, null, null, collection, null);
-                } catch (ServiceException e) {
-                    e.printStackTrace();
                 } catch (LoginException e) {
+                    e.printStackTrace();
+                } catch (ServiceException e) {
                     e.printStackTrace();
                 }
             }

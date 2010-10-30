@@ -30,17 +30,9 @@ package fm.audiobox.core.exceptions;
  * @author Valerio Chiodino
  * @version 0.0.1
  */
-public class LoginException extends javax.security.auth.login.LoginException {
-
-    /** Tipically used when trying to access services without authentication */
-    public static final int NO_CREDENTIALS = -400;
-
-    /** Error code given by an inactive user login */
-    public static final int INACTIVE_USER_STATE = -200;
+public class LoginException extends ServiceException {
 
     private static final long serialVersionUID = 1L;
-
-    private int errorCode;
 
     /**
      * <p>Constructor for LoginException.</p>
@@ -49,17 +41,7 @@ public class LoginException extends javax.security.auth.login.LoginException {
      * @param code a int.
      */
     public LoginException(String message, int code) {
-        super(message);
-        errorCode = code;
-    }
-
-    /**
-     * <p>Getter for the field <code>errorCode</code>.</p>
-     *
-     * @return a int.
-     */
-    public int getErrorCode() {
-        return errorCode;
+        super(message, code);
     }
 
 }

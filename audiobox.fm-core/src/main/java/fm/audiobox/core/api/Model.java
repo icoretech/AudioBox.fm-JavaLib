@@ -46,6 +46,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
+import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.AudioBoxClient;
@@ -158,7 +159,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
 
     /** {@inheritDoc} */
     @Override
-    public String[] handleResponse(HttpResponse response) throws ClientProtocolException, IOException {
+    public String[] handleResponse(HttpResponse response) throws IOException {
 
         int responseCode = response.getStatusLine().getStatusCode();
         String responseString = "";
@@ -172,6 +173,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
             responseString = this.parseResponse( response );
             break;
 
+        
         case HttpStatus.SC_NO_CONTENT:
             responseString = "Resource not ready";
             break;
@@ -181,22 +183,18 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
             responseString = response.getFirstHeader("Location").getValue();
             break;
 
-            // 40*
+            // 401, 403
         case HttpStatus.SC_UNAUTHORIZED:
-            throw new ClientProtocolException(String.valueOf(responseCode));
-
-        case HttpStatus.SC_UNPROCESSABLE_ENTITY:
-            throw new ServiceException( "Unprocessable entity", responseCode );
-
-        case HttpStatus.SC_NOT_FOUND:
-            throw new ServiceException( "Resource not found", responseCode );
-
-            // 50*
+        case HttpStatus.SC_FORBIDDEN:
+        	{String reason = this._parsePlainResponse(response.getEntity().getContent() );
+        	throw new LoginException( reason , responseCode );}
+        	
+        // 50x
         default:
-            throw new ServiceException( "Response code not recognized (" + responseCode + ")", responseCode );
+        	{String reason = this._parsePlainResponse(response.getEntity().getContent() );
+            throw new ServiceException( reason, responseCode );}
 
         }
-
 
         HttpEntity responseEntity = response.getEntity(); 
         if (responseEntity != null) 
@@ -282,15 +280,9 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
      * @return a String representing the body of the response
      */
     protected String parsePlainResponse(InputStream input) throws IOException {
-
-        int read;
-        byte[] bytes = new byte[ CHUNK ];
-        StringBuffer sb = new StringBuffer();
-        while(  ( read = input.read( bytes) ) != -1 )
-            sb.append( new String( bytes, 0, read ));
-        return sb.toString().trim();
-
+    	return this._parsePlainResponse(input);
     }
+    
     
     /**
      * This method implementation does nothing. It must be overridden by each model that should contains
@@ -304,6 +296,22 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
         return "";
     }
 
+    
+    
+    /**
+     * This method is used to parse plain text responses in case of errors
+     * @param input	the {@link InputStream} of the entity content
+     * @return	a String that represents the response body text
+     * @throws IOException
+     */
+    private String _parsePlainResponse(InputStream input) throws IOException {
+    	int read;
+        byte[] bytes = new byte[ CHUNK ];
+        StringBuffer sb = new StringBuffer();
+        while(  ( read = input.read( bytes) ) != -1 )
+            sb.append( new String( bytes, 0, read ));
+        return sb.toString().trim();
+    }
     
     
     /* --------- */

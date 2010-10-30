@@ -91,9 +91,9 @@ public class UserTest extends junit.framework.TestCase {
             assertTrue( plan.hasWebPlayer() );
             assertTrue( plan.hasYoutubeChannel() );
             
-        } catch (ServiceException e) {
-            e.printStackTrace();
         } catch (LoginException e) {
+            e.printStackTrace();
+        } catch (ServiceException e) {
             e.printStackTrace();
         } catch (ModelException e) {
             e.printStackTrace();
@@ -189,9 +189,9 @@ public class UserTest extends junit.framework.TestCase {
             assertNotNull(tracks);
             assertNotNull(tracks[0]);
             
-        } catch (ServiceException e) {
-            e.printStackTrace();
         } catch (LoginException e) {
+            e.printStackTrace();
+        } catch (ServiceException e) {
             e.printStackTrace();
         }
     }
