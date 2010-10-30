@@ -99,7 +99,7 @@ public class ThreadedTest extends junit.framework.TestCase {
                     Playlists pls = (Playlists) user.getPlaylists(false);
                     assertNotNull(pls.getCollection());
                     
-                    Playlist pl = pls.get(0);
+                    Playlist pl = pls.getPlaylistByName("development");
                     
                     assertNotNull(pl);
                     

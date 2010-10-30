@@ -210,9 +210,12 @@ public class AudioBoxClient {
 
     /** Constant <code>TRACKS_KEY="Tracks"</code> */
     public static final String TRACKS_KEY    = "Tracks";
-
+    
     /** Constant <code>TRACK_KEY="Track.TAG_NAME"</code> */
     public static final String TRACK_KEY     = Track.TAG_NAME;
+    
+    /** Constant <code>ERROR_KEY="Tracks"</code> */
+    public static final String ERROR_KEY     = Error.TAG_NAME;
 
     /** Constant <code>NEW_TRACK_KEY="Track.TAG_NAME"</code> */
     public static final String NEW_TRACK_KEY     = "NewTrack";
@@ -242,6 +245,7 @@ public class AudioBoxClient {
         sModelsMap.put( TRACKS_KEY,    Tracks.class ); 
         sModelsMap.put( TRACK_KEY ,    Track.class );
         sModelsMap.put( NEW_TRACK_KEY , Track.class );
+        sModelsMap.put( ERROR_KEY,      Error.class );
     }
 
     private User mUser;
