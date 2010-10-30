@@ -16,6 +16,7 @@ import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Albums;
+import fm.audiobox.core.models.CoverUrls;
 import fm.audiobox.core.models.User;
 import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 import fm.audiobox.core.test.mocks.models.Album;
@@ -60,15 +61,20 @@ public class AlbumsTest extends junit.framework.TestCase {
             for (Model al : albums.getCollection()) {
                 Album alb = (Album) al;
                 assertNotNull( alb );
-                assertNotNull( alb.getCoverUrlAsThumb() );
-                assertNotNull( alb.getCoverUrl() );
+                assertNotNull( alb.getCoverUrls() );
                 assertNotNull( alb.getArtist() );
                 album = alb;
             }
-
+            
             Album al = (Album) albums.get(album.getToken());
             assertNotNull( al );
             assertSame( al, album);
+            
+            CoverUrls c = al.getCoverUrls();
+            assertNotNull( c.getBig() );
+            assertNotNull( c.getThumb() );
+            assertNotNull( c.getTiny() );
+            assertNotNull( c.getTinyNormal() );
             
             List<Album> list = new ArrayList<Album>();
             albums.setCollection( list );

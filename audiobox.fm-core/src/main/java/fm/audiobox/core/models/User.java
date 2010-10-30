@@ -102,7 +102,7 @@ import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
  * 
  * @author Valerio Chiodino
  * @author Fabio Tunno
- * @version 0.0.1
+ * @version 0.0.2
  */
 public class User extends ModelItem {
 

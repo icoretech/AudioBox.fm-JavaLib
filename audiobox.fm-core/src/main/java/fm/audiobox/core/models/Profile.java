@@ -44,7 +44,7 @@ import fm.audiobox.core.api.ModelItem;
  * 
  * @author Valerio Chiodino
  * @author Fabio Tunno
- * @version 0.0.1
+ * @version 0.0.2
  */
 public class Profile extends ModelItem {
 
