@@ -37,9 +37,10 @@ public class ThreadedCollectionsTest extends junit.framework.TestCase {
             user = (User) abc.login( fx.get( Fixtures.LOGIN ), fx.get( Fixtures.RIGHT_PASS ) );
         } catch (LoginException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         } catch (ServiceException e) {
-            log.error("Service exception: " + e.getMessage());
             e.printStackTrace();
+            assertNull( e );	// development purpose
         }
     }
 
@@ -125,6 +126,7 @@ public class ThreadedCollectionsTest extends junit.framework.TestCase {
             
         } catch (ModelException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         }
 
     }

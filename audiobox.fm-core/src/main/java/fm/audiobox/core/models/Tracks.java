@@ -107,7 +107,7 @@ public class Tracks extends ModelsCollection {
      */
     public Track get(String uuid) {
         for (Track track : collection) {
-            if ( uuid.equals( track.getUuid() ) )
+            if ( uuid.equals( track.getToken() ) )
                 return track;
         }
         return null;

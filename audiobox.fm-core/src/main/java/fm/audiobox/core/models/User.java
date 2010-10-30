@@ -392,9 +392,9 @@ public class User extends ModelItem {
      * @throws ServiceException if the requested resource doesn't exists or any other ServiceException occur.
      * @throws ModelException 
      */
-    public Track getTrackByUuid(String uuid) throws ServiceException, LoginException, ModelException {
+    public Track getTrackByToken(String uuid) throws ServiceException, LoginException, ModelException {
     	Track t = this.newTrack();
-        t.setUuid(uuid);
+        t.setToken(uuid);
         return t;
     }
     

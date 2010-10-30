@@ -92,16 +92,22 @@ public class ArtistsTest extends junit.framework.TestCase {
 
         } catch (LoginException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         } catch (SocketException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         } catch (InstantiationException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         } catch (IllegalAccessException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         } catch (ModelException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         }
     }
     
@@ -122,23 +128,29 @@ public class ArtistsTest extends junit.framework.TestCase {
             Track tr = (Track) trs.get(0);
             assertNotNull(tr);
             
-            Track tr2 = ar.getTrack(tr.getUuid());
+            Track tr2 = ar.getTrack( tr.getToken() );
             
             assertNotNull( tr2 );
             assertSame(tr, tr2);
 
         } catch (LoginException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         } catch (SocketException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         } catch (InstantiationException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         } catch (IllegalAccessException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         } catch (ModelException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         }
     }
     

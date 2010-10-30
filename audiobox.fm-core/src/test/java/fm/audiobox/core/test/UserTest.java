@@ -93,10 +93,13 @@ public class UserTest extends junit.framework.TestCase {
             
         } catch (LoginException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         } catch (ServiceException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         } catch (ModelException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         }
     }
     
@@ -110,8 +113,10 @@ public class UserTest extends junit.framework.TestCase {
            assertEquals( HttpStatus.SC_UNAUTHORIZED, e.getErrorCode());
         } catch (SocketException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         } catch (ModelException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         }
     }
     
@@ -124,8 +129,10 @@ public class UserTest extends junit.framework.TestCase {
            assertEquals( 401, e.getErrorCode());
         } catch (SocketException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         } catch (ModelException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         }
     }
     
@@ -152,8 +159,10 @@ public class UserTest extends junit.framework.TestCase {
             assertEquals( HttpStatus.SC_UNAUTHORIZED, e.getErrorCode() );
         } catch (SocketException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         } catch (ModelException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         }
     }
     
@@ -176,6 +185,7 @@ public class UserTest extends junit.framework.TestCase {
             
         } catch (ModelException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         }
     }
     
@@ -191,8 +201,10 @@ public class UserTest extends junit.framework.TestCase {
             
         } catch (LoginException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         } catch (ServiceException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         }
     }
     
@@ -212,10 +224,13 @@ public class UserTest extends junit.framework.TestCase {
             user = (User) abc.login( fx.get(Fixtures.LOGIN) , fx.get( Fixtures.RIGHT_PASS) );
         } catch (LoginException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         } catch (SocketException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         } catch (ModelException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         }
         
     }

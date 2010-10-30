@@ -81,16 +81,22 @@ public class PlaylistsTest extends junit.framework.TestCase {
 
         } catch (LoginException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         } catch (SocketException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         } catch (InstantiationException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         } catch (IllegalAccessException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         } catch (ModelException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         }
     }
 
@@ -146,10 +152,13 @@ public class PlaylistsTest extends junit.framework.TestCase {
             user = abc.login( fx.get( Fixtures.LOGIN ), fx.get( Fixtures.RIGHT_PASS ) );
         } catch (LoginException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         } catch (SocketException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         } catch (ModelException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         }
 
     }

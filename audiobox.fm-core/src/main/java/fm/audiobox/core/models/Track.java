@@ -93,29 +93,42 @@ public class Track extends ModelItem {
     protected static final String STREAM_ACTION = "stream";
     protected static final String DOWNLOAD_ACTION = STREAM_ACTION;
 
-    private static final String PATH = "tracks";
     private static final String SCROBBLE_ACTION = "scrobble";
     private static final String LOVE_ACTION = "love";
     private static final String UNLOVE_ACTION = "unlove";
 
-    // Customized fields
-    private String uuid;
-
     // XML model fields
-    protected String duration;
-    protected long durationInSeconds;
-    protected boolean loved;
-    protected int playCount;
-    protected String title;
-    protected String trackNumber;
-    protected int year;
-    protected String fileHash;
-    protected String streamUrl;
-    protected long audioFileSize;
-    protected String originalFileName;
-    protected Artist artist;
-    protected Album album;
-
+    private String duration;
+    private long durationInSeconds;
+    private boolean loved;
+    private int playCount;
+    private String title;
+    private String trackNumber;
+    private int discNumber;
+    private int year;
+    private String fileHash;
+    private String streamUrl;
+    private long audioFileSize;
+    private String originalFileName;
+    private Artist artist;
+    private Album album;
+    
+    
+    /*
+    
+    <duration>3:51</duration>
+    <duration-in-seconds>231</duration-in-seconds>
+    <loved>true</loved>
+    <original-file-name>Alanis_Morissette_-_Ironic.mp3</original-file-name>
+    <play-count>31</play-count>
+    <title>Ironic</title>
+    <token>82bd7ee7-6323-47bb-9059-345ed1ba65d3</token>
+    <track-number>2</track-number>
+    <year>2002</year>
+    <stream-url>
+    https://audiobox.dev/api/tracks/82bd7ee7-6323-47bb-9059-345ed1ba65d3/stream
+    </stream-url>
+*/
     protected FileOutputStream fileOutputStream;
 
 
@@ -182,35 +195,6 @@ public class Track extends ModelItem {
 
 
     /**
-     * <p>Setter for the track's uuid.</p>
-     *
-     * @param uuid the track's UUID String.
-     */
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-
-    /**
-     * <p>Getter for the track's uuid.</p>
-     *
-     * @return the unique id of the track
-     */
-    public String getUuid() {
-
-        if (this.uuid == null && this.streamUrl != null) {
-            String	regex = "^(http|https)" + ( "://" + AudioBoxClient.getProperty("host") + AudioBoxClient.getProperty("apiPath")).replace(".", "\\.") + PATH + "/([^\\s]+)/stream$";
-            java.util.regex.Matcher m = java.util.regex.Pattern.compile(regex).matcher(streamUrl);
-            m.find();
-            this.setUuid( m.group(2) );
-        }
-
-        return this.uuid;		
-    }
-
-
-
-
-    /**
      * <p>Setter for the track duration: used by the parser.</p>
      *
      * @param duration the String of the duration in MM:SS format.
@@ -265,9 +249,36 @@ public class Track extends ModelItem {
      * @return the number of the track
      */
     public String getTrackNumber() {
-        return title;
+        return this.trackNumber;
     }
 
+
+    /**
+     * <p>Setter for the track's disc-number.</p>
+     * 
+     * @param {@link String} discNumber ( will be converted into integer )
+     */
+    public void setDiscNumber(String discNumber) {
+    	this.setDiscNumber( Integer.parseInt( discNumber) );
+    }
+    
+    /**
+     * <p>Getter for the track's disc-number.</p>
+     * 
+     * @param int the track's disc-number
+     */
+    public void setDiscNumber(int discNumber){
+    	this.discNumber = discNumber;
+    }
+
+    /**
+     * <p>Getter for the track's disc-number
+     * @return	the track's disc-number
+     */
+    public int getDiscNumber(){
+    	return this.discNumber;
+    }
+    
 
 
     /**
@@ -279,17 +290,33 @@ public class Track extends ModelItem {
         this.streamUrl = url;
     }
 
+    
+    /**
+     * This method invokes the <code>getStreamUrl(false)</code> method
+     * 
+     * @return	track's streamUrl 
+     * @throws LoginException
+     * @throws ServiceException
+     */
+    public String getStreamUrl() throws LoginException, ServiceException {
+    	return this.getStreamUrl(false);
+    }
+    
+    
     /**
      * <p>Getter for the track streaming url.</p>
      *
+     * @params boolean if true this methods executes a request and return the amazon stream url
      * @return the track streamUrl
      * 
      * @throws LoginException if any authentication problem during the request occurs.
      * @throws ServiceException if any connection problem to AudioBox.fm occurs.
      */
-    public String getStreamUrl() throws LoginException, ServiceException {
-        String[] result = this.getConnector().execute( this.pEndPoint, this.getUuid(), STREAM_ACTION, this, null);
-        return result[ AudioBoxConnector.RESPONSE_BODY ];
+    public String getStreamUrl(boolean s3) throws LoginException, ServiceException {
+        if ( s3 ){
+	    	String[] result = this.getConnector().execute( this.pEndPoint, this.getToken(), STREAM_ACTION, this, null);
+	        return result[ AudioBoxConnector.RESPONSE_BODY ];
+	    } else return this.streamUrl;
     }
 
 
@@ -566,7 +593,7 @@ public class Track extends ModelItem {
      * @throws ServiceException if any connection problem to AudioBox.fm occurs.
      */
     public void scrobble() throws ServiceException, LoginException {
-        String[] response = this.getConnector().execute( this.pEndPoint, this.getUuid(), SCROBBLE_ACTION, this, HttpPost.METHOD_NAME);
+        String[] response = this.getConnector().execute( this.pEndPoint, this.getToken(), SCROBBLE_ACTION, this, HttpPost.METHOD_NAME);
         if ( Integer.parseInt( response[ AudioBoxConnector.RESPONSE_CODE ] ) == HttpStatus.SC_OK)
             this.setPlayCount( this.getPlayCount() + 1 );
     }
@@ -590,7 +617,7 @@ public class Track extends ModelItem {
     public boolean love() throws ServiceException, LoginException  {
         boolean markLoved = true;
         if ( ! this.isLoved()) {
-            String[] result = this.getConnector().execute( this.pEndPoint, this.getUuid(), LOVE_ACTION, this, HttpPut.METHOD_NAME);
+            String[] result = this.getConnector().execute( this.pEndPoint, this.getToken(), LOVE_ACTION, this, HttpPut.METHOD_NAME);
             markLoved = HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
             this.setLoved( markLoved );
         }
@@ -616,7 +643,7 @@ public class Track extends ModelItem {
     public boolean unlove() throws ServiceException, LoginException {
         boolean markLoved = true;
         if (this.isLoved()) {
-            String[] result = this.getConnector().execute( this.pEndPoint, this.getUuid(), UNLOVE_ACTION, this, HttpPut.METHOD_NAME);
+            String[] result = this.getConnector().execute( this.pEndPoint, this.getToken(), UNLOVE_ACTION, this, HttpPut.METHOD_NAME);
             markLoved = HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
             this.setLoved( !markLoved );
         }
@@ -632,7 +659,7 @@ public class Track extends ModelItem {
      * @throws ServiceException if any connection problem to AudioBox.fm occurs.
      */
     public boolean delete() throws ServiceException, LoginException {
-        String[] result = this.getConnector().execute( this.pEndPoint, this.getUuid(), null, this, HttpDelete.METHOD_NAME);
+        String[] result = this.getConnector().execute( this.pEndPoint, this.getToken(), null, this, HttpDelete.METHOD_NAME);
         return HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
     }
 
@@ -647,7 +674,7 @@ public class Track extends ModelItem {
      */
     public void download(final FileOutputStream fos) throws ServiceException, LoginException {
         this.fileOutputStream = fos;
-        this.getConnector().execute( this.pEndPoint, this.getUuid(), DOWNLOAD_ACTION, this, null, true);
+        this.getConnector().execute( this.pEndPoint, this.getToken(), DOWNLOAD_ACTION, this, null, true);
     }
 
 
@@ -778,16 +805,12 @@ public class Track extends ModelItem {
         return this.title + " - " + this.artist.getName() + " (" + this.duration + ")";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Returns the current track instance
+     */
     @Override
-    public String getToken() {
-        return getUuid();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Track getTrack(String uuid) {
-        if ( this.getUuid().equals( uuid ) )
+    public Track getTrack(String token) {
+        if ( this.getToken().equals( token ) )
             return this;
         else return null;
     }

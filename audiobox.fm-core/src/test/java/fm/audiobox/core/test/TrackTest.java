@@ -47,7 +47,7 @@ public class TrackTest extends junit.framework.TestCase {
 
     @Test
     public void testTrack() {
-        
+    	
         assertNotNull( abc );
         assertNotNull( user );
         
@@ -79,7 +79,7 @@ public class TrackTest extends junit.framework.TestCase {
                 
                 assertNotNull( tr );
                 
-                assertNotNull( tr.getUuid() );
+                assertNotNull( tr.getToken() );
 
                 assertNotNull( tr.isLoved() );
 
@@ -96,8 +96,8 @@ public class TrackTest extends junit.framework.TestCase {
                 assertTrue( Track.State.IDLE == tr.getState() );
                 assertNotNull( tr.getTitle() );
                 assertNotNull( tr.getTrackNumber() );
-                assertNotNull( tr.getTrack( tr.getUuid() ) );
-                assertSame( tr, tr.getTrack( tr.getUuid() ) );
+                assertNotNull( tr.getTrack( tr.getToken() ) );
+                assertSame( tr, tr.getTrack( tr.getToken() ) );
                 assertNull( tr.getTrack( "aaa" ) );
                 assertNull( tr.getTracks() );
                 
@@ -150,14 +150,14 @@ public class TrackTest extends junit.framework.TestCase {
             assertTrue( testTr.getPlayCount() == ( playcount + 1) );
             
             
-            Track tr = user.getTrackByUuid( testTr.getUuid() );
+            Track tr = user.getTrackByToken( testTr.getToken() );
             
             assertNotNull(tr);
             
-            assertEquals(tr.getUuid(), testTr.getUuid());
+            assertEquals(tr.getToken(), testTr.getToken());
             assertNotSame(tr, testTr);
             
-            String uuid = testTr.getUuid();
+            String uuid = testTr.getToken();
             
             Track track = trs.get(uuid);
             assertNotNull( track );
@@ -165,7 +165,7 @@ public class TrackTest extends junit.framework.TestCase {
             
             
             try {
-                Track t = user.getTrackByUuid( "aaa ");
+                Track t = user.getTrackByToken( "aaa ");
                 assertNull( t );
             } catch( ServiceException e ) {
                 assertEquals( HttpStatus.SC_NOT_FOUND, e.getErrorCode() );
@@ -182,10 +182,13 @@ public class TrackTest extends junit.framework.TestCase {
 
         } catch (LoginException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         } catch (SocketException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         } catch (ModelException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         }
     }
 
@@ -195,10 +198,13 @@ public class TrackTest extends junit.framework.TestCase {
             user = abc.login( fx.get( Fixtures.LOGIN ), fx.get( Fixtures.RIGHT_PASS ) );
         } catch (LoginException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         } catch (SocketException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         } catch (ModelException e) {
             e.printStackTrace();
+            assertNull( e );	// development purpose
         }
 
     }

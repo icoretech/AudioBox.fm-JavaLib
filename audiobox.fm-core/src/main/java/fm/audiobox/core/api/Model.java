@@ -391,7 +391,6 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
                         this.mStack.push( subClass );
                     } catch (ModelException e) {
                         e.printStackTrace();
-
                     }
 
                 } else {
