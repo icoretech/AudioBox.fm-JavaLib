@@ -39,10 +39,10 @@ public class DownloadTest extends junit.framework.TestCase {
             AudioBoxClient abc = new AudioBoxClient();
             abc.setForceTrust(true);
             
-            User user = abc.login( fx.get( Fixtures.LOGIN), fx.get(Fixtures.RIGHT_PASS) );
+            User user = abc.login( Fixtures.get( Fixtures.LOGIN), Fixtures.get(Fixtures.RIGHT_PASS) );
             assertNotNull( user );
             
-            File f = new File ( fx.get(Fixtures.DOWNLOAD_TEST_FILE) );
+            File f = new File ( Fixtures.get(Fixtures.DOWNLOAD_TEST_FILE) );
             
             assertNotNull( f );
             
@@ -60,7 +60,7 @@ public class DownloadTest extends junit.framework.TestCase {
 			
             
             // get track and its information by a given UUID
-            Track t = user.getTrackByUuid( fx.get( Fixtures.TRACK_TO_DOWNLOAD ) );
+            Track t = user.getTrackByToken( Fixtures.get( Fixtures.TRACK_TO_DOWNLOAD ) );
             
             assertNotNull( t );
             
@@ -77,12 +77,15 @@ public class DownloadTest extends junit.framework.TestCase {
 			
 			System.out.println( "New file: " + f.getPath() );
             
-        } catch (ServiceException e) {
-            e.printStackTrace();
         } catch (LoginException e) {
             e.printStackTrace();
+            assertNull( e ); // development purpose
+        } catch (ServiceException e) {
+            e.printStackTrace();
+            assertNull( e ); // development purpose
         } catch (ModelException e) {
             e.printStackTrace();
+            assertNull( e ); // development purpose
         }
     }
     

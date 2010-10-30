@@ -53,9 +53,9 @@ public class Upload extends AsyncTask {
 
         try {
 			this.mTrack.upload();
-        } catch (ServiceException e) {
-            e.printStackTrace( System.out );
         } catch (LoginException e) {
+            e.printStackTrace( System.out );
+        } catch (ServiceException e) {
             e.printStackTrace( System.out );
         } catch (IOException e) {
         	e.printStackTrace( System.out );
@@ -72,7 +72,7 @@ public class Upload extends AsyncTask {
 
     @Override
     protected synchronized String end() {
-        return this.mTrack.getUuid();
+        return this.mTrack.getToken();
     }
 
     @Override

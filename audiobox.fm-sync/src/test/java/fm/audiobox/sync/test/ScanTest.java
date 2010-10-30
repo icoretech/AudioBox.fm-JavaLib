@@ -40,7 +40,8 @@ public class ScanTest extends junit.framework.TestCase {
             User user = abc.login( fx.get( Fixtures.LOGIN), fx.get(Fixtures.RIGHT_PASS) );
             assertNotNull( user );
             
-            final String[] allowed_formats = user.getSubscription().getAllowedFormats();
+            
+            final String[] allowed_formats = user.getAllowedFormats();
             
             Scan scan = new Scan( new File("/home/shotty/Dropbox/Public"), false, false);
             scan.setFilter(new FileFilter() {
@@ -55,12 +56,15 @@ public class ScanTest extends junit.framework.TestCase {
             System.out.println( "" + scan.scan().size() + " was found");
             
             
-        } catch (ServiceException e) {
-            e.printStackTrace();
         } catch (LoginException e) {
             e.printStackTrace();
+            assertNotNull( e ); // development purpose
+        } catch (ServiceException e) {
+            e.printStackTrace();
+            assertNotNull( e ); // development purpose
         } catch (ModelException e) {
             e.printStackTrace();
+            assertNotNull( e ); // development purpose
         }
     }
     

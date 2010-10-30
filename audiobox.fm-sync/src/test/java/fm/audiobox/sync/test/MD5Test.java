@@ -51,9 +51,8 @@ public class MD5Test extends junit.framework.TestCase {
 				System.out.println( "Complete: " + item );
 			}
 		});
+        
         System.out.println( "now: " + task.digest() );
-        
-        
         
     }
 

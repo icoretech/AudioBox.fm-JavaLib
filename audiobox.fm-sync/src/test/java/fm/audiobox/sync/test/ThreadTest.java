@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import fm.audiobox.sync.interfaces.ThreadListener;
 import fm.audiobox.sync.task.Scan;
+import fm.audiobox.sync.test.mocks.fixtures.Fixtures;
 import fm.audiobox.sync.util.AsyncTask;
 import fm.audiobox.sync.util.AsyncTaskManager;
 
@@ -54,22 +55,23 @@ public class ThreadTest extends junit.framework.TestCase {
 			@Override
 			public void onComplete(AsyncTask result, Object item) {
 				System.out.println("Complete");
-				//finish = true;
+				finish = true;
 			}
 		});
         
-        List<File> files = Arrays.asList(new File("/home/fatshotty/Dropbox").listFiles(new FileFilter() {
+        File[] _files = new File( Fixtures.get( Fixtures.SCAN_FOLDER ) ).listFiles(new FileFilter() {
 			public boolean accept(File pathname) {
 				return pathname.isDirectory();
 			}
-		})); 
+		});
+        List<File> files = Arrays.asList( _files ); 
         System.out.println("Threads totali: " + files.size());
         for( File file: files){
         	Scan _scan = new Scan( file, true);
             _scan.setFilter(new FileFilter() {
     			@Override
     			public boolean accept(File pathname) {
-    				return  true; 
+    				return  true;
     			}
     		});
             _scan.setThreadListener(new ThreadListener() {
@@ -99,7 +101,9 @@ public class ThreadTest extends junit.framework.TestCase {
         }
         
         
-        while( !finish){}
+        while( !finish){
+        	System.out.println("\t\t\tWhile");
+        }
         
         	
     }

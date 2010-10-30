@@ -91,7 +91,7 @@ public class Track extends ModelItem {
     public static final String HTTP_PARAM = "media";
 
     protected static final String STREAM_ACTION = "stream";
-    protected static final String DOWNLOAD_ACTION = STREAM_ACTION;
+    protected static final String DOWNLOAD_ACTION = "download_url";
 
     private static final String SCROBBLE_ACTION = "scrobble";
     private static final String LOVE_ACTION = "love";
@@ -256,7 +256,7 @@ public class Track extends ModelItem {
     /**
      * <p>Setter for the track's disc-number.</p>
      * 
-     * @param {@link String} discNumber ( will be converted into integer )
+     * @param discNumber {@link String} that will be converted into integer
      */
     public void setDiscNumber(String discNumber) {
     	this.setDiscNumber( Integer.parseInt( discNumber) );
@@ -265,7 +265,7 @@ public class Track extends ModelItem {
     /**
      * <p>Getter for the track's disc-number.</p>
      * 
-     * @param int the track's disc-number
+     * @param discNumber the track's disc-number as integer
      */
     public void setDiscNumber(int discNumber){
     	this.discNumber = discNumber;
@@ -320,6 +320,16 @@ public class Track extends ModelItem {
     }
 
 
+    
+    /**
+     * This method invokes AudioBox.fm and restore all track information
+     * @throws LoginException if any authentication problem during the request occurs.
+     * @throws ServiceException if any connection problem to AudioBox.fm occurs.
+     */
+    public void refresh() throws LoginException, ServiceException {
+    	this.getConnector().execute( this.pEndPoint, this.getToken(), null , this, null);
+    }
+    
 
     /**
      * This method is used by the parser. Please use {@link Track#setLoved(boolean)} instead.

@@ -61,12 +61,15 @@ public class UploadTest extends junit.framework.TestCase {
             assertNotNull( tr );*/
             
             
-        } catch (ServiceException e) {
-            e.printStackTrace();
         } catch (LoginException e) {
             e.printStackTrace();
+            assertNotNull( e ); // development purpose
+        } catch (ServiceException e) {
+            e.printStackTrace();
+            assertNotNull( e ); // development purpose
         } catch (ModelException e) {
             e.printStackTrace();
+            assertNotNull( e ); // development purpose
         }
     }
 }

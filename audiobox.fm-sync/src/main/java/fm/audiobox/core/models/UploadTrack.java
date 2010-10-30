@@ -27,7 +27,7 @@ public class UploadTrack extends Track {
     public void upload() throws IOException, ServiceException, LoginException {
     	method = this.pConnector.createConnectionMethod(Tracks.END_POINT , null, null, this, HttpPost.METHOD_NAME);
     	String result[] = this.pConnector.request(method, this, false);
-    	this.setUuid( result[ AudioBoxConnector.RESPONSE_BODY ]  );
+    	this.setToken( result[ AudioBoxConnector.RESPONSE_BODY ]  );
     }
 
 	@Override

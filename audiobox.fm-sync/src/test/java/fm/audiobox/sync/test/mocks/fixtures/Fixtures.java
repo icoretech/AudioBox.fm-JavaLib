@@ -25,14 +25,14 @@ public class Fixtures {
     public static final String DOWNLOAD_TEST_FILE = "download_test_file";
     public static final String TRACK_TO_DOWNLOAD = "track_to_download";
     
+    public static final String SCAN_FOLDER = "scan_folder";
     
+    private static Properties ps = new Properties();
     
-    Properties ps = new Properties();
-
-    public Fixtures() {
-        try {
+    static {
+    	try {
             
-            ps.load(Fixtures.class.getResourceAsStream("/fixtures.properties"));
+            ps.load( Fixtures.class.getResourceAsStream("/fixtures.properties") );
             
         } catch (FileNotFoundException e) {
             log.error("Environment properties file not found: " + e.getMessage());
@@ -42,8 +42,8 @@ public class Fixtures {
             e.printStackTrace();
         }
     }
-    
-    public String get(String key) {
+
+    public static String get(String key) {
         return ps.getProperty(key);
     }
 

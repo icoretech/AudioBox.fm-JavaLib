@@ -51,9 +51,9 @@ public class Profile extends ModelItem {
     /** The XML tag name for the Profile element */
     public static final String TAG_NAME = "profile";
     
-    protected boolean autoplay;
-    protected String realName;
-    protected boolean maximumPortability;
+    private boolean autoplay;
+    private String realName;
+    private boolean maximumPortability;
     
     /**
      * <p>Constructor for Profile.</p>

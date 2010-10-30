@@ -114,19 +114,24 @@ public class User extends ModelItem {
 
     /** Active user state */
     public static final String ACTIVE_STATE = "active";
+    
+    /** Separator used to split the allowed formats string */
+    public static final String ALLOWED_EXTENSIONS_SEPARATOR = ";";
 
-    protected long bytesServed;
-    protected String email;
-    protected int playCount;
-    protected long quota;
-    protected String state;
-    protected int tracksCount;
-    protected String username;
-    protected String password;
-    protected long availableStorage;
-    protected String timeZone;
-    protected Profile profile;
-    protected Plan plan;
+    private long bytesServed;
+    private String email;
+    private int playCount;
+    private long quota;
+    private String state;
+    private int tracksCount;
+    private String username;
+    private String password;
+    private long availableStorage;
+    private String timeZone;
+    private Profile profile;
+    private Plan plan;
+    
+    private String[] allowedFormats;
 
     // User's collection relations
     protected Playlists playlists;
@@ -208,6 +213,35 @@ public class User extends ModelItem {
         return this.playCount;
     }
 
+    
+    
+    /**
+     * <p>Setter for the user allowed-formats: used by the parser.</p>
+     *
+     * @param allowedFormats the allowed format semicolon-separated {@link String}.
+     */
+    @Deprecated
+    public void setAllowedFormats(String allowedFormats){
+    	this.setAllowedFormats( allowedFormats.split( ALLOWED_EXTENSIONS_SEPARATOR ) );
+    }
+    
+    /**
+     * <p>Setter for the user allowed-formats</p>
+     *
+     * @param allowedFormats a String array the contains the user subscription allowed media formats 
+     */
+    public void setAllowedFormats(String[] allowedFormats){
+    	this.allowedFormats =  allowedFormats;
+    }
+    
+    /**
+     * <p>Getter for the allowed-formats</p>
+     *
+     * @return String[] the allowed-formats
+     */
+    public String[] getAllowedFormats(){
+    	return this.allowedFormats;
+    }
 
 
     /**
@@ -382,19 +416,20 @@ public class User extends ModelItem {
 
 
     /**
-     * Given a known track UUID this method will requests AudioBox.fm and returns a valid {@link Track} object.
+     * Given a known track Token this method will requests AudioBox.fm and returns a valid {@link Track} object.
      *
-     * @param uuid the UUID of the track you are asking for.
+     * @param token the UUID of the track you are asking for.
      * 
-     * @return the requested track if it exists.
+     * @return the requested track if exists.
      * 
      * @throws LoginException if user has not been authenticated
      * @throws ServiceException if the requested resource doesn't exists or any other ServiceException occur.
      * @throws ModelException 
      */
-    public Track getTrackByToken(String uuid) throws ServiceException, LoginException, ModelException {
+    public Track getTrackByToken(String token) throws ServiceException, LoginException, ModelException {
     	Track t = this.newTrack();
-        t.setToken(uuid);
+        t.setToken(token);
+        t.refresh();
         return t;
     }
     
