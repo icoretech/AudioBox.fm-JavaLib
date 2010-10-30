@@ -91,7 +91,7 @@ public class Track extends ModelItem {
     public static final String HTTP_PARAM = "media";
 
     protected static final String STREAM_ACTION = "stream";
-    protected static final String DOWNLOAD_ACTION = "download_url";
+    protected static final String DOWNLOAD_ACTION = "download";
 
     private static final String SCROBBLE_ACTION = "scrobble";
     private static final String LOVE_ACTION = "love";
