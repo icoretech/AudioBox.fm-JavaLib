@@ -34,11 +34,16 @@ import fm.audiobox.core.api.ModelItem;
  * 
  * <pre>
  * {@code
+ * 
  * <album>
  *   <name>Album name</name>
  *   <token>coq8FfgK</token>
- *   <cover-url-as-thumb>http://url.to/thumb.png</cover-url-as-thumb>
- *   <cover-url>http://url.to/original.png</cover-url>
+ *   <cover-urls>
+ *     <big>http://url.to/big.png</big>
+ *     <tiny>http://url.to/tiny.png</tiny>
+ *     <thumb>http://url.to/thumb.png</thumb>
+ *     <tiny-normal>http://url.to/tiny-normal.png</tiny-normal>
+ *   </cover-urls>
  *   <artist>
  *     <name>Artist name</name>
  *     <token>fs8d8g9d</token>
@@ -49,7 +54,7 @@ import fm.audiobox.core.api.ModelItem;
  *
  * @author Valerio Chiodino
  * @author Fabio Tunno
- * @version 0.0.1
+ * @version 0.0.2
  */
 public class Album extends ModelItem {
 
@@ -57,8 +62,7 @@ public class Album extends ModelItem {
 	public static final String TAG_NAME = "album";
 	
 	// Name and token are inherited from Model
-    protected String coverUrlAsThumb;
-    protected String coverUrl;
+	protected CoverUrls coverUrls;
     protected Artist artist;
 	
 	/**
@@ -69,43 +73,30 @@ public class Album extends ModelItem {
 	}
 	
 	
+	/* ------------------- */
+    /* Getters and setters */
+    /* ------------------- */
+	
+	
 	/**
-	 * <p>Setter for the field <code>coverUrlAsThumb</code>.</p>
-	 *
-	 * @param coverUrlAsThumb a {@link java.lang.String} object.
-	 */
-	public void setCoverUrlAsThumb( String coverUrlAsThumb ) {
-        this.coverUrlAsThumb = coverUrlAsThumb;
+     * <p>Setter for the field <code>coverUrls</code>.</p>
+     *
+     * @param coverUrls a {@link fm.audiobox.core.models.CoverUrls} object.
+     */
+    public void setCoverUrls(CoverUrls coverUrls ) {
+        this.coverUrls = coverUrls;
+    }
+    
+    /**
+     * <p>Getter for the field <code>coverUrls</code>.</p>
+     *
+     * @return the coverUrls
+     */
+    public CoverUrls getCoverUrls() {
+        return this.coverUrls;
     }
 	
-	/**
-	 * <p>Getter for the field <code>coverUrlAsThumb</code>.</p>
-	 *
-	 * @return the coverUrlAsThumb
-	 */
-	public String getCoverUrlAsThumb() {
-		return coverUrlAsThumb;
-	}
-	
-	
-	/**
-	 * <p>Setter for the field <code>coverUrl</code>.</p>
-	 *
-	 * @param coverUrl a {@link java.lang.String} object.
-	 */
-	public void setCoverUrl( String coverUrl ) {
-	    this.coverUrl = coverUrl;
-	}
-	
-	/**
-	 * <p>Getter for the field <code>coverUrl</code>.</p>
-	 *
-	 * @return the coverUrl
-	 */
-	public String getCoverUrl() {
-		return coverUrl;
-	}
-
+    
 	
 	/**
 	 * <p>Setter for the field <code>artist</code>.</p>
