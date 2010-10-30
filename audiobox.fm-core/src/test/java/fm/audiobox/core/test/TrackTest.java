@@ -64,7 +64,7 @@ public class TrackTest extends junit.framework.TestCase {
             Playlists pls = user.getPlaylists();
             assertNotNull( pls );
 
-            Playlist pl = pls.get(0);
+            Playlist pl = pls.getPlaylistByName("development");
             assertNotNull( pl );
 
             Tracks trs = pl.getTracks();
@@ -183,9 +183,9 @@ public class TrackTest extends junit.framework.TestCase {
         } catch (LoginException e) {
             e.printStackTrace();
             assertNull( e );	// development purpose
-        } catch (SocketException e) {
+        } catch (ServiceException e ) {
             e.printStackTrace();
-            assertNull( e );	// development purpose
+            assertNull( e );    // development purpose
         } catch (ModelException e) {
             e.printStackTrace();
             assertNull( e );	// development purpose

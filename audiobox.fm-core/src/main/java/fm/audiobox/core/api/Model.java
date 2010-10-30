@@ -190,9 +190,9 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
         	
         // 50x
         default:
-        	{String reason = this._parsePlainResponse(response.getEntity().getContent() );
-            throw new ServiceException( reason, responseCode );}
-
+        	fm.audiobox.core.models.Error error = new fm.audiobox.core.models.Error();
+        	error.parseXMLResponse( response.getEntity().getContent() );
+            throw new ServiceException( error.getMessage() , error.getStatus() );
         }
 
         HttpEntity responseEntity = response.getEntity(); 
