@@ -43,7 +43,7 @@ public class Fixtures {
         }
     }
 
-    public String get(String key) {
+    public static String get(String key) {
         return ps.getProperty(key);
     }
 

@@ -24,26 +24,17 @@ public class ScanTest extends junit.framework.TestCase {
     @SuppressWarnings("deprecation")
     public void testApp() {
         
-        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
-        System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire", "debug");
-        System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "debug");
-        System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire.header", "debug");
-        System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http.impl", "debug");
-        System.setProperty("org.apache.commons.logging.simplelog.log.fm.audiobox.core", "debug");
-        System.setProperty("org.apache.commons.logging.simplelog.log.fm.audiobox.sync", "debug");
-        
         assertTrue( true );
         try {
             AudioBoxClient abc = new AudioBoxClient();
             abc.setForceTrust(true);
             
-            User user = abc.login( fx.get( Fixtures.LOGIN), fx.get(Fixtures.RIGHT_PASS) );
+            User user = abc.login( Fixtures.get( Fixtures.LOGIN), Fixtures.get(Fixtures.RIGHT_PASS) );
             assertNotNull( user );
             
             
             final String[] allowed_formats = user.getAllowedFormats();
-            
-            Scan scan = new Scan( new File("/home/shotty/Dropbox/Public"), false, false);
+            Scan scan = new Scan( new File( Fixtures.get( Fixtures.SCAN_FOLDER ) ), false, false);
             scan.setFilter(new FileFilter() {
 				public boolean accept(File file) {
 					if ( ! file.isDirectory() && ! file.isHidden() )

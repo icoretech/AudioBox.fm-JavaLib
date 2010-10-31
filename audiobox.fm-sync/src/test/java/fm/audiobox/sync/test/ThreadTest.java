@@ -50,7 +50,7 @@ public class ThreadTest extends junit.framework.TestCase {
 			}
 		});
         
-        File[] _files = new File( fx.get( Fixtures.SCAN_FOLDER ) ).listFiles(new FileFilter() {
+        File[] _files = new File( Fixtures.get( Fixtures.SCAN_FOLDER ) ).listFiles(new FileFilter() {
 			public boolean accept(File pathname) {
 				return pathname.isDirectory();
 			}

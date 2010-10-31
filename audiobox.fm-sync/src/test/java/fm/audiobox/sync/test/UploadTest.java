@@ -25,24 +25,16 @@ public class UploadTest extends junit.framework.TestCase {
     @SuppressWarnings("deprecation")
     public void testApp() {
         
-        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
-        System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire", "debug");
-        System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "debug");
-        System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire.header", "debug");
-        System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http.impl", "debug");
-        System.setProperty("org.apache.commons.logging.simplelog.log.fm.audiobox.core", "debug");
-        System.setProperty("org.apache.commons.logging.simplelog.log.fm.audiobox.sync", "debug");
-        
         assertTrue( true );
         try {
         	AudioBoxClient.setModelClassFor( AudioBoxClient.NEW_TRACK_KEY , UploadTrack.class );
             AudioBoxClient abc = new AudioBoxClient();
             abc.setForceTrust(true);
             
-            User user = abc.login( fx.get( Fixtures.LOGIN), fx.get(Fixtures.RIGHT_PASS) );
+            User user = abc.login( Fixtures.get( Fixtures.LOGIN), Fixtures.get(Fixtures.RIGHT_PASS) );
             assertNotNull( user );
             
-            File f = new File( fx.get( Fixtures.UPLOAD_TEST_FILE ) );
+            File f = new File( Fixtures.get( Fixtures.UPLOAD_TEST_FILE ) );
             assertNotNull( f );
             assertTrue( f.exists() );
             

@@ -298,8 +298,15 @@ public class Track extends ModelItem {
      * @throws LoginException
      * @throws ServiceException
      */
-    public String getStreamUrl() throws LoginException, ServiceException {
-    	return this.getStreamUrl(false);
+    public String getStreamUrl() {
+    	try {
+            return this.getStreamUrl(false);
+        } catch (LoginException e) { 
+            /* Should not happen */
+        } catch (ServiceException e) { 
+            /* Should not happen */
+        }
+        return null;
     }
     
     
