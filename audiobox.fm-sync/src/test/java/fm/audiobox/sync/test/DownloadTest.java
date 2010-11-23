@@ -25,6 +25,7 @@ import fm.audiobox.sync.test.mocks.fixtures.Fixtures;
 public class DownloadTest extends junit.framework.TestCase {
     
     private static Logger logger = LoggerFactory.getLogger(DownloadTest.class);
+    File media = null;
     
     @Test
     public void testApp() {
@@ -47,7 +48,7 @@ public class DownloadTest extends junit.framework.TestCase {
             String filePath = Fixtures.get(Fixtures.SCAN_FOLDER) + System.getProperty("file.separator") + track.getOriginalFileName();
             assertTrue( filePath.toLowerCase().endsWith( ".mp3" ));
             
-            File media = new File( filePath );
+            media = new File( filePath );
             // delete file if already exists
             if ( media.exists() ) media.delete();
             // Create new media file
@@ -71,6 +72,8 @@ public class DownloadTest extends junit.framework.TestCase {
 			
 			logger.info("New file: " + f.getPath());
 			
+			// Keep tree clean
+			f.delete();
             
         } catch (LoginException e) {
             fail(e.getMessage());
@@ -78,6 +81,9 @@ public class DownloadTest extends junit.framework.TestCase {
             fail(e.getMessage());
         } catch (ModelException e) {
             fail(e.getMessage());
+        } finally {
+          // delete file if already exists
+          if ( media.exists() ) media.delete();
         }
     }
     
