@@ -94,7 +94,7 @@ public abstract class ModelItem extends Model {
      *
      * @return this ModelItems {@link Tracks} collection
      * 
-     * @throws ModelException if a custom model was specified and an error while using occurs.
+     * @throws ModelException if a custom model was specified and an error occurs while using occurs.
      */
     public Tracks getTracks() throws ModelException {
         return this.getTracks(false);

@@ -67,14 +67,6 @@ public class Playlist extends ModelItem {
     /** The XML tag name for the Playlist element */
     public static final String TAG_NAME = "playlist";
     
-    /* Actions */
-    /** Used to empty the recycle bin */
-    protected static final String EMPTY_TRASH_ACTION = "empty_trash";
-    /** Used to add a list of tracks to a playlist */
-    protected static final String ADD_ACTION = "add_tracks";
-    /** Used to remove a list of tracks from a playlist */
-    protected static final String REMOVE_ACTION = "remove_tracks";
-
     /* Parameters */
     /** Used as HTTP parameters to specify the tracks list */
     private static final String HTTP_PARAM = "track_tokens[]";
@@ -85,8 +77,26 @@ public class Playlist extends ModelItem {
     protected int playlistTracksCount;
     protected String playlistType;
     protected int position;
-
+    
     private UrlEncodedFormEntity entity;
+    
+    /** Actions that can be performed on a playlist
+     * <ul> 
+     *   <li>{@link PlaylistActions#EMPTY_TRASH /empty_trash}</li>
+     *   <li>{@link PlaylistActions#ADD_TRACKS /add_tracks}</li>
+     *   <li>{@link PlaylistActions#REMOVE_TRACKS /remove_tracks}</li>
+     * </ul>  
+     */
+    public enum PlaylistActions {
+        /** Used to empty the recycle bin */
+        EMPTY_TRASH,
+        
+        /** Used to add a list of tracks to a playlist */
+        ADD_TRACKS, 
+        
+        /** Used to remove a list of tracks from a playlist */
+        REMOVE_TRACKS
+    };
     
     /**
      * <p>Constructor for Playlist.</p>
@@ -200,7 +210,7 @@ public class Playlist extends ModelItem {
      * @throws ServiceException if any connection problem to AudioBox.fm occurs.
      */
     public boolean addTracks(List<Track> tracks) throws LoginException, ServiceException {
-        return performAction(tracks, ADD_ACTION);
+        return performAction(tracks, PlaylistActions.ADD_TRACKS);
     }
     
     
@@ -228,7 +238,7 @@ public class Playlist extends ModelItem {
      * @throws ServiceException if any connection problem to AudioBox.fm occurs.
      */
     public boolean removeTracks(List<Track> tracks) throws LoginException, ServiceException {
-        return performAction(tracks, REMOVE_ACTION);
+        return performAction(tracks, PlaylistActions.REMOVE_TRACKS);
     }
     
     
@@ -274,17 +284,18 @@ public class Playlist extends ModelItem {
      * Use this method to add or remove multiple {@link Track tracks} from this playlist
      * 
      * @param tracks the {@link List} of {@link Track Tracks} to remove from playlist
-     * @param action the action to perform, can be one of {@link Playlist#ADD_ACTION} or {@link Playlist#REMOVE_ACTION}
+     * @param action the action to perform, can be one of {@link PlaylistActions}
      * 
      * @return true if the action succeed false if something goes wrong.
      * 
      * @throws LoginException if any authentication problem during the request occurs.
      * @throws ServiceException if any connection problem to AudioBox.fm occurs.
      */
-    private boolean performAction(List<Track> tracks, String action) throws LoginException, ServiceException {
+    private boolean performAction(List<Track> tracks, PlaylistActions action) throws LoginException, ServiceException {
         try {
-            this.buildEntity(tracks);
-            String[] result = this.getConnector().execute( this.pEndPoint, this.getToken(), action, this, HttpPut.METHOD_NAME);
+            if ( PlaylistActions.EMPTY_TRASH !=  action ) 
+                this.buildEntity(tracks);
+            String[] result = this.getConnector().execute( this.pEndPoint, this.getToken(), action.name().toLowerCase(), this, HttpPut.METHOD_NAME);
             boolean ok = HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
             
             if (ok) {
