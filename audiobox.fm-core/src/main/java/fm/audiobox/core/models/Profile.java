@@ -36,8 +36,8 @@ import fm.audiobox.core.api.ModelItem;
  * {@code
  * <profile>
  *   <autoplay>false</autoplay>
- *   <real-name>Real User Name</real-name>
- *   <maximum-portability>false</maximum-portability>
+ *   <real_name>Real User Name</real_name>
+ *   <maximum_portability>false</maximum_portability>
  * </profile>
  * }
  * </pre>

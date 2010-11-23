@@ -2,6 +2,7 @@
 /***************************************************************************
  *   Copyright (C) 2010 iCoreTech research labs                            *
  *   Contributed code from:                                                *
+ *   - Valerio Chiodino - keytwo at keytwo dot net                         *
  *   - Fabio Tunno      - fat at fatshotty dot net                         *
  *                                                                         *
  *   This program is free software: you can redistribute it and/or modify  *
@@ -37,6 +38,12 @@ import fm.audiobox.core.models.UploadTrack;
 import fm.audiobox.sync.interfaces.ThreadListener;
 import fm.audiobox.sync.util.AsyncTask;
 
+/**
+ * 
+ * 
+ * @author Fabio Tunno
+ * @version 0.0.1
+ */
 public class Upload extends AsyncTask {
 
     private UploadTrack mTrack;
@@ -54,11 +61,9 @@ public class Upload extends AsyncTask {
         try {
 			this.mTrack.upload();
         } catch (LoginException e) {
-            e.printStackTrace( System.out );
+            e.printStackTrace();
         } catch (ServiceException e) {
-            e.printStackTrace( System.out );
-        } catch (IOException e) {
-        	e.printStackTrace( System.out );
+            e.printStackTrace();
         }
 
     }

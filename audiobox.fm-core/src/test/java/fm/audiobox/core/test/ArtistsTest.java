@@ -8,14 +8,12 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import fm.audiobox.core.api.Model;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
-import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Artist;
 import fm.audiobox.core.models.Artists;
 import fm.audiobox.core.models.Track;
@@ -31,15 +29,12 @@ public class ArtistsTest extends junit.framework.TestCase {
 
 	StaticAudioBox abc;
     User user;
-    Artists artists;
     Fixtures fx = new Fixtures();
     
-    @SuppressWarnings("deprecation")
     @Before
     public void setUp() throws Exception {
         
     	abc = new StaticAudioBox();
-        abc.setForceTrust(true);
         
         user = abc.login(fx.get( Fixtures.LOGIN ), fx.get( Fixtures.RIGHT_PASS ));
     }
@@ -56,8 +51,7 @@ public class ArtistsTest extends junit.framework.TestCase {
         loginCatched();
         try {
             
-            loadArtists();
-            
+            Artists artists = user.getArtists(false);
             assertNotNull(artists);
             
             Artist artist = null;
@@ -83,24 +77,8 @@ public class ArtistsTest extends junit.framework.TestCase {
             ar = (Artist) artists.get(ar.getToken());
             assertNull( ar );
 
-        } catch (LoginException e) {
-            e.printStackTrace();
-            assertNull( e );	// development purpose
-        } catch (SocketException e) {
-            e.printStackTrace();
-            assertNull( e );	// development purpose
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-            assertNull( e );	// development purpose
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            assertNull( e );	// development purpose
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            assertNull( e );	// development purpose
         } catch (ModelException e) {
-            e.printStackTrace();
-            assertNull( e );	// development purpose
+            fail( e.getMessage() );
         }
     }
     
@@ -109,9 +87,9 @@ public class ArtistsTest extends junit.framework.TestCase {
         loginCatched();
         try {
             
-            loadArtists();
-            
+            Artists artists = user.getArtists(false);
             assertNotNull(artists);
+            
             Artist ar = (Artist) artists.get(0);
             assertNotNull(ar);
             
@@ -126,48 +104,22 @@ public class ArtistsTest extends junit.framework.TestCase {
             assertNotNull( tr2 );
             assertSame(tr, tr2);
 
-        } catch (LoginException e) {
-            e.printStackTrace();
-            assertNull( e );	// development purpose
-        } catch (SocketException e) {
-            e.printStackTrace();
-            assertNull( e );	// development purpose
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-            assertNull( e );	// development purpose
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            assertNull( e );	// development purpose
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            assertNull( e );	// development purpose
         } catch (ModelException e) {
-            e.printStackTrace();
-            assertNull( e );	// development purpose
+            fail( e.getMessage() );
         }
     }
     
-    
-    @After
-    public void tearDown() throws Exception {
-        
-    }
-    
-    private void loadArtists() throws ServiceException, LoginException, InstantiationException, IllegalAccessException, ClassNotFoundException, ModelException {
-        artists = (Artists) user.getArtists(false);
-        //artists.invoke();
-    }
-    
+
     private void loginCatched() {
         try {
-            user = abc.login(fx.get( Fixtures.LOGIN ), fx.get( Fixtures.RIGHT_PASS ));
+            user = abc.login( fx.get( Fixtures.LOGIN ), fx.get( Fixtures.RIGHT_PASS ) );
         } catch (LoginException e) {
-            e.printStackTrace();
+            fail(e.getMessage());
         } catch (SocketException e) {
-            e.printStackTrace();
+            fail(e.getMessage());
         } catch (ModelException e) {
-            e.printStackTrace();
+            fail(e.getMessage());
         }
-        
     }
+    
 }

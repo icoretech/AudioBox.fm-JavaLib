@@ -35,15 +35,14 @@ import fm.audiobox.core.api.ModelItem;
  * <pre>
  * {@code
  * <plan>
- *   <feat-download>true</feat-download>
- *   <feat-dropbox>true</feat-dropbox>
- *   <feat-lastfm>true</feat-lastfm>
- *   <feat-manager>true</feat-manager>
- *   <feat-multiformat>true</feat-multiformat>
- *   <feat-social>true</feat-social>
- *   <feat-third-party>true</feat-third-party>
- *   <feat-web-player>true</feat-web-player>
- *   <feat-youtube-channel>true</feat-youtube-channel>
+ *   <feat_api>true</feat_api>
+ *   <feat_cloud_web_player>true</feat_cloud_web_player>
+ *   <feat_dropbox>true</feat_dropbox>
+ *   <feat_lastfm>true</feat_lastfm>
+ *   <feat_manager>true</feat_manager>
+ *   <feat_multiformat>true</feat_multiformat>
+ *   <feat_social_networks>true</feat_social_networks>
+ *   <feat_youtube_channel>true</feat_youtube_channel>
  *   <name>ultra</name>
  * </plan>
  * }
@@ -58,15 +57,14 @@ public class Plan extends ModelItem {
     /** The XML tag name for the Profile element */
     public static final String TAG_NAME = "plan";
     
-    protected boolean featThirdParty;
-    protected boolean featYoutubeChannel;
-    protected boolean featWebPlayer;
-    protected boolean featDropbox;
-    protected boolean featMultiformat;
-    protected boolean featManager;
-    protected boolean featSocial;
-    protected boolean featDownload;
-    protected boolean featLastfm;
+    private boolean featApi;
+    private boolean featCloudWebPlayer;
+    private boolean featDropbox;
+    private boolean featLastfm;
+    private boolean featManager;
+    private boolean featMultiformat;
+    private boolean featSocialNetworks;
+    private boolean featYoutubeChannel;
     
     /**
      * <p>Constructor for Plan.</p>
@@ -82,22 +80,22 @@ public class Plan extends ModelItem {
     /**
      * This method is used by the parser.
      * 
-     * <p>Setter for the "Third Party" option: used by the parser.</p>
+     * <p>Setter for the "API" option: used by the parser.</p>
      *
-     * @param featThirdParty String representing the boolean value, true to enable false to disable.
+     * @param featApi String representing the boolean value, true to enable false to disable.
      */
     @Deprecated
-    public void setFeatThirdParty(String featThirdParty) {
-        this.featThirdParty = Boolean.parseBoolean( featThirdParty );
+    public void setFeatApi(String featApi) {
+        this.featApi = Boolean.parseBoolean( featApi );
     }
     
     /**
-     * Checks whether the user has "Third Party" option enabled or not.
+     * Checks whether the user has "API" option enabled or not.
      *
-     * @return true if "Third Party" option is available.
+     * @return true if "API" option is available.
      */
-    public boolean hasThirdParty() {
-        return this.featThirdParty;
+    public boolean hasApi() {
+        return this.featApi;
     }
     
     
@@ -128,22 +126,22 @@ public class Plan extends ModelItem {
     /**
      * This method is used by the parser.
      * 
-     * <p>Setter for the "Web Player" option: used by the parser.</p>
+     * <p>Setter for the "Cloud Web Player" option: used by the parser.</p>
      *
-     * @param featWebPlayer String representing the boolean value, true to enable false to disable.
+     * @param featCloudWebPlayer String representing the boolean value, true to enable false to disable.
      */
     @Deprecated
-    public void setFeatWebPlayer(String featWebPlayer) {
-        this.featWebPlayer = Boolean.parseBoolean( featWebPlayer );
+    public void setFeatCloudWebPlayer(String featCloudWebPlayer) {
+        this.featCloudWebPlayer = Boolean.parseBoolean( featCloudWebPlayer );
     }
     
     /**
-     * Checks whether the user has "Web Player" option enabled or not.
+     * Checks whether the user has "Cloud Web Player" option enabled or not.
      *
-     * @return true if "Web Player" option is available.
+     * @return true if "Cloud Web Player" option is available.
      */
-    public boolean hasWebPlayer() {
-        return this.featWebPlayer;
+    public boolean hasCloudWebPlayer() {
+        return this.featCloudWebPlayer;
     }
     
     
@@ -224,47 +222,24 @@ public class Plan extends ModelItem {
     /**
      * This method is used by the parser.
      * 
-     * <p>Setter for the "Social" option: used by the parser.</p>
+     * <p>Setter for the "Social Networks" option: used by the parser.</p>
      *
-     * @param featSocial String representing the boolean value, true to enable false to disable.
+     * @param featSocialNetworks String representing the boolean value, true to enable false to disable.
      */
     @Deprecated
-    public void setFeatSocial(String featSocial) {
-        this.featSocial = Boolean.parseBoolean( featSocial );
+    public void setFeatSocialNetworks(String featSocialNetworks) {
+        this.featSocialNetworks = Boolean.parseBoolean( featSocialNetworks );
     }
     
     /**
-     * Checks whether the user has "Social" option enabled or not.
+     * Checks whether the user has "Social Networks" option enabled or not.
      *
-     * @return true if "Social" option is available.
+     * @return true if "Social Networks" option is available.
      */
-    public boolean hasSocial() {
-        return this.featSocial;
+    public boolean hasSocialNetworks() {
+        return this.featSocialNetworks;
     }
     
-    
-    
-    
-    /**
-     * This method is used by the parser.
-     * 
-     * <p>Setter for the "Download" option: used by the parser.</p>
-     *
-     * @param featDownload String representing the boolean value, true to enable false to disable.
-     */
-    @Deprecated
-    public void setFeatDownload(String featDownload) {
-        this.featDownload = Boolean.parseBoolean( featDownload );
-    }
-    
-    /**
-     * Checks whether the user has "Download" option enabled or not.
-     *
-     * @return true if "Download" option is available.
-     */
-    public boolean hasDownload() {
-        return this.featDownload;
-    }
     
     
     

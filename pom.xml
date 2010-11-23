@@ -373,7 +373,7 @@
 			<properties>
 				<fm.audiobox.protocol>http</fm.audiobox.protocol>
 				<fm.audiobox.host>0.0.0.0</fm.audiobox.host>
-				<fm.audiobox.port>3000</fm.audiobox.port>
+				<fm.audiobox.port>80</fm.audiobox.port>
 				<fm.audiobox.skipTests>true</fm.audiobox.skipTests>
 				<fm.audiobox.logLevel>DEBUG</fm.audiobox.logLevel>
 				<maven.javadoc.skip>true</maven.javadoc.skip>
@@ -407,9 +407,9 @@
 				</property>
 			</activation>
 			<properties>
-				<fm.audiobox.protocol>https</fm.audiobox.protocol>
+				<fm.audiobox.protocol>http</fm.audiobox.protocol>
 				<fm.audiobox.host>0.0.0.0</fm.audiobox.host>
-				<fm.audiobox.port>443</fm.audiobox.port>
+				<fm.audiobox.port>80</fm.audiobox.port>
 				<fm.audiobox.skipTests>false</fm.audiobox.skipTests>
 				<fm.audiobox.logLevel>INFO</fm.audiobox.logLevel>
 			</properties>

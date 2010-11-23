@@ -14,7 +14,6 @@ import org.junit.Test;
 import fm.audiobox.core.api.Model;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
-import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Album;
 import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
@@ -31,15 +30,11 @@ public class PlaylistsTest extends junit.framework.TestCase {
 
 	StaticAudioBox abc;
     User user;
-    Playlists playlists;
     Fixtures fx = new Fixtures();
     
-    @SuppressWarnings("deprecation")
     @Before
     public void setUp() throws Exception {
     	abc = new StaticAudioBox();
-        abc.setForceTrust(true);
-        
         user = abc.login( fx.get( Fixtures.LOGIN ), fx.get( Fixtures.RIGHT_PASS ) );
     }
 
@@ -55,7 +50,7 @@ public class PlaylistsTest extends junit.framework.TestCase {
         loginCatched();
         try {
 
-            loadPlaylists();
+            Playlists playlists = user.getPlaylists(false);
             assertNotNull(playlists);
             
             Playlist playlist = null;
@@ -79,32 +74,16 @@ public class PlaylistsTest extends junit.framework.TestCase {
             playlist = (Playlist) playlists.get(playlist.getToken());
             assertNull( playlist );
 
-        } catch (LoginException e) {
-            e.printStackTrace();
-            assertNull( e );	// development purpose
-        } catch (SocketException e) {
-            e.printStackTrace();
-            assertNull( e );	// development purpose
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-            assertNull( e );	// development purpose
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            assertNull( e );	// development purpose
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            assertNull( e );	// development purpose
         } catch (ModelException e) {
-            e.printStackTrace();
-            assertNull( e );	// development purpose
+           fail(e.getMessage());
         }
     }
 
     @Test
-    public void testPlaylistShouldBePopulatedAndContainsTracks() throws ServiceException, LoginException, InstantiationException, IllegalAccessException, ClassNotFoundException, ModelException {
+    public void testPlaylistShouldBePopulatedAndContainsTracks() throws ModelException {
         loginCatched();
 
-        loadPlaylists();
+        Playlists playlists = user.getPlaylists(false);
         assertNotNull(playlists);
 
         
@@ -137,29 +116,34 @@ public class PlaylistsTest extends junit.framework.TestCase {
         assertNotNull( tr.getAlbum() );
         assertNotNull( tr.getAlbum().getToken() );
 
-        assertNotNull( ((Album) tr.getAlbum()).getArtist() );
-        assertNotNull( ((Album) tr.getAlbum()).getArtist().getToken() );
+        assertNull( ((Album) tr.getAlbum()).getArtist() );
 
     }
 
+    
+    @Test
+    public void testPlaylistShouldBeNullIfItDoesNotExists() throws ModelException {
+        loginCatched();
 
-    private void loadPlaylists() throws ServiceException, LoginException, InstantiationException, IllegalAccessException, ClassNotFoundException, ModelException {
-        playlists = (Playlists) user.getPlaylists(false);
+        Playlists playlists = user.getPlaylists(false);
+        assertNotNull(playlists);
+        
+        assertNull( playlists.getPlaylistByName("Not existings playlist") );
+        
     }
+    
+    
 
     private void loginCatched() {
         try {
             user = abc.login( fx.get( Fixtures.LOGIN ), fx.get( Fixtures.RIGHT_PASS ) );
         } catch (LoginException e) {
-            e.printStackTrace();
-            assertNull( e );	// development purpose
+            fail(e.getMessage());
         } catch (SocketException e) {
-            e.printStackTrace();
-            assertNull( e );	// development purpose
+            fail(e.getMessage());
         } catch (ModelException e) {
-            e.printStackTrace();
-            assertNull( e );	// development purpose
+            fail(e.getMessage());
         }
-
     }
+    
 }

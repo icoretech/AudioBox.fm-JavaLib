@@ -15,7 +15,7 @@ public class MD5Test extends junit.framework.TestCase {
 
     @Test
     public void testApp() {
-        File file = new File(Fixtures.get( Fixtures.UPLOAD_TEST_FILE ));
+        File file = new File(Fixtures.get( Fixtures.TEST_FILE ));
         
         MD5 task = new MD5( file );
         task.setThreadListener(new ThreadListener() {

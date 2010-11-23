@@ -25,40 +25,30 @@ public class ThreadedTest extends junit.framework.TestCase {
     User user;
     Fixtures fx = new Fixtures();
     
-    @SuppressWarnings("deprecation")
     @Before
     public void setUp() throws Exception {
-        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
-        System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire", "debug");
-        System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "debug");
-        System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire.header", "debug");
-        System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http.impl", "debug");
-
-        System.setProperty("org.apache.commons.logging.simplelog.log.fm.audiobox.api", "debug");
 
         StaticAudioBox.setModelClassFor(StaticAudioBox.USER_KEY , User.class );
 
         abc = new StaticAudioBox();
-        abc.setForceTrust(true);
         
         try {
             user = (User) abc.login( fx.get( Fixtures.LOGIN ), fx.get( Fixtures.RIGHT_PASS ) );
         } catch (LoginException e) {
-            e.printStackTrace();
-            assertNull( e );	// development purpose
+            fail(e.getMessage());
         } catch (SocketException e) {
-            e.printStackTrace();
-            assertNull( e );	// development purpose
+            fail(e.getMessage());
+        } catch (ModelException e) {
+            fail(e.getMessage());
         }
     }
 
     @Test
-    public void testTrhead() throws InterruptedException {
+    public void testThread() throws InterruptedException {
         
         assertNotNull( abc );
         assertNotNull( user );
         
-        final Log logger = LogFactory.getLog(ThreadedTest.class);
         final Handle h1 = new Handle();
         final Handle h2 = new Handle();
         
@@ -68,6 +58,7 @@ public class ThreadedTest extends junit.framework.TestCase {
             public void run() {
                 try {
                     
+                    Log logger = LogFactory.getLog("Test thread #1");
                     logger.debug("Started thread #1");
                     
                     String[] tracks = user.getUploadedTracks();
@@ -81,10 +72,10 @@ public class ThreadedTest extends junit.framework.TestCase {
                     
                 } catch (LoginException e) {
                     e.printStackTrace();
-                    assertNull( e );	// development purpose
+                    fail( e.getMessage() );
                 } catch (ServiceException e) {
                     e.printStackTrace();
-                    assertNull( e );	// development purpose
+                    fail( e.getMessage() );
                 }
             }
 
@@ -94,6 +85,8 @@ public class ThreadedTest extends junit.framework.TestCase {
             @Override
             public void run() {
                 try {
+                    
+                    Log logger = LogFactory.getLog("Test thread #2");
                     logger.debug("Started thread #2");
                     
                     Playlists pls = (Playlists) user.getPlaylists(false);
@@ -119,8 +112,7 @@ public class ThreadedTest extends junit.framework.TestCase {
                     assertNotNull( tr.getAlbum() );
                     assertNotNull( tr.getAlbum().getToken() );
 
-                    assertNotNull( ((Album) tr.getAlbum()).getArtist() );
-                    assertNotNull( ((Album) tr.getAlbum()).getArtist().getToken() );
+                    assertNull( ((Album) tr.getAlbum()).getArtist() );
                     
                     h2.setDone(true);
                     
@@ -128,22 +120,22 @@ public class ThreadedTest extends junit.framework.TestCase {
                     
                 } catch (ModelException e) {
                     e.printStackTrace();
-                    assertNull( e );	// development purpose
+                    fail( e.getMessage() );
                 }
             }
         });
 
-        long _start = System.currentTimeMillis();
         t1.start();
         t2.start();
         
-        while ( t1.isAlive() || t2.isAlive() ) {}
-
-        logger.debug( "End: " +  (  System.currentTimeMillis() - _start  ) );
+        while ( t1.isAlive() || t2.isAlive() ) {
+            Thread.sleep(2500);
+        }
         
         assertTrue( h1.getDone() && h2.getDone() );
     }
 
+    
     private class Handle {
         
         private boolean done = false;

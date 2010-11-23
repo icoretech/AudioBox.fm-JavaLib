@@ -31,11 +31,9 @@ public class CollectionListenerTest extends junit.framework.TestCase {
     Albums albums;
     Fixtures fx = new Fixtures();
     
-    @SuppressWarnings("deprecation")
     @Before
     public void setUp() throws Exception {
         abc = new AudioBoxClient();
-        abc.setForceTrust(true);
     }
 
 
@@ -84,15 +82,12 @@ public class CollectionListenerTest extends junit.framework.TestCase {
         try {
             user = abc.login( fx.get( Fixtures.LOGIN ), fx.get( Fixtures.RIGHT_PASS ) );
         } catch (LoginException e) {
-            e.printStackTrace();
-            assertNull( e );	// development purpose
+            fail(e.getMessage());
         } catch (SocketException e) {
-            e.printStackTrace();
-            assertNull( e );	// development purpose
+            fail(e.getMessage());
         } catch (ModelException e) {
-            e.printStackTrace();
-            assertNull( e );	// development purpose
+            fail(e.getMessage());
         }
-
     }
+    
 }

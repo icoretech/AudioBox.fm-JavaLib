@@ -190,9 +190,19 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
         	
         // 50x
         default:
+            
+            String message = "";
+            int status = responseCode;
+            
         	fm.audiobox.core.models.Error error = new fm.audiobox.core.models.Error();
-        	error.parseXMLResponse( response.getEntity().getContent() );
-            throw new ServiceException( error.getMessage() , error.getStatus() );
+        	
+        	try {
+        	    error.parseXMLResponse( response.getEntity().getContent() );
+        	    message = error.getMessage();
+        	    status = error.getStatus();
+        	} catch(IOException e) { message = e.getMessage(); }
+        	
+        	throw new ServiceException( message, status );
         }
 
         HttpEntity responseEntity = response.getEntity(); 
@@ -242,9 +252,12 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
      * @param input the {@link InputStream} of the entity content.
      * 
      * @return an empty String
+     * @throws IOException if the parse process fails for some reason.
      */
     protected String parseXMLResponse( InputStream input ) throws IOException {
-        String response = "";
+
+        String message = null;
+        
         try {
 
             // Instanciate new SaxParser
@@ -262,13 +275,17 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
             input.close();
 
         } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-
+            message = "Parser misconfiguration: " + e.getMessage();
         } catch (SAXException e) {
-            e.printStackTrace();
-
+            message = "Failed to parse response: " + e.getMessage(); 
         }
-        return response;
+        
+        if (message != null) {
+            log.fatal(message);
+            throw new IOException(message);
+        }
+        
+        return "";
     }
 
     /**
@@ -352,7 +369,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
             if (localName.trim().length() == 0)
                 localName = qName;
 
-            localName =  mInflector.upperCamelCase( localName, '-' );
+            localName =  mInflector.upperCamelCase( localName, '_' );
 
             String methodPrefix = SET_PREFIX;
             String scm = mInflector.singularize( peek.getClass().getSimpleName() );
@@ -385,7 +402,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
 
                     Model subClass = null;
                     try {
-                        subClass = AudioBoxClient.getModelInstance( mInflector.lowerCamelCase( localName, '-'), this.getConnector() );
+                        subClass = AudioBoxClient.getModelInstance( mInflector.lowerCamelCase( localName, '_'), this.getConnector() );
                         method.invoke(peek, subClass );
 
                         this.mStack.push( subClass );

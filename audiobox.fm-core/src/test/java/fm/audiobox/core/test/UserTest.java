@@ -5,6 +5,7 @@ package fm.audiobox.core.test;
 
 
 import java.net.SocketException;
+import java.util.Arrays;
 
 import org.apache.http.HttpStatus;
 import org.junit.After;
@@ -29,16 +30,15 @@ import fm.audiobox.core.test.mocks.models.User;
  */
 public class UserTest extends junit.framework.TestCase {
 
+    private static final String[] ADMIN_ALLOWED_FORMATS = "aac;mp3;mp2;m4a;m4b;m4p;m4v;m4r;mp4;3gp;ogg;flac;spx;wma;rm;ram;wav;mpc;mp+;mpp;aiff;aif;aifc;tta".split(";");
 	StaticAudioBox abc;
     User user;
     Fixtures fx = new Fixtures();
     
-    @SuppressWarnings("deprecation")
     @Before
     public void setUp() throws Exception {
         abc = new StaticAudioBox();
         StaticAudioBox.setModelClassFor(StaticAudioBox.USER_KEY , User.class );
-        abc.setForceTrust(true);
     }
     
     @Test
@@ -61,8 +61,12 @@ public class UserTest extends junit.framework.TestCase {
             assertNotNull( user.getName() );
             assertEquals( fx.get( Fixtures.USERNAME ), user.getName() );
             assertNotNull( user.getTimeZone() );
-            
             assertTrue( user.getQuota() < user.getAvailableStorage() );
+            assertNotNull( user.getAllowedFormats() );
+            for (String fmt : user.getAllowedFormats()) {
+                assertTrue( Arrays.asList( ADMIN_ALLOWED_FORMATS ).contains( fmt ) ); 
+            }
+            
             
             // Profile
             Profile p = user.getProfile();
@@ -71,18 +75,30 @@ public class UserTest extends junit.framework.TestCase {
             assertEquals( fx.get( Fixtures.REAL_NAME ), p.getRealName() );
             assertEquals( p.getName(), p.getRealName() );
             assertNull( p.getToken() );
+            
+            assertNotNull( p.hasMaximumPortability() );
+            if ( p.hasMaximumPortability() ) {
+                p.setMaximumPortability( false );
+                assertFalse( p.hasMaximumPortability() );
+            } else {
+                p.setMaximumPortability( true );
+                assertTrue( p.hasMaximumPortability() );
+            }
+            
+            
+            
+            assertTrue( p.hasMaximumPortability() );
 
             // Plan
             Plan plan = user.getPlan();
             assertEquals( plan.getName(), "admin" );
-            assertTrue( plan.hasDownload() );
+            assertTrue( plan.hasApi() );
             assertTrue( plan.hasDropbox() );
             assertTrue( plan.hasManager() );
             assertTrue( plan.hasLastfm() );
             assertTrue( plan.hasMultiformat() );
-            assertTrue( plan.hasSocial() );
-            assertTrue( plan.hasThirdParty() );
-            assertTrue( plan.hasWebPlayer() );
+            assertTrue( plan.hasSocialNetworks() );
+            assertTrue( plan.hasCloudWebPlayer() );
             assertTrue( plan.hasYoutubeChannel() );
             
         } catch (LoginException e) {
@@ -148,7 +164,6 @@ public class UserTest extends junit.framework.TestCase {
         
         try {
             loginInactiveUser();
-            assertFalse( ! User.ACTIVE_STATE.equals( user.getState() ) ); // Make test fails
         } catch (LoginException e) {
             assertEquals( HttpStatus.SC_UNAUTHORIZED, e.getErrorCode() );
         } catch (SocketException e) {
@@ -215,18 +230,14 @@ public class UserTest extends junit.framework.TestCase {
     
     private void loginCatched() {
         try {
-            user = (User) abc.login( fx.get(Fixtures.LOGIN) , fx.get( Fixtures.RIGHT_PASS) );
+            user = (User) abc.login( fx.get( Fixtures.LOGIN ), fx.get( Fixtures.RIGHT_PASS ) );
         } catch (LoginException e) {
-            e.printStackTrace();
-            assertNull( e );	// development purpose
+            fail(e.getMessage());
         } catch (SocketException e) {
-            e.printStackTrace();
-            assertNull( e );	// development purpose
+            fail(e.getMessage());
         } catch (ModelException e) {
-            e.printStackTrace();
-            assertNull( e );	// development purpose
+            fail(e.getMessage());
         }
-        
     }
     
     

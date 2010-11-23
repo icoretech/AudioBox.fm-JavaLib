@@ -6,11 +6,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.AudioBoxClient;
+import fm.audiobox.core.models.Playlist;
+import fm.audiobox.core.models.Playlists;
 import fm.audiobox.core.models.Track;
 import fm.audiobox.core.models.User;
 import fm.audiobox.sync.test.mocks.fixtures.Fixtures;
@@ -20,62 +24,60 @@ import fm.audiobox.sync.test.mocks.fixtures.Fixtures;
  */
 public class DownloadTest extends junit.framework.TestCase {
     
-    Fixtures fx = new Fixtures(); 
-
+    private static Logger logger = LoggerFactory.getLogger(DownloadTest.class);
+    
     @Test
-    @SuppressWarnings("deprecation")
     public void testApp() {
         
         try {
             AudioBoxClient abc = new AudioBoxClient();
-            abc.setForceTrust(true);
-            
             User user = abc.login( Fixtures.get( Fixtures.LOGIN), Fixtures.get(Fixtures.RIGHT_PASS) );
             assertNotNull( user );
             
-            File f = new File ( Fixtures.get(Fixtures.DOWNLOAD_TEST_FILE) );
+            Playlists pls = user.getPlaylists();
+            assertNotNull(pls);
             
-            assertNotNull( f );
+            Playlist pl = pls.getPlaylistByName("development");
+            assertNotNull(pl);
             
-            /* delete file if exists */
-            if ( f.exists() ) f.delete();
+            Track track = pl.getTracks().get(0);
+            assertNotNull(track);
+            assertNotNull( track.getOriginalFileName() );
+            
+            String filePath = Fixtures.get(Fixtures.SCAN_FOLDER) + System.getProperty("file.separator") + track.getOriginalFileName();
+            assertTrue( filePath.toLowerCase().endsWith( ".mp3" ));
+            
+            File media = new File( filePath );
+            // delete file if already exists
+            if ( media.exists() ) media.delete();
+            // Create new media file
+            try { media.createNewFile(); } catch (IOException e) { fail(e.getMessage()); }
+            
+            
+            long total = track.getAudioFileSize();
             
             try {
-				f.createNewFile();
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-            
-			
-			assertTrue( f.exists() );
-			
-            // get track and its information by a given UUID
-            Track t = user.getTrackByToken( Fixtures.get( Fixtures.TRACK_TO_DOWNLOAD ) );
-            
-            assertNotNull( t );
-            
-            long total = t.getAudioFileSize();
-            
-            try {
-            	// download track
-				t.download( this.new testFileOutputStream( f, total ) );
+            	// Start download track
+                track.download( this.new testFileOutputStream( media, total ) );
 			} catch (FileNotFoundException e) {
-				e.printStackTrace();
+				fail(e.getMessage());
 			}
             
+			File f = new File ( filePath );
+            assertNotNull( f );
+            assertTrue( f.exists() );
+            assertTrue( filePath.equals( f.getAbsolutePath() ) );
 			assertTrue( f.length() == total );
 			
-			System.out.println( "New file: " + f.getPath() );
+			logger.info("New file: " + f.getPath());
+			
             
         } catch (LoginException e) {
-            e.printStackTrace();
-            assertNull( e ); // development purpose
+            fail(e.getMessage());
         } catch (ServiceException e) {
-            e.printStackTrace();
-            assertNull( e ); // development purpose
+            fail(e.getMessage());
         } catch (ModelException e) {
-            e.printStackTrace();
-            assertNull( e ); // development purpose
+            fail(e.getMessage());
         }
     }
     
@@ -83,6 +85,7 @@ public class DownloadTest extends junit.framework.TestCase {
 
     	private long total_bytes = -1;
     	private long current_bytes = 0;
+    	private int percent = 0;
     	
 		public testFileOutputStream(File file, long total) throws FileNotFoundException {
 			super(file);
@@ -90,10 +93,14 @@ public class DownloadTest extends junit.framework.TestCase {
 		}
 		
 		public void write(byte[] bytes, int offset, int len) throws IOException{
-			super.write(bytes,offset,len);
+			super.write(bytes, offset, len);
+			
 			this.current_bytes += len;
 			
-			System.out.println("Downloaded: " + ( (current_bytes * 100 )/ total_bytes ) + " %" );
+			if (( (current_bytes * 100 )/ total_bytes ) != percent) {
+			    percent = (int) ( (current_bytes * 100 )/ total_bytes );
+				logger.debug("Downloaded: " + percent + " %" );
+			}
 		}
     	
     }

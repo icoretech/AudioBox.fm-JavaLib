@@ -21,13 +21,11 @@ public class ScanTest extends junit.framework.TestCase {
     Fixtures fx = new Fixtures(); 
 
     @Test
-    @SuppressWarnings("deprecation")
     public void testApp() {
         
         assertTrue( true );
         try {
             AudioBoxClient abc = new AudioBoxClient();
-            abc.setForceTrust(true);
             
             User user = abc.login( Fixtures.get( Fixtures.LOGIN), Fixtures.get(Fixtures.RIGHT_PASS) );
             assertNotNull( user );
@@ -48,14 +46,11 @@ public class ScanTest extends junit.framework.TestCase {
             
             
         } catch (LoginException e) {
-            e.printStackTrace();
-            assertNotNull( e ); // development purpose
+            fail(e.getMessage());
         } catch (ServiceException e) {
-            e.printStackTrace();
-            assertNotNull( e ); // development purpose
+            fail(e.getMessage());
         } catch (ModelException e) {
-            e.printStackTrace();
-            assertNotNull( e ); // development purpose
+            fail(e.getMessage());
         }
     }
     

@@ -45,32 +45,33 @@ import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
  * <pre>
  * {@code
  * <user>
- *   <bytes-served>123456</bytes-served>
+ *   <bytes_served>123456</bytes_served>
  *   <email>user@example.com</email>
- *   <play-count>1042</play-count>
+ *   <play_count>1042</play_count>
  *   <quota>984354165</quota>
  *   <state>active</state>
- *   <tracks-count>1490</tracks-count>
+ *   <tracks_count>1490</tracks_count>
  *   <username>Username</username>
- *   <available-storage>1232321123</available-storage>
- *   <allowed-formats>aac;mp3;mp2;m4a;m4b;m4p;m4v;m4r;mp4;3gp;ogg;flac;spx;wma;rm;ram;wav;mpc;mp+;mpp;aiff;aif;aifc;tta</allowed-formats>
- *   <time-zone>New York</time-zone>
+ *   <available_storage>1232321123</available_storage>
+ *   <allowed_formats>
+ *      aac;mp3;mp2;m4a;m4b;m4p;m4v;m4r;mp4;3gp;ogg;flac;spx;wma;rm;ram;wav;mpc;mp+;mpp;aiff;aif;aifc;tta
+ *   </allowed_formats>
+ *   <time_zone>New York</time_zone>
  *   <profile>
  *      <autoplay>false</autoplay>
- *      <real-name>Real User Name</real-name>
- *      <maximum-portability>false</maximum-portability>
+ *      <real_name>Real User Name</real_name>
+ *      <maximum_portability>false</maximum_portability>
  *   </profile>
  *   <plan>
- *      <feat-download>true</feat-download>
- *      <feat-dropbox>true</feat-dropbox>
- *      <feat-lastfm>true</feat-lastfm>
- *      <feat-manager>true</feat-manager>
- *      <feat-multiformat>true</feat-multiformat>
- *      <feat-social>true</feat-social>
- *      <feat-third-party>true</feat-third-party>
- *      <feat-web-player>true</feat-web-player>
- *      <feat-youtube-channel>true</feat-youtube-channel>
- *      <name>ultra</name>
+ *     <feat_api>true</feat_api>
+ *     <feat_cloud_web_player>true</feat_cloud_web_player>
+ *     <feat_dropbox>true</feat_dropbox>
+ *     <feat_lastfm>true</feat_lastfm>
+ *     <feat_manager>true</feat_manager>
+ *     <feat_multiformat>true</feat_multiformat>
+ *     <feat_social_networks>true</feat_social_networks>
+ *     <feat_youtube_channel>true</feat_youtube_channel>
+ *     <name>ultra</name>
  *   </plan>
  * </user>
  *
@@ -122,7 +123,6 @@ public class User extends ModelItem {
     private String email;
     private int playCount;
     private long quota;
-    private String state;
     private int tracksCount;
     private String username;
     private long availableStorage;
@@ -263,28 +263,9 @@ public class User extends ModelItem {
 
 
 
-    /**
-     * <p>Setter for the user state: used by the parser.</p>
-     *
-     * @param state the user state.
-     */
-    public void setState(String state) {
-        this.state = state;
-    }
 
     /**
-     * <p>Getter for the user state.</p>
-     *
-     * @return the user state
-     */
-    public String getState() {
-        return this.state;
-    }
-
-
-
-    /**
-     * <p>Setter for the user total tracks count: used by the parser..</p>
+     * <p>Setter for the user total tracks count: used by the parser.</p>
      *
      * @param tracksCount the user total tracks count.
      */

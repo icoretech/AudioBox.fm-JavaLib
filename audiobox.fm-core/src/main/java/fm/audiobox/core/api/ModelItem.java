@@ -63,15 +63,6 @@ public abstract class ModelItem extends Model {
         return this.mTracks.get(uuid);
     }
 
-    /**
-     * <p>Setter for the {@link Tracks} collection.</p>
-     *
-     * @param tracks a {@link Tracks} ModelsCollection object.
-     */
-    public void setTracks(Tracks tracks) {
-        this.mTracks = tracks;
-    }
-
     
     /**
      * Use this method to get the {@link Tracks} collection of this ModelItem.

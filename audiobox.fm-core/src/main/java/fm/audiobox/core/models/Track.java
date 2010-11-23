@@ -32,6 +32,8 @@ import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.mime.content.FileBody;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fm.audiobox.core.api.ModelItem;
 import fm.audiobox.core.exceptions.LoginException;
@@ -53,26 +55,28 @@ import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
  * <pre>
  * {@code
  * <track>
- *   <duration>4:15</duration>
- *   <duration-in-seconds type="integer">296</duration-in-seconds>
- *   <loved type="boolean">true</loved>
- *   <play-count type="integer">3</play-count>
+ *   <token>asjad89087r3</token>
  *   <title>Track title</title>
- *   <track-number type="integer">7</track-number>
- *   <year type="integer">2001</year>
- *   <stream-url>http://url.to/<uuid>/stream</stream-url>
- *   <audio-file-size>12313124432</audio-file-size>
- *   <original-file-name>song.mp3</original-file-name>
- *   <artist>
- *     <name>Artist name</name>
- *     <token>iq6ieJ9z</token>
- *   </artist>
+ *   <duration>3:51</duration>
+ *   <duration_in_seconds>231</duration_in_seconds>
+ *   <stream_url>
+ *      http://url/to/steram/url
+ *   </stream_url>
+ *   <year>2010</year>
+ *   <loved>true</loved>
+ *   <play_count>31</play_count>
+ *   <audio_file_size>4933632</audio_file_size>
+ *   <track_number>2</track_number>
+ *   <disc_number>1</disc_number>
+ *   <original_file_name>origina_file_name.mp3</original_file_name>
  *   <album>
+ *     <token>2sd3Fgd7</token>
  *     <name>Album name</name>
- *     <token>DUoSAAoN</token>
- *     <cover-url-as-thumb>http://url.to/thumb.png</cover-url-as-thumb>
- *     <cover-url>http://url.to/original.jpg</cover-url>
  *   </album>
+ *   <artist>
+ *     <token>Sast5pt</token>
+ *     <name>Artist Name</name>
+ *   </artist>
  * </track>
  * }
  * </pre>
@@ -83,6 +87,8 @@ import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
  */
 public class Track extends ModelItem {
 
+    private static Logger logger = LoggerFactory.getLogger(Track.class);
+    
     // Constants
     /** The XML tag name for the Track element */
     public static final String TAG_NAME = "track";
@@ -113,28 +119,11 @@ public class Track extends ModelItem {
     private Artist artist;
     private Album album;
     
-    
-    /*
-    
-    <duration>3:51</duration>
-    <duration-in-seconds>231</duration-in-seconds>
-    <loved>true</loved>
-    <original-file-name>Alanis_Morissette_-_Ironic.mp3</original-file-name>
-    <play-count>31</play-count>
-    <title>Ironic</title>
-    <token>82bd7ee7-6323-47bb-9059-345ed1ba65d3</token>
-    <track-number>2</track-number>
-    <year>2002</year>
-    <stream-url>
-    https://audiobox.dev/api/tracks/82bd7ee7-6323-47bb-9059-345ed1ba65d3/stream
-    </stream-url>
-*/
     protected FileOutputStream fileOutputStream;
 
 
-    // Utility fields
     /**
-     * During the lifecycle a Track can be put in differents states.
+     * During the lifecycle a Track can be placed in differents states.
      * 
      * <p>
      * 
@@ -184,7 +173,7 @@ public class Track extends ModelItem {
      * @param fileBody a {@link FileBody} object.
      */
     public Track(FileBody fileBody) {
-        super();
+        this();
         this.fileBody = fileBody;
     }
 
@@ -276,7 +265,7 @@ public class Track extends ModelItem {
      * @return	the track's disc-number
      */
     public int getDiscNumber(){
-    	return this.discNumber;
+        return this.discNumber;
     }
     
 
@@ -292,44 +281,49 @@ public class Track extends ModelItem {
 
     
     /**
-     * This method invokes the <code>getStreamUrl(false)</code> method
+     * Same as using {@link #getStreamUrl(boolean) getStreamUrl(false)}
      * 
-     * @return	track's streamUrl 
+     * @return track's streamUrl 
      * @throws LoginException
      * @throws ServiceException
      */
     public String getStreamUrl() {
-    	try {
+        try {
             return this.getStreamUrl(false);
         } catch (LoginException e) { 
-            /* Should not happen */
+            logger.error("Login exception: " + e.getMessage());
         } catch (ServiceException e) { 
-            /* Should not happen */
+            logger.error("Service exception: " + e.getMessage());
         }
         return null;
     }
     
     
     /**
-     * <p>Getter for the track streaming url.</p>
+     * <p>
+     * Getter method for the track streaming URL.<br/>
+     * Use this method if you need the real, volatile remote stream URL.<br/>
+     * If you need the API value use {@link #getStreamUrl() getStreamUrl()} instead.
+     * </p>
      *
-     * @param remote if true this methods executes a request and return the stream url
-     * @return the track stream URL
+     * @param remote if true this methods executes a request and return the real stream url
+     * @return the track stream URL to be consumed by a media player (for example).
      * 
      * @throws LoginException if any authentication problem during the request occurs.
      * @throws ServiceException if any connection problem to AudioBox.fm occurs.
      */
     public String getStreamUrl(boolean remote) throws LoginException, ServiceException {
         if ( remote ){
-	    	String[] result = this.getConnector().execute( this.pEndPoint, this.getToken(), STREAM_ACTION, this, null);
-	        return result[ AudioBoxConnector.RESPONSE_BODY ];
-	    } else return this.streamUrl;
+            String[] result = this.getConnector().execute( this.pEndPoint, this.getToken(), STREAM_ACTION, this, null);
+            return result[ AudioBoxConnector.RESPONSE_BODY ];
+        } else return this.streamUrl;
     }
 
 
     
     /**
-     * This method invokes AudioBox.fm and restore all track information
+     * This method performs a request against AudioBox.fm to refreshes all track informations.
+     * 
      * @throws LoginException if any authentication problem during the request occurs.
      * @throws ServiceException if any connection problem to AudioBox.fm occurs.
      */
@@ -832,9 +826,6 @@ public class Track extends ModelItem {
         else return null;
     }
 
-    /** Does nothing: prevent undesired behaviours. */
-    @Override
-    public void setTracks(Tracks tracks) { }
 
     /** 
      * Returns <code>null</code>: prevent undesired behaviours.

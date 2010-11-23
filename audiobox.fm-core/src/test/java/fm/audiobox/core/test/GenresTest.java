@@ -8,14 +8,12 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import fm.audiobox.core.api.Model;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
-import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Genre;
 import fm.audiobox.core.models.Genres;
 import fm.audiobox.core.models.Track;
@@ -31,15 +29,11 @@ public class GenresTest extends junit.framework.TestCase {
 
 	StaticAudioBox abc;
     User user;
-    Genres genres;
     Fixtures fx = new Fixtures();
     
-    @SuppressWarnings("deprecation")
     @Before
     public void setUp() throws Exception {
     	abc = new StaticAudioBox();
-    	abc.setForceTrust(true);
-        
         user = abc.login( fx.get( Fixtures.LOGIN ), fx.get( Fixtures.RIGHT_PASS ) );
     }
     
@@ -55,8 +49,7 @@ public class GenresTest extends junit.framework.TestCase {
         loginCatched();
         try {
             
-            loadGenres();
-            
+            Genres genres = user.getGenres(false);
             assertNotNull(genres);
             
             Genre genre = null;
@@ -81,24 +74,8 @@ public class GenresTest extends junit.framework.TestCase {
             assertNull( genre );
             
 
-        } catch (LoginException e) {
-            e.printStackTrace();
-            assertNull( e );	// development purpose
-        } catch (SocketException e) {
-            e.printStackTrace();
-            assertNull( e );	// development purpose
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-            assertNull( e );	// development purpose
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            assertNull( e );	// development purpose
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            assertNull( e );	// development purpose
         } catch (ModelException e) {
-            e.printStackTrace();
-            assertNull( e );	// development purpose
+            fail( e.getMessage() );
         }
     }
     
@@ -107,9 +84,9 @@ public class GenresTest extends junit.framework.TestCase {
         loginCatched();
         try {
             
-            loadGenres();
-            
+            Genres genres = user.getGenres(false);
             assertNotNull(genres);
+            
             Genre al = (Genre) genres.get(0);
             assertNotNull(al);
             
@@ -119,42 +96,23 @@ public class GenresTest extends junit.framework.TestCase {
             Track tr = (Track) trs.get(0);
             assertNotNull(tr);
 
-        } catch (LoginException e) {
-            e.printStackTrace();
-        } catch (SocketException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         } catch (ModelException e) {
-            e.printStackTrace();
+            fail(e.getMessage());
         }
     }
     
     
-    @After
-    public void tearDown() throws Exception {
-        
-    }
-    
-    private void loadGenres() throws ServiceException, LoginException, InstantiationException, IllegalAccessException, ClassNotFoundException, ModelException {
-        genres = (Genres) user.getGenres(false);
-        //genres.invoke();
-    }
     
     private void loginCatched() {
         try {
             user = abc.login( fx.get( Fixtures.LOGIN ), fx.get( Fixtures.RIGHT_PASS ) );
         } catch (LoginException e) {
-            e.printStackTrace();
+            fail(e.getMessage());
         } catch (SocketException e) {
-            e.printStackTrace();
+            fail(e.getMessage());
         } catch (ModelException e) {
-            e.printStackTrace();
+            fail(e.getMessage());
         }
-        
     }
+    
 }

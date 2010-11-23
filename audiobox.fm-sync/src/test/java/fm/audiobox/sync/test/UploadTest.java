@@ -22,19 +22,17 @@ public class UploadTest extends junit.framework.TestCase {
     Fixtures fx = new Fixtures(); 
 
     @Test
-    @SuppressWarnings("deprecation")
     public void testApp() {
         
         assertTrue( true );
         try {
         	AudioBoxClient.setModelClassFor( AudioBoxClient.NEW_TRACK_KEY , UploadTrack.class );
             AudioBoxClient abc = new AudioBoxClient();
-            abc.setForceTrust(true);
             
             User user = abc.login( Fixtures.get( Fixtures.LOGIN), Fixtures.get(Fixtures.RIGHT_PASS) );
             assertNotNull( user );
             
-            File f = new File( Fixtures.get( Fixtures.UPLOAD_TEST_FILE ) );
+            File f = new File( Fixtures.get( Fixtures.TEST_FILE ) );
             assertNotNull( f );
             assertTrue( f.exists() );
             

@@ -28,22 +28,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.net.SocketTimeoutException;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.zip.GZIPInputStream;
-
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLException;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -56,7 +44,6 @@ import org.apache.http.HttpRequest;
 import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
-import org.apache.http.HttpStatus;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -71,7 +58,6 @@ import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.entity.HttpEntityWrapper;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
@@ -278,10 +264,8 @@ public class AudioBoxClient {
             version = AudioBoxClient.getProperty("version");
         } catch (FileNotFoundException e) {
             log.error("Environment properties file not found: " + e.getMessage());
-            e.printStackTrace();
         } catch (IOException e) {
             log.error("Unable to access the environment properties file: " + e.getMessage());
-            e.printStackTrace();
         }
 
         mUserAgent = "AudioBox.fm/" + version + " (Java; U; " +
@@ -464,18 +448,6 @@ public class AudioBoxClient {
 
 
     /**
-     * This method will switch SSL certificate validation on or off.
-     * You will not need to use this. This method is used for testing purpose only. For this reason is
-     * marked as "deprecated".
-     *
-     * @param force set or unset the SSL certificate validation (false validates, true skips validation).
-     */
-    @Deprecated
-    public void setForceTrust(boolean force) {
-        this.getMainConnector().setForceTrust(force);
-    }
-
-    /**
      * AudioBoxConnector is the AudioBoxClient http request wrapper.
      * 
      * <p>
@@ -494,6 +466,7 @@ public class AudioBoxClient {
         private static final String PATH_PARAMETER = "${path}";
         private static final String TOKEN_PARAMETER = "${token}";
         private static final String ACTION_PARAMETER = "${action}";
+        private static final String URI_SEPARATOR = "/";
         
         /** Get informations from configuration file */
         private final String PROTOCOL = AudioBoxClient.getProperty("protocol");
@@ -666,8 +639,8 @@ public class AudioBoxClient {
          * @throws ServiceException if the connection to AudioBox.fm throws a {@link SocketTimeoutException} or {@link IOException}.
          */
         public HttpRequestBase createConnectionMethod(String path, String token, String action , Model target, String httpVerb) {
-        	token = ( ( token == null ) ? "" : token.startsWith("/") ? token : "/".concat(token) ).trim();
-            action = ( ( action == null ) ? "" : action.startsWith("/") ? action : "/".concat(action) ).trim();
+        	token = ( ( token == null ) ? "" : URI_SEPARATOR.concat(token) ).trim();
+            action = ( ( action == null ) ? "" : URI_SEPARATOR.concat(action) ).trim();
 
             // Replace the placeholder with right values
             String url = mApiPath.replace( PATH_PARAMETER , path ).replace( TOKEN_PARAMETER , token ).replace( ACTION_PARAMETER , action ); 
@@ -765,8 +738,8 @@ public class AudioBoxClient {
          */
         public String[] execute(String path, String token, String action , Model target, String httpVerb, String format, boolean followRedirects) throws LoginException , ServiceException {
 
-            token = ( ( token == null ) ? "" : token.startsWith("/") ? token : "/".concat(token) ).trim();
-            action = ( ( action == null ) ? "" : action.startsWith("/") ? action : "/".concat(action) ).trim();
+            token = ( ( token == null ) ? "" : URI_SEPARATOR.concat(token) ).trim();
+            action = ( ( action == null ) ? "" : URI_SEPARATOR.concat(action) ).trim();
 
             // Replace the placeholder with right values
             String url = mApiPath.replace( PATH_PARAMETER , path ).replace( TOKEN_PARAMETER , token ).replace( ACTION_PARAMETER , action ); 
@@ -803,11 +776,8 @@ public class AudioBoxClient {
          */
         public String[] request(HttpRequestBase method, Model target, boolean followRedirects) throws LoginException, ServiceException {
             
-            if (mUser == null)
-                throw new LoginException( "User is not recognized" , HttpStatus.SC_UNAUTHORIZED );
-            
             this.mClient.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, followRedirects);
-
+            
             log.debug("Requesting resource: " + method.getURI() );
             
             try {
@@ -824,28 +794,6 @@ public class AudioBoxClient {
             } catch( IOException e ) {
                 throw new ServiceException( "IO exception: " + e.getMessage(), ServiceException.SOCKET_ERROR );
             }
-        }
-        
-
-        
-        
-        /* ----------------- */
-        /* Protected methods */
-        /* ----------------- */
-
-
-        /**
-         * This method will switch SSL certificate validation on or off.
-         * You will not need to use this. This method is used for testing purpose only. For this reason this method is 
-         * marked as "deprecated".
-         * 
-         * @param force set or unset the SSL certificate validation (false validates, true skips validation).
-         */
-
-        @Deprecated
-        protected void setForceTrust(boolean force){
-            if (force)
-                this.forceTrustCertificate();
         }
 
 
@@ -864,7 +812,8 @@ public class AudioBoxClient {
          * 
          */
         private HttpRequestBase createConnectionMethod(String url, Model target, String httpVerb) {
-        	HttpRequestBase method = null; 
+        	HttpRequestBase method = null;
+        	
             if ( HttpPost.METHOD_NAME.equals( httpVerb ) ) {
                 method = new HttpPost(url);
             } else if ( HttpPut.METHOD_NAME.equals( httpVerb ) ) {
@@ -884,7 +833,7 @@ public class AudioBoxClient {
                 }
             }
 
-            log.debug("Build new Request Method for url: " + url);
+            log.debug("[ " + httpVerb + " ] Build new Request Method for url: " + url);
         	
         	return method;
         }
@@ -921,54 +870,6 @@ public class AudioBoxClient {
             
         }
         
-        
-
-        /**
-         * This method is for internal testing and debugging use only.<br/>
-         * Please avoid the use of this method.
-         * 
-         * <p>
-         * 
-         * If {@link AudioBoxClient} is configured to accept all certificates this method is called to provide the SSL
-         * interfaces that will skips any of the default SSL certificate verifications.
-         * 
-         * <p>
-         * 
-         * Note that if {@link NoSuchAlgorithmException} or {@link KeyManagementException} occurs this method fails silently
-         * with only warn log message. 
-         */
-
-        @Deprecated
-        private void forceTrustCertificate() {
-
-            TrustManager easyTrustManager = new X509TrustManager() {
-                public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException { }
-                public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException { }
-                public X509Certificate[] getAcceptedIssuers() { return null; }
-            };
-
-            X509HostnameVerifier hnv = new X509HostnameVerifier() {
-                public void verify(String arg0, SSLSocket arg1) throws IOException { }
-                public void verify(String arg0, X509Certificate arg1) throws SSLException { }
-                public void verify(String arg0, String[] arg1, String[] arg2) throws SSLException { }
-                public boolean verify(String hostname, SSLSession session) { return false; }
-            };
-
-            try {
-                SSLContext ctx = SSLContext.getInstance("TLS");
-                ctx.init(new KeyManager[0], new TrustManager[] { easyTrustManager }, null);
-                SSLSocketFactory sf = new SSLSocketFactory(ctx);
-                sf.setHostnameVerifier( hnv );
-                Scheme https = new Scheme("https", sf, 443);
-                this.mClient.getConnectionManager().getSchemeRegistry().register(https);
-            } catch (NoSuchAlgorithmException e) {
-                log.warn("Cannot force SSL certificate trust due to 'NoSuchAlgorithmException': " + e.getMessage());
-            } catch (KeyManagementException e) {
-                log.warn("Cannot force SSL certificate trust due to 'KeyManagementException': " + e.getMessage());
-            }
-        }
-
     }
-
 
 }
