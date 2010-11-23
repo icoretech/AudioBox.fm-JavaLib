@@ -207,6 +207,27 @@ public class TrackTest extends junit.framework.TestCase {
         }
     }
 
+    @Test
+    public void testAddRemoveFromPlaylist() throws ModelException, LoginException, ServiceException {
+        Playlists pls = user.getPlaylists();
+        assertNotNull( pls );
+        
+        Playlist smp = pls.getPlaylistByName(Fixtures.get(Fixtures.SMALL_PLAYLIST_NAME));
+        assertNotNull( smp );
+        
+        Playlist dev = pls.getPlaylistByName("development");
+        assertNotNull( dev );
+        
+        Track track = smp.getTracks().get(0);
+        
+        int originalDevTracksCount = dev.getPlaylistTracksCount();
+        
+        track.addTo(dev);
+        assertEquals( originalDevTracksCount + 1, dev.getPlaylistTracksCount());
+        
+        track.removeFrom(dev);
+        assertEquals( originalDevTracksCount, dev.getPlaylistTracksCount());
+    }
 
     private void loginCatched() {
         try {
