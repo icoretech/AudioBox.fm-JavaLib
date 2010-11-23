@@ -835,6 +835,39 @@ public class Track extends ModelItem {
     @Override
     public Tracks getTracks() { return null; }
 
+    
+    /* ------------------------ */
+    /* Track management methods */
+    /* ------------------------ */
+    
+    
+    /**
+     * Use this method to add this {@link Track track} to a playlist
+     * 
+     * @param playlist the {@link Playlist} to add this track to
+     * @return true if the action succeed false if something goes wrong.
+     * 
+     * @throws LoginException if any authentication problem during the request occurs.
+     * @throws ServiceException if any connection problem to AudioBox.fm occurs.
+     */
+    public boolean addTo(Playlist playlist) throws LoginException, ServiceException {
+        return playlist.addTrack(this);
+    }
+    
+    
+    /**
+     * Use this method to remove this {@link Track track} from a playlist
+     * 
+     * @param playlist the {@link Playlist} to remove this track from
+     * @return true if the action succeed false if something goes wrong.
+     * 
+     * @throws LoginException if any authentication problem during the request occurs.
+     * @throws ServiceException if any connection problem to AudioBox.fm occurs.
+     */
+    public boolean removeFrom(Playlist playlist) throws LoginException, ServiceException {
+        return playlist.removeTrack(this);
+    }
+    
 }
 
 
