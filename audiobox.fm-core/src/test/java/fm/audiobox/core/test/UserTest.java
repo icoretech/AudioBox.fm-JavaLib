@@ -33,7 +33,6 @@ public class UserTest extends junit.framework.TestCase {
     private static final String[] ADMIN_ALLOWED_FORMATS = "aac;mp3;mp2;m4a;m4b;m4p;m4v;m4r;mp4;3gp;ogg;flac;spx;wma;rm;ram;wav;mpc;mp+;mpp;aiff;aif;aifc;tta".split(";");
 	StaticAudioBox abc;
     User user;
-    Fixtures fx = new Fixtures();
     
     @Before
     public void setUp() throws Exception {
@@ -47,19 +46,19 @@ public class UserTest extends junit.framework.TestCase {
             StaticAudioBox.getConnector().setTimeout(5000);
             assertEquals( 5000, StaticAudioBox.getConnector().getTimeout());
             
-            user = (User) abc.login( fx.get( Fixtures.LOGIN ), fx.get( Fixtures.RIGHT_PASS ) );
+            user = (User) abc.login( Fixtures.get( Fixtures.LOGIN ), Fixtures.get( Fixtures.RIGHT_PASS ) );
             assertSame( user, abc.getUser() );
             
             assertNotNull( user.getBytesServed() );
             assertNotNull( user.getEmail() );
-            assertEquals( fx.get( Fixtures.LOGIN ), user.getEmail() );
+            assertEquals( Fixtures.get( Fixtures.LOGIN ), user.getEmail() );
             assertNotNull( user.getPlayCount() );
             assertNotNull( user.getQuota() );
             assertNotNull( user.getTracksCount() );
             assertNotNull( user.getAvailableStorage() );
             assertEquals( 162135015424L, user.getAvailableStorage() );
             assertNotNull( user.getName() );
-            assertEquals( fx.get( Fixtures.USERNAME ), user.getName() );
+            assertEquals( Fixtures.get( Fixtures.USERNAME ), user.getName() );
             assertNotNull( user.getTimeZone() );
             assertTrue( user.getQuota() < user.getAvailableStorage() );
             assertNotNull( user.getAllowedFormats() );
@@ -72,7 +71,7 @@ public class UserTest extends junit.framework.TestCase {
             Profile p = user.getProfile();
             assertNotNull( p.hasAutoplay() );
             assertNotNull( p.getRealName() );
-            assertEquals( fx.get( Fixtures.REAL_NAME ), p.getRealName() );
+            assertEquals( Fixtures.get( Fixtures.REAL_NAME ), p.getRealName() );
             assertEquals( p.getName(), p.getRealName() );
             assertNull( p.getToken() );
             
@@ -118,7 +117,7 @@ public class UserTest extends junit.framework.TestCase {
     public void testLoginShouldThrowsLoginExceptionOnWrongPassword() {
         assertNotNull( abc );
         try {
-            user = (User) abc.login( fx.get( Fixtures.LOGIN ), fx.get( Fixtures.WRONG_PASS ) );
+            user = (User) abc.login( Fixtures.get( Fixtures.LOGIN ), Fixtures.get( Fixtures.WRONG_PASS ) );
         } catch (LoginException e) {
            assertEquals( HttpStatus.SC_UNAUTHORIZED, e.getErrorCode());
         } catch (SocketException e) {
@@ -134,7 +133,7 @@ public class UserTest extends junit.framework.TestCase {
     public void testLoginShouldThrowsLoginExceptionOnWrongCredentials() {
         assertNotNull( abc );
         try {
-            user = (User) abc.login( "wrong_user" , fx.get( Fixtures.WRONG_PASS ));
+            user = (User) abc.login( "wrong_user" , Fixtures.get( Fixtures.WRONG_PASS ));
         } catch (LoginException e) {
            assertEquals( 401, e.getErrorCode());
         } catch (SocketException e) {
@@ -155,7 +154,7 @@ public class UserTest extends junit.framework.TestCase {
         
         assertNotNull( user.getProfile() );
         assertNotNull( user.getProfile().getName() );
-        assertEquals( fx.get( Fixtures.USERNAME ), user.getUsername());
+        assertEquals( Fixtures.get( Fixtures.USERNAME ), user.getUsername());
     }
 
     @Test
@@ -224,13 +223,13 @@ public class UserTest extends junit.framework.TestCase {
     
     
     private void loginInactiveUser() throws LoginException, ServiceException, ModelException {
-        user = (User) abc.login( fx.get( Fixtures.INACTIVE_LOGIN ), fx.get( Fixtures.INACTIVE_RIGHT_PASS ) );
+        user = (User) abc.login( Fixtures.get( Fixtures.INACTIVE_LOGIN ), Fixtures.get( Fixtures.INACTIVE_RIGHT_PASS ) );
     }
     
     
     private void loginCatched() {
         try {
-            user = (User) abc.login( fx.get( Fixtures.LOGIN ), fx.get( Fixtures.RIGHT_PASS ) );
+            user = (User) abc.login( Fixtures.get( Fixtures.LOGIN ), Fixtures.get( Fixtures.RIGHT_PASS ) );
         } catch (LoginException e) {
             fail(e.getMessage());
         } catch (SocketException e) {

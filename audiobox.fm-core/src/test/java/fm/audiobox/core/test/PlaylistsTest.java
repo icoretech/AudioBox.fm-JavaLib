@@ -32,12 +32,11 @@ public class PlaylistsTest extends junit.framework.TestCase {
 
 	StaticAudioBox abc;
     User user;
-    Fixtures fx = new Fixtures();
     
     @Before
     public void setUp() throws Exception {
     	abc = new StaticAudioBox();
-        user = abc.login( fx.get( Fixtures.LOGIN ), fx.get( Fixtures.RIGHT_PASS ) );
+        user = abc.login( Fixtures.get( Fixtures.LOGIN ), Fixtures.get( Fixtures.RIGHT_PASS ) );
     }
 
     @Test
@@ -165,9 +164,9 @@ public class PlaylistsTest extends junit.framework.TestCase {
         Playlists playlists = user.getPlaylists(false);
         assertNotNull(playlists);
         
-        Playlist soundtracks = playlists.getPlaylistByName("soundtracks");
+        Playlist smallPlaylist = playlists.getPlaylistByName(Fixtures.get( Fixtures.SMALL_PLAYLIST_NAME ));
         Playlist dev = playlists.getPlaylistByName("development");
-        Track trk = soundtracks.getTracks().get(0);
+        Track trk = smallPlaylist.getTracks().get(0);
         
         int previousTracksCount = dev.getPlaylistTracksCount();
         
@@ -235,7 +234,7 @@ public class PlaylistsTest extends junit.framework.TestCase {
 
     private void loginCatched() {
         try {
-            user = abc.login( fx.get( Fixtures.LOGIN ), fx.get( Fixtures.RIGHT_PASS ) );
+            user = abc.login( Fixtures.get( Fixtures.LOGIN ), Fixtures.get( Fixtures.RIGHT_PASS ) );
         } catch (LoginException e) {
             fail(e.getMessage());
         } catch (SocketException e) {

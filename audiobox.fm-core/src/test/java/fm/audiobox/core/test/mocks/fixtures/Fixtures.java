@@ -22,11 +22,13 @@ public class Fixtures {
     public static final String INACTIVE_USERNAME = "inactive_username";
     public static final String INACTIVE_WRONG_PASS = "inactive_wrong_pass";
     
+    public static final String SMALL_PLAYLIST_NAME = "small_playlist_name";
+    
     public static final String TEST_FILE = "test_file";
     
-    Properties ps = new Properties();
+    private static Properties ps = new Properties();
 
-    public Fixtures() {
+    static {
         try {
             
             ps.load(Fixtures.class.getResourceAsStream("/fixtures.properties"));
@@ -40,7 +42,7 @@ public class Fixtures {
         }
     }
     
-    public String get(String key) {
+    public static String get(String key) {
         return ps.getProperty(key);
     }
 

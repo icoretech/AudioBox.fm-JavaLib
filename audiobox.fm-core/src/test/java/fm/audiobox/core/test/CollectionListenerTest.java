@@ -80,7 +80,7 @@ public class CollectionListenerTest extends junit.framework.TestCase {
 
     private void loginCatched() {
         try {
-            user = abc.login( fx.get( Fixtures.LOGIN ), fx.get( Fixtures.RIGHT_PASS ) );
+            user = abc.login( Fixtures.get( Fixtures.LOGIN ), Fixtures.get( Fixtures.RIGHT_PASS ) );
         } catch (LoginException e) {
             fail(e.getMessage());
         } catch (SocketException e) {

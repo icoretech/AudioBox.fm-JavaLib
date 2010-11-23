@@ -23,7 +23,6 @@ public class ThreadedTest extends junit.framework.TestCase {
 
 	StaticAudioBox abc;
     User user;
-    Fixtures fx = new Fixtures();
     
     @Before
     public void setUp() throws Exception {
@@ -33,7 +32,7 @@ public class ThreadedTest extends junit.framework.TestCase {
         abc = new StaticAudioBox();
         
         try {
-            user = (User) abc.login( fx.get( Fixtures.LOGIN ), fx.get( Fixtures.RIGHT_PASS ) );
+            user = (User) abc.login( Fixtures.get( Fixtures.LOGIN ), Fixtures.get( Fixtures.RIGHT_PASS ) );
         } catch (LoginException e) {
             fail(e.getMessage());
         } catch (SocketException e) {
