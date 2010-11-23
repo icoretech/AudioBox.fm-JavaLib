@@ -42,6 +42,33 @@ public class Playlists extends ModelsCollection {
     
     protected List<Playlist> collection = new ArrayList<Playlist>();
     
+    /** 
+     * Playlists are grouped by types that are:
+     * <ul> 
+     *   <li>{@link PlaylistTypes#AUDIO audio}</li>
+     *   <li>{@link PlaylistTypes#NATIVE native}</li>
+     *   <li>{@link PlaylistTypes#TRASH trash}</li>
+     *   <li>{@link PlaylistTypes#VIDEO video}</li>
+     *   <li>{@link PlaylistTypes#CUSTOM custom}</li>
+     * </ul> 
+     */
+    public enum PlaylistTypes {
+        /** The so called "Music" playlist, master audio media container */
+        AUDIO,
+        
+        /** Maximum portability audio media container, for media that are not Mpeg Layer 3 encoded */
+        NATIVE,
+        
+        /** Recycle bin meta playlist */
+        TRASH,
+        
+        /** Mainly the YouTube&trade; Channel playlist */
+        VIDEO,
+        
+        /** User defined playlists */
+        CUSTOM
+    }
+    
     /**
      * <p>Constructor for Playlists.</p>
      */
@@ -127,4 +154,22 @@ public class Playlists extends ModelsCollection {
         }
         return null;
     }
+    
+    /**
+     * <p>Getter method for a {@link List} of {@link Playlist} of a defined <code>type</code>.</p>
+     *
+     * @param type the {@link PlaylistTypes} of the desired Playlists group.
+     * 
+     * @return a {@link Playlist} {@link List} if any. An empty list otherwise.
+     */
+    public List<Playlist> getPlaylistsByType(PlaylistTypes type) {
+        List<Playlist> result = new ArrayList<Playlist>();
+        for (Playlist playlist : collection) {
+            if ( type.name().equalsIgnoreCase( playlist.getPlaylistType() ) )
+                result.add(playlist);
+        }
+        return result;
+    }
+    
+    
 }

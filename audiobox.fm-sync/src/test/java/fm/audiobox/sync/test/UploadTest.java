@@ -18,48 +18,46 @@ import fm.audiobox.sync.test.mocks.fixtures.Fixtures;
  * Unit test for simple App.
  */
 public class UploadTest extends junit.framework.TestCase {
-    
-    Fixtures fx = new Fixtures(); 
+
+    // private static Logger logger = LoggerFactory.getLogger(DownloadTest.class);
 
     @Test
-    public void testApp() {
-        
+    public void testUploadTrack() {
+
         assertTrue( true );
         try {
-        	AudioBoxClient.setModelClassFor( AudioBoxClient.NEW_TRACK_KEY , UploadTrack.class );
+            
             AudioBoxClient abc = new AudioBoxClient();
+            AudioBoxClient.setModelClassFor( AudioBoxClient.NEW_TRACK_KEY , UploadTrack.class );
             
             User user = abc.login( Fixtures.get( Fixtures.LOGIN), Fixtures.get(Fixtures.RIGHT_PASS) );
             assertNotNull( user );
-            
+
             File f = new File( Fixtures.get( Fixtures.TEST_FILE ) );
             assertNotNull( f );
             assertTrue( f.exists() );
-            
+
             Track up =  user.newTrack();
             assertNotNull( up );
+            assertTrue( up instanceof UploadTrack);
             
-            Upload upload = new Upload( (UploadTrack)up, f);
-            
+            Upload upload = new Upload( (UploadTrack) up, f);
+
             String uuid = upload.upload();
-            
+
             assertNotNull( uuid );
             assertTrue( uuid.length() > 0 );
-            
-            /*Track tr = user.getTrackByUuid( uuid );
-            
-            assertNotNull( tr );*/
-            
-            
+
+            Track tr = user.getTrackByToken( uuid );
+            assertNotNull( tr );
+
+
         } catch (LoginException e) {
-            e.printStackTrace();
-            assertNotNull( e ); // development purpose
+            fail( e.getMessage() );
         } catch (ServiceException e) {
-            e.printStackTrace();
-            assertNotNull( e ); // development purpose
+            fail( e.getMessage() );
         } catch (ModelException e) {
-            e.printStackTrace();
-            assertNotNull( e ); // development purpose
+            fail( e.getMessage() );
         }
     }
 }

@@ -832,6 +832,10 @@ public class AudioBoxClient {
                     ( (HttpPost) method).setEntity( reqEntity );
                 }
             }
+            
+            if (method instanceof HttpPut && target instanceof Playlist) {
+                ( (HttpPut) method).setEntity( ( (Playlist) target).getEntity() );
+            }
 
             log.debug("[ " + httpVerb + " ] Build new Request Method for url: " + url);
         	

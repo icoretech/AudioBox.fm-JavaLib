@@ -3,6 +3,8 @@ package fm.audiobox.sync.test;
 import java.io.File;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fm.audiobox.sync.interfaces.ThreadListener;
 import fm.audiobox.sync.task.MD5;
@@ -11,8 +13,8 @@ import fm.audiobox.sync.util.AsyncTask;
 
 public class MD5Test extends junit.framework.TestCase {
     
-    Fixtures fx = new Fixtures(); 
-
+    private static Logger logger = LoggerFactory.getLogger(MD5Test.class);
+    
     @Test
     public void testApp() {
         File file = new File(Fixtures.get( Fixtures.TEST_FILE ));
@@ -22,27 +24,27 @@ public class MD5Test extends junit.framework.TestCase {
 			
 			@Override
 			public void onStop(AsyncTask task) {
-				System.out.println( "Stop" );
+			    logger.info( "Stop" );
 			}
 			
 			@Override
 			public boolean onStart(AsyncTask result) {
-				System.out.println( "Start" );
+			    logger.info( "Start" );
 				return true;
 			}
 			
 			@Override
 			public void onProgress(AsyncTask result, long total, long completed,long remaining, Object item) {
-				System.out.println( "Progress: " + (  ( 100 * completed ) / total ) );
+			    logger.info( "Progress: " + (  ( 100 * completed ) / total ) );
 			}
 			
 			@Override
 			public void onComplete(AsyncTask result, Object item) {
-				System.out.println( "Complete: " + item );
+			    logger.info( "Complete: " + item );
 			}
 		});
         
-        System.out.println( "now: " + task.digest() );
+        logger.info( "MD5 hash: " + task.digest() );
         
     }
 

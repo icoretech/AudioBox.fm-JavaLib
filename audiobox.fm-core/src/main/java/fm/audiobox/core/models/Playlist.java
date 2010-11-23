@@ -22,7 +22,21 @@
 
 package fm.audiobox.core.models;
 
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.message.BasicNameValuePair;
+
 import fm.audiobox.core.api.ModelItem;
+import fm.audiobox.core.exceptions.LoginException;
+import fm.audiobox.core.exceptions.ModelException;
+import fm.audiobox.core.exceptions.ServiceException;
+import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
 
 
 /**
@@ -36,8 +50,8 @@ import fm.audiobox.core.api.ModelItem;
  * {@code
  * <playlist>
  *   <name>Music</name>
- *   <playlist-tracks-count type="integer">1591</playlist-tracks-count>
- *   <playlist-type>audio</playlist-type>
+ *   <playlist_tracks_count type="integer">1591</playlist_tracks_count>
+ *   <playlist_type>audio</playlist_type>
  *   <position type="integer">1</position>
  *   <token>ass8sad909sh</token>
  * </playlist>
@@ -53,10 +67,26 @@ public class Playlist extends ModelItem {
     /** The XML tag name for the Playlist element */
     public static final String TAG_NAME = "playlist";
     
+    /* Actions */
+    /** Used to empty the recycle bin */
+    protected static final String EMPTY_TRASH_ACTION = "empty_trash";
+    /** Used to add a list of tracks to a playlist */
+    protected static final String ADD_ACTION = "add_tracks";
+    /** Used to remove a list of tracks from a playlist */
+    protected static final String REMOVE_ACTION = "remove_tracks";
+
+    /* Parameters */
+    /** Used as HTTP parameters to specify the tracks list */
+    private static final String HTTP_PARAM = "track_tokens[]";
+    
+    /** Used to encode the entity string */
+    private static final String CHAR_ENCODING = "UTF-8";
+    
     protected int playlistTracksCount;
     protected String playlistType;
     protected int position;
 
+    private UrlEncodedFormEntity entity;
     
     /**
      * <p>Constructor for Playlist.</p>
@@ -129,4 +159,148 @@ public class Playlist extends ModelItem {
         return position;
     }
 
+    
+    /**
+     * <p>Getter for the http entity</p>
+     * 
+     * @return the entity to make management requests to AudioBox.fm
+     */
+    public UrlEncodedFormEntity getEntity() {
+        return entity;
+    }
+
+    
+    /* ---------------------------- */
+    /* Playlists management methods */
+    /* ---------------------------- */
+    
+
+
+    /**
+     * Use this method to add a single {@link Track track} to this playlist
+     * 
+     * @param track the {@link Track} to add to playlist
+     * @return true if the action succeed false if something goes wrong.
+     * 
+     * @throws LoginException if any authentication problem during the request occurs.
+     * @throws ServiceException if any connection problem to AudioBox.fm occurs.
+     */
+    public boolean addTrack(Track track) throws LoginException, ServiceException {
+        return this.addTracks(listify(track));
+    }
+
+    
+    /**
+     * Use this method to add multiple {@link Track tracks} to this playlist
+     * 
+     * @param tracks the {@link List} of {@link Track Tracks} to add to playlist
+     * @return true if the action succeed false if something goes wrong.
+     * 
+     * @throws LoginException if any authentication problem during the request occurs.
+     * @throws ServiceException if any connection problem to AudioBox.fm occurs.
+     */
+    public boolean addTracks(List<Track> tracks) throws LoginException, ServiceException {
+        return performAction(tracks, ADD_ACTION);
+    }
+    
+    
+    /**
+     * Use this method to remove a single {@link Track} from this playlist
+     * 
+     * @param track the {@link Track} to remove from playlist
+     * @return true if the action succeed false if something goes wrong.
+     * 
+     * @throws LoginException if any authentication problem during the request occurs.
+     * @throws ServiceException if any connection problem to AudioBox.fm occurs.
+     */
+    public boolean removeTrack(Track track) throws LoginException, ServiceException {
+        return this.removeTracks(listify(track));
+    }
+
+    
+    /**
+     * Use this method to remove multiple {@link Track tracks} from this playlist
+     * 
+     * @param tracks the {@link List} of {@link Track Tracks} to remove from playlist
+     * @return true if the action succeed false if something goes wrong.
+     * 
+     * @throws LoginException if any authentication problem during the request occurs.
+     * @throws ServiceException if any connection problem to AudioBox.fm occurs.
+     */
+    public boolean removeTracks(List<Track> tracks) throws LoginException, ServiceException {
+        return performAction(tracks, REMOVE_ACTION);
+    }
+    
+    
+    
+    
+    /* --------------- */
+    /* Private methods */
+    /* --------------- */
+    
+    
+    /**
+     * Used to prepare parameters to send playlists management requests.
+     * 
+     * @param tracks a {@link List} of {@link Track tracks} to add to the request
+     * 
+     * @throws UnsupportedEncodingException if an error while evaluating {@link Track#getToken()} occurs.
+     */
+    private void buildEntity(List<Track> tracks) throws UnsupportedEncodingException {
+        
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        for (Track track : tracks)
+            params.add(new BasicNameValuePair(HTTP_PARAM, track.getToken()));
+
+        this.entity = new UrlEncodedFormEntity(params, CHAR_ENCODING);
+        
+    }
+    
+    
+    /**
+     * Used to transform a single track in a list of tracks containing a single element.
+     * 
+     * @param track the track to transform into a list of tracks
+     * @return a list of tracks containing a single element
+     */
+    private List<Track> listify(Track track) {
+        List<Track> tracks = new ArrayList<Track>();
+        tracks.add(track);
+        return tracks;
+    }
+
+    
+    /**
+     * Use this method to add or remove multiple {@link Track tracks} from this playlist
+     * 
+     * @param tracks the {@link List} of {@link Track Tracks} to remove from playlist
+     * @param action the action to perform, can be one of {@link Playlist#ADD_ACTION} or {@link Playlist#REMOVE_ACTION}
+     * 
+     * @return true if the action succeed false if something goes wrong.
+     * 
+     * @throws LoginException if any authentication problem during the request occurs.
+     * @throws ServiceException if any connection problem to AudioBox.fm occurs.
+     */
+    private boolean performAction(List<Track> tracks, String action) throws LoginException, ServiceException {
+        try {
+            this.buildEntity(tracks);
+            String[] result = this.getConnector().execute( this.pEndPoint, this.getToken(), action, this, HttpPut.METHOD_NAME);
+            boolean ok = HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
+            
+            if (ok) {
+                try {
+                    this.buildCollection( false );
+                    // Update tracks count
+                    this.playlistTracksCount = this.getTracks().getCollection().size();
+                } catch (ModelException e) {
+                    e.printStackTrace();
+                }
+            }
+            
+            return ok;
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

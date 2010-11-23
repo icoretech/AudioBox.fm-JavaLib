@@ -55,12 +55,12 @@ public abstract class ModelItem extends Model {
     /**
      * <p>Getter method for a particular {@link Track} of the ModelItem {@link Tracks} collection.</p>
      *
-     * @param uuid the uuid of the desired track.
+     * @param token the uuid of the desired track.
      * 
      * @return a {@link Track} object.
      */
-    public Track getTrack(String uuid) {
-        return this.mTracks.get(uuid);
+    public Track getTrack(String token) {
+        return this.mTracks.get(token);
     }
 
     
@@ -72,6 +72,10 @@ public abstract class ModelItem extends Model {
      * This method accept the parameter <code>async</code>. If <code>true</code> the collection is populated 
      * asynchronously; in this case it may be necessary to specify a {@link CollectionListener} to keep track 
      * of what is happening to the collection.
+     * 
+     * <p>
+     * 
+     * Note that if <code>async</code> is true this method may return a null value in first instance.
      *
      * @param async whether to make the request asynchronously.
      * 
@@ -80,13 +84,8 @@ public abstract class ModelItem extends Model {
      * @throws ModelException if a custom model class was specified and an error while using it occurs.
      */
     public Tracks getTracks(boolean async) throws ModelException {
-        this.mTracks = (Tracks) AudioBoxClient.getModelInstance(AudioBoxClient.TRACKS_KEY, this.getConnector());
-        Thread t = populateCollection( this.getEndPoint(), this.mTracks );
-        if (async)
-            t.start();
-        else
-            t.run();
-
+        if (this.mTracks == null)
+            buildCollection(async);
         return this.mTracks;
     }
     
@@ -100,6 +99,34 @@ public abstract class ModelItem extends Model {
     public Tracks getTracks() throws ModelException {
         return this.getTracks(false);
     }
+    
+    
+    
+    
+    
+    /* ----------------- */
+    /* Protected methods */
+    /* ----------------- */
+    
+    
+    
+    /**
+     * Used to populate or refresh this item Tracks collection
+     * 
+     * @param async whether to make the request asynchronously.
+     * 
+     * @throws ModelException if a custom model class was specified and an error while using it occurs.
+     */
+    protected void buildCollection(boolean async) throws ModelException {
+        this.mTracks = (Tracks) AudioBoxClient.getModelInstance(AudioBoxClient.TRACKS_KEY, this.getConnector());
+        Thread t = populateCollection( this.getEndPoint(), this.mTracks );
+        if (async)
+            t.start();
+        else
+            t.run();
+    }
+    
+    
     
     
     /* --------------- */
@@ -132,4 +159,5 @@ public abstract class ModelItem extends Model {
         };
 
     }
+    
 }

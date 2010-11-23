@@ -72,8 +72,6 @@ public class DownloadTest extends junit.framework.TestCase {
 			
 			logger.info("New file: " + f.getPath());
 			
-			// Keep tree clean
-			f.delete();
             
         } catch (LoginException e) {
             fail(e.getMessage());
@@ -82,7 +80,7 @@ public class DownloadTest extends junit.framework.TestCase {
         } catch (ModelException e) {
             fail(e.getMessage());
         } finally {
-          // delete file if already exists
+          // Keep tree clean
           if ( media.exists() ) media.delete();
         }
     }

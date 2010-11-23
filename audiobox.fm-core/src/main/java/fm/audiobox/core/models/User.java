@@ -99,7 +99,7 @@ import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
  * Tracks trs = artist.getTracks();
  * </pre>
  * 
- * Or you can get informations about a specific, UUID known track's, by calling {@link User#getTrackByToken(String)}
+ * Or you can get informations about a specific, token-known track's, by calling {@link User#getTrackByToken(String)}
  * 
  * @author Valerio Chiodino
  * @author Fabio Tunno

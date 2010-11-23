@@ -14,9 +14,11 @@ import org.junit.Test;
 import fm.audiobox.core.api.Model;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
+import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Album;
 import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
+import fm.audiobox.core.models.Playlists.PlaylistTypes;
 import fm.audiobox.core.models.Track;
 import fm.audiobox.core.models.Tracks;
 import fm.audiobox.core.models.User;
@@ -132,7 +134,104 @@ public class PlaylistsTest extends junit.framework.TestCase {
         
     }
     
+    @Test
+    public void testPlaylistsTypes() throws ModelException {
+        loginCatched();
+
+        Playlists playlists = user.getPlaylists(false);
+        assertNotNull(playlists);
+        
+        List<Playlist> pls = playlists.getPlaylistsByType(PlaylistTypes.AUDIO);
+        assertEquals(1, pls.size());
+        
+        pls = playlists.getPlaylistsByType(PlaylistTypes.NATIVE);
+        assertEquals(1, pls.size());
+        
+        pls = playlists.getPlaylistsByType(PlaylistTypes.TRASH);
+        assertEquals(1, pls.size());
+        
+        pls = playlists.getPlaylistsByType(PlaylistTypes.VIDEO);
+        assertEquals(1, pls.size());
+        
+        pls = playlists.getPlaylistsByType(PlaylistTypes.CUSTOM);
+        assertNotNull( pls );
+    }
     
+    
+    @Test
+    public void testMoveSingleTrackToPlaylist() throws ModelException, LoginException, ServiceException {
+        loginCatched();
+        
+        Playlists playlists = user.getPlaylists(false);
+        assertNotNull(playlists);
+        
+        Playlist soundtracks = playlists.getPlaylistByName("soundtracks");
+        Playlist dev = playlists.getPlaylistByName("development");
+        Track trk = soundtracks.getTracks().get(0);
+        
+        int previousTracksCount = dev.getPlaylistTracksCount();
+        
+        boolean result = dev.addTrack(trk);
+        if (result) {
+            assertEquals( previousTracksCount + 1 , dev.getPlaylistTracksCount() );
+            assertNotNull( dev.getTrack( trk.getToken() ) );
+        } else {
+            // Fail and exit
+            fail( "Unable to move track to the selected playlist" );
+        }
+        
+        result = dev.removeTrack( trk );
+        if (result) {
+            assertNull( dev.getTrack( trk.getToken() ));
+        } else {
+            // Fail and exit
+            fail( "Unable to move track to the selected playlist" );
+        }
+        
+    }
+    
+    @Test
+    public void testMoveMultipleTracksToPlaylist() throws ModelException, LoginException, ServiceException {
+        loginCatched();
+        
+        Playlists playlists = user.getPlaylists(false);
+        assertNotNull(playlists);
+        
+        Playlist soundtracks = playlists.getPlaylistByName("soundtracks");
+        Playlist dev = playlists.getPlaylistByName("development");
+        
+        Tracks musicTracks = soundtracks.getTracks();
+        
+        List<Track> tracks = new ArrayList<Track>();
+        int numberOfTracksToAdd = 10;
+        for (int i = 0; i < numberOfTracksToAdd; i++) {
+            tracks.add( musicTracks.get(i));
+        }
+        
+        int previousTracksCount = dev.getPlaylistTracksCount();
+        
+        boolean result = dev.addTracks(tracks);
+        if (result) {
+            assertEquals( previousTracksCount + numberOfTracksToAdd, dev.getPlaylistTracksCount() );
+            for (Track trk : tracks) {
+                assertNotNull( dev.getTrack( trk.getToken() ) );
+            }
+        } else {
+            // Fail and exit
+            fail( "Unable to move track to the selected playlist" );
+        }
+        
+        result = dev.removeTracks( tracks );
+        if (result) {
+            for (Track trk : tracks)
+                assertNull( dev.getTrack( trk.getToken() ));
+        } else {
+            // Fail and exit
+            fail( "Unable to move track to the selected playlist" );
+        }
+        
+        
+    }
 
     private void loginCatched() {
         try {
