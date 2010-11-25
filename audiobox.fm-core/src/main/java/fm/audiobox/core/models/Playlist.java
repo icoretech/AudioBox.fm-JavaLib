@@ -30,7 +30,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPut;
 import org.apache.http.message.BasicNameValuePair;
 
 import fm.audiobox.core.api.EnclosingEntityModelItem;
@@ -83,24 +82,6 @@ public class Playlist extends EnclosingEntityModelItem {
     /** Used to parse action responses */
     private Tracks response;
     
-    
-    /** Actions that can be performed on a playlist
-     * <ul> 
-     *   <li>{@link PlaylistActions#EMPTY_TRASH /empty_trash}</li>
-     *   <li>{@link PlaylistActions#ADD_TRACKS /add_tracks}</li>
-     *   <li>{@link PlaylistActions#REMOVE_TRACKS /remove_tracks}</li>
-     * </ul>  
-     */
-    public enum PlaylistActions {
-        /** Used to empty the recycle bin */
-        EMPTY_TRASH,
-        
-        /** Used to add a list of tracks to a playlist */
-        ADD_TRACKS, 
-        
-        /** Used to remove a list of tracks from a playlist */
-        REMOVE_TRACKS
-    };
     
     /**
      * <p>Constructor for Playlist.</p>
@@ -199,7 +180,9 @@ public class Playlist extends EnclosingEntityModelItem {
      * @throws ServiceException if any connection problem to AudioBox.fm occurs.
      */
     public boolean addTrack(Track track) throws LoginException, ServiceException {
-        return this.addTracks(track.listify());
+    	List<Track> tracks = new ArrayList<Track>();
+    	tracks.add(track);
+        return this.addTracks(tracks);
     }
 
     
@@ -213,7 +196,7 @@ public class Playlist extends EnclosingEntityModelItem {
      * @throws ServiceException if any connection problem to AudioBox.fm occurs.
      */
     public boolean addTracks(List<Track> tracks) throws LoginException, ServiceException {
-        return performAction(tracks, PlaylistActions.ADD_TRACKS);
+        return performAction(tracks, Playlists.ADD_TRACKS_ACTION);
     }
     
     
@@ -227,7 +210,9 @@ public class Playlist extends EnclosingEntityModelItem {
      * @throws ServiceException if any connection problem to AudioBox.fm occurs.
      */
     public boolean removeTrack(Track track) throws LoginException, ServiceException {
-        return this.removeTracks(track.listify());
+    	List<Track> tracks = new ArrayList<Track>();
+    	tracks.add(track);
+        return this.removeTracks(tracks);
     }
 
     
@@ -241,7 +226,7 @@ public class Playlist extends EnclosingEntityModelItem {
      * @throws ServiceException if any connection problem to AudioBox.fm occurs.
      */
     public boolean removeTracks(List<Track> tracks) throws LoginException, ServiceException {
-        return performAction(tracks, PlaylistActions.REMOVE_TRACKS);
+        return performAction(tracks, Playlists.REMOVE_TRACKS_ACTION);
     }
     
     
@@ -250,24 +235,6 @@ public class Playlist extends EnclosingEntityModelItem {
     /* --------------- */
     /* Private methods */
     /* --------------- */
-    
-    
-    /**
-     * Used to prepare parameters to send playlists management requests.
-     * 
-     * @param tracks a {@link List} of {@link Track tracks} to add to the request
-     * 
-     * @throws UnsupportedEncodingException if an error while evaluating {@link Track#getToken()} occurs.
-     */
-    private void buildEntity(List<Track> tracks) throws UnsupportedEncodingException {
-        
-        List<NameValuePair> params = new ArrayList<NameValuePair>();
-        for (Track track : tracks)
-            params.add(new BasicNameValuePair(HTTP_PARAM, track.getToken()));
-
-        this.pEntity = new UrlEncodedFormEntity(params, CHAR_ENCODING);
-        
-    }
     
     
     /**
@@ -281,12 +248,16 @@ public class Playlist extends EnclosingEntityModelItem {
      * @throws LoginException if any authentication problem during the request occurs.
      * @throws ServiceException if any connection problem to AudioBox.fm occurs.
      */
-    private boolean performAction(List<Track> tracks, PlaylistActions action) throws LoginException, ServiceException {
+    private boolean performAction(List<Track> tracks, String action) throws LoginException, ServiceException {
         try {
-            if ( PlaylistActions.EMPTY_TRASH !=  action ) 
-                this.buildEntity(tracks);
+        	
+        	List<NameValuePair> params = new ArrayList<NameValuePair>();
+            for (Track track : tracks)
+                params.add(new BasicNameValuePair(HTTP_PARAM, track.getToken()));
+        	
+            HttpEntity entity = new UrlEncodedFormEntity(params, CHAR_ENCODING);
             
-            String[] result = this.getConnector().execute( this.pEndPoint, this.getToken(), action.name().toLowerCase(), this, HttpPut.METHOD_NAME, null);
+            String[] result = this.getConnector().put( this, this, action, entity);
             boolean sc_ok = HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
             
             if (sc_ok) {

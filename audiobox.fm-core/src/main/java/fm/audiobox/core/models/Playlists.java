@@ -40,6 +40,10 @@ public class Playlists extends ModelsCollection {
     /** Tracks API end point */
     public static final String END_POINT = "playlists";
     
+    public static final String EMPTY_TRASH_ACTION = "empty_trash";
+    public static final String ADD_TRACKS_ACTION = "empty_trash";
+    public static final String REMOVE_TRACKS_ACTION = "empty_trash";
+    
     protected List<Playlist> collection = new ArrayList<Playlist>();
     
     /** 

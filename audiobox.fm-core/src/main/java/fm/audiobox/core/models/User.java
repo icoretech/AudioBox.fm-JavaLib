@@ -22,11 +22,10 @@
 
 package fm.audiobox.core.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPut;
 
 import fm.audiobox.core.api.Model;
 import fm.audiobox.core.api.ModelItem;
@@ -36,7 +35,6 @@ import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.interfaces.CollectionListener;
 import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
-import fm.audiobox.core.models.Playlist.PlaylistActions;
 import fm.audiobox.core.models.Playlists.PlaylistTypes;
 
 
@@ -143,8 +141,6 @@ public class User extends ModelItem {
     protected Genres genres;
     protected Artists artists;
     protected Albums albums;
-
-    private String[] md5Hashes;
 
     /**
      * <p>Constructor for User.</p>
@@ -578,17 +574,16 @@ public class User extends ModelItem {
      * @throws LoginException if any authentication problem occurs.
      */
     public String[] getUploadedTracks() throws ServiceException, LoginException {
-        
-        String[] result = this.getConnector().execute(Tracks.END_POINT, null, null, this, HttpGet.METHOD_NAME, AudioBoxConnector.TEXT_FORMAT);
+        String[] result = this.getConnector().get(new Tracks(), this, null);
         String response = result[ AudioBoxConnector.RESPONSE_BODY ];
         
         result = response.split( ";" , response.length() );
-        this.md5Hashes = new String[ result.length ];
+        String[] hashes = new String[ result.length ];
         int pos = 0;
         for ( String hash : result )
-            this.md5Hashes[ pos++ ] = hash.trim();
+        	hashes[ pos++ ] = hash.trim();
         
-        return this.md5Hashes;
+        return hashes;
     }
 
 
@@ -602,12 +597,14 @@ public class User extends ModelItem {
     }
     
     public boolean dropTrack(Track track) throws LoginException, ServiceException {
-        return dropTracks(track.listify());
+    	List<Track> tracks = new ArrayList<Track>();
+    	tracks.add(track);
+        return dropTracks( tracks );
     }
     
     
     public boolean emptyTrash() throws LoginException, ServiceException {
-        String[] result = this.getConnector().execute( Playlists.END_POINT, null, PlaylistActions.EMPTY_TRASH.name().toLowerCase(), this, HttpPut.METHOD_NAME, null);
+        String[] result = this.getConnector().put( new Playlists(), null, Playlists.EMPTY_TRASH_ACTION, null);
         return HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
     }
     
@@ -664,7 +661,7 @@ public class User extends ModelItem {
 
             public void run() {
                 try {
-                    user.getConnector().execute(endpoint, null, null, collection, null, null);
+                    user.getConnector().get(collection, collection, null);
                 } catch (LoginException e) {
                     e.printStackTrace();
                 } catch (ServiceException e) {

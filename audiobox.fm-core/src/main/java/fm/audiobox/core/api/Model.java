@@ -88,7 +88,6 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
 
     // Default models variables
     protected String pName;
-    protected String pToken;
     protected String pEndPoint;
     protected AudioBoxConnector pConnector;
 
@@ -138,25 +137,6 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
         this.pName = name;
     }
 
-    /**
-     * <p>Getter for the model token.</p>
-     *
-     * @return the unique token of the model.
-     */
-    public String getToken() {
-        return this.pToken;
-    }
-
-    /**
-     * <p>Setter for the model token: used by the parser.</p>
-     *
-     * @param token the unique token of the model.
-     */
-    public final void setToken(String token) {
-        this.pToken = token;
-    }
-
-    
     /** {@inheritDoc} */
     @Override
     public String[] handleResponse(HttpResponse response) throws IOException {

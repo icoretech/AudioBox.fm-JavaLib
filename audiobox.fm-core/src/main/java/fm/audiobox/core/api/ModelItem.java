@@ -52,6 +52,29 @@ public abstract class ModelItem extends Model {
     /** The collection of tracks for this object */
     private Tracks mTracks;
     
+    /** the unique id of this {@link ModelItem} instance */
+    private String pToken;
+    
+    
+    
+    
+    /**
+     * <p>Getter for the model token.</p>
+     *
+     * @return the unique token of the model.
+     */
+    public String getToken() {
+        return this.pToken;
+    }
+
+    /**
+     * <p>Setter for the model token: used by the parser.</p>
+     *
+     * @param token the unique token of the model.
+     */
+    public final void setToken(String token) {
+        this.pToken = token;
+    }
     
     /**
      * <p>Getter method for a particular {@link Track} of the ModelItem {@link Tracks} collection.</p>
@@ -148,7 +171,7 @@ public abstract class ModelItem extends Model {
 
             public void run() {
                 try {
-                    mi.getConnector().execute(endpoint, mi.getToken(), null, collection, null, null);
+                    mi.getConnector().get(mi, collection , null);
                 } catch (LoginException e) {
                     e.printStackTrace();
                 } catch (ServiceException e) {

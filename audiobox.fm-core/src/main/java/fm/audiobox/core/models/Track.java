@@ -25,21 +25,17 @@ package fm.audiobox.core.models;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.params.ClientPNames;
 import org.apache.http.entity.mime.content.FileBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fm.audiobox.core.api.EnclosingEntityModelItem;
+import fm.audiobox.core.api.ModelItem;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
@@ -89,7 +85,7 @@ import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
  * @author Fabio Tunno
  * @version 0.0.1
  */
-public class Track extends EnclosingEntityModelItem {
+public class Track extends ModelItem {
 
     private static Logger logger = LoggerFactory.getLogger(Track.class);
     
@@ -104,8 +100,7 @@ public class Track extends EnclosingEntityModelItem {
     protected static final String DOWNLOAD_ACTION = "download";
 
     private static final String SCROBBLE_ACTION = "scrobble";
-    private static final String LOVE_ACTION = "love";
-    private static final String UNLOVE_ACTION = "unlove";
+    private static final String TOGGLE_LOVE_ACTION = "toggle_loved";
 
     // XML model fields
     private String duration;
@@ -318,7 +313,9 @@ public class Track extends EnclosingEntityModelItem {
      */
     public String getStreamUrl(boolean remote) throws LoginException, ServiceException {
         if ( remote ){
-            String[] result = this.getConnector().execute( this.pEndPoint, this.getToken(), STREAM_ACTION, this, null, null);
+        	HttpRequestBase method = this.getConnector().createConnectionMethod(HttpGet.METHOD_NAME, this, STREAM_ACTION, null);
+        	method.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, false);
+        	String[] result = this.getConnector().request(method, this);
             return result[ AudioBoxConnector.RESPONSE_BODY ];
         } else return this.streamUrl;
     }
@@ -334,7 +331,7 @@ public class Track extends EnclosingEntityModelItem {
      * @throws ServiceException if any connection problem to AudioBox.fm occurs.
      */
     public String[] refresh() throws LoginException, ServiceException {
-    	return this.getConnector().execute( this.pEndPoint, this.getToken(), null , this, null, null);
+    	return this.getConnector().get( this, this, null );
     }
     
 
@@ -610,75 +607,28 @@ public class Track extends EnclosingEntityModelItem {
      * @throws ServiceException if any connection problem to AudioBox.fm occurs.
      */
     public void scrobble() throws ServiceException, LoginException {
-        String[] response = this.getConnector().execute( this.pEndPoint, this.getToken(), SCROBBLE_ACTION, this, HttpPost.METHOD_NAME, null);
+        String[] response = this.getConnector().post( this, this, SCROBBLE_ACTION, null);
         if ( Integer.parseInt( response[ AudioBoxConnector.RESPONSE_CODE ] ) == HttpStatus.SC_OK)
             this.setPlayCount( this.getPlayCount() + 1 );
     }
 
     /**
-     * Use this method to mark the track as loved.
+     * Use this method to mark the track as loved/unlove.
      * 
-     * <p>
-     * 
-     * Note that calling this method on an already "loved" track will have no effect.
-     * 
-     * <p>
-     * 
-     * This method also sets to <code>true</code> the loved state.
+     * This method also sets to <code>true/false</code> the loved state.
      *
-     * @return true if the request is succesfully done, false otherwise.
+     * @return boolean the "love" state of this track instance
      * 
      * @throws LoginException if any authentication problem during the request occurs.
      * @throws ServiceException if any connection problem to AudioBox.fm occurs.
      */
-    public boolean love() throws ServiceException, LoginException  {
-        boolean markLoved = true;
-        if ( ! this.isLoved()) {
-            String[] result = this.getConnector().execute( this.pEndPoint, this.getToken(), LOVE_ACTION, this, HttpPut.METHOD_NAME, null);
-            markLoved = HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
-            this.setLoved( markLoved );
-        }
-        return markLoved;
+    public boolean toggleLove() throws ServiceException, LoginException  {
+        String[] result = this.getConnector().put( this, this, TOGGLE_LOVE_ACTION, null);
+        if ( HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] )  )
+        	this.setLoved( ! this.isLoved() );
+        return this.isLoved();
     }
 
-    /**
-     * Use this method to mark the track as no more loved.
-     * 
-     * <p>
-     * 
-     * Note that calling this method on an "unloved" track will have no effect.
-     * 
-     * <p>
-     * 
-     * This method also sets to <code>false</code> the loved state.
-     *
-     * @return true if the request is succesfully done, false otherwise.
-     * 
-     * @throws LoginException if any authentication problem during the request occurs.
-     * @throws ServiceException if any connection problem to AudioBox.fm occurs.
-     */
-    public boolean unlove() throws ServiceException, LoginException {
-        boolean markLoved = true;
-        if (this.isLoved()) {
-            String[] result = this.getConnector().execute( this.pEndPoint, this.getToken(), UNLOVE_ACTION, this, HttpPut.METHOD_NAME, null);
-            markLoved = HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
-            this.setLoved( !markLoved );
-        }
-        return markLoved;
-    }
-
-    /**
-     * <p>Permanently destroy a media file. <strong>This operation cannot be reverted</strong>.</p>
-     *
-     * @return true if the request is succesfully done, false otherwise.
-     * 
-     * @throws LoginException if any authentication problem during the request occurs.
-     * @throws ServiceException if any connection problem to AudioBox.fm occurs.
-     */
-    public boolean delete() throws ServiceException, LoginException {
-        String[] result = this.getConnector().execute( this.pEndPoint, this.getToken(), null, this, HttpDelete.METHOD_NAME, null);
-        return HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
-    }
 
 
     /**
@@ -691,7 +641,7 @@ public class Track extends EnclosingEntityModelItem {
      */
     public void download(final FileOutputStream fos) throws ServiceException, LoginException {
         this.fileOutputStream = fos;
-        this.getConnector().execute( this.pEndPoint, this.getToken(), DOWNLOAD_ACTION, this, null, null, true);
+        this.getConnector().get( this, this, DOWNLOAD_ACTION);
     }
 
 
@@ -708,17 +658,6 @@ public class Track extends EnclosingEntityModelItem {
 
 
     
-    /**
-     * Used to transform a single track in a list of tracks containing a single element.
-     * 
-     * @return a list of tracks containing a single element
-     */
-    public List<Track> listify() {
-        List<Track> tracks = new ArrayList<Track>();
-        tracks.add(this);
-        return tracks;
-    }
-
     /* ----- */
     /* State */
     /* ----- */
@@ -820,6 +759,8 @@ public class Track extends EnclosingEntityModelItem {
             } finally {
                 this.fileOutputStream.close();
             }
+            
+            this.fileOutputStream = null;
         }
 
         return super.parseBinaryResponse(response);
@@ -882,17 +823,6 @@ public class Track extends EnclosingEntityModelItem {
      */
     public boolean removeFrom(Playlist playlist) throws LoginException, ServiceException {
         return playlist.removeTrack(this);
-    }
-
-    
-    /** {@inheritDoc} */
-    @Override
-    public HttpEntity getEntity(String action) {
-        if (this.fileBody != null ) {
-            this.pEntity = new MultipartEntity();
-            ( (MultipartEntity) this.pEntity).addPart(Track.HTTP_PARAM, this.fileBody);
-        }
-        return this.pEntity;
     }
     
 }

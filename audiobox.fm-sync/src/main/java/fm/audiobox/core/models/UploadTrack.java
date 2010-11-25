@@ -24,9 +24,11 @@ package fm.audiobox.core.models;
 
 import java.io.IOException;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
 
 import fm.audiobox.core.exceptions.LoginException;
@@ -66,7 +68,9 @@ public class UploadTrack extends Track {
      * @throws ServiceException if any remote service problem occurs
      */
     public void upload() throws LoginException, ServiceException  {
-    	method = this.pConnector.createConnectionMethod(Tracks.END_POINT , null, null, this, HttpPost.METHOD_NAME);
+    	HttpEntity entity = new MultipartEntity();
+    	((MultipartEntity)entity).addPart(Track.HTTP_PARAM, this.fileBody);
+    	method = this.pConnector.createConnectionMethod( HttpPost.METHOD_NAME, new Tracks(), DOWNLOAD_ACTION,  entity);
     	String result[] = this.pConnector.request(method, this);
     	this.setToken( result[ AudioBoxConnector.RESPONSE_BODY ]  );
     }

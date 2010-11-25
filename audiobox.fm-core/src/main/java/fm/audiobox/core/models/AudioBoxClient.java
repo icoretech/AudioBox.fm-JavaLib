@@ -71,8 +71,8 @@ import org.apache.http.protocol.HttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fm.audiobox.core.api.EnclosingEntityModelItem;
 import fm.audiobox.core.api.Model;
+import fm.audiobox.core.api.ModelItem;
 import fm.audiobox.core.api.ModelsCollection;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
@@ -221,6 +221,9 @@ public class AudioBoxClient {
     /** Used to setup useragent */
     private static String sAppName = "AudioBoxClient";
     
+    /** Default request format */
+    private RequestFormat mRequestFormat = RequestFormat.XML;
+    
     private static Inflector sI = Inflector.getInstance();
     private static Map<String, CollectionListener> sCollectionListenersMap = new HashMap<String , CollectionListener>();
     private static Map<String, Class<? extends Model>> sModelsMap;
@@ -256,6 +259,14 @@ public class AudioBoxClient {
         public void onItemReady(int item, Object obj) { }
     };
 
+    
+    public enum RequestFormat {
+    	XML,
+    	JSON,
+    	TEXT
+    }
+    
+    
 
     /**
      * <p>Constructor for AudioBoxClient.</p>
@@ -295,6 +306,15 @@ public class AudioBoxClient {
     
     public static void setAppName(String name) {
         AudioBoxClient.sAppName = name;
+    }
+    
+    
+    /**
+     *  Setter method for {@link AudioBoxClient#RequestFormat}
+     * @param rf
+     */
+    public void setRequestFormat(RequestFormat rf){
+    	this.mRequestFormat = rf;
     }
 
     /**
@@ -443,7 +463,7 @@ public class AudioBoxClient {
 
         this.getMainConnector().setCredential( new UsernamePasswordCredentials(username, password) );
 
-        this.getMainConnector().execute( this.mUser.getEndPoint(), null, null, this.mUser, null, null );
+        this.getMainConnector().get(this.mUser, this.mUser, null);
 
         return this.mUser;
     }
@@ -643,71 +663,72 @@ public class AudioBoxClient {
         /**
          * Creates a HttpRequestBase
          * 
-         * @param path the partial url to call. Tipically this is a Model end point ({@link Model#getEndPoint()})
-         * @param token the token of the Model if any, may be null or empty ({@link Model#getToken()})
-         * @param action the remote action to execute on the model that executes the action (ex. "scrobble")
-         * @param target usually reffers the Model that executes the method
          * @param httpVerb the HTTP method to use for the request (ie: GET, PUT, POST and DELETE)
+         * @param source usually reffers the Model that invokes method
+         * @param dest Model that intercepts the response
+         * @param action the remote action to execute on the model that executes the action (ex. "scrobble")
+         * @param entity HttpEntity used by POST and PUT method
          * 
          * @return the HttpRequestBase 
          */
-        public HttpRequestBase createConnectionMethod(String path, String token, String action, Model target, String httpVerb) {
-            return this.createConnectionMethod(path, token, action, target, httpVerb, XML_FORMAT);
-        }
+        public HttpRequestBase createConnectionMethod(String httpVerb, Model source, String action, HttpEntity entity) {
+        	
+        	httpVerb = httpVerb == null ? HttpGet.METHOD_NAME : httpVerb;
+            
+        	String
+        		namespace = source.getEndPoint(),
+        		token = ( source instanceof ModelItem ) ? ((ModelItem)source).getToken() : null,
+        		url = buildRequestUrl(namespace, token, action, httpVerb);
+            
+        	HttpRequestBase method = null;
+        	
+            if ( HttpPost.METHOD_NAME.equals( httpVerb ) ) {
+                method = new HttpPost(url);
+            } else if ( HttpPut.METHOD_NAME.equals( httpVerb ) ) {
+                method = new HttpPut(url);
+            } else if ( HttpDelete.METHOD_NAME.equals( httpVerb ) ) {
+                method = new HttpDelete(url);
+            } else {
+            	// TODO: set the entity as querystring
+                method = new HttpGet(url);
+            }
+            
+            if (method instanceof HttpEntityEnclosingRequestBase && entity != null ) {
+            	((HttpEntityEnclosingRequestBase) method).setEntity(entity);
+            }
+            
+            // Default: follow redirects!
+            method.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, true);
 
-        /**
-         * <strong>
-         * This method is used by the {@link Model} class.<br/>
-         * Avoid direct execution of this method if you don't know what you are doing.
-         * </strong>
-         * 
-         * <p>
-         * 
-         * Some of the parameter may be null other cannot.
-         * 
-         * @param path the partial url to call. Tipically this is a Model end point ({@link Model#getEndPoint()})
-         * @param token the token of the Model if any, may be null or empty ({@link Model#getToken()})
-         * @param action the remote action to execute on the model that executes the action (ex. "scrobble")
-         * @param target usually reffers the Model that executes the method
-         * @param httpVerb the HTTP method to use for the request (ie: GET, PUT, POST and DELETE)
-         * @param format the request format (xml or txt)
-         * @param followRedirect true if redirections must be followed
-         * 
-         * @return String array containing the response code at position 0 and the response body at position 1
-         *
-         * @throws LoginException if user has not yet logged in
-         * @throws ServiceException if the connection to AudioBox.fm throws a {@link SocketTimeoutException} or {@link IOException} occurs.
-         */
-        public String[] execute(String path, String token, String action, Model target, String httpVerb, String format, boolean followRedirect) throws LoginException , ServiceException {
-            format = format == null ? XML_FORMAT : format;
-            return request(path, token, action, target, httpVerb, format, followRedirect);
+            log.debug("[ " + httpVerb + " ] Next request will be: " + url);
+        	
+        	return method;
         }
         
-        /**
-         * <strong>
-         * This method is used by the {@link Model} class.<br/>
-         * Avoid direct execution of this method if you don't know what you are doing.
-         * </strong>
-         * 
-         * <p>
-         * 
-         * Some of the parameter may be null other cannot.
-         * 
-         * @param path the partial url to call. Tipically this is a Model end point ({@link Model#getEndPoint()})
-         * @param token the token of the Model if any, may be null or empty ({@link Model#getToken()})
-         * @param action the remote action to execute on the model that executes the action (ex. "scrobble")
-         * @param target usually reffers the Model that executes the method
-         * @param httpVerb the HTTP method to use for the request (ie: GET, PUT, POST and DELETE)
-         * @param format the request format (xml or txt)
-         * 
-         * @return String array containing the response code at position 0 and the response body at position 1
-         *
-         * @throws LoginException if user has not yet logged in
-         * @throws ServiceException if the connection to AudioBox.fm throws a {@link SocketTimeoutException} or {@link IOException} occurs.
-         */
-        public String[] execute(String path, String token, String action, Model target, String httpVerb, String format) throws LoginException , ServiceException {
-            return execute(path, token, action, target, httpVerb, format, false);
+        
+        
+        public String[] get(Model source, Model dest, String action) throws LoginException, ServiceException{
+        	// TODO: get parameters as entity
+        	HttpRequestBase method = this.createConnectionMethod( HttpGet.METHOD_NAME, source, action, null);
+        	return this.request(method, dest);
         }
+        
+        public String[] post(Model source, Model dest, String action, HttpEntity entity) throws LoginException, ServiceException{
+        	HttpRequestBase method = this.createConnectionMethod( HttpPost.METHOD_NAME, source, action, entity);
+        	return this.request(method, dest);
+        }
+        
+        public String[] put(Model source, Model dest, String action, HttpEntity entity) throws LoginException, ServiceException{
+        	HttpRequestBase method = this.createConnectionMethod( HttpPut.METHOD_NAME, source, action, entity);
+        	return this.request(method, dest);
+        }
+        
+        public String[] delete(Model source, Model dest, String action) throws LoginException, ServiceException{
+        	HttpRequestBase method = this.createConnectionMethod( HttpDelete.METHOD_NAME, source, action, null);
+        	return this.request(method, dest);
+        }
+        
+
 
         
         /**
@@ -731,35 +752,10 @@ public class AudioBoxClient {
          * @throws ServiceException if the connection to AudioBox.fm throws a {@link SocketTimeoutException} or {@link IOException} occurs.
          */
         public String[] request(HttpRequestBase method, Model target) throws LoginException, ServiceException {
-            return this.request(method, target, false);
-        }
-        
-        /**
-         * This method is used to performs requests to AudioBox.fm service APIs.<br/>
-         * Once AudioBox.fm responds the response is parsed through the target {@link Model}.
-         * 
-         * <p>
-         * 
-         * If a stream url is requested (tipically from a {@link Track} object), the location for audio streaming is returned.
-         * 
-         * <p>
-         * 
-         * Any other case returns a string representing the status code.
-         * 
-         * @param method the HTTP method to use for the request
-         * @param target the model to use to parse the response
-         * @param followRedirect true if redirections must be followed
-         * 
-         * @return String array containing the response code at position 0 and the response body at position 1
-         * 
-         * @throws LoginException if user has not yet logged in
-         * @throws ServiceException if the connection to AudioBox.fm throws a {@link SocketTimeoutException} or {@link IOException} occurs.
-         */
-        public String[] request(HttpRequestBase method, Model target, boolean followRedirect) throws LoginException, ServiceException {
             
             try {
-                
-                this.mClient.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, followRedirect);
+                // TODO: check this code
+            	// this.mClient.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, followRedirect);
                 return mClient.execute(method, target, new BasicHttpContext());
                 
             } catch( SocketTimeoutException e ) {
@@ -780,73 +776,6 @@ public class AudioBoxClient {
         /* Private methods */
         /* --------------- */
         
-        /**
-         * Creates a HttpRequestBase by a full URL path
-         * 
-         * @param target usually reffers the Model that executes the method
-         * @param httpVerb the HTTP method to use for the request (ie: GET, PUT, POST and DELETE)
-         * 
-         * @return a new HttpRequestBase
-         */
-        private HttpRequestBase createConnectionMethod(String path, String token, String action, Model target, String httpVerb, String format) {
-            
-            httpVerb = httpVerb == null ? HttpGet.METHOD_NAME : httpVerb;
-            
-            String url = buildRequestUrl(path, token, action, httpVerb, format);
-            
-        	HttpRequestBase method = null;
-        	
-            if ( HttpPost.METHOD_NAME.equals( httpVerb ) ) {
-                method = new HttpPost(url);
-            } else if ( HttpPut.METHOD_NAME.equals( httpVerb ) ) {
-                method = new HttpPut(url);
-            } else if ( HttpDelete.METHOD_NAME.equals( httpVerb ) ) {
-                method = new HttpDelete(url);
-            } else {
-                method = new HttpGet(url);
-            }
-            
-            if (method instanceof HttpEntityEnclosingRequestBase && target instanceof EnclosingEntityModelItem) {
-                HttpEntity entity = ( (EnclosingEntityModelItem) target ).getEntity(action);
-                if (entity != null)
-                    ((HttpEntityEnclosingRequestBase) method).setEntity(entity);
-            }
-            
-
-            log.debug("[ " + httpVerb + " ] Next request will be: " + url);
-        	
-        	return method;
-        }
-        
-        /**
-         * This method is used to performs requests to AudioBox.fm service APIs.<br/>
-         * Once AudioBox.fm responds the response is parsed through the target {@link Model}.
-         * 
-         * <p>
-         * 
-         * If a stream url is requested (tipically from a {@link Track} object), the location for audio streaming is returned.
-         * 
-         * <p>
-         * 
-         * Any other case returns a string representing the status code.
-         * 
-         * @param url the full url where to make the request
-         * @param target the model to use to parse the response
-         * @param httpVerb the HTTP method to use for the request
-         * @param followRedirect true if redirections must be followed
-         * 
-         * @return String array containing the response code at position 0 and the response body at position 1
-         * 
-         * @throws LoginException if user has not yet logged in
-         * @throws ServiceException if the connection to AudioBox.fm throws a {@link SocketTimeoutException} or {@link IOException} occurs.
-         */
-        private String[] request(String path, String token, String action, Model target, String httpVerb, String format, boolean followRedirect) throws LoginException, ServiceException {
-
-            HttpRequestBase method = this.createConnectionMethod(path, token, action, target, httpVerb, format);
-            
-            return this.request(method, target, followRedirect);
-            
-        }
         
         /**
          * Creates the correct url starting from parameters
@@ -855,12 +784,10 @@ public class AudioBoxClient {
          * @param token the token of the Model if any, may be null or empty ({@link Model#getToken()})
          * @param action the remote action to execute on the model that executes the action (ex. "scrobble")
          * @param httpVerb the HTTP method to use for the request (ie: GET, PUT, POST and DELETE)
-         * @param format the request format (xml or txt)
          * 
          * @return the URL string 
-         * 
          */
-        private String buildRequestUrl(String path, String token, String action, String httpVerb, String format) {
+        private String buildRequestUrl(String path, String token, String action, String httpVerb) {
             token = ( ( token == null ) ? "" : URI_SEPARATOR.concat(token) ).trim();
             action = ( ( action == null ) ? "" : URI_SEPARATOR.concat(action) ).trim();
 
@@ -868,7 +795,7 @@ public class AudioBoxClient {
             String url = mApiPath.replace( PATH_PARAMETER , path ).replace( TOKEN_PARAMETER , token ).replace( ACTION_PARAMETER , action ); 
 
             if ( HttpGet.METHOD_NAME.equals(httpVerb) )
-                url += "." + format;
+                url += "." + ( mRequestFormat == RequestFormat.XML ? "xml" : "json" );
             
             return url;
         }
