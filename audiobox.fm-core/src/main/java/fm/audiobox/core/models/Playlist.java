@@ -182,7 +182,7 @@ public class Playlist extends EnclosingEntityModelItem {
     /**
      * <p>Setter for the playlist management response parsing: used by the parser</p>
      *
-     * @param trakcs the collection of tracks to set
+     * @param tracks the collection of tracks to set
      */
     public void setTracks(Tracks tracks) {
         this.response = tracks;

@@ -92,9 +92,11 @@ public class StoryTest extends junit.framework.TestCase {
             assertTrue( up instanceof UploadTrack);
             
             Upload upload = new Upload( (UploadTrack) up, f);
+            assertNotNull( upload );
             
             // Re-upload it
             String token = upload.upload();
+            assertNotNull( token );
             
             // And move to the previous playlist
             Track newTrack = user.getTrackByToken( token );
@@ -102,7 +104,11 @@ public class StoryTest extends junit.framework.TestCase {
                 Thread.sleep( 1000 );
             }
             
-            newTrack.addTo( pl );
+            assertEquals(token, newTrack.getToken());
+            assertTrue( newTrack.addTo( pl ) );
+            
+            // Keep tree clean
+            if ( media.exists() ) media.delete();
             
         } catch (LoginException e) {
             fail(e.getMessage());
@@ -112,9 +118,6 @@ public class StoryTest extends junit.framework.TestCase {
             fail(e.getMessage());
         } catch (InterruptedException e) {
             fail(e.getMessage());
-        } finally {
-          // Keep tree clean
-         // if ( media.exists() ) media.delete();
         }
     }
     
