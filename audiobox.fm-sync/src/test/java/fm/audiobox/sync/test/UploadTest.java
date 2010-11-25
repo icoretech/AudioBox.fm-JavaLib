@@ -24,7 +24,6 @@ public class UploadTest extends junit.framework.TestCase {
     @Test
     public void testUploadTrack() {
 
-        assertTrue( true );
         try {
             
             AudioBoxClient abc = new AudioBoxClient();

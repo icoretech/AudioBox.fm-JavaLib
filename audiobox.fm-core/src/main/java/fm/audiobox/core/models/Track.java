@@ -25,17 +25,21 @@ package fm.audiobox.core.models;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fm.audiobox.core.api.ModelItem;
+import fm.audiobox.core.api.EnclosingEntityModelItem;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
@@ -85,7 +89,7 @@ import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
  * @author Fabio Tunno
  * @version 0.0.1
  */
-public class Track extends ModelItem {
+public class Track extends EnclosingEntityModelItem {
 
     private static Logger logger = LoggerFactory.getLogger(Track.class);
     
@@ -314,7 +318,7 @@ public class Track extends ModelItem {
      */
     public String getStreamUrl(boolean remote) throws LoginException, ServiceException {
         if ( remote ){
-            String[] result = this.getConnector().execute( this.pEndPoint, this.getToken(), STREAM_ACTION, this, null);
+            String[] result = this.getConnector().execute( this.pEndPoint, this.getToken(), STREAM_ACTION, this, null, null);
             return result[ AudioBoxConnector.RESPONSE_BODY ];
         } else return this.streamUrl;
     }
@@ -323,12 +327,14 @@ public class Track extends ModelItem {
     
     /**
      * This method performs a request against AudioBox.fm to refreshes all track informations.
+     *
+     * @return an array of {@link String} objects containing response code and other info.
      * 
      * @throws LoginException if any authentication problem during the request occurs.
      * @throws ServiceException if any connection problem to AudioBox.fm occurs.
      */
-    public void refresh() throws LoginException, ServiceException {
-    	this.getConnector().execute( this.pEndPoint, this.getToken(), null , this, null);
+    public String[] refresh() throws LoginException, ServiceException {
+    	return this.getConnector().execute( this.pEndPoint, this.getToken(), null , this, null, null);
     }
     
 
@@ -604,7 +610,7 @@ public class Track extends ModelItem {
      * @throws ServiceException if any connection problem to AudioBox.fm occurs.
      */
     public void scrobble() throws ServiceException, LoginException {
-        String[] response = this.getConnector().execute( this.pEndPoint, this.getToken(), SCROBBLE_ACTION, this, HttpPost.METHOD_NAME);
+        String[] response = this.getConnector().execute( this.pEndPoint, this.getToken(), SCROBBLE_ACTION, this, HttpPost.METHOD_NAME, null);
         if ( Integer.parseInt( response[ AudioBoxConnector.RESPONSE_CODE ] ) == HttpStatus.SC_OK)
             this.setPlayCount( this.getPlayCount() + 1 );
     }
@@ -628,7 +634,7 @@ public class Track extends ModelItem {
     public boolean love() throws ServiceException, LoginException  {
         boolean markLoved = true;
         if ( ! this.isLoved()) {
-            String[] result = this.getConnector().execute( this.pEndPoint, this.getToken(), LOVE_ACTION, this, HttpPut.METHOD_NAME);
+            String[] result = this.getConnector().execute( this.pEndPoint, this.getToken(), LOVE_ACTION, this, HttpPut.METHOD_NAME, null);
             markLoved = HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
             this.setLoved( markLoved );
         }
@@ -654,7 +660,7 @@ public class Track extends ModelItem {
     public boolean unlove() throws ServiceException, LoginException {
         boolean markLoved = true;
         if (this.isLoved()) {
-            String[] result = this.getConnector().execute( this.pEndPoint, this.getToken(), UNLOVE_ACTION, this, HttpPut.METHOD_NAME);
+            String[] result = this.getConnector().execute( this.pEndPoint, this.getToken(), UNLOVE_ACTION, this, HttpPut.METHOD_NAME, null);
             markLoved = HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
             this.setLoved( !markLoved );
         }
@@ -670,7 +676,7 @@ public class Track extends ModelItem {
      * @throws ServiceException if any connection problem to AudioBox.fm occurs.
      */
     public boolean delete() throws ServiceException, LoginException {
-        String[] result = this.getConnector().execute( this.pEndPoint, this.getToken(), null, this, HttpDelete.METHOD_NAME);
+        String[] result = this.getConnector().execute( this.pEndPoint, this.getToken(), null, this, HttpDelete.METHOD_NAME, null);
         return HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
     }
 
@@ -685,7 +691,7 @@ public class Track extends ModelItem {
      */
     public void download(final FileOutputStream fos) throws ServiceException, LoginException {
         this.fileOutputStream = fos;
-        this.getConnector().execute( this.pEndPoint, this.getToken(), DOWNLOAD_ACTION, this, null, true);
+        this.getConnector().execute( this.pEndPoint, this.getToken(), DOWNLOAD_ACTION, this, null, null, true);
     }
 
 
@@ -701,7 +707,18 @@ public class Track extends ModelItem {
     public void upload() throws IOException ,ServiceException, LoginException { }
 
 
-
+    
+    /**
+     * Used to transform a single track in a list of tracks containing a single element.
+     * 
+     * @param track the track to transform into a list of tracks
+     * @return a list of tracks containing a single element
+     */
+    public List<Track> listify() {
+        List<Track> tracks = new ArrayList<Track>();
+        tracks.add(this);
+        return tracks;
+    }
 
     /* ----- */
     /* State */
@@ -866,6 +883,17 @@ public class Track extends ModelItem {
      */
     public boolean removeFrom(Playlist playlist) throws LoginException, ServiceException {
         return playlist.removeTrack(this);
+    }
+
+    
+    /** {@inheritDoc} */
+    @Override
+    public HttpEntity getEntity(String action) {
+        if (this.fileBody != null ) {
+            this.pEntity = new MultipartEntity();
+            ( (MultipartEntity) this.pEntity).addPart(Track.HTTP_PARAM, this.fileBody);
+        }
+        return this.pEntity;
     }
     
 }

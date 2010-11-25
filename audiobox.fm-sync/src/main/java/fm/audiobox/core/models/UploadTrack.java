@@ -67,7 +67,7 @@ public class UploadTrack extends Track {
      */
     public void upload() throws LoginException, ServiceException  {
     	method = this.pConnector.createConnectionMethod(Tracks.END_POINT , null, null, this, HttpPost.METHOD_NAME);
-    	String result[] = this.pConnector.request(method, this, false);
+    	String result[] = this.pConnector.request(method, this);
     	this.setToken( result[ AudioBoxConnector.RESPONSE_BODY ]  );
     }
 

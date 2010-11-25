@@ -22,7 +22,11 @@
 
 package fm.audiobox.core.models;
 
+import java.util.List;
+
+import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPut;
 
 import fm.audiobox.core.api.Model;
 import fm.audiobox.core.api.ModelItem;
@@ -32,6 +36,8 @@ import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.interfaces.CollectionListener;
 import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
+import fm.audiobox.core.models.Playlist.PlaylistActions;
+import fm.audiobox.core.models.Playlists.PlaylistTypes;
 
 
 /**
@@ -573,7 +579,7 @@ public class User extends ModelItem {
      */
     public String[] getUploadedTracks() throws ServiceException, LoginException {
         
-        String[] result = this.getConnector().execute(Tracks.END_POINT, null, null, this, HttpGet.METHOD_NAME, AudioBoxConnector.TEXT_FORMAT, false);
+        String[] result = this.getConnector().execute(Tracks.END_POINT, null, null, this, HttpGet.METHOD_NAME, AudioBoxConnector.TEXT_FORMAT);
         String response = result[ AudioBoxConnector.RESPONSE_BODY ];
         
         result = response.split( ";" , response.length() );
@@ -585,6 +591,27 @@ public class User extends ModelItem {
         return this.md5Hashes;
     }
 
+
+    public boolean dropTracks(List<Track> tracks) throws LoginException, ServiceException {
+        try {
+            return this.getPlaylists().getPlaylistsByType( PlaylistTypes.TRASH ).get( AudioBoxClient.FIRST ).addTracks(tracks);
+        } catch (ModelException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    public boolean dropTrack(Track track) throws LoginException, ServiceException {
+        return dropTracks(track.listify());
+    }
+    
+    
+    public boolean emptyTrash() throws LoginException, ServiceException {
+        String[] result = this.getConnector().execute( Playlists.END_POINT, null, PlaylistActions.EMPTY_TRASH.name().toLowerCase(), this, HttpPut.METHOD_NAME, null);
+        return HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
+    }
+    
+    
     
     /* -------------------- */
     /* New collection items */
@@ -637,7 +664,7 @@ public class User extends ModelItem {
 
             public void run() {
                 try {
-                    user.getConnector().execute(endpoint, null, null, collection, null);
+                    user.getConnector().execute(endpoint, null, null, collection, null, null);
                 } catch (LoginException e) {
                     e.printStackTrace();
                 } catch (ServiceException e) {

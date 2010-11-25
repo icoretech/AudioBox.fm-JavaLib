@@ -56,5 +56,4 @@ public class Artist extends ModelItem {
 	protected Artist() {
 		this.pEndPoint = Artists.END_POINT;
 	}
-	
 }

@@ -26,12 +26,14 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.message.BasicNameValuePair;
 
+import fm.audiobox.core.api.EnclosingEntityModelItem;
 import fm.audiobox.core.api.ModelItem;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
@@ -62,7 +64,7 @@ import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
  * @author Fabio Tunno
  * @version 0.0.1
  */
-public class Playlist extends ModelItem {
+public class Playlist extends EnclosingEntityModelItem {
     
     /** The XML tag name for the Playlist element */
     public static final String TAG_NAME = "playlist";
@@ -78,7 +80,9 @@ public class Playlist extends ModelItem {
     protected String playlistType;
     protected int position;
     
-    private UrlEncodedFormEntity entity;
+    /** Used to parse action responses */
+    private Tracks response;
+    
     
     /** Actions that can be performed on a playlist
      * <ul> 
@@ -170,20 +174,19 @@ public class Playlist extends ModelItem {
     }
 
     
-    /**
-     * <p>Getter for the http entity</p>
-     * 
-     * @return the entity to make management requests to AudioBox.fm
-     */
-    public UrlEncodedFormEntity getEntity() {
-        return entity;
-    }
-
-    
     /* ---------------------------- */
     /* Playlists management methods */
     /* ---------------------------- */
     
+
+    /**
+     * <p>Setter for the playlist management response parsing: used by the parser</p>
+     *
+     * @param trakcs the collection of tracks to set
+     */
+    public void setTracks(Tracks tracks) {
+        this.response = tracks;
+    }
 
 
     /**
@@ -196,7 +199,7 @@ public class Playlist extends ModelItem {
      * @throws ServiceException if any connection problem to AudioBox.fm occurs.
      */
     public boolean addTrack(Track track) throws LoginException, ServiceException {
-        return this.addTracks(listify(track));
+        return this.addTracks(track.listify());
     }
 
     
@@ -224,7 +227,7 @@ public class Playlist extends ModelItem {
      * @throws ServiceException if any connection problem to AudioBox.fm occurs.
      */
     public boolean removeTrack(Track track) throws LoginException, ServiceException {
-        return this.removeTracks(listify(track));
+        return this.removeTracks(track.listify());
     }
 
     
@@ -262,23 +265,10 @@ public class Playlist extends ModelItem {
         for (Track track : tracks)
             params.add(new BasicNameValuePair(HTTP_PARAM, track.getToken()));
 
-        this.entity = new UrlEncodedFormEntity(params, CHAR_ENCODING);
+        this.pEntity = new UrlEncodedFormEntity(params, CHAR_ENCODING);
         
     }
     
-    
-    /**
-     * Used to transform a single track in a list of tracks containing a single element.
-     * 
-     * @param track the track to transform into a list of tracks
-     * @return a list of tracks containing a single element
-     */
-    private List<Track> listify(Track track) {
-        List<Track> tracks = new ArrayList<Track>();
-        tracks.add(track);
-        return tracks;
-    }
-
     
     /**
      * Use this method to add or remove multiple {@link Track tracks} from this playlist
@@ -295,23 +285,41 @@ public class Playlist extends ModelItem {
         try {
             if ( PlaylistActions.EMPTY_TRASH !=  action ) 
                 this.buildEntity(tracks);
-            String[] result = this.getConnector().execute( this.pEndPoint, this.getToken(), action.name().toLowerCase(), this, HttpPut.METHOD_NAME);
-            boolean ok = HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
             
-            if (ok) {
-                try {
-                    this.buildCollection( false );
-                    // Update tracks count
-                    this.playlistTracksCount = this.getTracks().getCollection().size();
-                } catch (ModelException e) {
-                    e.printStackTrace();
+            String[] result = this.getConnector().execute( this.pEndPoint, this.getToken(), action.name().toLowerCase(), this, HttpPut.METHOD_NAME, null);
+            boolean sc_ok = HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
+            
+            if (sc_ok) {
+                
+                this.buildCollection( false );
+                // Update tracks count
+                this.playlistTracksCount = this.getTracks().getCollection().size();
+                
+                for (Track track : tracks) {
+                    if ( this.response.get( track.getToken() ) == null ) {
+                        sc_ok = false;
+                        break;
+                    }
                 }
+                
+                this.response = null;
             }
             
-            return ok;
+            return sc_ok;
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+        } catch (ModelException e) {
+            e.printStackTrace();
         }
+        
         return false;
     }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public HttpEntity getEntity(String action) {
+        return this.pEntity;
+    }
+    
 }

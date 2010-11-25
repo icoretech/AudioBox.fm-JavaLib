@@ -56,5 +56,4 @@ public class Genre extends ModelItem {
 	protected Genre() {
 		this.pEndPoint = Genres.END_POINT;
 	}
-	
 }

@@ -101,13 +101,13 @@ public class Tracks extends ModelsCollection {
     /**
      * <p>Getter method for a single {@link Track} contained in the collection.</p>
      *
-     * @param uuid the uuid of the desired Track.
+     * @param token the token of the desired Track.
      * 
      * @return a {@link Track} object.
      */
-    public Track get(String uuid) {
+    public Track get(String token) {
         for (Track track : collection) {
-            if ( uuid.equals( track.getToken() ) )
+            if ( token.equals( track.getToken() ) )
                 return track;
         }
         return null;

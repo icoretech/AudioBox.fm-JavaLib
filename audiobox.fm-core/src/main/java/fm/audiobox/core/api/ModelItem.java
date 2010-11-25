@@ -51,7 +51,8 @@ public abstract class ModelItem extends Model {
 
     /** The collection of tracks for this object */
     private Tracks mTracks;
-
+    
+    
     /**
      * <p>Getter method for a particular {@link Track} of the ModelItem {@link Tracks} collection.</p>
      *
@@ -103,7 +104,6 @@ public abstract class ModelItem extends Model {
     
     
     
-    
     /* ----------------- */
     /* Protected methods */
     /* ----------------- */
@@ -148,7 +148,7 @@ public abstract class ModelItem extends Model {
 
             public void run() {
                 try {
-                    mi.getConnector().execute(endpoint, mi.getToken(), null, collection, null);
+                    mi.getConnector().execute(endpoint, mi.getToken(), null, collection, null, null);
                 } catch (LoginException e) {
                     e.printStackTrace();
                 } catch (ServiceException e) {

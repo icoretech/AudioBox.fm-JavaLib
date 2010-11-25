@@ -16,6 +16,7 @@ import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Album;
+import fm.audiobox.core.models.AudioBoxClient;
 import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
 import fm.audiobox.core.models.Playlists.PlaylistTypes;
@@ -187,7 +188,7 @@ public class PlaylistsTest extends junit.framework.TestCase {
             fail( "Unable to move track to the selected playlist" );
         }
         
-    }
+    } 
     
     @Test
     public void testMoveMultipleTracksToPlaylist() throws ModelException, LoginException, ServiceException {
@@ -231,6 +232,25 @@ public class PlaylistsTest extends junit.framework.TestCase {
         
         
     }
+
+    @Test
+    public void testMoveUnexistingsTrackShouldRiseErrors() throws ModelException, LoginException, ServiceException {
+        loginCatched();
+        
+        Playlists playlists = user.getPlaylists(false);
+        assertNotNull(playlists);
+        
+        Playlist dev = playlists.getPlaylistByName("development");
+        Track trk = (Track) AudioBoxClient.getModelInstance(AudioBoxClient.TRACK_KEY, null);
+        trk.setToken("foobar");
+        
+        assertNotNull( trk );
+        
+        assertFalse( dev.addTrack(trk) );
+        assertFalse( dev.removeTrack( trk ) );
+        
+    }
+    
 
     private void loginCatched() {
         try {

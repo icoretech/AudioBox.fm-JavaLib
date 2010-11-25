@@ -156,6 +156,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
         this.pToken = token;
     }
 
+    
     /** {@inheritDoc} */
     @Override
     public String[] handleResponse(HttpResponse response) throws IOException {
