@@ -1,8 +1,9 @@
 package fm.audiobox.core.test;
 
-import fm.audiobox.core.models.AudioBoxClient;
+import fm.audiobox.core.AudioBox;
 
-public class StaticAudioBox extends AudioBoxClient{
+
+public class StaticAudioBox extends AudioBox{
 
 	private static StaticAudioBox instance = null; 
 	
@@ -10,7 +11,7 @@ public class StaticAudioBox extends AudioBoxClient{
 		instance = this;
 	}
 	
-	public static AudioBoxConnector getConnector(){
+	public static Connector getConnector(){
 		return instance.getMainConnector();
 	}
 	

@@ -17,6 +17,7 @@ import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Albums;
 import fm.audiobox.core.models.CoverUrls;
+import fm.audiobox.core.models.ModelFactory;
 import fm.audiobox.core.models.User;
 import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 import fm.audiobox.core.test.mocks.models.Album;
@@ -36,10 +37,12 @@ public class CustomAlbumsTest extends junit.framework.TestCase {
     
     @Before
     public void setUp() throws Exception {
-        StaticAudioBox.setModelClassFor( StaticAudioBox.ALBUM_KEY, Album.class );
-        StaticAudioBox.setModelClassFor( StaticAudioBox.TRACKS_KEY, Tracks.class );
-        StaticAudioBox.setModelClassFor( StaticAudioBox.TRACK_KEY, Track.class );
+    	ModelFactory mf = new ModelFactory();
+    	mf.setModelClassFor( ModelFactory.ALBUM_KEY, Album.class );
+    	mf.setModelClassFor( ModelFactory.TRACKS_KEY, Tracks.class );
+    	mf.setModelClassFor( ModelFactory.TRACK_KEY, Track.class );
         abc = new StaticAudioBox();
+        abc.setModelFactory(mf);
     }
 
     @Test

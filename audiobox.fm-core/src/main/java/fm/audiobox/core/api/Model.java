@@ -45,12 +45,15 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
+import fm.audiobox.core.AudioBox;
+import fm.audiobox.core.AudioBox.Connector;
+import fm.audiobox.core.AudioBox.RequestFormat;
+import fm.audiobox.core.AudioBox.Utils;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.models.AudioBoxClient;
-import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
 import fm.audiobox.core.models.Track;
+import fm.audiobox.core.models.User;
 import fm.audiobox.core.util.Inflector;
 
 
@@ -89,7 +92,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
     // Default models variables
     protected String pName;
     protected String pEndPoint;
-    protected AudioBoxConnector pConnector;
+    protected Utils pUtils;
 
 
     /**
@@ -102,22 +105,34 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
     }
 
     /**
-     * <p>Getter for this model {@link AudioBoxConnector connector}.</p>
+     * <p>Getter for {@link AudioBox.Connector} instance.</p>
      *
-     * @return the {@link AudioBoxConnector} object used by this model.
+     * @return the {@link AudioBox.Connector} object used by this model.
      */
-    public AudioBoxConnector getConnector(){
-        return this.pConnector;
+    public Connector getConnector(){
+        return this.pUtils.getConnector();
+    }
+    
+    /**
+     * <p>Getter for {@link User} instance.</p>
+     *
+     * @return the {@link User} object used by this model.
+     */
+    protected User getUser(){
+    	return this.pUtils.getUser();
     }
 
     /**
-     * <p>Setter for the {@link AudioBoxConnector connector}.</p>
+     * <p>Setter for the {@link AudioBox.Utils Utils} instance.</p>
      *
-     * @param connector a {@link AudioBoxConnector} object.
+     * @param utils a {@link AudioBox.Utils} object.
      */
-    public void setConnector(AudioBoxConnector connector){
-        this.pConnector = connector;
+    public final void setUtils(Utils utils){
+        this.pUtils = utils;
     }
+    
+    
+    
 
     /**
      * <p>Getter for the name of this model, may be vary depending the Model extension.</p>
@@ -211,10 +226,10 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
 
         Header contentType = response.getEntity().getContentType();
         String rsp = "";
-        if ( contentType.getValue().contains(AudioBoxConnector.XML_FORMAT) )
+        if ( contentType.getValue().contains( RequestFormat.XML.toString().toLowerCase() ) )
             rsp = this.parseXMLResponse( response.getEntity().getContent() );
 
-        else if ( contentType.getValue().contains( AudioBoxConnector.TEXT_CONTENT_TYPE )  )
+        else if ( contentType.getValue().contains( RequestFormat.TEXT.toString().toLowerCase() )  )
             rsp = this.parsePlainResponse( response.getEntity().getContent() );
         
         else
@@ -383,7 +398,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
 
                     Model subClass = null;
                     try {
-                        subClass = AudioBoxClient.getModelInstance( mInflector.lowerCamelCase( localName, '_'), this.getConnector() );
+                        subClass = this.pUtils.getModelInstance( mInflector.lowerCamelCase( localName, '_') );
                         method.invoke(peek, subClass );
 
                         this.mStack.push( subClass );

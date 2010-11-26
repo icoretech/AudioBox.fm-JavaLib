@@ -12,6 +12,7 @@ import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Album;
+import fm.audiobox.core.models.ModelFactory;
 import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
 import fm.audiobox.core.models.Track;
@@ -27,9 +28,11 @@ public class ThreadedTest extends junit.framework.TestCase {
     @Before
     public void setUp() throws Exception {
 
-        StaticAudioBox.setModelClassFor(StaticAudioBox.USER_KEY , User.class );
+    	ModelFactory mf = new ModelFactory();
+        mf.setModelClassFor(ModelFactory.USER_KEY , User.class );
 
         abc = new StaticAudioBox();
+        abc.setModelFactory(mf);
         
         try {
             user = (User) abc.login( Fixtures.get( Fixtures.LOGIN ), Fixtures.get( Fixtures.RIGHT_PASS ) );

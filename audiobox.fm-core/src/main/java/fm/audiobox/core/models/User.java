@@ -27,6 +27,8 @@ import java.util.List;
 
 import org.apache.http.HttpStatus;
 
+import fm.audiobox.core.AudioBox;
+import fm.audiobox.core.AudioBox.Connector;
 import fm.audiobox.core.api.Model;
 import fm.audiobox.core.api.ModelItem;
 import fm.audiobox.core.api.ModelsCollection;
@@ -34,7 +36,6 @@ import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.interfaces.CollectionListener;
-import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
 import fm.audiobox.core.models.Playlists.PlaylistTypes;
 
 
@@ -421,7 +422,7 @@ public class User extends ModelItem {
      * @throws ModelException if a custom model class was specified and an error while using it occurs.
      */
     public Playlists getPlaylists(boolean async) throws ModelException {
-        this.playlists = (Playlists) AudioBoxClient.getModelInstance(AudioBoxClient.PLAYLISTS_KEY, this.getConnector());
+        this.playlists = (Playlists) this.pUtils.getModelInstance(ModelFactory.PLAYLISTS_KEY);
         Thread t = populateCollection( Playlists.END_POINT, this.playlists );
         if (async)
             t.start();
@@ -460,7 +461,7 @@ public class User extends ModelItem {
      * @throws ModelException if a custom model class was specified and an error while using it occurs.
      */
     public Genres getGenres(boolean async) throws ModelException {
-        this.genres = (Genres) AudioBoxClient.getModelInstance(AudioBoxClient.GENRES_KEY, this.getConnector());
+        this.genres = (Genres) this.pUtils.getModelInstance(ModelFactory.GENRES_KEY);
         Thread t = populateCollection( Genres.END_POINT, this.genres );
         if (async)
             t.start();
@@ -499,7 +500,7 @@ public class User extends ModelItem {
      * @throws ModelException if a custom model class was specified and an error while using it occurs.
      */
     public Artists getArtists(boolean async) throws ModelException {
-        this.artists = (Artists) AudioBoxClient.getModelInstance(AudioBoxClient.ARTISTS_KEY, this.getConnector());
+        this.artists = (Artists) this.pUtils.getModelInstance(ModelFactory.ARTISTS_KEY);
         Thread t = populateCollection( Artists.END_POINT, this.artists );
         if (async)
             t.start();
@@ -538,7 +539,7 @@ public class User extends ModelItem {
      * @throws ModelException if a custom model class was specified and an error while using it occurs.
      */
     public Albums getAlbums(boolean async) throws ModelException {
-        this.albums = (Albums) AudioBoxClient.getModelInstance(AudioBoxClient.ALBUMS_KEY, this.getConnector());
+        this.albums = (Albums) this.pUtils.getModelInstance(ModelFactory.ALBUMS_KEY);
         Thread t = populateCollection( Albums.END_POINT, this.albums );
         if (async)
             t.start();
@@ -575,7 +576,7 @@ public class User extends ModelItem {
      */
     public String[] getUploadedTracks() throws ServiceException, LoginException {
         String[] result = this.getConnector().get(new Tracks(), this, null);
-        String response = result[ AudioBoxConnector.RESPONSE_BODY ];
+        String response = result[ Connector.RESPONSE_BODY ];
         
         result = response.split( ";" , response.length() );
         String[] hashes = new String[ result.length ];
@@ -589,7 +590,7 @@ public class User extends ModelItem {
 
     public boolean dropTracks(List<Track> tracks) throws LoginException, ServiceException {
         try {
-            return this.getPlaylists().getPlaylistsByType( PlaylistTypes.TRASH ).get( AudioBoxClient.FIRST ).addTracks(tracks);
+            return this.getPlaylists().getPlaylistsByType( PlaylistTypes.TRASH ).get( AudioBox.FIRST ).addTracks(tracks);
         } catch (ModelException e) {
             e.printStackTrace();
         }
@@ -605,7 +606,7 @@ public class User extends ModelItem {
     
     public boolean emptyTrash() throws LoginException, ServiceException {
         String[] result = this.getConnector().put( new Playlists(), null, Playlists.EMPTY_TRASH_ACTION, null);
-        return HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
+        return HttpStatus.SC_OK == Integer.parseInt( result[ Connector.RESPONSE_CODE ] );
     }
     
     
@@ -624,7 +625,7 @@ public class User extends ModelItem {
      * @throws ModelException
      */
     public Track newTrack() throws ServiceException, LoginException, ModelException {
-        return (Track) AudioBoxClient.getModelInstance( AudioBoxClient.NEW_TRACK_KEY , this.getConnector() );
+        return (Track) this.pUtils.getModelInstance(ModelFactory.NEW_TRACK_KEY);
     }
     
     

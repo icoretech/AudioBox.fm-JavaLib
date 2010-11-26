@@ -9,11 +9,12 @@ import java.net.SocketException;
 import org.junit.Before;
 import org.junit.Test;
 
+import fm.audiobox.core.AudioBox;
 import fm.audiobox.core.api.Model;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.models.Albums;
-import fm.audiobox.core.models.AudioBoxClient;
+import fm.audiobox.core.models.ModelFactory;
 import fm.audiobox.core.models.Track;
 import fm.audiobox.core.models.User;
 import fm.audiobox.core.test.mocks.fixtures.Fixtures;
@@ -24,52 +25,30 @@ import fm.audiobox.core.test.mocks.fixtures.Fixtures;
  */
 public class AudioBoxClientTest extends junit.framework.TestCase {
 
-    AudioBoxClient abc;
+    AudioBox abx;
     User user;
     Albums albums;
     Fixtures fx = new Fixtures();
     
     @Before
     public void setUp() throws Exception {
-        abc = new AudioBoxClient();
+        abx = new AudioBox();
     }
 
 
     @Test
     public void testModelLoading() {
         
-        assertNotNull( abc );
+        assertNotNull( abx );
         loginCatched();
-        assertNotNull( user );
-        try {
-            
-            Track tr = (Track) AudioBoxClient.getModelInstance(AudioBoxClient.TRACK_KEY, null);
-            assertTrue(tr instanceof Track);
-            
-            AudioBoxClient.setModelClassFor("ABC", null);
-            AudioBoxClient.getModelInstance("ABC", null);
-            
-        } catch (ModelException e) {
-            assertEquals( ModelException.CLASS_NOT_FOUND, e.getErrorCode());
-        }
+        assertNotNull( abx.getUser() );
         
-        try {
-            
-            AudioBoxClient.setModelClassFor(AudioBoxClient.TRACK_KEY, TestModel.class);
-            TestModel tm = (TestModel) AudioBoxClient.getModelInstance(AudioBoxClient.TRACK_KEY, null);
-            assertTrue(tm instanceof TestModel);
-            
-            
-        } catch (ModelException e) {
-            assertEquals( ModelException.INSTANTIATION_FAILED, e.getErrorCode());
-            AudioBoxClient.setModelClassFor(AudioBoxClient.TRACK_KEY, null); // <-- resets the key
-        }
     }
 
 
     private void loginCatched() {
         try {
-            user = abc.login( Fixtures.get( Fixtures.LOGIN),  Fixtures.get( Fixtures.RIGHT_PASS ) );
+            user = abx.login( Fixtures.get( Fixtures.LOGIN),  Fixtures.get( Fixtures.RIGHT_PASS ) );
         } catch (LoginException e) {
             fail(e.getMessage());
         } catch (SocketException e) {
@@ -77,10 +56,5 @@ public class AudioBoxClientTest extends junit.framework.TestCase {
         } catch (ModelException e) {
             fail(e.getMessage());
         }
-    }
-    
-    
-    private abstract class TestModel extends Model {
-        
     }
 }

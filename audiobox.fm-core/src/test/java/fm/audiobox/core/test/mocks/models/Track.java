@@ -1,6 +1,6 @@
 package fm.audiobox.core.test.mocks.models;
 
-import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
+import fm.audiobox.core.AudioBox.Connector;
 import fm.audiobox.core.test.StaticAudioBox;
 
 public class Track extends fm.audiobox.core.models.Track {
@@ -23,7 +23,7 @@ public class Track extends fm.audiobox.core.models.Track {
         return test;
     }
     
-    public AudioBoxConnector getConnector(){
+    public Connector getConnector(){
     	return StaticAudioBox.getConnector();
     }
     

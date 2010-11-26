@@ -23,6 +23,7 @@ public class Fixtures {
     public static final String INACTIVE_WRONG_PASS = "inactive_wrong_pass";
     
     public static final String SMALL_PLAYLIST_NAME = "small_playlist_name";
+    public static final String DEV_PLAYLIST_NAME = "dev_playlist";
     
     public static final String TEST_FILE = "test_file";
     

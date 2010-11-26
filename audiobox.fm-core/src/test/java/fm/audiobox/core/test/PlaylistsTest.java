@@ -16,7 +16,6 @@ import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Album;
-import fm.audiobox.core.models.AudioBoxClient;
 import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
 import fm.audiobox.core.models.Playlists.PlaylistTypes;
@@ -166,7 +165,7 @@ public class PlaylistsTest extends junit.framework.TestCase {
         assertNotNull(playlists);
         
         Playlist smallPlaylist = playlists.getPlaylistByName(Fixtures.get( Fixtures.SMALL_PLAYLIST_NAME ));
-        Playlist dev = playlists.getPlaylistByName("development");
+        Playlist dev = playlists.getPlaylistByName( Fixtures.get( Fixtures.DEV_PLAYLIST_NAME ) );
         Track trk = smallPlaylist.getTracks().get(0);
         
         int previousTracksCount = dev.getPlaylistTracksCount();
@@ -197,8 +196,8 @@ public class PlaylistsTest extends junit.framework.TestCase {
         Playlists playlists = user.getPlaylists(false);
         assertNotNull(playlists);
         
-        Playlist soundtracks = playlists.getPlaylistByName("soundtracks");
-        Playlist dev = playlists.getPlaylistByName("development");
+        Playlist soundtracks = playlists.getPlaylistByName( Fixtures.get( Fixtures.SMALL_PLAYLIST_NAME));
+        Playlist dev = playlists.getPlaylistByName(Fixtures.get( Fixtures.DEV_PLAYLIST_NAME));
         
         Tracks musicTracks = soundtracks.getTracks();
         
@@ -240,11 +239,12 @@ public class PlaylistsTest extends junit.framework.TestCase {
         Playlists playlists = user.getPlaylists(false);
         assertNotNull(playlists);
         
-        Playlist dev = playlists.getPlaylistByName("development");
-        Track trk = (Track) AudioBoxClient.getModelInstance(AudioBoxClient.TRACK_KEY, null);
-        trk.setToken("foobar");
+        Playlist dev = playlists.getPlaylistByName( Fixtures.get( Fixtures.DEV_PLAYLIST_NAME ));
+        Track trk = user.newTrack();
         
         assertNotNull( trk );
+        
+        trk.setToken("foo-bar");
         
         assertFalse( dev.addTrack(trk) );
         assertFalse( dev.removeTrack( trk ) );

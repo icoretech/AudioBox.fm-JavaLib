@@ -35,10 +35,10 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fm.audiobox.core.AudioBox.Connector;
 import fm.audiobox.core.api.ModelItem;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
 
 
 /**
@@ -316,7 +316,7 @@ public class Track extends ModelItem {
         	HttpRequestBase method = this.getConnector().createConnectionMethod(HttpGet.METHOD_NAME, this, STREAM_ACTION, null);
         	method.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, false);
         	String[] result = this.getConnector().request(method, this);
-            return result[ AudioBoxConnector.RESPONSE_BODY ];
+            return result[ Connector.RESPONSE_BODY ];
         } else return this.streamUrl;
     }
 
@@ -608,7 +608,7 @@ public class Track extends ModelItem {
      */
     public void scrobble() throws ServiceException, LoginException {
         String[] response = this.getConnector().post( this, this, SCROBBLE_ACTION, null);
-        if ( Integer.parseInt( response[ AudioBoxConnector.RESPONSE_CODE ] ) == HttpStatus.SC_OK)
+        if ( Integer.parseInt( response[ Connector.RESPONSE_CODE ] ) == HttpStatus.SC_OK)
             this.setPlayCount( this.getPlayCount() + 1 );
     }
 
@@ -624,7 +624,7 @@ public class Track extends ModelItem {
      */
     public boolean toggleLove() throws ServiceException, LoginException  {
         String[] result = this.getConnector().put( this, this, TOGGLE_LOVE_ACTION, null);
-        if ( HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] )  )
+        if ( HttpStatus.SC_OK == Integer.parseInt( result[ Connector.RESPONSE_CODE ] )  )
         	this.setLoved( ! this.isLoved() );
         return this.isLoved();
     }

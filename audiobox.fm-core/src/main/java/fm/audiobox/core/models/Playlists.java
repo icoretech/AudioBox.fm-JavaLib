@@ -41,8 +41,8 @@ public class Playlists extends ModelsCollection {
     public static final String END_POINT = "playlists";
     
     public static final String EMPTY_TRASH_ACTION = "empty_trash";
-    public static final String ADD_TRACKS_ACTION = "empty_trash";
-    public static final String REMOVE_TRACKS_ACTION = "empty_trash";
+    public static final String ADD_TRACKS_ACTION = "add_tracks";
+    public static final String REMOVE_TRACKS_ACTION = "remove_tracks";
     
     protected List<Playlist> collection = new ArrayList<Playlist>();
     

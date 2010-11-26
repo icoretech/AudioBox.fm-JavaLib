@@ -32,12 +32,10 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.message.BasicNameValuePair;
 
-import fm.audiobox.core.api.EnclosingEntityModelItem;
+import fm.audiobox.core.AudioBox.Connector;
 import fm.audiobox.core.api.ModelItem;
 import fm.audiobox.core.exceptions.LoginException;
-import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
 
 
 /**
@@ -63,7 +61,7 @@ import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
  * @author Fabio Tunno
  * @version 0.0.1
  */
-public class Playlist extends EnclosingEntityModelItem {
+public class Playlist extends ModelItem {
     
     /** The XML tag name for the Playlist element */
     public static final String TAG_NAME = "playlist";
@@ -78,10 +76,6 @@ public class Playlist extends EnclosingEntityModelItem {
     protected int playlistTracksCount;
     protected String playlistType;
     protected int position;
-    
-    /** Used to parse action responses */
-    private Tracks response;
-    
     
     /**
      * <p>Constructor for Playlist.</p>
@@ -161,16 +155,6 @@ public class Playlist extends EnclosingEntityModelItem {
     
 
     /**
-     * <p>Setter for the playlist management response parsing: used by the parser</p>
-     *
-     * @param tracks the collection of tracks to set
-     */
-    public void setTracks(Tracks tracks) {
-        this.response = tracks;
-    }
-
-
-    /**
      * Use this method to add a single {@link Track track} to this playlist
      * 
      * @param track the {@link Track} to add to playlist
@@ -196,7 +180,21 @@ public class Playlist extends EnclosingEntityModelItem {
      * @throws ServiceException if any connection problem to AudioBox.fm occurs.
      */
     public boolean addTracks(List<Track> tracks) throws LoginException, ServiceException {
-        return performAction(tracks, Playlists.ADD_TRACKS_ACTION);
+    	Tracks addedTracks = performAction(tracks, Playlists.ADD_TRACKS_ACTION);
+    	if ( addedTracks == null ) return false;
+    	if ( this.mTracks != null ) {
+    		// Tracks already loaded, manual management
+	    	for ( Track addedTrack : addedTracks.getCollection() ){
+	    		for ( Track track : tracks ){
+	    			if ( track.getToken().equals( addedTrack.getToken() )){
+	    				// TODO: fire collection listener events
+	    				this.mTracks.addTrack(track);
+	    				this.playlistTracksCount++;
+	    			}
+	    		}
+	    	}
+    	}
+        return true;
     }
     
     
@@ -226,7 +224,21 @@ public class Playlist extends EnclosingEntityModelItem {
      * @throws ServiceException if any connection problem to AudioBox.fm occurs.
      */
     public boolean removeTracks(List<Track> tracks) throws LoginException, ServiceException {
-        return performAction(tracks, Playlists.REMOVE_TRACKS_ACTION);
+    	Tracks removedTracks = performAction(tracks, Playlists.REMOVE_TRACKS_ACTION);
+    	if ( removedTracks == null ) return false;
+    	if ( this.mTracks != null ) {
+    		// Tracks already loaded, manual management
+	    	for ( Track removedTrack : removedTracks.getCollection() ){
+	    		for ( Track track : tracks ){
+	    			if ( track.getToken().equals(removedTrack.getToken() )){
+	    				// TODO: fire collection listener events
+	    				if (  this.mTracks.getCollection().remove( this.mTracks.get( track.getToken() ) )  )
+	    					this.playlistTracksCount--;	// remove correctly
+	    			}
+	    		}
+	    	}
+    	}
+        return true;
     }
     
     
@@ -240,57 +252,37 @@ public class Playlist extends EnclosingEntityModelItem {
     /**
      * Use this method to add or remove multiple {@link Track tracks} from this playlist
      * 
-     * @param tracks the {@link List} of {@link Track Tracks} to remove from playlist
-     * @param action the action to perform, can be one of {@link PlaylistActions}
+     * @param tracks the {@link List} of {@link Track Tracks} to remove/add
+     * @param action the action to perform. Should be one of {@link Playlists#ADD_TRACKS_ACTION} or {@link Playlists#REMOVE_TRACKS_ACTION} 
      * 
-     * @return true if the action succeed false if something goes wrong.
+     * @return Tracks instance that contains all added/removed tracks tokens
      * 
      * @throws LoginException if any authentication problem during the request occurs.
      * @throws ServiceException if any connection problem to AudioBox.fm occurs.
      */
-    private boolean performAction(List<Track> tracks, String action) throws LoginException, ServiceException {
-        try {
-        	
+    private Tracks performAction(List<Track> tracks, String action) throws LoginException, ServiceException {
+        
+    	try {
+    		
         	List<NameValuePair> params = new ArrayList<NameValuePair>();
             for (Track track : tracks)
                 params.add(new BasicNameValuePair(HTTP_PARAM, track.getToken()));
         	
             HttpEntity entity = new UrlEncodedFormEntity(params, CHAR_ENCODING);
             
-            String[] result = this.getConnector().put( this, this, action, entity);
-            boolean sc_ok = HttpStatus.SC_OK == Integer.parseInt( result[ AudioBoxConnector.RESPONSE_CODE ] );
+            Tracks _tracks = new Tracks();
             
-            if (sc_ok) {
-                
-                this.buildCollection( false );
-                // Update tracks count
-                this.playlistTracksCount = this.getTracks().getCollection().size();
-                
-                for (Track track : tracks) {
-                    if ( this.response.get( track.getToken() ) == null ) {
-                        sc_ok = false;
-                        break;
-                    }
-                }
-                
-                this.response = null;
+            String[] result = this.getConnector().put( this, _tracks, action, entity);
+            
+            
+            if ( HttpStatus.SC_OK == Integer.parseInt( result[ Connector.RESPONSE_CODE ] )  ) {
+            	return _tracks;
             }
             
-            return sc_ok;
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (ModelException e) {
             e.printStackTrace();
         }
         
-        return false;
+        return null;
     }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public HttpEntity getEntity(String action) {
-        return this.pEntity;
-    }
-    
 }

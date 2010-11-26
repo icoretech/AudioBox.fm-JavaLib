@@ -18,10 +18,12 @@ import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Albums;
 import fm.audiobox.core.models.Artists;
 import fm.audiobox.core.models.Genres;
+import fm.audiobox.core.models.ModelFactory;
 import fm.audiobox.core.models.Plan;
 import fm.audiobox.core.models.Playlists;
 import fm.audiobox.core.models.Profile;
 import fm.audiobox.core.test.mocks.fixtures.Fixtures;
+import fm.audiobox.core.test.mocks.models.Album;
 import fm.audiobox.core.test.mocks.models.User;
 
 /**
@@ -36,8 +38,10 @@ public class UserTest extends junit.framework.TestCase {
 
     @Before
     public void setUp() throws Exception {
+        ModelFactory mf = new ModelFactory();
+    	mf.setModelClassFor( ModelFactory.USER_KEY, Album.class );
         abc = new StaticAudioBox();
-        StaticAudioBox.setModelClassFor(StaticAudioBox.USER_KEY , User.class );
+        abc.setModelFactory(mf);
     }
 
     @Test

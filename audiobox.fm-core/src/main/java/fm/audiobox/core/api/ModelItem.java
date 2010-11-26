@@ -26,7 +26,7 @@ import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.interfaces.CollectionListener;
-import fm.audiobox.core.models.AudioBoxClient;
+import fm.audiobox.core.models.ModelFactory;
 import fm.audiobox.core.models.Track;
 import fm.audiobox.core.models.Tracks;
 
@@ -50,7 +50,7 @@ import fm.audiobox.core.models.Tracks;
 public abstract class ModelItem extends Model {
 
     /** The collection of tracks for this object */
-    private Tracks mTracks;
+    protected Tracks mTracks;
     
     /** the unique id of this {@link ModelItem} instance */
     private String pToken;
@@ -141,7 +141,7 @@ public abstract class ModelItem extends Model {
      * @throws ModelException if a custom model class was specified and an error while using it occurs.
      */
     protected void buildCollection(boolean async) throws ModelException {
-        this.mTracks = (Tracks) AudioBoxClient.getModelInstance(AudioBoxClient.TRACKS_KEY, this.getConnector());
+        this.mTracks = (Tracks) this.pUtils.getModelInstance( ModelFactory.TRACKS_KEY );
         Thread t = populateCollection( this.getEndPoint(), this.mTracks );
         if (async)
             t.start();

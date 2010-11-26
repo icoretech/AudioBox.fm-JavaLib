@@ -11,11 +11,11 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fm.audiobox.core.AudioBox;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.interfaces.CollectionListener;
 import fm.audiobox.core.models.Albums;
-import fm.audiobox.core.models.AudioBoxClient;
 import fm.audiobox.core.models.Playlists;
 import fm.audiobox.core.models.User;
 import fm.audiobox.core.test.mocks.fixtures.Fixtures;
@@ -26,14 +26,14 @@ import fm.audiobox.core.test.mocks.fixtures.Fixtures;
  */
 public class CollectionListenerTest extends junit.framework.TestCase {
 
-    AudioBoxClient abc;
+    AudioBox abc;
     User user;
     Albums albums;
     Fixtures fx = new Fixtures();
     
     @Before
     public void setUp() throws Exception {
-        abc = new AudioBoxClient();
+        abc = new AudioBox();
     }
 
 
@@ -45,29 +45,6 @@ public class CollectionListenerTest extends junit.framework.TestCase {
         assertNotNull( user );
         
         try {
-
-            CollectionListener cl1 = new CollectionListener() {
-                
-                Logger log = LoggerFactory.getLogger(getClass());
-                
-                public void onItemReady(int index, Object item) { 
-                    log.trace("Playlist item ready: " + item ); 
-                }
-                public void onCollectionReady(int message, Object result) { 
-                    log.trace("Playlists collection ready: " + message );
-                }
-            };
-            
-            
-            CollectionListener cl2 = AudioBoxClient.getCollectionListenerFor(AudioBoxClient.PLAYLISTS_KEY);
-            AudioBoxClient.setCollectionListenerFor(AudioBoxClient.PLAYLISTS_KEY, null);
-            CollectionListener cl3 = AudioBoxClient.getCollectionListenerFor(AudioBoxClient.PLAYLISTS_KEY);
-            
-            assertSame( cl2, cl3 );
-            
-            AudioBoxClient.setCollectionListenerFor(AudioBoxClient.PLAYLISTS_KEY, cl1);
-            assertNotNull(AudioBoxClient.getCollectionListenerFor(AudioBoxClient.PLAYLISTS_KEY) );
-            assertSame( cl1, AudioBoxClient.getCollectionListenerFor(AudioBoxClient.PLAYLISTS_KEY) );
 
             Playlists pls = user.getPlaylists();
             assertNotNull( pls );

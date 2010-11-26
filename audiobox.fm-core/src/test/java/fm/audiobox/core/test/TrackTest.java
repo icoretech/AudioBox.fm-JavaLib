@@ -19,6 +19,7 @@ import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Albums;
+import fm.audiobox.core.models.ModelFactory;
 import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
 import fm.audiobox.core.models.Track;
@@ -39,8 +40,10 @@ public class TrackTest extends junit.framework.TestCase {
 
     @Before
     public void setUp() throws Exception {
-        StaticAudioBox.setModelClassFor( StaticAudioBox.ALBUM_KEY, Album.class );
+    	ModelFactory mf = new ModelFactory();
+    	mf.setModelClassFor( ModelFactory.ALBUM_KEY, Album.class );
         abc = new StaticAudioBox();
+        abc.setModelFactory(mf);
         user = abc.login( Fixtures.get( Fixtures.LOGIN), Fixtures.get( Fixtures.RIGHT_PASS ) );
     }
 
@@ -215,7 +218,7 @@ public class TrackTest extends junit.framework.TestCase {
         Playlist smp = pls.getPlaylistByName(Fixtures.get(Fixtures.SMALL_PLAYLIST_NAME));
         assertNotNull( smp );
         
-        Playlist dev = pls.getPlaylistByName("development");
+        Playlist dev = pls.getPlaylistByName(Fixtures.get( Fixtures.DEV_PLAYLIST_NAME));
         assertNotNull( dev );
         
         Track track = smp.getTracks().get(0);

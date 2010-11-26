@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 
-package fm.audiobox.core.models;
+package fm.audiobox.core;
 
 
 import java.io.FileNotFoundException;
@@ -73,11 +73,13 @@ import org.slf4j.LoggerFactory;
 
 import fm.audiobox.core.api.Model;
 import fm.audiobox.core.api.ModelItem;
-import fm.audiobox.core.api.ModelsCollection;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.interfaces.CollectionListener;
+import fm.audiobox.core.models.ModelFactory;
+import fm.audiobox.core.models.Track;
+import fm.audiobox.core.models.User;
 import fm.audiobox.core.util.Inflector;
 
 
@@ -154,60 +156,22 @@ import fm.audiobox.core.util.Inflector;
  * @author Fabio Tunno
  * @version 0.0.1
  */
-public class AudioBoxClient {
+public class AudioBox {
 
-    private static Logger log = LoggerFactory.getLogger(AudioBoxClient.class);
+    private static Logger log = LoggerFactory.getLogger(AudioBox.class);
 
     /** Used to keep track of the first element of a list */
     public static final int FIRST = 0;
     
-    /** Specifies the models package (default: fm.audiobox.core.models) */
-    public static final String DEFAULT_MODELS_PACKAGE = AudioBoxClient.class.getPackage().getName();
-
-    /** Constant <code>TRACK_ID_PLACEHOLDER="[track_id]"</code> */
-    public static final String TRACK_ID_PLACEHOLDER = "[track_id]";
-
-    /** Constant <code>USER_KEY="User.TAG_NAME"</code> */
-    public static final String USER_KEY      = User.TAG_NAME;
-
-    /** Constant <code>PROFILE_KEY="Profile.TAG_NAME"</code> */
-    public static final String PROFILE_KEY   = Profile.TAG_NAME;
-
-    /** Constant <code>PLAYLISTS_KEY="Playlists"</code> */
-    public static final String PLAYLISTS_KEY = "Playlists";
-
-    /** Constant <code>PLAYLIST_KEY="Playlist.TAG_NAME"</code> */
-    public static final String PLAYLIST_KEY  = Playlist.TAG_NAME;
-
-    /** Constant <code>GENRES_KEY="Genres"</code> */
-    public static final String GENRES_KEY    = "Genres";
-
-    /** Constant <code>GENRE_KEY="Genre.TAG_NAME"</code> */
-    public static final String GENRE_KEY     = Genre.TAG_NAME;
-
-    /** Constant <code>ARTISTS_KEY="Artists"</code> */
-    public static final String ARTISTS_KEY   = "Artists";
-
-    /** Constant <code>ARTIST_KEY="Artist.TAG_NAME"</code> */
-    public static final String ARTIST_KEY    = Artist.TAG_NAME;
-
-    /** Constant <code>ALBUMS_KEY="Albums"</code> */
-    public static final String ALBUMS_KEY    = "Albums";
-
-    /** Constant <code>ALBUM_KEY="Album.TAG_NAME"</code> */
-    public static final String ALBUM_KEY     = Album.TAG_NAME;
-
-    /** Constant <code>TRACKS_KEY="Tracks"</code> */
-    public static final String TRACKS_KEY    = "Tracks";
     
-    /** Constant <code>TRACK_KEY="Track.TAG_NAME"</code> */
-    public static final String TRACK_KEY     = Track.TAG_NAME;
+    public enum RequestFormat {
+    	XML,
+    	JSON,
+    	TEXT
+    }
     
-    /** Constant <code>ERROR_KEY="Tracks"</code> */
-    public static final String ERROR_KEY     = Error.TAG_NAME;
-
-    /** Constant <code>NEW_TRACK_KEY="Track.TAG_NAME"</code> */
-    public static final String NEW_TRACK_KEY     = "NewTrack";
+//    /** Constant <code>TRACK_ID_PLACEHOLDER="[track_id]"</code> */
+//    public static final String TRACK_ID_PLACEHOLDER = "[track_id]";
 
     /** Prefix for properties keys */
     private static final String PROP_PREFIX = "libaudioboxfm-core.";
@@ -219,53 +183,16 @@ public class AudioBoxClient {
     private static Properties sProperties = new Properties();
 
     /** Used to setup useragent */
-    private static String sAppName = "AudioBoxClient";
+    private static String sAppName = "AudioBox";
     
     /** Default request format */
     private RequestFormat mRequestFormat = RequestFormat.XML;
     
-    private static Inflector sI = Inflector.getInstance();
-    private static Map<String, CollectionListener> sCollectionListenersMap = new HashMap<String , CollectionListener>();
-    private static Map<String, Class<? extends Model>> sModelsMap;
-    static {
-        sModelsMap = new HashMap<String , Class<? extends Model>>();
-        sModelsMap.put( USER_KEY,      User.class ); 
-        sModelsMap.put( PROFILE_KEY ,  Profile.class );
-        sModelsMap.put( PLAYLISTS_KEY, Playlists.class ); 
-        sModelsMap.put( PLAYLIST_KEY,  Playlist.class );
-        sModelsMap.put( GENRES_KEY,    Genres.class ); 
-        sModelsMap.put( GENRE_KEY,     Genre.class );
-        sModelsMap.put( ARTISTS_KEY,   Artists.class ); 
-        sModelsMap.put( ARTIST_KEY,    Artist.class );
-        sModelsMap.put( ALBUMS_KEY,    Albums.class ); 
-        sModelsMap.put( ALBUM_KEY ,    Album.class );
-        sModelsMap.put( TRACKS_KEY,    Tracks.class ); 
-        sModelsMap.put( TRACK_KEY ,    Track.class );
-        sModelsMap.put( NEW_TRACK_KEY , Track.class );
-        sModelsMap.put( ERROR_KEY,      Error.class );
-    }
+    private ModelFactory mModelFactory = new ModelFactory();
 
-    private User mUser;
-    private AudioBoxConnector mConnector;
+    private Utils mUtils;
     private String mUserAgent;
 
-    /* ------------------ */
-    /* Default Interfaces */
-    /* ------------------ */
-
-    /** The default {@link CollectionListener}. Dummy implementation. */
-    private static CollectionListener sDefaultCollectionListener = new CollectionListener() {
-        public void onCollectionReady(int message, Object result) { }
-        public void onItemReady(int item, Object obj) { }
-    };
-
-    
-    public enum RequestFormat {
-    	XML,
-    	JSON,
-    	TEXT
-    }
-    
     
 
     /**
@@ -274,13 +201,13 @@ public class AudioBoxClient {
      * When is created it instantiate an {@link AudioBoxConnector} too.
      * 
      */
-    public AudioBoxClient() {
+    public AudioBox() {
 
         String version = "unattended";
         String ga_flag = "S";
         try {
-            sProperties.load(AudioBoxClient.class.getResourceAsStream("/fm/audiobox/core/config/env.properties"));
-            version = AudioBoxClient.getProperty("version");
+            sProperties.load(AudioBox.class.getResourceAsStream("/fm/audiobox/core/config/env.properties"));
+            version = AudioBox.getProperty("version");
             ga_flag = version.contains(SNAPSHOT) ? ga_flag : "GA";
             version = version.replace(SNAPSHOT, "");
         } catch (FileNotFoundException e) {
@@ -289,23 +216,27 @@ public class AudioBoxClient {
             log.error("Unable to access the environment properties file: " + e.getMessage());
         }
         
-        
-        
         mUserAgent = "AudioBox.fm/" + version + " (Java; " + ga_flag + "; " +
-        System.getProperty("os.name") + " " +
-        System.getProperty("os.arch") + "; " + 
-        System.getProperty("user.language") + "; " +
-        System.getProperty("java.runtime.version") +  ") " +
-        System.getProperty("java.vm.name") + "/" + 
-        System.getProperty("java.vm.version") + 
-        " " + AudioBoxClient.sAppName + "/" + version;
+	        System.getProperty("os.name") + " " +
+	        System.getProperty("os.arch") + "; " + 
+	        System.getProperty("user.language") + "; " +
+	        System.getProperty("java.runtime.version") +  ") " +
+	        System.getProperty("java.vm.name") + "/" + 
+	        System.getProperty("java.vm.version") + 
+	        " " + AudioBox.sAppName + "/" + version;
+        
+        this.mUtils = new Utils();
 
-        this.mConnector = new AudioBoxConnector();
-        this.mConnector.setTimeout( 180 * 1000 );
+    }
+    
+    
+    public void setModelFactory(ModelFactory mf){
+    	if ( mf != null )
+    		this.mModelFactory = mf;
     }
     
     public static void setAppName(String name) {
-        AudioBoxClient.sAppName = name;
+        AudioBox.sAppName = name;
     }
     
     
@@ -333,110 +264,20 @@ public class AudioBoxClient {
      *
      * @return the main {@link AudioBoxConnector} object.
      */
-    protected AudioBoxConnector getMainConnector(){
-        return this.mConnector;
-    }
-
-
-    /**
-     * <p>{@link CollectionListener} is mainly used for async requests.</p>
-     * Default implementation does nothing.
-     * 
-     * <p>
-     * 
-     * If you wish to interact with the collection while it's being build you can provide your implementation through 
-     * this method.
-     * 
-     * <p>
-     * 
-     * Note that this will affect only {@link ModelsCollection} models only.
-     * 
-     * @param key one of the key defined as AudioBoxClient model constants.
-     * @param cl your CollectionListener implementation.
-     */
-    public static void setCollectionListenerFor(String key, CollectionListener cl) {
-        if ( cl != null )
-            sCollectionListenersMap.put( key, cl );
-    }
-
-
-    /**
-     * Use this method to get the configured {@link CollectionListener} for the <em>key</em> specified {@link ModelsCollection}.
-     *
-     * @param key the name of the ModelsCollection associated with the collection listener.
-     * 
-     * @return the current collection listener AudioBoxClient is using.
-     */
-    public static CollectionListener getCollectionListenerFor(String key) {
-        return sCollectionListenersMap.get(key);
-    }
-
-
-    /**
-     * <p>If you need to customize or extend the default models classes you can set your own implementation through
-     * this method.</p>
-     * 
-     * @param key one of the key defined as AudioBoxClient model constants,
-     * @param klass your extended {@link Model} {@link Class}.
-     */
-    public static void setModelClassFor(String key, Class<? extends Model> klass) {
-        // Allow only existings keys
-        if ( sModelsMap.containsKey( key ) ) {
-            sModelsMap.put( key , klass );
-        }
+    protected Connector getMainConnector(){
+        return this.mUtils.getConnector();
     }
 
     /**
-     * <p>Create new {@link Model} object based upon the provided key.</p>
-     *
-     * @param key one of the key defined as AudioBoxClient model constants.
-     * @param connector CollectionListener implementation or null.
+     * <p>Getter method for the {@link User user} Object<p>
      * 
-     * @return a {@link Model} object.
-     * 
-     * @throws ModelException if provided key isn't covered from the models map.
+     * @return the logged in {@link User} instance
      */
-    @SuppressWarnings("unchecked")
-    public static Model getModelInstance(String key, AudioBoxConnector connector) throws ModelException {
-
-        Model model = null;
-        Class<? extends Model> klass = sModelsMap.get( key );
-
-        if ( klass == null ) {
-            String className = DEFAULT_MODELS_PACKAGE + "." + sI.upperCamelCase( key, '-' );
-
-            try {
-                klass = (Class<? extends Model>) Class.forName( className );
-                AudioBoxClient.setModelClassFor( key, klass ); // Reset the key
-            } catch (ClassNotFoundException e) {
-                throw new ModelException("No model class found: " + className, ModelException.CLASS_NOT_FOUND );
-            }
-        }
-
-        try {
-
-            log.trace("New model instance: " + klass.getName() );
-            model = klass.newInstance();
-
-        } catch (InstantiationException e) {
-            throw new ModelException("Instantiation Exception: " + klass.getName(), ModelException.INSTANTIATION_FAILED );
-
-        } catch (IllegalAccessException e) {
-            throw new ModelException("Illegal Access Exception: " + klass.getName(), ModelException.ILLEGAL_ACCESS );
-
-        }
-
-        model.setConnector( connector );
-
-        if ( model instanceof ModelsCollection ) {
-            CollectionListener cl = sCollectionListenersMap.get( model.getClass().getSimpleName() );
-            ( (ModelsCollection) model ).setCollectionListener( cl == null ? sDefaultCollectionListener : cl );
-        }
-
-        return model;
+    public User getUser(){
+    	return this.mUtils.getUser();
     }
-
-
+    
+    
     /**
      * This method should be called before any other call to AudioBox.fm.<br/>
      * It tries to perform a login. If succeeds a {@link User} object is returned otherwise a 
@@ -458,30 +299,49 @@ public class AudioBoxClient {
 
         log.info("Starting AudioBoxClient: " + mUserAgent);
 
-        this.mUser = (User) getModelInstance( USER_KEY , this.getMainConnector() );
-        this.mUser.setUsername(username);
+        User user = (User) this.mUtils.getModelInstance( ModelFactory.USER_KEY );
+        user.setUsername(username);
+        
+        this.mUtils.setUser(user);
 
         this.getMainConnector().setCredential( new UsernamePasswordCredentials(username, password) );
 
-        this.getMainConnector().get(this.mUser, this.mUser, null);
+        this.getMainConnector().get(user, user, null);
 
-        return this.mUser;
+        return user;
     }
 
 
-    /**
-     * This method returns the User object used to perform authenticated requests to AudioBox.fm.
-     * 
-     * <p>
-     * 
-     * May return <b>null</b> if the user has not yet performed a {@link AudioBoxClient#login(String, String) login}.
-     * 
-     * @return {@link User} object
-     */
-    public User getUser() {
-        return mUser;
+    public class Utils implements Serializable {
+    	
+    	private User mUser;
+        private Connector mConnector;
+        
+        private void setUser(User user){
+        	this.mUser = user;
+        }
+        
+        public User getUser(){
+        	return mUser;
+        }
+        
+        public Model getModelInstance(String key) throws ModelException {
+        	Model model = mModelFactory.getModelInstance(key);
+        	model.setUtils( this );
+        	return model;
+        }
+    	
+    	public Connector getConnector(){
+    		if ( mConnector == null ){
+    			this.mConnector = new Connector();
+    	        this.mConnector.setTimeout( 180 * 1000 );
+    		}
+    		return this.mConnector;
+    	}
+    	
     }
-
+    
+    
 
     /**
      * AudioBoxConnector is the AudioBoxClient http request wrapper.
@@ -495,7 +355,7 @@ public class AudioBoxClient {
      * 
      * Actually the only configurable parameter is the timeout through the {@link AudioBoxConnector#setTimeout(long)}.
      */
-    public class AudioBoxConnector implements Serializable {
+    public class Connector implements Serializable {
 
         private static final long serialVersionUID = -1947929692214926338L;
         
@@ -505,10 +365,10 @@ public class AudioBoxClient {
         private static final String URI_SEPARATOR = "/";
         
         /** Get informations from configuration file */
-        private final String PROTOCOL = AudioBoxClient.getProperty("protocol");
-        private final String HOST = AudioBoxClient.getProperty("host");
-        private final String PORT = AudioBoxClient.getProperty("port");
-        private final String API_PREFIX = AudioBoxClient.getProperty("apiPath");
+        private final String PROTOCOL = AudioBox.getProperty("protocol");
+        private final String HOST = AudioBox.getProperty("host");
+        private final String PORT = AudioBox.getProperty("port");
+        private final String API_PREFIX = AudioBox.getProperty("apiPath");
         
         public static final String TEXT_FORMAT = "txt";
         public static final String TEXT_CONTENT_TYPE = "text";
@@ -524,10 +384,10 @@ public class AudioBoxClient {
         private UsernamePasswordCredentials mCredentials;
         private BasicScheme mScheme = new BasicScheme();
 
-        private Log log = LogFactory.getLog(AudioBoxConnector.class);
+        private Log log = LogFactory.getLog(Connector.class);
 
         /** Default constructor builds {@code mApiPath} string and basic AudioBox.fm http connector */
-        private AudioBoxConnector() {
+        private Connector() {
 
             mApiPath = this.getApiPath() + PATH_PARAMETER + TOKEN_PARAMETER + ACTION_PARAMETER;
 

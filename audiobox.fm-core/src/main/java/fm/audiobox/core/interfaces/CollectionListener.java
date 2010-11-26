@@ -22,7 +22,6 @@
 
 package fm.audiobox.core.interfaces;
 
-import fm.audiobox.core.models.AudioBoxClient;
 import fm.audiobox.core.models.Track;
 
 
