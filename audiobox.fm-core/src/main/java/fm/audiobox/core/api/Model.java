@@ -24,9 +24,7 @@ package fm.audiobox.core.api;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Stack;
+import java.util.Observable;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -39,22 +37,18 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ResponseHandler;
-import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.DefaultHandler;
 
 import fm.audiobox.core.AudioBox;
 import fm.audiobox.core.AudioBox.Connector;
 import fm.audiobox.core.AudioBox.RequestFormat;
 import fm.audiobox.core.AudioBox.Utils;
 import fm.audiobox.core.exceptions.LoginException;
-import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Track;
 import fm.audiobox.core.models.User;
-import fm.audiobox.core.util.Inflector;
 
 
 /**
@@ -74,20 +68,12 @@ import fm.audiobox.core.util.Inflector;
  * @author Fabio Tunno
  * @version 0.0.1
  */
-public abstract class Model extends DefaultHandler implements ResponseHandler<String[]> {
+public abstract class Model extends Observable implements ResponseHandler<String[]> {
 
     /** Constant that defines bytes dimention to be read from responses {@link InputStream} */
     protected static final int CHUNK = 4096;
 
-    private static final String ADD_PREFIX = "add";
-    private static final String SET_PREFIX = "set";
-
     private static Log log = LogFactory.getLog(Model.class);
-
-    private boolean mSkipField = false;
-    private Stack<Object> mStack;
-    private Inflector mInflector = Inflector.getInstance();
-    private StringBuffer mStringBuffer = new StringBuffer();
 
     // Default models variables
     protected String pName;
@@ -132,8 +118,15 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
     }
     
     
+    /**
+     * This method refreshes current {@link ModelItem} instance
+     * executing a new request and populating its fields
+     */
+    public boolean refresh() throws LoginException, ServiceException {
+    	String[] result = this.getConnector().get(this, this, null);
+    	return Integer.parseInt( result[ Connector.RESPONSE_CODE ] ) == HttpStatus.SC_OK;
+    }
     
-
     /**
      * <p>Getter for the name of this model, may be vary depending the Model extension.</p>
      *
@@ -264,7 +257,7 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
             XMLReader xr = sp.getXMLReader();
 
             /* Create a new ContentHandler and apply it to the XML-Reader */
-            xr.setContentHandler( this );
+            xr.setContentHandler( this.pUtils.getModelParser(this) );
 
             xr.parse( new InputSource( input ) );
 
@@ -272,8 +265,10 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
 
         } catch (ParserConfigurationException e) {
             message = "Parser misconfiguration: " + e.getMessage();
+            log.error(message, e);
         } catch (SAXException e) {
-            message = "Failed to parse response: " + e.getMessage(); 
+            message = "Failed to parse response: " + e.getMessage();
+            log.error(message, e);
         }
         
         if (message != null) {
@@ -311,9 +306,10 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
     
     
     /**
-     * This method is used to parse plain text responses in case of errors
+     * This method is used to parse plain text responses
+     * 
      * @param input	the {@link InputStream} of the entity content
-     * @return	a String that represents the response body text
+     * @return String that represents the response body as text
      * @throws IOException
      */
     private String _parsePlainResponse(InputStream input) throws IOException {
@@ -335,149 +331,6 @@ public abstract class Model extends DefaultHandler implements ResponseHandler<St
     @Override
     public String toString() {
         return this.getName();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void startDocument() throws SAXException {
-        this.mStack = new Stack<Object>();
-        this.mStack.push( this );
-        super.startDocument();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void endDocument() throws SAXException {
-        this.mStack = null;
-        super.endDocument();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public final void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-
-        Object peek = this.mStack.peek();
-
-        mSkipField = false;
-
-        try {
-            if (localName.trim().length() == 0)
-                localName = qName;
-
-            localName =  mInflector.upperCamelCase( localName, '_' );
-
-            String methodPrefix = SET_PREFIX;
-            String scm = mInflector.singularize( peek.getClass().getSimpleName() );
-            if (!scm.equals( peek.getClass().getSimpleName() ) && localName.equals( scm  ) ) {
-                methodPrefix = ADD_PREFIX;
-            }
-
-            String methodName =  methodPrefix + localName;
-            Method method = null;
-            try {
-                method = peek.getClass().getMethod(methodName, String.class);
-            } catch (NoSuchMethodException e) {
-                for (Method m : peek.getClass().getMethods()) {
-                    if (m.getName().equals( methodName )) {
-                        method = m;
-                        break;
-                    }
-                }
-            }
-
-
-            if (method == null)
-                mSkipField = true;
-
-            if ( !mSkipField ) {
-
-                Class<?> argType = method.getParameterTypes()[0];
-
-                if ( ! argType.isPrimitive() && ! argType.equals(String.class) ){
-
-                    Model subClass = null;
-                    try {
-                        subClass = this.pUtils.getModelInstance( mInflector.lowerCamelCase( localName, '_') );
-                        method.invoke(peek, subClass );
-
-                        this.mStack.push( subClass );
-                    } catch (ModelException e) {
-                        e.printStackTrace();
-                    }
-
-                } else {
-                    this.mStack.push( method );
-                }
-            }
-
-        } catch (IllegalArgumentException e) {
-            log.error("Illegal Argument Exception @" + localName + ": " + e.getMessage());
-            e.printStackTrace();
-
-        } catch (IllegalAccessException e) {
-            log.error("Illegal AccessException @" + localName + ": " + e.getMessage());
-            e.printStackTrace();
-
-        } catch (SecurityException e) {
-            log.error("Security Exception @" + localName + ": " + e.getMessage());
-            e.printStackTrace();
-
-        } catch (InvocationTargetException e) {
-            log.error("Invocation Target Exception @" + localName + ": " + e.getMessage());
-            e.printStackTrace();
-
-        } 
-
-        super.startElement(uri, localName, qName, attributes);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void endElement(String uri, String localName, String qName) throws SAXException {
-
-        if ( !mSkipField ) {
-
-            String _temp = mStringBuffer.toString();
-            _temp = _temp.replace("\n","").trim();
-            mStringBuffer = new StringBuffer();
-
-
-            if (this.mStack.peek() instanceof Method) {
-
-                Method method = ( Method ) this.mStack.peek();
-                Object _dest = this.mStack.get(  this.mStack.size() - 2 );
-
-                try {
-                    if (_temp.trim().length() > 0) {
-                        method.invoke(_dest, _temp);
-                    }
-                } catch (IllegalArgumentException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                }
-
-            }
-
-            this.mStack.pop();
-
-        }
-
-        super.endElement(uri, localName, qName);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void characters(char[] ch, int start, int length) throws SAXException {
-
-        if ( !mSkipField ) {
-            mStringBuffer.append( String.valueOf( ch , start , length ) );
-        }
-
-        super.characters(ch, start, length);
     }
 
 

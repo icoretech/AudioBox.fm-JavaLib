@@ -22,9 +22,6 @@
 
 package fm.audiobox.core.models;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import fm.audiobox.core.api.ModelsCollection;
 
 
@@ -39,8 +36,6 @@ public class Albums extends ModelsCollection {
 
     /** Tracks API end point */
     public static final String END_POINT = "albums";
-    
-    protected List<Album> collection = new ArrayList<Album>();
     
     /**
      * <p>Constructor for Albums.</p>
@@ -59,33 +54,14 @@ public class Albums extends ModelsCollection {
     }
     
     /**
-     * <p>Getter method for the Album collection.</p>
-     *
-     * @return the {@link List} of {@link Album} of this collection.
-     */
-    public List<? extends Album> getCollection() {
-        return this.collection;
-    }
-    
-    /**
      * Adds a Album to the collection: this is mainly used by the parser.
      *
      * @param album a {@link Album} to add to the collection.
      */
     public void addAlbum(Album album) {
-        this.collection.add( album );
+        super.addToCollection(album);
     }
 
-    /**
-     * <p>Setter method for the collection list of {@link Album}.</p>
-     *
-     * @param collection a {@link List} of {@link Album} that represents the collection.
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public void setCollection(List<?> collection) {
-        this.collection = (List<Album>) collection;
-    }
     
     /**
      * <p>Getter method for a single {@link Album} contained in the collection.</p>
@@ -95,7 +71,7 @@ public class Albums extends ModelsCollection {
      * @return a {@link Album} object.
      */
     public Album get(int index) {
-        return collection.get(index);
+        return (Album) super.getItem(index);
     }
     
     /**
@@ -106,10 +82,6 @@ public class Albums extends ModelsCollection {
      * @return a {@link Album} object.
      */
     public Album get(String token) {
-        for (Album album : collection) {
-            if ( token.equals( album.getToken() ) )
-                return album;
-        }
-        return null;
+        return (Album) super.getItem(token);
     }
 }

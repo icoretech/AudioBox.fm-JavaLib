@@ -59,33 +59,14 @@ public class Genres extends ModelsCollection {
     }
     
     /**
-     * <p>Getter method for the Genres collection.</p>
-     *
-     * @return the {@link List} of {@link Genre} of this collection.
-     */
-    public List<? extends Genre> getCollection() {
-        return this.collection;
-    }
-    
-    /**
      * Adds a Genre to the collection: this is mainly used by the parser.
      *
      * @param genre a {@link Genre} to add to the collection.
      */
     public void addGenre(Genre genre) {
-        this.collection.add(genre);
+        super.addToCollection(genre);
     }
     
-    /**
-     * <p>Setter method for the collection list of {@link Genre}.</p>
-     *
-     * @param collection a {@link List} of {@link Genre} that represents the collection.
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public void setCollection(List<?> collection) {
-        this.collection = (List<Genre>) collection;
-    }
     
     /**
      * <p>Getter method for a single {@link Genre} contained in the collection.</p>
@@ -95,7 +76,7 @@ public class Genres extends ModelsCollection {
      * @return a {@link Genre} object.
      */
     public Genre get(int index) {
-        return collection.get(index);
+        return (Genre)super.getItem(index);
     }
     
     /**
@@ -106,10 +87,6 @@ public class Genres extends ModelsCollection {
      * @return a {@link Genre} object.
      */
     public Genre get(String token) {
-        for (Genre genre : collection) {
-            if ( token.equals( genre.getToken() ) )
-                return genre;
-        }
-        return null;
+        return (Genre)super.getItem(token);
     }
 }

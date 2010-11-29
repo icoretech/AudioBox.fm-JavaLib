@@ -22,11 +22,8 @@
 
 package fm.audiobox.core.api;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import org.xml.sax.SAXException;
-
-import fm.audiobox.core.interfaces.CollectionListener;
 
 
 /**
@@ -43,7 +40,11 @@ import fm.audiobox.core.interfaces.CollectionListener;
  */
 public abstract class ModelsCollection extends Model {
 
-	protected CollectionListener pCollectionListener = null;
+	/** Parent of this ModelsCollection instance */
+	protected ModelItem pParent;
+	
+	
+	private List<ModelItem> pCollection = new ArrayList<ModelItem>();
 	
 	/**
 	 * Getter method for the XML tag name of collection's elements.
@@ -60,18 +61,27 @@ public abstract class ModelsCollection extends Model {
 	protected abstract String getTagName();
     
     /**
-     * <p>Setter method for the collection list.</p>
-     *
-     * @param collection a {@link List} object that represents the collection.
-     */
-    public abstract void setCollection(List<?> collection);
-    
-    /**
      * <p>Getter method for the collection of this ModelsCollection</p>
      *
      * @return the {@link List} of {@link ModelItem} that this ModelsCollection contains.
      */
-    public abstract List<?> getCollection();
+    public List<ModelItem> getCollection(){
+    	return this.pCollection;
+    }
+    
+    
+    
+    /**
+     * <p>Setter method for <code>parent</code></p>
+     * 
+     * This method is while instantiating Model
+     * 
+     * @param parent ModelItem associated with this {@link ModelsCollection} instance
+     */
+    protected void setParent(ModelItem parent){
+    	this.pParent = parent;
+    }
+    
     
     /**
      * <p>Getter method for a single {@link ModelItem} contained in the collection.</p>
@@ -79,7 +89,9 @@ public abstract class ModelsCollection extends Model {
      * @param index the index of the desired item.
      * @return a {@link ModelItem} object.
      */
-    public abstract ModelItem get(int index);
+    public final ModelItem getItem(int index){
+    	return (ModelItem)this.getCollection().get(index);
+    }
 
     /**
      * <p>Getter method for a single {@link ModelItem} contained in the collection.</p>
@@ -87,34 +99,82 @@ public abstract class ModelsCollection extends Model {
      * @param token the token of the desired ModelItem.
      * @return a {@link ModelItem} object.
      */
-    public abstract ModelItem get(String token);
+    public final ModelItem getItem(String token){
+    	for ( ModelItem modelItem : this.getCollection() )
+    		if ( modelItem.getToken().equals(token) )
+    			return modelItem;
+    	return null;
+    }
+    
     
     /**
-     * <p>Setter method for a custom {@link CollectionListener} </p>
-     *
-     * @param cl a {@link CollectionListener} implementation.
+     * This method adds a {@link ModelItem} instance to collection
+     * 
+     * @param item the ModelItem to add to collection
+     * @return index of ModelItem put into collection, returns -1 if something went wrong
      */
-    public void setCollectionListener(CollectionListener cl) {
-        this.pCollectionListener = cl;
+    public final int addToCollection(ModelItem item){
+    	// TODO: fire event
+    	if ( this.getCollection().add( item ) ){
+    		item.setParent( this );
+    		return this.getCollection().size() -1;
+    	}
+    	return -1;
     }
     
-    /** {@inheritDoc} */
-    @Override
-    public void endElement(String uri, String localName, String qName) throws SAXException {
-        super.endElement(uri, localName, qName);
-        if (localName.trim().length() == 0) {
-            localName = qName;
-        }
-        if ( this.getTagName().equals(localName) ) {
-            int index = this.getCollection().size() -1;
-            this.pCollectionListener.onItemReady( index, this.getCollection().get(index));
-        }
+    /**
+     * This method removes a {@link ModelItem} item from collection
+     * 
+     * @param index the index of ModelItem to remove from collection
+     * @return the ModelItem item removed
+     */
+    public final ModelItem removeFromCollection(int index){
+    	// TODO: fire event
+    	ModelItem item = this.getCollection().remove(index);
+    	item.setParent(null);
+    	return item; 
     }
     
-    /** {@inheritDoc} */
-    @Override
-    public void endDocument() throws SAXException {
-        this.pCollectionListener.onCollectionReady(CollectionListener.DOCUMENT_PARSED, this);
+    /**
+     * This method removes a {@link ModelItem} item from collection
+     * 
+     * @param item the ModelItem to remove from collection
+     * @return true if ModelItem was removed, false if not
+     */
+    public final boolean removeFromCollection(ModelItem item){
+    	// TODO: fire event
+    	item.setParent(null);
+    	return this.getCollection().remove(item);
     }
+    
+    /** 
+     * This method removes a {@link ModelItem} item from collection
+     * 
+     * @param token the token associated with ModelItem to remove
+     * @return ModelItem item removed from collection
+     */
+    public final ModelItem removeFromCollection(String token){
+    	// TODO: fire event
+    	for ( ModelItem item : this.getCollection() )
+    		if ( item.getToken().equals(token) ){
+    			if ( this.removeFromCollection(item) ){
+    				item.setParent(null);
+    				return item;
+    			}
+    			break;
+    		}
+    	return null;
+    }
+    
+    
+    /**
+     * This method empties the collection.
+     * It is used while refreshing {@link ModelItem}
+     */
+    public void empties(){
+    	// TODO: fire event before empty collection
+    	this.pCollection = new ArrayList<ModelItem>();
+    }
+    
     
 }

@@ -1,14 +1,24 @@
 package fm.audiobox.core.models;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
-import fm.audiobox.core.AudioBox;
+import fm.audiobox.core.AudioBox.Utils;
 import fm.audiobox.core.api.Model;
 import fm.audiobox.core.exceptions.ModelException;
+import fm.audiobox.core.observers.Listener;
 import fm.audiobox.core.util.Inflector;
 
 public class ModelFactory {
@@ -64,7 +74,29 @@ public class ModelFactory {
 	
     /** Model classes collection */
 	private Map<String, Class<? extends Model>> mModelsMap;
+	
+	private Map<String, List<Listener>> mListenersMap;
     
+	
+	private static Map<String, String> mShortFieldsMap = new HashMap<String, String>();
+	static {
+		mShortFieldsMap.put("tk", "token");
+		mShortFieldsMap.put("t", "title");
+		mShortFieldsMap.put("d", "duration");
+		mShortFieldsMap.put("ds", "duration_in_seconds");
+		mShortFieldsMap.put("su", "stream_url");
+		mShortFieldsMap.put("y", "year");
+		mShortFieldsMap.put("l", "loved");
+		mShortFieldsMap.put("pc", "play_count");
+		mShortFieldsMap.put("fs", "audio_file_size");
+		mShortFieldsMap.put("tn", "track_number");
+		mShortFieldsMap.put("dn", "disc_number");
+		mShortFieldsMap.put("fn", "original_file_name");
+		mShortFieldsMap.put("al", "album");
+		mShortFieldsMap.put("ar", "artist");
+	}
+	
+	
 	public ModelFactory() {
 		mModelsMap = new HashMap<String , Class<? extends Model>>();
 		mModelsMap.put( USER_KEY,      User.class ); 
@@ -81,6 +113,8 @@ public class ModelFactory {
         mModelsMap.put( TRACK_KEY ,    Track.class );
         mModelsMap.put( NEW_TRACK_KEY , Track.class );
         mModelsMap.put( ERROR_KEY,      Error.class );
+        
+        mListenersMap = new HashMap<String, List<Listener>>();
     }
 	
 	/**
@@ -137,4 +171,201 @@ public class ModelFactory {
         return model;
     }
 	
+    
+    public void addListenerFor(String key, Listener listener){
+    	List<Listener> listeners = this.getListeners(key);
+    	listeners.add(listener);
+    }
+    
+    
+    public List<Listener> getListeners(){
+    	List<Listener> listeners = new ArrayList<Listener>();
+    	Iterator<String> keys = this.mListenersMap.keySet().iterator();
+    	while( keys.hasNext() )
+    		listeners.addAll( this.getListeners(keys.next() ) );
+    	return listeners;
+    }
+    
+    public List<Listener> getListeners(String key){
+    	List<Listener> listeners = this.mListenersMap.get(key);
+    	if ( listeners == null ){
+    		listeners = new ArrayList<Listener>();
+    		this.mListenersMap.put(key, listeners);
+    	}
+    	return listeners;
+    }
+    
+    
+    public ModelParser getModelParser(Model model, Utils utils){
+    	return new ModelParser(model,utils);
+    }    
+
+    public class ModelParser extends DefaultHandler {
+    	
+    	private static final String ADD_PREFIX = "add";
+        private static final String SET_PREFIX = "set";
+    	
+    	private Model model;
+    	private Utils utils;
+    	private Stack<Object> mStack;
+    	private boolean mSkipField;
+    	private StringBuffer mStringBuffer = new StringBuffer();
+    	
+    	private ModelParser(Model model, Utils utils){
+    		this.model = model;
+    		this.utils = utils;
+    	}
+    	
+    	
+    	/** {@inheritDoc} */
+        @Override
+        public final void startDocument() throws SAXException {
+            this.mStack = new Stack<Object>();
+            this.mStack.push( this.model );
+            super.startDocument();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void endDocument() throws SAXException {
+            this.mStack = null;
+            super.endDocument();
+        }
+
+
+        /** {@inheritDoc} */
+        @Override
+        public final void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+
+            Object peek = this.mStack.peek();
+
+            mSkipField = false;
+
+            try {
+                if (localName.trim().length() == 0)
+                    localName = qName;
+                
+                if ( mShortFieldsMap.containsKey(localName) )
+                	localName = mShortFieldsMap.get(localName);
+
+                localName =  sI.upperCamelCase( localName, '_' );
+
+                String methodPrefix = SET_PREFIX;
+                String scm = sI.singularize( peek.getClass().getSimpleName() );
+                if (!scm.equals( peek.getClass().getSimpleName() ) && localName.equals( scm  ) ) {
+                    methodPrefix = ADD_PREFIX;
+                }
+
+                String methodName =  methodPrefix + localName;
+                Method method = null;
+                try {
+                    method = peek.getClass().getMethod(methodName, String.class);
+                } catch (NoSuchMethodException e) {
+                    for (Method m : peek.getClass().getMethods()) {
+                        if (m.getName().equals( methodName )) {
+                            method = m;
+                            break;
+                        }
+                    }
+                }
+
+
+                if (method == null)
+                    mSkipField = true;
+
+                if ( !mSkipField ) {
+
+                    Class<?> argType = method.getParameterTypes()[0];
+
+                    if ( ! argType.isPrimitive() && ! argType.equals(String.class) ){
+
+                        Model subClass = null;
+                        try {
+                            subClass = this.utils.getModelInstance( sI.lowerCamelCase( localName, '_') );
+                            method.invoke(peek, subClass );
+
+                            this.mStack.push( subClass );
+                        } catch (ModelException e) {
+                            e.printStackTrace();
+                        }
+
+                    } else {
+                        this.mStack.push( method );
+                    }
+                }
+
+            } catch (IllegalArgumentException e) {
+                log.error("Illegal Argument Exception @" + localName + ": " + e.getMessage());
+                e.printStackTrace();
+
+            } catch (IllegalAccessException e) {
+                log.error("Illegal AccessException @" + localName + ": " + e.getMessage());
+                e.printStackTrace();
+
+            } catch (SecurityException e) {
+                log.error("Security Exception @" + localName + ": " + e.getMessage());
+                e.printStackTrace();
+
+            } catch (InvocationTargetException e) {
+                log.error("Invocation Target Exception @" + localName + ": " + e.getMessage());
+                e.printStackTrace();
+
+            } 
+
+            super.startElement(uri, localName, qName, attributes);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void endElement(String uri, String localName, String qName) throws SAXException {
+
+            if ( !mSkipField ) {
+
+                String _temp = mStringBuffer.toString();
+                _temp = _temp.replace("\n","").trim();
+                mStringBuffer = new StringBuffer();
+
+
+                if (this.mStack.peek() instanceof Method) {
+
+                    Method method = ( Method ) this.mStack.peek();
+                    Object _dest = this.mStack.get(  this.mStack.size() - 2 );
+
+                    try {
+                        if (_temp.trim().length() > 0) {
+                            method.invoke(_dest, _temp);
+                        }
+                    } catch (IllegalArgumentException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    } catch (InvocationTargetException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+                this.mStack.pop();
+
+            }
+
+            super.endElement(uri, localName, qName);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void characters(char[] ch, int start, int length) throws SAXException {
+
+            if ( !mSkipField ) {
+                mStringBuffer.append( String.valueOf( ch , start , length ) );
+            }
+
+            super.characters(ch, start, length);
+        }
+    	
+    	
+    	
+    }
+    
+    
 }

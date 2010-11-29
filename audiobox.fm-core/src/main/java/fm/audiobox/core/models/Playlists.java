@@ -25,6 +25,7 @@ package fm.audiobox.core.models;
 import java.util.ArrayList;
 import java.util.List;
 
+import fm.audiobox.core.api.ModelItem;
 import fm.audiobox.core.api.ModelsCollection;
 
 
@@ -43,8 +44,6 @@ public class Playlists extends ModelsCollection {
     public static final String EMPTY_TRASH_ACTION = "empty_trash";
     public static final String ADD_TRACKS_ACTION = "add_tracks";
     public static final String REMOVE_TRACKS_ACTION = "remove_tracks";
-    
-    protected List<Playlist> collection = new ArrayList<Playlist>();
     
     /** 
      * Playlists are grouped by types that are:
@@ -70,7 +69,10 @@ public class Playlists extends ModelsCollection {
         VIDEO,
         
         /** User defined playlists */
-        CUSTOM
+        CUSTOM,
+        
+        /** Offline playlist */
+        OFFLINE
     }
     
     /**
@@ -90,33 +92,14 @@ public class Playlists extends ModelsCollection {
     }
 
     /**
-     * <p>Getter method for the Playlists collection.</p>
-     *
-     * @return the {@link List} of {@link Playlist} of this collection.
-     */
-    public List<? extends Playlist> getCollection() {
-        return this.collection;
-    }
-    
-    /**
      * Adds a Playlist to the collection: this is mainly used by the parser.
      *
      * @param playlist a {@link Playlist} to add to the collection.
      */
     public void addPlaylist(Playlist playlist) {
-        this.collection.add(playlist);
+        super.addToCollection(playlist);
     }
     
-    /**
-     * <p>Setter method for the collection list of {@link Playlist}.</p>
-     *
-     * @param collection a {@link List} of {@link Playlist} that represents the collection.
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public void setCollection(List<?> collection) {
-        this.collection = (List<Playlist>) collection;
-    }
     
     /**
      * <p>Getter method for a single {@link Playlist} contained in the collection.</p>
@@ -126,7 +109,7 @@ public class Playlists extends ModelsCollection {
      * @return a {@link Playlist} object.
      */
     public Playlist get(int index) {
-        return collection.get(index);
+        return (Playlist) super.getItem(index);
     }
     
     /**
@@ -137,11 +120,7 @@ public class Playlists extends ModelsCollection {
      * @return a {@link Playlist} object.
      */
     public Playlist get(String token) {
-        for (Playlist playlist : collection) {
-            if ( token.equals( playlist.getToken() ) )
-                return playlist;
-        }
-        return null;
+    	return (Playlist) super.getItem(token);
     }
     
     /**
@@ -152,9 +131,9 @@ public class Playlists extends ModelsCollection {
      * @return a {@link Playlist} object if the playlist is in pool <code>null</code> otherwise.
      */
     public Playlist getPlaylistByName(String name) {
-        for (Playlist playlist : collection) {
+        for (ModelItem playlist : super.getCollection()) {
             if ( name.equalsIgnoreCase( playlist.getName() ) )
-                return playlist;
+                return (Playlist)playlist;
         }
         return null;
     }
@@ -168,9 +147,9 @@ public class Playlists extends ModelsCollection {
      */
     public List<Playlist> getPlaylistsByType(PlaylistTypes type) {
         List<Playlist> result = new ArrayList<Playlist>();
-        for (Playlist playlist : collection) {
-            if ( type.name().equalsIgnoreCase( playlist.getPlaylistType() ) )
-                result.add(playlist);
+        for (ModelItem playlist : super.getCollection() ) {
+            if ( type.name().equalsIgnoreCase( ((Playlist)playlist).getPlaylistType() ) )
+                result.add( (Playlist) playlist);
         }
         return result;
     }

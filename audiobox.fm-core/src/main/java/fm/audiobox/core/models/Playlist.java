@@ -31,6 +31,8 @@ import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.message.BasicNameValuePair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fm.audiobox.core.AudioBox.Connector;
 import fm.audiobox.core.api.ModelItem;
@@ -63,6 +65,8 @@ import fm.audiobox.core.exceptions.ServiceException;
  */
 public class Playlist extends ModelItem {
     
+	private static final Logger log = LoggerFactory.getLogger(Playlist.class);
+	
     /** The XML tag name for the Playlist element */
     public static final String TAG_NAME = "playlist";
     
@@ -184,7 +188,7 @@ public class Playlist extends ModelItem {
     	if ( addedTracks == null ) return false;
     	if ( this.mTracks != null ) {
     		// Tracks already loaded, manual management
-	    	for ( Track addedTrack : addedTracks.getCollection() ){
+	    	for ( ModelItem addedTrack : addedTracks.getCollection() ){
 	    		for ( Track track : tracks ){
 	    			if ( track.getToken().equals( addedTrack.getToken() )){
 	    				// TODO: fire collection listener events
@@ -228,11 +232,11 @@ public class Playlist extends ModelItem {
     	if ( removedTracks == null ) return false;
     	if ( this.mTracks != null ) {
     		// Tracks already loaded, manual management
-	    	for ( Track removedTrack : removedTracks.getCollection() ){
+	    	for ( ModelItem removedTrack : removedTracks.getCollection() ){
 	    		for ( Track track : tracks ){
 	    			if ( track.getToken().equals(removedTrack.getToken() )){
 	    				// TODO: fire collection listener events
-	    				if (  this.mTracks.getCollection().remove( this.mTracks.get( track.getToken() ) )  )
+	    				if (  this.mTracks.removeFromCollection( track.getToken()  ) != null  )
 	    					this.playlistTracksCount--;	// remove correctly
 	    			}
 	    		}
@@ -280,7 +284,7 @@ public class Playlist extends ModelItem {
             }
             
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+        	log.error("An error occurred while encoding", e);
         }
         
         return null;

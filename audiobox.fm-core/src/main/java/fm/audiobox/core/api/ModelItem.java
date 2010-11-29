@@ -25,7 +25,6 @@ package fm.audiobox.core.api;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.interfaces.CollectionListener;
 import fm.audiobox.core.models.ModelFactory;
 import fm.audiobox.core.models.Track;
 import fm.audiobox.core.models.Tracks;
@@ -49,6 +48,9 @@ import fm.audiobox.core.models.Tracks;
  */
 public abstract class ModelItem extends Model {
 
+	/** Parent of this ModelItem instance */
+	protected ModelsCollection pParent;
+	
     /** The collection of tracks for this object */
     protected Tracks mTracks;
     
@@ -56,16 +58,17 @@ public abstract class ModelItem extends Model {
     private String pToken;
     
     
-    
-    
     /**
-     * <p>Getter for the model token.</p>
-     *
-     * @return the unique token of the model.
+     * <p>Setter method for <code>parent</code></p>
+     * 
+     * This method is while instanciating Model 
+     * 
+     * @param parent ModelsCollection associated with this {@link ModelItem} instance
      */
-    public String getToken() {
-        return this.pToken;
+    protected void setParent(ModelsCollection parent){
+    	this.pParent = parent;
     }
+    
 
     /**
      * <p>Setter for the model token: used by the parser.</p>
@@ -75,6 +78,16 @@ public abstract class ModelItem extends Model {
     public final void setToken(String token) {
         this.pToken = token;
     }
+    
+    /**
+     * <p>Getter for the model token.</p>
+     *
+     * @return the unique token of the model.
+     */
+    public String getToken() {
+        return this.pToken;
+    }
+    
     
     /**
      * <p>Getter method for a particular {@link Track} of the ModelItem {@link Tracks} collection.</p>
@@ -97,7 +110,7 @@ public abstract class ModelItem extends Model {
      * asynchronously; in this case it may be necessary to specify a {@link CollectionListener} to keep track 
      * of what is happening to the collection.
      * 
-     * <p>
+     * <p/>
      * 
      * Note that if <code>async</code> is true this method may return a null value in first instance.
      *
@@ -125,6 +138,12 @@ public abstract class ModelItem extends Model {
     }
     
     
+    /** {@inheritDoc} */
+    public boolean refresh() throws LoginException, ServiceException{
+    	if( this.mTracks != null )
+    		this.mTracks.empties();
+    	return super.refresh();
+    }
     
     
     /* ----------------- */
@@ -142,7 +161,8 @@ public abstract class ModelItem extends Model {
      */
     protected void buildCollection(boolean async) throws ModelException {
         this.mTracks = (Tracks) this.pUtils.getModelInstance( ModelFactory.TRACKS_KEY );
-        Thread t = populateCollection( this.getEndPoint(), this.mTracks );
+        this.mTracks.setParent( this );
+        Thread t = populateCollection( this.mTracks );
         if (async)
             t.start();
         else
@@ -162,7 +182,7 @@ public abstract class ModelItem extends Model {
      * @param endpoint the collection API end point to make request to 
      * @param collection the collection ({@link ModelsCollection}) to populate
      */
-    private Thread populateCollection( final String endpoint, final ModelsCollection collection ) {
+    private Thread populateCollection( final ModelsCollection collection ) {
 
         // Final reference to user object
         final ModelItem mi = this;

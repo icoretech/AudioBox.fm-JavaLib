@@ -322,18 +322,6 @@ public class Track extends ModelItem {
 
 
     
-    /**
-     * This method performs a request against AudioBox.fm to refreshes all track informations.
-     *
-     * @return an array of {@link String} objects containing response code and other info.
-     * 
-     * @throws LoginException if any authentication problem during the request occurs.
-     * @throws ServiceException if any connection problem to AudioBox.fm occurs.
-     */
-    public String[] refresh() throws LoginException, ServiceException {
-    	return this.getConnector().get( this, this, null );
-    }
-    
 
     /**
      * This method is used by the parser. Please use {@link Track#setLoved(boolean)} instead.
@@ -790,7 +778,7 @@ public class Track extends ModelItem {
      * @return null
      */
     @Override
-    public Tracks getTracks() { return null; }
+    public Tracks getTracks() { return (Tracks) this.pParent; }
 
     
     /* ------------------------ */

@@ -35,7 +35,6 @@ import fm.audiobox.core.api.ModelsCollection;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.interfaces.CollectionListener;
 import fm.audiobox.core.models.Playlists.PlaylistTypes;
 
 

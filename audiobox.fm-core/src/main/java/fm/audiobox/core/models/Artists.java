@@ -58,14 +58,6 @@ public class Artists extends ModelsCollection {
         return Artist.TAG_NAME;
     }
     
-    /**
-     * <p>Getter method for the Artist collection.</p>
-     *
-     * @return the {@link List} of {@link Artist} of this collection.
-     */
-    public List<? extends Artist> getCollection() {
-        return this.collection;
-    }
     
     /**
      * Adds a Artist to the collection: this is mainly used by the parser.
@@ -73,19 +65,9 @@ public class Artists extends ModelsCollection {
      * @param artist a {@link Artist} to add to the collection.
      */
     public void addArtist(Artist artist) {
-        this.collection.add(artist);
+    	super.addToCollection(artist);
     }
     
-    /**
-     * <p>Setter method for the collection list of {@link Artist}.</p>
-     *
-     * @param collection a {@link List} of {@link Artist} that represents the collection.
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public void setCollection(List<?> collection) {
-        this.collection = (List<Artist>) collection;
-    }
     
     /**
      * <p>Getter method for a single {@link Artist} contained in the collection.</p>
@@ -95,7 +77,7 @@ public class Artists extends ModelsCollection {
      * @return a {@link Artist} object.
      */
     public Artist get(int index) {
-        return collection.get(index);
+        return (Artist) super.getItem(index);
     }
     
     /**
@@ -106,10 +88,6 @@ public class Artists extends ModelsCollection {
      * @return a {@link Artist} object.
      */
     public Artist get(String token) {
-        for (Artist artist : collection) {
-            if ( token.equals( artist.getToken() ) )
-                return artist;
-        }
-        return null;
+    	return (Artist) super.getItem(token);
     }
 }

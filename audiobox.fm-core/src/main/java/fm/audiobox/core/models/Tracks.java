@@ -22,9 +22,6 @@
 
 package fm.audiobox.core.models;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import fm.audiobox.core.api.ModelsCollection;
 
 
@@ -39,8 +36,6 @@ public class Tracks extends ModelsCollection {
 
     /** Tracks API end point */
     public static final String END_POINT = "tracks";
-    
-    protected List<Track> collection = new ArrayList<Track>();
     
     /**
      * <p>Constructor for Tracks.</p>
@@ -59,33 +54,14 @@ public class Tracks extends ModelsCollection {
     }
     
     /**
-     * <p>Getter method for the Tracks collection.</p>
-     *
-     * @return the {@link List} of {@link Track} of this collection.
-     */
-    public List<? extends Track> getCollection() {
-        return this.collection;
-    }
-    
-    /**
      * Adds a Track to the collection: this is mainly used by the parser.
      *
      * @param track a {@link Track} to add to the collection.
      */
     public void addTrack(Track track) {
-        this.collection.add(track);
+        super.addToCollection(track);
     }
     
-    /**
-     * <p>Setter method for the collection list of {@link Track}.</p>
-     *
-     * @param collection a {@link List} of {@link Track} that represents the collection.
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public void setCollection(List<?> collection) {
-        this.collection = (List<Track>) collection;
-    }
     
     /**
      * <p>Getter method for a single {@link Track} contained in the collection.</p>
@@ -95,7 +71,7 @@ public class Tracks extends ModelsCollection {
      * @return a {@link Track} object.
      */
     public Track get(int index) {
-        return collection.get(index);
+        return (Track)super.getItem(index);
     }
     
     /**
@@ -106,10 +82,6 @@ public class Tracks extends ModelsCollection {
      * @return a {@link Track} object.
      */
     public Track get(String token) {
-        for (Track track : collection) {
-            if ( token.equals( track.getToken() ) )
-                return track;
-        }
-        return null;
+        return (Track) super.getItem(token);
     }
 }

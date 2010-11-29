@@ -15,6 +15,7 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.junit.Before;
 import org.junit.Test;
 
+import fm.audiobox.core.api.ModelItem;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
@@ -80,7 +81,8 @@ public class TrackTest extends junit.framework.TestCase {
 
             Track testTr = null;
             
-            for (Track tr : trs.getCollection()) {
+            for (ModelItem trk : trs.getCollection()) {
+            	Track tr = (Track) trk;
 
                 assertNotNull( tr );
                 

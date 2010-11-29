@@ -28,8 +28,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.net.SocketTimeoutException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 import java.util.zip.GZIPInputStream;
 
@@ -76,21 +74,20 @@ import fm.audiobox.core.api.ModelItem;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.interfaces.CollectionListener;
 import fm.audiobox.core.models.ModelFactory;
+import fm.audiobox.core.models.ModelFactory.ModelParser;
 import fm.audiobox.core.models.Track;
 import fm.audiobox.core.models.User;
-import fm.audiobox.core.util.Inflector;
 
 
 /**
- * AudioBoxClient is the main library class. Every request to AudioBox.fm should pass through this object.
+ * AudioBox is the main library class. Every request to AudioBox.fm should pass through this object.
  * This class is used mainly to configure every aspect of the library itself.<br/>
  * To populate and get informations about user library use the {@link User} (or an extended User) model instead.
  * <p>
  * 
  * Keep in mind that this library provides only the common browsing actions and some other few feature.<br/>
- * AudioBoxClient does not streams, nor play or provide a BitmapFactory for albums covers.
+ * AudioBox does not streams, nor play or provide a BitmapFactory for albums covers.
  * 
  * <p>
  *
@@ -99,8 +96,8 @@ import fm.audiobox.core.util.Inflector;
  *
  * <p>
  *
- * In order to make AudioBoxClient load your extended models you will need to provide your {@link Model} extension
- * through the {@link AudioBoxClient#setCollectionListenerFor(String, CollectionListener)} method.<br/>
+ * In order to make AudioBox load your extended models you will need to provide your {@link Model} extension
+ * through the {@link AudioBox#setCollectionListenerFor(String, CollectionListener)} method.<br/>
  *
  * <p>
  * 
@@ -112,12 +109,12 @@ import fm.audiobox.core.util.Inflector;
  * The usual execution flow can be demonstrated by the code snippet below:
  *
  * <pre>
- * // Creating the new AudioBoxClient instance
- * abc = new AudioBoxClient();
+ * // Creating the new AudioBox instance
+ * abc = new AudioBox();
  *
- * // If you extended the {@link User} model AudioBoxClient should 
+ * // If you extended the {@link User} model AudioBox should 
  * // be informed before the login take place.
- * AudioBoxClient.setModelClassFor(AudioBoxClient.USER_KEY , MyUser.class );
+ * AudioBox.setModelClassFor(AudioBox.USER_KEY , MyUser.class );
  * 
  * // Suppose we want to limit requests timeout to 5 seconds
  * abc.getMainConnector().setTimeout( 5000 );
@@ -126,7 +123,7 @@ import fm.audiobox.core.util.Inflector;
  * try {
  *
  *    // Should perform a login before anything else is done with 
- *    // the AudioBoxClient object
+ *    // the AudioBox object
  *    MyUser user = (MyUser) abc.login( "user@email.com" , "password" );
  *
  *    // To browse user library we have some nice utils methods
@@ -183,11 +180,15 @@ public class AudioBox {
     private static Properties sProperties = new Properties();
 
     /** Used to setup useragent */
-    private static String sAppName = "AudioBox";
+    private String mAppName = "AudioBox";
     
     /** Default request format */
     private RequestFormat mRequestFormat = RequestFormat.XML;
     
+    /** If <code>true</code> all requests will be executed with <code>short=true</code> parameter */
+    private boolean shortlyResponse = false;
+    
+    /** Model creator */
     private ModelFactory mModelFactory = new ModelFactory();
 
     private Utils mUtils;
@@ -196,9 +197,9 @@ public class AudioBox {
     
 
     /**
-     * <p>Constructor for AudioBoxClient.</p>
+     * <p>Constructor for AudioBox.</p>
      * 
-     * When is created it instantiate an {@link AudioBoxConnector} too.
+     * When is created it instantiate an {@link Connector} too.
      * 
      */
     public AudioBox() {
@@ -223,30 +224,59 @@ public class AudioBox {
 	        System.getProperty("java.runtime.version") +  ") " +
 	        System.getProperty("java.vm.name") + "/" + 
 	        System.getProperty("java.vm.version") + 
-	        " " + AudioBox.sAppName + "/" + version;
+	        " " + this.mAppName + "/" + version;
         
         this.mUtils = new Utils();
 
     }
     
-    
+    /** 
+     * Setter method for {@ink ModelFactory} associated with this AudioBox instance
+     * 
+     * @param mf the {@link ModelFactory} to set to
+     */
     public void setModelFactory(ModelFactory mf){
     	if ( mf != null )
     		this.mModelFactory = mf;
     }
     
-    public static void setAppName(String name) {
-        AudioBox.sAppName = name;
+    /**
+     * Getter method for {@link ModelFactory} associated with this AudioBox instance
+     * @return the {@link ModelFactory} associated with this AudioBox instance
+     */
+    public ModelFactory getModelFactory(){
+    	return this.mModelFactory;
+    }
+    
+    /**
+     * Setter method for application name
+     * 
+     * @param name the name of this application
+     */
+    public void setAppName(String name) {
+        this.mAppName = name;
     }
     
     
     /**
-     *  Setter method for {@link AudioBoxClient#RequestFormat}
-     * @param rf
+     *  Setter method for {@link AudioBox#RequestFormat}
+     * @param rf the RequesFormat to set to
      */
     public void setRequestFormat(RequestFormat rf){
     	this.mRequestFormat = rf;
     }
+    
+    
+    /**
+     * Setter method for {@link AudioBox#shortlyResponse} field
+     * 
+     * @param s boolean
+     */
+    public void setShortlyResponse(boolean s){
+    	this.shortlyResponse = s;
+    }
+    
+    
 
     /**
      * This method returns the AudioBox.fm properties file reader.
@@ -262,7 +292,7 @@ public class AudioBox {
     /**
      * <p>Getter method for the default connector Object<p>
      *
-     * @return the main {@link AudioBoxConnector} object.
+     * @return the main {@link Connector} object.
      */
     protected Connector getMainConnector(){
         return this.mUtils.getConnector();
@@ -297,7 +327,7 @@ public class AudioBox {
      */
     public User login(String username, String password) throws LoginException, ServiceException, ModelException {
 
-        log.info("Starting AudioBoxClient: " + mUserAgent);
+        log.info("Starting AudioBox: " + mUserAgent);
 
         User user = (User) this.mUtils.getModelInstance( ModelFactory.USER_KEY );
         user.setUsername(username);
@@ -314,7 +344,9 @@ public class AudioBox {
 
     public class Utils implements Serializable {
     	
-    	private User mUser;
+		private static final long serialVersionUID = 1L;
+		
+		private User mUser;
         private Connector mConnector;
         
         private void setUser(User user){
@@ -323,6 +355,10 @@ public class AudioBox {
         
         public User getUser(){
         	return mUser;
+        }
+        
+        public ModelParser getModelParser(Model model){
+        	return getModelFactory().getModelParser(model, this);
         }
         
         public Model getModelInstance(String key) throws ModelException {
@@ -344,7 +380,7 @@ public class AudioBox {
     
 
     /**
-     * AudioBoxConnector is the AudioBoxClient http request wrapper.
+     * Connector is the AudioBox http request wrapper.
      * 
      * <p>
      * 
@@ -353,7 +389,7 @@ public class AudioBox {
      * 
      * <p>
      * 
-     * Actually the only configurable parameter is the timeout through the {@link AudioBoxConnector#setTimeout(long)}.
+     * Actually the only configurable parameter is the timeout through the {@link Connector#setTimeout(long)}.
      */
     public class Connector implements Serializable {
 
@@ -370,9 +406,9 @@ public class AudioBox {
         private final String PORT = AudioBox.getProperty("port");
         private final String API_PREFIX = AudioBox.getProperty("apiPath");
         
-        public static final String TEXT_FORMAT = "txt";
-        public static final String TEXT_CONTENT_TYPE = "text";
-        public static final String XML_FORMAT = "xml";
+//        public static final String TEXT_FORMAT = "txt";
+//        public static final String TEXT_CONTENT_TYPE = RequestFormat.TEXT;
+//        public static final String XML_FORMAT = "xml";
 
         public static final int RESPONSE_CODE = 0;
         public static final int RESPONSE_BODY = 1;
@@ -655,7 +691,11 @@ public class AudioBox {
             String url = mApiPath.replace( PATH_PARAMETER , path ).replace( TOKEN_PARAMETER , token ).replace( ACTION_PARAMETER , action ); 
 
             if ( HttpGet.METHOD_NAME.equals(httpVerb) )
-                url += "." + ( mRequestFormat == RequestFormat.XML ? "xml" : "json" );
+                url += "." + mRequestFormat.toString().toLowerCase();
+            
+            if ( shortlyResponse ){
+            	url += "?short=true";	// default parameter name and value
+            }
             
             return url;
         }
