@@ -41,10 +41,10 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
-import fm.audiobox.core.AudioBox;
-import fm.audiobox.core.AudioBox.Connector;
-import fm.audiobox.core.AudioBox.RequestFormat;
-import fm.audiobox.core.AudioBox.Utils;
+import fm.audiobox.AudioBox;
+import fm.audiobox.AudioBox.Connector;
+import fm.audiobox.AudioBox.RequestFormat;
+import fm.audiobox.AudioBox.Utils;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Track;

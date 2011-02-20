@@ -1,0 +1,145 @@
+package fm.audiobox.configurations;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fm.audiobox.interfaces.IConfiguration;
+import fm.audiobox.interfaces.IFactory;
+import fm.audiobox.interfaces.ILoginExceptionHandler;
+import fm.audiobox.interfaces.IParser;
+
+public class DefaultConfiguration implements IConfiguration {
+
+  private static final Logger log = LoggerFactory.getLogger(DefaultConfiguration.class);
+  
+  public static final String APPLICATION_NAME = "Java libs";
+  public static final int MAJOR = 1;
+  public static final int MINOR = 0;
+  public static final int REVISION = 0;
+  public static final String VERSION = MAJOR + "." + MINOR + "." + REVISION;
+  public static final String PROTOCOL = "http";
+  public static final String HOST = "audiobox.fm";
+  public static final String PATH = "/api/";
+  
+  
+  private RequestFormat requestFormat = RequestFormat.XML;
+  private boolean useCache = false;
+  private boolean shortResponse = false;
+  private IFactory factory;
+  private IParser parser;
+  private ILoginExceptionHandler loginHandler;
+  private String appName = APPLICATION_NAME;
+  private String version = VERSION;
+  
+  
+  
+  public DefaultConfiguration(String appName, int major, int minor, int revision, RequestFormat requestFormat){
+    this.setApplicationName(appName);
+    this.setVersion(major, minor, revision);
+    this.setRequestFormat(requestFormat);
+    log.debug("Application name: " + appName);
+    log.debug("Application version: " + this.getVersion() );
+    log.debug("Request format: " + requestFormat.toString() );
+    log.info("Configuration loaded");
+  }
+  
+  
+  public DefaultConfiguration(String appName, int major, int minor, int revision){
+    this(appName, major, minor, revision, RequestFormat.XML);
+  }
+  
+  public DefaultConfiguration(String appName){
+    this(appName, MAJOR, MINOR, REVISION);
+  }
+  
+  
+  @Override
+  public void setRequestFormat(RequestFormat requestFormat) {
+    this.requestFormat = requestFormat;
+  }
+
+  @Override
+  public RequestFormat getRequestFormat() {
+    return this.requestFormat;
+  }
+
+  @Override
+  public IFactory getFactory() {
+    return this.factory;
+  }
+
+  @Override
+  public IParser getParser() {
+    return this.parser;
+  }
+
+  @Override
+  public void setApplicationName(String appName) {
+    this.appName = appName;
+  }
+  
+  @Override
+  public String getApplicationName() {
+    return this.appName;
+  }
+
+
+  @Override
+  public void setVersion(int major, int minor, int revision) {
+    this.version = major + "." + minor + "." + revision;
+  }
+  
+  
+  @Override
+  public String getVersion() {
+    return this.version;
+  }
+
+  @Override
+  public String getProtocol() {
+    return PROTOCOL;
+  }
+
+  @Override
+  public String getHost() {
+    return HOST;
+  }
+
+  @Override
+  public String getPath() {
+    return PATH;
+  }
+
+  @Override
+  public void setUseCache(boolean useCache) {
+    this.useCache = useCache;
+  }
+
+  @Override
+  public boolean isUsingCache() {
+    return this.useCache;
+  }
+
+  @Override
+  public void setShortResponse(boolean shortResponse) {
+    this.shortResponse = shortResponse;
+  }
+
+  @Override
+  public boolean isUsingShortResponse() {
+    return this.shortResponse;
+  }
+
+  @Override
+  public void setDefaultLoginExceptionHandler(ILoginExceptionHandler handler) {
+    this.loginHandler = handler;
+  }
+
+  @Override
+  public ILoginExceptionHandler getDefaultLoginExceptionHandler() {
+    return this.loginHandler;
+  }
+
+  
+  
+}

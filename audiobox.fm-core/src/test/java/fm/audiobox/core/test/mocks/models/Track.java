@@ -1,6 +1,6 @@
 package fm.audiobox.core.test.mocks.models;
 
-import fm.audiobox.core.AudioBox.Connector;
+import fm.audiobox.AudioBox.Connector;
 import fm.audiobox.core.test.StaticAudioBox;
 
 public class Track extends fm.audiobox.core.models.Track {

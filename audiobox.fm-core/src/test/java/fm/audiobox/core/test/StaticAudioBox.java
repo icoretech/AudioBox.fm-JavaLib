@@ -1,6 +1,6 @@
 package fm.audiobox.core.test;
 
-import fm.audiobox.core.AudioBox;
+import fm.audiobox.AudioBox;
 
 
 public class StaticAudioBox extends AudioBox{

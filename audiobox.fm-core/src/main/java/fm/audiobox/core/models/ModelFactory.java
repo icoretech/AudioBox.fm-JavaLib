@@ -15,7 +15,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import fm.audiobox.core.AudioBox.Utils;
+import fm.audiobox.AudioBox.Utils;
 import fm.audiobox.core.api.Model;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.observers.Listener;

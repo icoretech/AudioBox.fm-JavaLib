@@ -34,7 +34,7 @@ package fm.audiobox.core.exceptions;
  * @author Valerio Chiodino
  * @version 0.0.1
  */
-public class ServiceException extends java.net.ConnectException {
+public class ServiceException extends AudioBoxException {
 
     /** Socket exception error code */
     public static final int SOCKET_ERROR = 1;
@@ -47,34 +47,4 @@ public class ServiceException extends java.net.ConnectException {
 
     private static final long serialVersionUID = 1L;
 
-    private int errorCode;
-
-    /**
-     * <p>Constructor for ServiceException.</p>
-     *
-     * @param message a {@link java.lang.String} object.
-     */
-    public ServiceException(String message) {
-        super(message);
-    }
-
-    /**
-     * <p>Constructor for ServiceException.</p>
-     *
-     * @param message a {@link java.lang.String} object.
-     * @param errorCode a int.
-     */
-    public ServiceException(String message, int errorCode) {
-        this(message);
-        this.errorCode = errorCode;
-    }
-
-    /**
-     * <p>Getter for the field <code>errorCode</code>.</p>
-     *
-     * @return a int.
-     */
-    public int getErrorCode(){
-        return errorCode;
-    }
 }

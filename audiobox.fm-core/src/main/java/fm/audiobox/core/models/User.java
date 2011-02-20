@@ -27,8 +27,8 @@ import java.util.List;
 
 import org.apache.http.HttpStatus;
 
-import fm.audiobox.core.AudioBox;
-import fm.audiobox.core.AudioBox.Connector;
+import fm.audiobox.AudioBox;
+import fm.audiobox.AudioBox.Connector;
 import fm.audiobox.core.api.Model;
 import fm.audiobox.core.api.ModelItem;
 import fm.audiobox.core.api.ModelsCollection;

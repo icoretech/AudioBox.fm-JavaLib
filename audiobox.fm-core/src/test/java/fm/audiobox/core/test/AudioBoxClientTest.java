@@ -9,7 +9,7 @@ import java.net.SocketException;
 import org.junit.Before;
 import org.junit.Test;
 
-import fm.audiobox.core.AudioBox;
+import fm.audiobox.AudioBox;
 import fm.audiobox.core.api.Model;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;

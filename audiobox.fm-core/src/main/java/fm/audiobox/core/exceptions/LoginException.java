@@ -30,18 +30,8 @@ package fm.audiobox.core.exceptions;
  * @author Valerio Chiodino
  * @version 0.0.1
  */
-public class LoginException extends ServiceException {
-
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * <p>Constructor for LoginException.</p>
-     *
-     * @param message a {@link java.lang.String} object.
-     * @param code a int.
-     */
-    public LoginException(String message, int code) {
-        super(message, code);
-    }
+public class LoginException extends AudioBoxException {
+  
+  private static final long serialVersionUID = 1L;
 
 }

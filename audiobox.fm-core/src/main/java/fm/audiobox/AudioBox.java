@@ -20,15 +20,13 @@
  *                                                                         *
  ***************************************************************************/
 
-package fm.audiobox.core;
+package fm.audiobox;
 
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.net.SocketTimeoutException;
-import java.util.Properties;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.logging.Log;
@@ -43,6 +41,7 @@ import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
@@ -57,10 +56,13 @@ import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.entity.BasicHttpEntity;
+import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.HttpEntityWrapper;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
@@ -78,6 +80,7 @@ import fm.audiobox.core.models.ModelFactory;
 import fm.audiobox.core.models.ModelFactory.ModelParser;
 import fm.audiobox.core.models.Track;
 import fm.audiobox.core.models.User;
+import fm.audiobox.interfaces.IConfiguration;
 
 
 /**
@@ -157,43 +160,22 @@ public class AudioBox {
 
     private static Logger log = LoggerFactory.getLogger(AudioBox.class);
 
-    /** Used to keep track of the first element of a list */
-    public static final int FIRST = 0;
-    
-    
-    public enum RequestFormat {
-    	XML,
-    	JSON,
-    	TEXT
-    }
-    
-//    /** Constant <code>TRACK_ID_PLACEHOLDER="[track_id]"</code> */
-//    public static final String TRACK_ID_PLACEHOLDER = "[track_id]";
 
-    /** Prefix for properties keys */
-    private static final String PROP_PREFIX = "libaudioboxfm-core.";
+    /** Prefix used to store each property into properties file */
+    private static final String PREFIX = "fm.audiobox.";
 
-    /** Keyword used to check if libs have GA */
-    private static final String SNAPSHOT = "-SNAPSHOT";
     
-    /** Properties descriptor reader */
-    private static Properties sProperties = new Properties();
-
-    /** Used to setup useragent */
-    private String mAppName = "AudioBox";
+    private static final String USER_AGENT = 
+                "AudioBox.fm (Java; " +
+                System.getProperty("os.name") + " " +
+                System.getProperty("os.arch") + "; " + 
+                System.getProperty("user.language") + "; " +
+                System.getProperty("java.runtime.version") +  ") " +
+                System.getProperty("java.vm.name") + "/" + 
+                System.getProperty("java.vm.version") + 
+                " {APP_NAME}/{VERSION}";
     
-    /** Default request format */
-    private RequestFormat mRequestFormat = RequestFormat.XML;
-    
-    /** If <code>true</code> all requests will be executed with <code>short=true</code> parameter */
-    private boolean shortlyResponse = false;
-    
-    /** Model creator */
-    private ModelFactory mModelFactory = new ModelFactory();
-
-    private Utils mUtils;
-    private String mUserAgent;
-
+    private IConfiguration configuration;
     
 
     /**
@@ -202,92 +184,11 @@ public class AudioBox {
      * When is created it instantiate an {@link Connector} too.
      * 
      */
-    public AudioBox() {
-
-        String version = "unattended";
-        String ga_flag = "S";
-        try {
-            sProperties.load(AudioBox.class.getResourceAsStream("/fm/audiobox/core/config/env.properties"));
-            version = AudioBox.getProperty("version");
-            ga_flag = version.contains(SNAPSHOT) ? ga_flag : "GA";
-            version = version.replace(SNAPSHOT, "");
-        } catch (FileNotFoundException e) {
-            log.error("Environment properties file not found: " + e.getMessage());
-        } catch (IOException e) {
-            log.error("Unable to access the environment properties file: " + e.getMessage());
-        }
-        
-        mUserAgent = "AudioBox.fm/" + version + " (Java; " + ga_flag + "; " +
-	        System.getProperty("os.name") + " " +
-	        System.getProperty("os.arch") + "; " + 
-	        System.getProperty("user.language") + "; " +
-	        System.getProperty("java.runtime.version") +  ") " +
-	        System.getProperty("java.vm.name") + "/" + 
-	        System.getProperty("java.vm.version") + 
-	        " " + this.mAppName + "/" + version;
-        
-        this.mUtils = new Utils();
-
-    }
-    
-    /** 
-     * Setter method for {@ink ModelFactory} associated with this AudioBox instance
-     * 
-     * @param mf the {@link ModelFactory} to set to
-     */
-    public void setModelFactory(ModelFactory mf){
-    	if ( mf != null )
-    		this.mModelFactory = mf;
-    }
-    
-    /**
-     * Getter method for {@link ModelFactory} associated with this AudioBox instance
-     * @return the {@link ModelFactory} associated with this AudioBox instance
-     */
-    public ModelFactory getModelFactory(){
-    	return this.mModelFactory;
-    }
-    
-    /**
-     * Setter method for application name
-     * 
-     * @param name the name of this application
-     */
-    public void setAppName(String name) {
-        this.mAppName = name;
+    public AudioBox(IConfiguration config) {
+      configuration = config;
     }
     
     
-    /**
-     *  Setter method for {@link AudioBox#RequestFormat}
-     * @param rf the RequesFormat to set to
-     */
-    public void setRequestFormat(RequestFormat rf){
-    	this.mRequestFormat = rf;
-    }
-    
-    
-    /**
-     * Setter method for {@link AudioBox#shortlyResponse} field
-     * 
-     * @param s boolean
-     */
-    public void setShortlyResponse(boolean s){
-    	this.shortlyResponse = s;
-    }
-    
-    
-
-    /**
-     * This method returns the AudioBox.fm properties file reader.
-     * 
-     * <p>
-     * 
-     * It has to be used for internal logics only.
-     */
-    public static String getProperty(String key) {
-        return sProperties.getProperty(PROP_PREFIX + key);
-    }
 
     /**
      * <p>Getter method for the default connector Object<p>
@@ -344,36 +245,36 @@ public class AudioBox {
 
     public class Utils implements Serializable {
     	
-		private static final long serialVersionUID = 1L;
-		
-		private User mUser;
-        private Connector mConnector;
-        
-        private void setUser(User user){
-        	this.mUser = user;
-        }
-        
-        public User getUser(){
-        	return mUser;
-        }
-        
-        public ModelParser getModelParser(Model model){
-        	return getModelFactory().getModelParser(model, this);
-        }
-        
-        public Model getModelInstance(String key) throws ModelException {
-        	Model model = mModelFactory.getModelInstance(key);
-        	model.setUtils( this );
-        	return model;
-        }
-    	
-    	public Connector getConnector(){
-    		if ( mConnector == null ){
-    			this.mConnector = new Connector();
-    	        this.mConnector.setTimeout( 180 * 1000 );
-    		}
-    		return this.mConnector;
-    	}
+  		private static final long serialVersionUID = 1L;
+  		
+  		private User mUser;
+          private Connector mConnector;
+          
+          private void setUser(User user){
+          	this.mUser = user;
+          }
+          
+          public User getUser(){
+          	return mUser;
+          }
+          
+          public ModelParser getModelParser(Model model){
+          	return getModelFactory().getModelParser(model, this);
+          }
+          
+          public Model getModelInstance(String key) throws ModelException {
+          	Model model = mModelFactory.getModelInstance(key);
+          	model.setUtils( this );
+          	return model;
+          }
+      	
+      	public Connector getConnector(){
+      		if ( mConnector == null ){
+      			this.mConnector = new Connector();
+      	        this.mConnector.setTimeout( 180 * 1000 );
+      		}
+      		return this.mConnector;
+      	}
     	
     }
     
@@ -595,6 +496,10 @@ public class AudioBox {
             
             // Default: follow redirects!
             method.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, true);
+            
+            
+//            BasicNameValuePair bnvp = new BasicNameValuePair("a", "b");
+//            UrlEncodedFormEntity uefe = new UrlEncodedFormEntity(null)
 
             log.debug("[ " + httpVerb + " ] Next request will be: " + url);
         	
