@@ -1,5 +1,7 @@
 package fm.audiobox.interfaces;
 
+import fm.audiobox.interfaces.IConnector.IConnectionMethod;
+
 public interface IConfiguration {
   
   
@@ -49,6 +51,7 @@ public interface IConfiguration {
    */
   public String getApplicationName();
   
+  
   /**
    * Sets the version sent to server as "User-Agent" request header.
    * Default should be 1.0.0
@@ -65,6 +68,11 @@ public interface IConfiguration {
    */
   public String getVersion();
   
+
+  
+  public String getUserAgent();
+  
+  
   /**
    * Returns protocol used for connection
    * @return
@@ -76,6 +84,13 @@ public interface IConfiguration {
    * @return
    */
   public String getHost();
+  
+  /**
+   * Returns server port used for connection
+   * @return
+   */
+  public int getPort();
+  
   
   /**
    * Returns path used for connetion
@@ -124,5 +139,17 @@ public interface IConfiguration {
    */
   public ILoginExceptionHandler getDefaultLoginExceptionHandler();
   
+  
+  /**
+   * Sets the connection method class used for connection
+   * @param method
+   */
+  public void setHttpMethodType(Class<? extends IConnectionMethod> method);
+  
+  /**
+   * Returns the connection method class used for connection
+   * @return
+   */
+  public Class<? extends IConnectionMethod> getHttpMethodType();
   
 }

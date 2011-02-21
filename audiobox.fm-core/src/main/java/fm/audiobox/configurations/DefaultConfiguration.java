@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fm.audiobox.interfaces.IConfiguration;
+import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IFactory;
 import fm.audiobox.interfaces.ILoginExceptionHandler;
 import fm.audiobox.interfaces.IParser;
@@ -12,6 +13,9 @@ public class DefaultConfiguration implements IConfiguration {
 
   private static final Logger log = LoggerFactory.getLogger(DefaultConfiguration.class);
   
+  private static final String APP_NAME_PLACEHOLDER = "${APP_NAME}";
+  private static final String VERSION_PLACEHOLDER = "${VERSION}";
+  
   public static final String APPLICATION_NAME = "Java libs";
   public static final int MAJOR = 1;
   public static final int MINOR = 0;
@@ -19,7 +23,18 @@ public class DefaultConfiguration implements IConfiguration {
   public static final String VERSION = MAJOR + "." + MINOR + "." + REVISION;
   public static final String PROTOCOL = "http";
   public static final String HOST = "audiobox.fm";
+  public static final int PORT = 80;
   public static final String PATH = "/api/";
+  
+  private static final String USER_AGENT = 
+        "AudioBox.fm; " +
+        System.getProperty("os.name") + " " +
+        System.getProperty("os.arch") + "; " + 
+        System.getProperty("user.language") + "; " +
+        System.getProperty("java.runtime.version") +  ") " +
+        System.getProperty("java.vm.name") + "/" + 
+        System.getProperty("java.vm.version") + " " + 
+        APP_NAME_PLACEHOLDER + "/" + VERSION_PLACEHOLDER;
   
   
   private RequestFormat requestFormat = RequestFormat.XML;
@@ -30,6 +45,7 @@ public class DefaultConfiguration implements IConfiguration {
   private ILoginExceptionHandler loginHandler;
   private String appName = APPLICATION_NAME;
   private String version = VERSION;
+  private Class<? extends IConnectionMethod> connMethodClass;
   
   
   
@@ -96,6 +112,14 @@ public class DefaultConfiguration implements IConfiguration {
   }
 
   @Override
+  public String getUserAgent(){
+    return USER_AGENT
+              .replace(APP_NAME_PLACEHOLDER, getApplicationName() )
+              .replace(VERSION_PLACEHOLDER, getVersion() );
+  }
+  
+  
+  @Override
   public String getProtocol() {
     return PROTOCOL;
   }
@@ -105,6 +129,11 @@ public class DefaultConfiguration implements IConfiguration {
     return HOST;
   }
 
+  public int getPort(){
+    return PORT;
+  }
+  
+  
   @Override
   public String getPath() {
     return PATH;
@@ -138,6 +167,18 @@ public class DefaultConfiguration implements IConfiguration {
   @Override
   public ILoginExceptionHandler getDefaultLoginExceptionHandler() {
     return this.loginHandler;
+  }
+
+
+  @Override
+  public void setHttpMethodType(Class<? extends IConnectionMethod> method) {
+    this.connMethodClass = method; 
+  }
+
+
+  @Override
+  public Class<? extends IConnectionMethod> getHttpMethodType() {
+    return this.connMethodClass;
   }
 
   

@@ -4,11 +4,19 @@ import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.methods.HttpRequestBase;
 
+import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 
-public class RequestMethod implements IConnectionMethod {
+public class DefaultRequestMethod implements IConnectionMethod {
 
+  
+  public DefaultRequestMethod(IConnector connector, HttpRequestBase method){
+    
+  }
+  
+  
   @Override
   public void send() {
     

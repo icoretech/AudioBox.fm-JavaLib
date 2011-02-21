@@ -57,7 +57,6 @@ public interface IConnector {
   
   public interface IConnectionMethod {
     
-    
     /**
      * Invokes server
      */
