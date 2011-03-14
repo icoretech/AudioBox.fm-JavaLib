@@ -36,6 +36,7 @@ import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Playlists.PlaylistTypes;
+import fm.audiobox.interfaces.IEntity;
 
 
 /**
@@ -109,7 +110,7 @@ import fm.audiobox.core.models.Playlists.PlaylistTypes;
  * @author Fabio Tunno
  * @version 0.0.2
  */
-public class User extends ModelItem {
+public class User extends ModelItem implements IEntity {
 
     /** The XML tag name for the User element */
     public static final String TAG_NAME = "user";

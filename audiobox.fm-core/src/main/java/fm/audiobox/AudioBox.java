@@ -26,7 +26,7 @@ package fm.audiobox;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.net.SocketTimeoutException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
@@ -43,14 +43,13 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.NameValuePair;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.params.ClientPNames;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.conn.params.ConnPerRouteBean;
 import org.apache.http.conn.routing.HttpRoute;
@@ -58,8 +57,6 @@ import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.entity.BasicHttpEntity;
-import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.HttpEntityWrapper;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -69,22 +66,21 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fm.audiobox.core.DefaultResponseHandler;
 import fm.audiobox.core.api.Model;
-import fm.audiobox.core.api.ModelItem;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.models.ModelFactory;
-import fm.audiobox.core.models.ModelFactory.ModelParser;
-import fm.audiobox.core.models.Track;
 import fm.audiobox.core.models.User;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IEntity;
+import fm.audiobox.interfaces.IResponseHandler;
 
 
 /**
@@ -165,27 +161,13 @@ public class AudioBox {
   private static Logger log = LoggerFactory.getLogger(AudioBox.class);
 
   
-  private static final String APP_NAME_PLACEHOLDER = "${APP_NAME}";
-  private static final String VERSION_PLACEHOLDER = "${VERSION}";
-  
-
   /** Prefix used to store each property into properties file */
-  private static final String PREFIX = "fm.audiobox.";
-
-
-  private static final String USER_AGENT = 
-    "AudioBox.fm; " +
-    System.getProperty("os.name") + " " +
-    System.getProperty("os.arch") + "; " + 
-    System.getProperty("user.language") + "; " +
-    System.getProperty("java.runtime.version") +  ") " +
-    System.getProperty("java.vm.name") + "/" + 
-    System.getProperty("java.vm.version") + " " + 
-    APP_NAME_PLACEHOLDER + "/" + VERSION_PLACEHOLDER;
+  public static final String PREFIX = "fm.audiobox.";
 
   private IConfiguration configuration;
-
-
+  private IConnector connector;
+  private User user;
+  
   /**
    * <p>Constructor for AudioBox.</p>
    * 
@@ -193,9 +175,12 @@ public class AudioBox {
    * 
    */
   public AudioBox(IConfiguration config) {
-    configuration = config;
+    log.info("New AudioBox is going to be instanciated");
+    this.configuration = config;
+    this.connector = new Connector();
+    config.getFactory().setConnector( getConnector() );
+    log.debug("New AudioBox instanciated correctly");
   }
-
 
 
   /**
@@ -203,8 +188,8 @@ public class AudioBox {
    *
    * @return the main {@link Connector} object.
    */
-  protected Connector getMainConnector(){
-    return this.mUtils.getConnector();
+  protected IConnector getConnector(){
+    return this.connector;
   }
 
   /**
@@ -213,7 +198,7 @@ public class AudioBox {
    * @return the logged in {@link User} instance
    */
   public User getUser(){
-    return this.mUtils.getUser();
+    return this.user;
   }
 
 
@@ -235,59 +220,24 @@ public class AudioBox {
    * @throws ServiceException if any connection problem occurs.
    */
   public User login(String username, String password) throws LoginException, ServiceException, ModelException {
+    log.info("Executing login for user: " + username);
 
-    log.info("Starting AudioBox: " + mUserAgent);
-
-    User user = (User) this.mUtils.getModelInstance( ModelFactory.USER_KEY );
+    User user = (User) this.configuration.getFactory().getEntity(User.TAG_NAME, this.getConfiguration() );
     user.setUsername(username);
 
-    this.mUtils.setUser(user);
-
-    this.getMainConnector().setCredential( new UsernamePasswordCredentials(username, password) );
-
-    this.getMainConnector().get(user, user, null);
+    this.getConnector().get(user, null, null);
 
     return user;
   }
 
-
-  public class Utils implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
-    private User mUser;
-    private Connector mConnector;
-
-    private void setUser(User user){
-      this.mUser = user;
-    }
-
-    public User getUser(){
-      return mUser;
-    }
-
-    public ModelParser getModelParser(Model model){
-      return getModelFactory().getModelParser(model, this);
-    }
-
-    public Model getModelInstance(String key) throws ModelException {
-      Model model = mModelFactory.getModelInstance(key);
-      model.setUtils( this );
-      return model;
-    }
-
-    public Connector getConnector(){
-      if ( mConnector == null ){
-        this.mConnector = new Connector();
-        this.mConnector.setTimeout( 180 * 1000 );
-      }
-      return this.mConnector;
-    }
-
+  
+  public IConfiguration getConfiguration(){
+    return this.configuration;
   }
-
-
-
+  
+  
+  
+  
   /**
    * Connector is the AudioBox http request wrapper.
    * 
@@ -304,10 +254,11 @@ public class AudioBox {
 
     private static final long serialVersionUID = -1947929692214926338L;
 
-    private static final String NAMESPACE_PARAMETER = "${namespace}";
-    private static final String TOKEN_PARAMETER = "${token}";
-    private static final String ACTION_PARAMETER = "${action}";
     private static final String URI_SEPARATOR = "/";
+    private static final String NAMESPACE_PARAMETER = URI_SEPARATOR + "${namespace}";
+    private static final String TOKEN_PARAMETER = URI_SEPARATOR + "${token}";
+    private static final String ACTION_PARAMETER = URI_SEPARATOR + "${action}";
+    
 
     /** Get informations from configuration file */
     private final String PROTOCOL = configuration.getProtocol();
@@ -315,7 +266,7 @@ public class AudioBox {
     private final String PORT = String.valueOf( configuration.getPort() ); 
     private final String PATH = configuration.getPath();;
 
-    private final String API_PATH = PROTOCOL + "://" + HOST + ":" + PORT + "/" + PATH + "/" + NAMESPACE_PARAMETER + "/" + TOKEN_PARAMETER + "/" + ACTION_PARAMETER;
+    private final String API_PATH = PROTOCOL + "://" + HOST + ":" + PORT + "/" + PATH + NAMESPACE_PARAMETER + TOKEN_PARAMETER + ACTION_PARAMETER;
     private HttpRoute mAudioBoxRoute;
     private ThreadSafeClientConnManager mCm;
     private DefaultHttpClient mClient;
@@ -326,6 +277,8 @@ public class AudioBox {
 
     /** Default constructor builds http connector */
     private Connector() {
+      log.info("New Connector is going to be instanciated");
+      log.info("Remote host will be: " + API_PATH );
       buildClient();
     }
 
@@ -342,16 +295,18 @@ public class AudioBox {
       schemeRegistry.register( new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
 
       HttpParams params = new BasicHttpParams();
-      //params.setParameter(ClientPNames.HANDLE_REDIRECTS, false);
+
       HttpConnectionParams.setConnectionTimeout(params, 30 * 1000);
       HttpConnectionParams.setSoTimeout(params, 30 * 1000);
 
       this.mCm = new ThreadSafeClientConnManager(params, schemeRegistry);
       this.mClient = new DefaultHttpClient( this.mCm, params );
+      
+      log.info("New ThreadSafeClientConnManager and HttpClient instanciated");
 
       // Increase max total connection to 200
       ConnManagerParams.setMaxTotalConnections(params, 200);
-
+      
       // Increase default max connection per route to 20
       ConnPerRouteBean connPerRoute = new ConnPerRouteBean(20);
 
@@ -362,15 +317,20 @@ public class AudioBox {
       this.mClient.addRequestInterceptor(new HttpRequestInterceptor() {
 
         public void process( final HttpRequest request,  final HttpContext context) throws HttpException, IOException {
+          
+          log.debug("New request detected");
+          
           if (!request.containsHeader("Accept-Encoding")) {
             request.addHeader("Accept-Encoding", "gzip");
           }
           
-          String userAgent = USER_AGENT.replace( APP_NAME_PLACEHOLDER , configuration.getApplicationName() ).replace(VERSION_PLACEHOLDER, configuration.getVersion() );
+          log.debug("User-Agent: " + getConfiguration().getUserAgent() );
           
-          request.addHeader("User-Agent",  userAgent);
+          request.addHeader("User-Agent",  getConfiguration().getUserAgent() );
+          
           Header hostHeader = request.getFirstHeader("HOST");
           if ( hostHeader.getValue().equals( HOST ) )
+            log.debug("Request to AudioBox, add user credentials");
             request.addHeader( mScheme.authenticate(mCredentials,  request) );
         }
 
@@ -379,6 +339,7 @@ public class AudioBox {
       this.mClient.addResponseInterceptor(new HttpResponseInterceptor() {
 
         public void process( final HttpResponse response, final HttpContext context) throws HttpException, IOException {
+          log.debug("New response detected");
           HttpEntity entity = response.getEntity();
           if (entity != null) {
             Header ceheader = entity.getContentEncoding();
@@ -386,6 +347,7 @@ public class AudioBox {
               HeaderElement[] codecs = ceheader.getElements();
               for (int i = 0; i < codecs.length; i++) {
                 if (codecs[i].getName().equalsIgnoreCase("gzip")) {
+                  log.debug("Response seems to be gzipped");
                   response.setEntity( new HttpEntityWrapper(entity){
                     @Override
                     public InputStream getContent() throws IOException, IllegalStateException {
@@ -406,27 +368,19 @@ public class AudioBox {
         }
       });
 
+      log.info("HttpClient ready");
+      
     }
 
 
     /**
      * This method is used to close all connections and reinstantiate the HttpClient.
      */
-    public void abortAll() {
+    public void abort() {
+      log.warn("All older requests will be aborted");
       this.mCm.shutdown();
       buildClient();
     }
-
-
-    /**
-     * Set up HTTP Basic Authentication credentials for HTTP authenticated requests.
-     * 
-     * @param credential the basic scheme credentials object to use.
-     */
-    public void setCredential(UsernamePasswordCredentials credential) {
-      this.mCredentials = credential;
-    }
-
 
     /**
      * Use this method to configure the timeout limit for reqests made against AudioBox.fm.
@@ -434,6 +388,7 @@ public class AudioBox {
      * @param timeout the milliseconds of the timeout limit
      */
     public void setTimeout(long timeout) {
+      log.info("Setting timeout parameter to: " + timeout);
       mClient.getParams().setParameter(ConnManagerParams.TIMEOUT, timeout);
     }
 
@@ -459,108 +414,95 @@ public class AudioBox {
      * 
      * @return the HttpRequestBase 
      */
-    public HttpRequestBase createConnectionMethod(String httpVerb, Model source, String action, HttpEntity entity) {
+    public HttpRequestBase createConnectionMethod(String httpVerb, IEntity destEntity, String action, List<NameValuePair> params) {
 
-      httpVerb = httpVerb == null ? HttpGet.METHOD_NAME : httpVerb;
-
-      String
-      namespace = source.getEndPoint(),
-      token = ( source instanceof ModelItem ) ? ((ModelItem)source).getToken() : null,
-          url = buildRequestUrl(namespace, token, action, httpVerb);
+      if ( httpVerb == null ) {
+        httpVerb = IConnectionMethod.METHOD_GET;
+      }
+      
+      String url = this.buildRequestUrl(destEntity.getEndpoint(), destEntity.getToken(), action, httpVerb, params);
 
       HttpRequestBase method = null;
 
-      if ( HttpPost.METHOD_NAME.equals( httpVerb ) ) {
+      if ( IConnectionMethod.METHOD_POST.equals( httpVerb ) ) {
+        log.debug("Building HttpMethod POST");
         method = new HttpPost(url);
-      } else if ( HttpPut.METHOD_NAME.equals( httpVerb ) ) {
+      } else if ( IConnectionMethod.METHOD_PUT.equals( httpVerb ) ) {
+        log.debug("Building HttpMethod PUT");
         method = new HttpPut(url);
-      } else if ( HttpDelete.METHOD_NAME.equals( httpVerb ) ) {
+      } else if ( IConnectionMethod.METHOD_DELETE.equals( httpVerb ) ) {
+        log.debug("Building HttpMethod DELETE");
         method = new HttpDelete(url);
       } else {
-        // TODO: set the entity as querystring
+        log.debug("Building HttpMethod GET");
         method = new HttpGet(url);
       }
 
-      if (method instanceof HttpEntityEnclosingRequestBase && entity != null ) {
-        ((HttpEntityEnclosingRequestBase) method).setEntity(entity);
-      }
-
-      // Default: follow redirects!
-      method.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, true);
-
-
-      //            BasicNameValuePair bnvp = new BasicNameValuePair("a", "b");
-      //            UrlEncodedFormEntity uefe = new UrlEncodedFormEntity(null)
-
-      log.debug("[ " + httpVerb + " ] Next request will be: " + url);
+      log.info( "[ " + httpVerb + " ] Next request will be: " + url );
 
       return method;
     }
 
 
 
-    public String[] get(Model source, Model dest, String action) throws LoginException, ServiceException{
-      // TODO: get parameters as entity
-      HttpRequestBase method = this.createConnectionMethod( HttpGet.METHOD_NAME, source, action, null);
-      return this.request(method, dest);
-    }
 
-    public String[] post(Model source, Model dest, String action, HttpEntity entity) throws LoginException, ServiceException{
-      HttpRequestBase method = this.createConnectionMethod( HttpPost.METHOD_NAME, source, action, entity);
-      return this.request(method, dest);
-    }
-
-    public String[] put(Model source, Model dest, String action, HttpEntity entity) throws LoginException, ServiceException{
-      HttpRequestBase method = this.createConnectionMethod( HttpPut.METHOD_NAME, source, action, entity);
-      return this.request(method, dest);
-    }
-
-    public String[] delete(Model source, Model dest, String action) throws LoginException, ServiceException{
-      HttpRequestBase method = this.createConnectionMethod( HttpDelete.METHOD_NAME, source, action, null);
-      return this.request(method, dest);
-    }
-
-
-
-
-    /**
-     * This method is used to performs requests to AudioBox.fm service APIs.<br/>
-     * Once AudioBox.fm responds the response is parsed through the target {@link Model}.
-     * 
-     * <p>
-     * 
-     * If a stream url is requested (tipically from a {@link Track} object), the location for audio streaming is returned.
-     * 
-     * <p>
-     * 
-     * Any other case returns a string representing the status code.
-     * 
-     * @param method the HTTP method to use for the request
-     * @param target the model to use to parse the response
-     * 
-     * @return String array containing the response code at position 0 and the response body at position 1
-     * 
-     * @throws LoginException if user has not yet logged in
-     * @throws ServiceException if the connection to AudioBox.fm throws a {@link SocketTimeoutException} or {@link IOException} occurs.
-     */
-    public String[] request(HttpRequestBase method, Model target) throws LoginException, ServiceException {
-
+    private IConnectionMethod getConnectionMethod(){
+      
+      Class<? extends IConnectionMethod> klass = getConfiguration().getHttpMethodType();
+      
+      if ( log.isDebugEnabled() )
+        log.debug("Instanciating IConnectionMethod by class: " + klass.getName() );
+      
       try {
-        // TODO: check this code
-        // this.mClient.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, followRedirect);
-        return mClient.execute(method, target, new BasicHttpContext());
-
-      } catch( SocketTimeoutException e ) {
-        throw new ServiceException( "Service does not respond: " + e.getMessage(), ServiceException.TIMEOUT_ERROR );
-
-      } catch( ServiceException e ) {
-        // Bypass IOException 
-        throw e;
-
-      } catch( IOException e ) {
-        throw new ServiceException( "IO exception: " + e.getMessage(), ServiceException.SOCKET_ERROR );
+        return klass.newInstance();
+      } catch (InstantiationException e) {
+        log.error("An error occurred while instanciating IConnectionMethod class", e);
+      } catch (IllegalAccessException e) {
+        log.error("An error occurred while accessing to IConnectionMethod class", e);
       }
+      return null;
     }
+    
+
+
+//
+//    /**
+//     * This method is used to performs requests to AudioBox.fm service APIs.<br/>
+//     * Once AudioBox.fm responds the response is parsed through the target {@link Model}.
+//     * 
+//     * <p>
+//     * 
+//     * If a stream url is requested (tipically from a {@link Track} object), the location for audio streaming is returned.
+//     * 
+//     * <p>
+//     * 
+//     * Any other case returns a string representing the status code.
+//     * 
+//     * @param method the HTTP method to use for the request
+//     * @param target the model to use to parse the response
+//     * 
+//     * @return String array containing the response code at position 0 and the response body at position 1
+//     * 
+//     * @throws LoginException if user has not yet logged in
+//     * @throws ServiceException if the connection to AudioBox.fm throws a {@link SocketTimeoutException} or {@link IOException} occurs.
+//     */
+//    public String[] request(HttpRequestBase method, Model target) throws LoginException, ServiceException {
+//
+//      try {
+//        // this.mClient.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, followRedirect);
+//        return mClient.execute(method, target, new BasicHttpContext());
+//
+//      } catch( SocketTimeoutException e ) {
+//        throw new ServiceException( "Service does not respond: " + e.getMessage(), ServiceException.TIMEOUT_ERROR );
+//
+//      } catch( ServiceException e ) {
+//        // Bypass IOException 
+//        throw e;
+//
+//      } catch( IOException e ) {
+//        throw new ServiceException( "IO exception: " + e.getMessage(), ServiceException.SOCKET_ERROR );
+//      }
+//    }
 
 
 
@@ -579,35 +521,53 @@ public class AudioBox {
      * 
      * @return the URL string 
      */
-    private String buildRequestUrl(String path, String token, String action, String httpVerb) {
+    private String buildRequestUrl(String namespace, String token, String action, String httpVerb, List<NameValuePair> params) {
+      
+      log.debug("Building request url");
+      
+      if ( params == null ){
+        params = new ArrayList<NameValuePair>();
+      }
+      if ( httpVerb == null ) {
+        httpVerb = IConnectionMethod.METHOD_GET;
+      }
+      
+      namespace = ( ( namespace == null ) ? "" : URI_SEPARATOR.concat(namespace) ).trim();
       token = ( ( token == null ) ? "" : URI_SEPARATOR.concat(token) ).trim();
       action = ( ( action == null ) ? "" : URI_SEPARATOR.concat(action) ).trim();
 
       // Replace placeholders with right values
-      String url = mApiPath.replace( PATH_PARAMETER , path ).replace( TOKEN_PARAMETER , token ).replace( ACTION_PARAMETER , action ); 
+      String url = API_PATH.replace( NAMESPACE_PARAMETER, namespace ).replace( TOKEN_PARAMETER , token ).replace( ACTION_PARAMETER , action ); 
 
-      if ( HttpGet.METHOD_NAME.equals(httpVerb) )
-        url += "." + mRequestFormat.toString().toLowerCase();
+      // add extension to request path
+      url += "." + getConfiguration().getRequestFormat().toString().toLowerCase();
 
-      if ( shortlyResponse ){
-        url += "?short=true";	// default parameter name and value
+      if ( getConfiguration().isUsingShortResponse() ){
+        params.add( new BasicNameValuePair("short", "true") );
+      }
+      
+      if ( httpVerb.equals( IConnectionMethod.METHOD_GET ) ){
+        url += "?" + URLEncodedUtils.format( params , HTTP.UTF_8 );
       }
 
+      log.debug("Request url built: " + url);
+      
       return url;
     }
 
 
     @Override
     public IConnectionMethod get(IEntity destEntity, String action, List<NameValuePair> params) {
+      IConnectionMethod method = getConnectionMethod();
       
-      return null;
+      if ( method != null ) {
+        HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_GET, destEntity, action, params);
+        method.init(destEntity, originalMethod, this);
+      }
+      
+      return method;
     }
 
-
-    @Override
-    public IConnectionMethod get(IEntity destEntity, String action) {
-      return null;
-    }
 
 
     @Override
@@ -626,12 +586,22 @@ public class AudioBox {
     public IConnectionMethod delete(IEntity destEntity, String action) {
       return null;
     }
-    
-    
-    private class ConnectionMethod implements IConnectionMethod {
+
+
+    public String[] execute(final IConnectionMethod method, IResponseHandler responseHandler) throws ServiceException, LoginException {
+      try {
+        
+        return mClient.execute( method.getHttpMethod(), new DefaultResponseHandler(getConfiguration(), method.getEntity(), responseHandler), new BasicHttpContext() );
+        
+      } catch (ClientProtocolException e) {
+        log.error("ClientProtocolException thrown while executing request method", e);
+        throw new ServiceException(e);
+      } catch (IOException e) {
+        log.error("IOException thrown while executing request method", e);
+        throw new ServiceException(e);
+      }
       
     }
-    
     
   }
 

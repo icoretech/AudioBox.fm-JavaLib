@@ -1,21 +1,34 @@
 package fm.audiobox.configurations;
 
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.ResponseHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fm.audiobox.core.exceptions.LoginException;
+import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
+import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IFactory;
 import fm.audiobox.interfaces.ILoginExceptionHandler;
 import fm.audiobox.interfaces.IParser;
+import fm.audiobox.interfaces.IResponseHandler;
 
 public class DefaultConfiguration implements IConfiguration {
 
   private static final Logger log = LoggerFactory.getLogger(DefaultConfiguration.class);
-  
+
   private static final String APP_NAME_PLACEHOLDER = "${APP_NAME}";
   private static final String VERSION_PLACEHOLDER = "${VERSION}";
-  
+
   public static final String APPLICATION_NAME = "Java libs";
   public static final int MAJOR = 1;
   public static final int MINOR = 0;
@@ -25,18 +38,18 @@ public class DefaultConfiguration implements IConfiguration {
   public static final String HOST = "audiobox.fm";
   public static final int PORT = 80;
   public static final String PATH = "/api/";
-  
+
   private static final String USER_AGENT = 
-        "AudioBox.fm; " +
-        System.getProperty("os.name") + " " +
-        System.getProperty("os.arch") + "; " + 
-        System.getProperty("user.language") + "; " +
-        System.getProperty("java.runtime.version") +  ") " +
-        System.getProperty("java.vm.name") + "/" + 
-        System.getProperty("java.vm.version") + " " + 
-        APP_NAME_PLACEHOLDER + "/" + VERSION_PLACEHOLDER;
-  
-  
+      "AudioBox.fm; " +
+      System.getProperty("os.name") + " " +
+      System.getProperty("os.arch") + "; " + 
+      System.getProperty("user.language") + "; " +
+      System.getProperty("java.runtime.version") +  ") " +
+      System.getProperty("java.vm.name") + "/" + 
+      System.getProperty("java.vm.version") + " " + 
+      APP_NAME_PLACEHOLDER + "/" + VERSION_PLACEHOLDER;
+
+
   private RequestFormat requestFormat = RequestFormat.XML;
   private boolean useCache = false;
   private boolean shortResponse = false;
@@ -46,9 +59,9 @@ public class DefaultConfiguration implements IConfiguration {
   private String appName = APPLICATION_NAME;
   private String version = VERSION;
   private Class<? extends IConnectionMethod> connMethodClass;
-  
-  
-  
+
+
+
   public DefaultConfiguration(String appName, int major, int minor, int revision, RequestFormat requestFormat){
     this.setApplicationName(appName);
     this.setVersion(major, minor, revision);
@@ -58,17 +71,17 @@ public class DefaultConfiguration implements IConfiguration {
     log.debug("Request format: " + requestFormat.toString() );
     log.info("Configuration loaded");
   }
-  
-  
+
+
   public DefaultConfiguration(String appName, int major, int minor, int revision){
     this(appName, major, minor, revision, RequestFormat.XML);
   }
-  
+
   public DefaultConfiguration(String appName){
     this(appName, MAJOR, MINOR, REVISION);
   }
-  
-  
+
+
   @Override
   public void setRequestFormat(RequestFormat requestFormat) {
     this.requestFormat = requestFormat;
@@ -93,7 +106,7 @@ public class DefaultConfiguration implements IConfiguration {
   public void setApplicationName(String appName) {
     this.appName = appName;
   }
-  
+
   @Override
   public String getApplicationName() {
     return this.appName;
@@ -104,8 +117,8 @@ public class DefaultConfiguration implements IConfiguration {
   public void setVersion(int major, int minor, int revision) {
     this.version = major + "." + minor + "." + revision;
   }
-  
-  
+
+
   @Override
   public String getVersion() {
     return this.version;
@@ -114,11 +127,11 @@ public class DefaultConfiguration implements IConfiguration {
   @Override
   public String getUserAgent(){
     return USER_AGENT
-              .replace(APP_NAME_PLACEHOLDER, getApplicationName() )
-              .replace(VERSION_PLACEHOLDER, getVersion() );
+      .replace(APP_NAME_PLACEHOLDER, getApplicationName() )
+      .replace(VERSION_PLACEHOLDER, getVersion() );
   }
-  
-  
+
+
   @Override
   public String getProtocol() {
     return PROTOCOL;
@@ -132,8 +145,8 @@ public class DefaultConfiguration implements IConfiguration {
   public int getPort(){
     return PORT;
   }
-  
-  
+
+
   @Override
   public String getPath() {
     return PATH;
@@ -181,6 +194,4 @@ public class DefaultConfiguration implements IConfiguration {
     return this.connMethodClass;
   }
 
-  
-  
 }

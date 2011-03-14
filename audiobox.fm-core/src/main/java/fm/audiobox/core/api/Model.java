@@ -175,7 +175,7 @@ public abstract class Model extends Observable implements ResponseHandler<String
         case HttpStatus.SC_UNAUTHORIZED:
         case HttpStatus.SC_FORBIDDEN:
         	{String reason = this._parsePlainResponse(response.getEntity().getContent() );
-        	throw new LoginException( reason , responseCode );}
+        	throw new LoginException( responseCode, reason );}
         	
         // 50x
         default:
@@ -191,7 +191,7 @@ public abstract class Model extends Observable implements ResponseHandler<String
         	    status = error.getStatus();
         	} catch(IOException e) { message = e.getMessage(); }
         	
-        	throw new ServiceException( message, status );
+        	throw new ServiceException( status, message );
         }
 
         HttpEntity responseEntity = response.getEntity(); 

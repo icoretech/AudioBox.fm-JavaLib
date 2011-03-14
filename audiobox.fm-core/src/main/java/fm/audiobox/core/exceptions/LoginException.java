@@ -34,4 +34,11 @@ public class LoginException extends AudioBoxException {
   
   private static final long serialVersionUID = 1L;
 
+  
+  public LoginException(int errorCode, String message){
+    super(message);
+    this.errorCode = errorCode;
+  }
+  
+  
 }

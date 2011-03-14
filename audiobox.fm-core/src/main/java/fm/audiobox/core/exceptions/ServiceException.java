@@ -22,6 +22,11 @@
 
 package fm.audiobox.core.exceptions;
 
+import java.io.IOException;
+
+import org.apache.http.client.ClientProtocolException;
+
+
 
 /**
  * ServiceException is thrown whenever a connection exception occurs while
@@ -47,4 +52,34 @@ public class ServiceException extends AudioBoxException {
 
     private static final long serialVersionUID = 1L;
 
+    
+    public ServiceException() {
+      super();
+    }
+
+    public ServiceException(String message, Throwable cause) {
+      super(message, cause);
+    }
+    
+    public ServiceException(int errorCode, String message){
+      super(message);
+      this.errorCode = errorCode;
+    }
+    
+
+    public ServiceException(String message) {
+      super(message);
+    }
+
+    public ServiceException(Throwable cause) {
+      super(cause);
+      
+      if ( cause instanceof ClientProtocolException ){
+        this.errorCode = CLIENT_ERROR;
+      } else if ( cause instanceof IOException ){
+        this.errorCode = SOCKET_ERROR;
+      }
+      
+    }
+    
 }

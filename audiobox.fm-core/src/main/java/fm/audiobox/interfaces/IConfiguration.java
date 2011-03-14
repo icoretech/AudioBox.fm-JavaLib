@@ -1,5 +1,8 @@
 package fm.audiobox.interfaces;
 
+import org.apache.http.client.ResponseHandler;
+
+import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 
 public interface IConfiguration {
@@ -24,20 +27,17 @@ public interface IConfiguration {
    */
   public RequestFormat getRequestFormat();
   
-  
   /**
    * Retruns current {@link IFactory} associated with this configuration
    * @return {@link IFactoruy}
    */
   public IFactory getFactory();
   
-  
   /**
    * Returns {@link IParser} associated with this configuration
    * @return {@link IParser}
    */
   public IParser getParser();
-  
 
   /**
    * Sets the application name sent to server as "User-Agent" request header
@@ -46,7 +46,7 @@ public interface IConfiguration {
   public void setApplicationName(String appName);
 
   /**
-   * Returns the application sent to server
+   * Returns the application name sent to server
    * @return
    */
   public String getApplicationName();
@@ -63,13 +63,16 @@ public interface IConfiguration {
   public void setVersion(int major, int minor, int revision);
   
   /**
-   * Returns the version sent to server
+   * Returns the application version sent to server as "User-Agent"
    * @return
    */
   public String getVersion();
   
 
-  
+  /**
+   * Returns the "User-Agent" sent to server
+   * @return
+   */
   public String getUserAgent();
   
   
@@ -100,7 +103,7 @@ public interface IConfiguration {
 
   
   /**
-   * Passing true AudioBox will try to use FileSystem to store information like a cache
+   * Passing true AudioBox will try to use FileSystem to store information as cache
    * @param useChache
    */
   public void setUseCache(boolean useCache);
@@ -114,7 +117,7 @@ public interface IConfiguration {
   
   
   /**
-   * Enables or disables using {@code short} request parameter
+   * Enables or disables {@code short} request parameter
    * @param shortResponse
    */
   public void setShortResponse(boolean shortResponse);
