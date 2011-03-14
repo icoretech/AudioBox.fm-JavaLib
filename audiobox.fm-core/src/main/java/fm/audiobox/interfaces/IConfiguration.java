@@ -1,7 +1,5 @@
 package fm.audiobox.interfaces;
 
-import org.apache.http.client.ResponseHandler;
-
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 
