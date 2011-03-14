@@ -1,26 +1,13 @@
 package fm.audiobox.configurations;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.ResponseHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fm.audiobox.core.exceptions.LoginException;
-import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
-import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IFactory;
 import fm.audiobox.interfaces.ILoginExceptionHandler;
 import fm.audiobox.interfaces.IParser;
-import fm.audiobox.interfaces.IResponseHandler;
 
 public class DefaultConfiguration implements IConfiguration {
 
