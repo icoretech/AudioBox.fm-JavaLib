@@ -236,8 +236,6 @@ public class AudioBox {
   }
   
   
-  
-  
   /**
    * Connector is the AudioBox http request wrapper.
    * 
@@ -465,45 +463,6 @@ public class AudioBox {
     
 
 
-//
-//    /**
-//     * This method is used to performs requests to AudioBox.fm service APIs.<br/>
-//     * Once AudioBox.fm responds the response is parsed through the target {@link Model}.
-//     * 
-//     * <p>
-//     * 
-//     * If a stream url is requested (tipically from a {@link Track} object), the location for audio streaming is returned.
-//     * 
-//     * <p>
-//     * 
-//     * Any other case returns a string representing the status code.
-//     * 
-//     * @param method the HTTP method to use for the request
-//     * @param target the model to use to parse the response
-//     * 
-//     * @return String array containing the response code at position 0 and the response body at position 1
-//     * 
-//     * @throws LoginException if user has not yet logged in
-//     * @throws ServiceException if the connection to AudioBox.fm throws a {@link SocketTimeoutException} or {@link IOException} occurs.
-//     */
-//    public String[] request(HttpRequestBase method, Model target) throws LoginException, ServiceException {
-//
-//      try {
-//        // this.mClient.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, followRedirect);
-//        return mClient.execute(method, target, new BasicHttpContext());
-//
-//      } catch( SocketTimeoutException e ) {
-//        throw new ServiceException( "Service does not respond: " + e.getMessage(), ServiceException.TIMEOUT_ERROR );
-//
-//      } catch( ServiceException e ) {
-//        // Bypass IOException 
-//        throw e;
-//
-//      } catch( IOException e ) {
-//        throw new ServiceException( "IO exception: " + e.getMessage(), ServiceException.SOCKET_ERROR );
-//      }
-//    }
-
 
 
     /* --------------- */
@@ -572,19 +531,40 @@ public class AudioBox {
 
     @Override
     public IConnectionMethod put(IEntity destEntity, String action) {
-      return null;
+      IConnectionMethod method = getConnectionMethod();
+      
+      if ( method != null ) {
+        HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_PUT, destEntity, action, null);
+        method.init(destEntity, originalMethod, this);
+      }
+      
+      return method;
     }
 
 
     @Override
     public IConnectionMethod post(IEntity destEntity, String action) {
-      return null;
+      IConnectionMethod method = getConnectionMethod();
+      
+      if ( method != null ) {
+        HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_POST, destEntity, action, null);
+        method.init(destEntity, originalMethod, this);
+      }
+      
+      return method;
     }
 
 
     @Override
     public IConnectionMethod delete(IEntity destEntity, String action) {
-      return null;
+      IConnectionMethod method = getConnectionMethod();
+      
+      if ( method != null ) {
+        HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_DELETE, destEntity, action, null);
+        method.init(destEntity, originalMethod, this);
+      }
+      
+      return method;
     }
 
 
