@@ -6,18 +6,20 @@ public interface IFactory {
 
   
   /**
-   * Returns the correct entity associated with name
-   * @param name
-   * @return
+   * Returns the right entity associated with its default class
+   * 
+   * @param klass default {@link Class}
+   * @param configuration the {@link IConfiguration} to pass to {@link IEntity} to be instantiated
+   * @return the right {@link IEntity}
    */
-  public IEntity getEntity(String tagName, IConfiguration configuration);
+  public IEntity getEntity(Class<? extends IEntity> klass, IConfiguration configuration);
   
   /**
-   * Sets the correct entity assicated with name
-   * @param name
-   * @param entity
+   * Sets the right entity associated with its default class
+   * @param klass default {@link Class}
+   * @param entity new {@link Class} to be instantiated
    */
-  public void setEntity(String tagName, Class<? extends IEntity> entity);
+  public void setEntity(Class<? extends IEntity> klass, Class<? extends IEntity> entity);
   
   /**
    * Sets the global {@link IConnector} associated with this {@link AudioBox} instance

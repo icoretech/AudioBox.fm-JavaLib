@@ -70,7 +70,7 @@ import fm.audiobox.core.models.User;
  */
 public abstract class Model extends Observable implements ResponseHandler<String[]> {
 
-    /** Constant that defines bytes dimention to be read from responses {@link InputStream} */
+    /** Constant that defines bytes dimension to be read from responses {@link InputStream} */
     protected static final int CHUNK = 4096;
 
     private static Log log = LogFactory.getLog(Model.class);

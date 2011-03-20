@@ -102,18 +102,20 @@ public interface IConnector {
     /**
      * Invokes server using
      * 
+     * @return a String array containing Response status and response body
      * @throws ServiceException
      * @throws LoginException
      */
-    public void send() throws ServiceException, LoginException;
+    public String[] send() throws ServiceException, LoginException;
     
     /**
      * Invokes server passing parameters.
      * (Used with all methods exclusing GET)
      * 
      * @param params {@link List} of {@link NameValuePair} used as request parameters
+     * @return a String array containing Response status and response body
      */
-    public void send(List<NameValuePair> params) throws ServiceException, LoginException;
+    public String[] send(List<NameValuePair> params) throws ServiceException, LoginException;
     
     /**
      * Invokes server passing an entire {@link HttpEntity}
@@ -121,18 +123,20 @@ public interface IConnector {
      * 
      * @param destEntity
      * @param params the {@link HttpEntity} used as request parameter
+     * @return a String array containing Response status and response body
      */
-    public void send(HttpEntity params) throws ServiceException, LoginException;
+    public String[] send(HttpEntity params) throws ServiceException, LoginException;
     
     /**
      * Invokes server passing a {@link HttpEntity} as request parameter
      * 
      * @param params a {@link HttpEntity} used as request parameter
      * @param responseHandler a {@link IResponseHandler} used as custom response parser
+     * @return a String array containing Response status and response body
      * @throws ServiceException
      * @throws LoginException
      */
-    public void send(HttpEntity params, IResponseHandler responseHandler) throws ServiceException, LoginException;
+    public String[] send(HttpEntity params, IResponseHandler responseHandler) throws ServiceException, LoginException;
     
     
     /**

@@ -36,7 +36,7 @@ import fm.audiobox.core.api.ModelsCollection;
  * @author Fabio Tunno
  * @version 0.0.1
  */
-public class Playlists extends ModelsCollection {
+public class Playlists extends AbstractEntity {
 
     /** Tracks API end point */
     public static final String END_POINT = "playlists";

@@ -15,7 +15,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import fm.audiobox.AudioBox.Utils;
 import fm.audiobox.core.api.Model;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.observers.Listener;
@@ -29,7 +28,7 @@ public class ModelFactory {
     public static final String DEFAULT_MODELS_PACKAGE = ModelFactory.class.getPackage().getName();
 
     /** Constant <code>USER_KEY="User.TAG_NAME"</code> */
-    public static final String USER_KEY      = User.TAG_NAME;
+//    public static final String USER_KEY      = User.TAG_NAME;
 
     /** Constant <code>PROFILE_KEY="Profile.TAG_NAME"</code> */
     public static final String PROFILE_KEY   = Profile.TAG_NAME;
@@ -99,7 +98,7 @@ public class ModelFactory {
 	
 	public ModelFactory() {
 		mModelsMap = new HashMap<String , Class<? extends Model>>();
-		mModelsMap.put( USER_KEY,      User.class ); 
+//		mModelsMap.put( USER_KEY,      User.class ); 
 		mModelsMap.put( PROFILE_KEY ,  Profile.class );
 		mModelsMap.put( PLAYLISTS_KEY, Playlists.class ); 
         mModelsMap.put( PLAYLIST_KEY,  Playlist.class );
@@ -196,8 +195,8 @@ public class ModelFactory {
     }
     
     
-    public ModelParser getModelParser(Model model, Utils utils){
-    	return new ModelParser(model,utils);
+    public ModelParser getModelParser(Model model){
+    	return new ModelParser(model);
     }    
 
     public class ModelParser extends DefaultHandler {
@@ -206,14 +205,12 @@ public class ModelFactory {
         private static final String SET_PREFIX = "set";
     	
     	private Model model;
-    	private Utils utils;
     	private Stack<Object> mStack;
     	private boolean mSkipField;
     	private StringBuffer mStringBuffer = new StringBuffer();
     	
-    	private ModelParser(Model model, Utils utils){
+    	private ModelParser(Model model){
     		this.model = model;
-    		this.utils = utils;
     	}
     	
     	
@@ -280,14 +277,14 @@ public class ModelFactory {
                     if ( ! argType.isPrimitive() && ! argType.equals(String.class) ){
 
                         Model subClass = null;
-                        try {
-                            subClass = this.utils.getModelInstance( sI.lowerCamelCase( localName, '_') );
-                            method.invoke(peek, subClass );
-
-                            this.mStack.push( subClass );
-                        } catch (ModelException e) {
-                            e.printStackTrace();
-                        }
+//                        try {
+////                            subClass = this.utils.getModelInstance( sI.lowerCamelCase( localName, '_') );
+//                            method.invoke(peek, subClass );
+//
+//                            this.mStack.push( subClass );
+//                        } catch (ModelException e) {
+//                            e.printStackTrace();
+//                        }
 
                     } else {
                         this.mStack.push( method );
@@ -298,19 +295,20 @@ public class ModelFactory {
                 log.error("Illegal Argument Exception @" + localName + ": " + e.getMessage());
                 e.printStackTrace();
 
-            } catch (IllegalAccessException e) {
-                log.error("Illegal AccessException @" + localName + ": " + e.getMessage());
-                e.printStackTrace();
-
-            } catch (SecurityException e) {
-                log.error("Security Exception @" + localName + ": " + e.getMessage());
-                e.printStackTrace();
-
-            } catch (InvocationTargetException e) {
-                log.error("Invocation Target Exception @" + localName + ": " + e.getMessage());
-                e.printStackTrace();
-
             } 
+//            catch (IllegalAccessException e) {
+//                log.error("Illegal AccessException @" + localName + ": " + e.getMessage());
+//                e.printStackTrace();
+//
+//            } catch (SecurityException e) {
+//                log.error("Security Exception @" + localName + ": " + e.getMessage());
+//                e.printStackTrace();
+//
+//            } catch (InvocationTargetException e) {
+//                log.error("Invocation Target Exception @" + localName + ": " + e.getMessage());
+//                e.printStackTrace();
+//
+//            } 
 
             super.startElement(uri, localName, qName, attributes);
         }
