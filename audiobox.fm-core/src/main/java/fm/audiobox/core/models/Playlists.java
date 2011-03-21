@@ -22,11 +22,15 @@
 
 package fm.audiobox.core.models;
 
+import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
 import fm.audiobox.core.api.ModelItem;
 import fm.audiobox.core.api.ModelsCollection;
+import fm.audiobox.interfaces.IConfiguration;
+import fm.audiobox.interfaces.IConnector;
 
 
 /**
@@ -36,10 +40,12 @@ import fm.audiobox.core.api.ModelsCollection;
  * @author Fabio Tunno
  * @version 0.0.1
  */
-public class Playlists extends AbstractEntity {
+public class Playlists extends AbstractEntity implements Serializable {
+
+  private static final long serialVersionUID = 1L;
 
     /** Tracks API end point */
-    public static final String END_POINT = "playlists";
+    public static final String NAMESPACE = "playlists";
     
     public static final String EMPTY_TRASH_ACTION = "empty_trash";
     public static final String ADD_TRACKS_ACTION = "add_tracks";
@@ -78,80 +84,18 @@ public class Playlists extends AbstractEntity {
     /**
      * <p>Constructor for Playlists.</p>
      */
-    protected Playlists(){
-        this.pEndPoint = END_POINT;
-    }
-    
-    /**
-     * Getter method for the XML tag name of collection's elements.
-     * 
-     * @return the XML tag name {@link String} for Playlists collection elements.
-     */
-    public String getTagName() {
-        return Playlist.TAG_NAME;
+    public Playlists(IConnector connector, IConfiguration config){
+      super(connector, config);
     }
 
-    /**
-     * Adds a Playlist to the collection: this is mainly used by the parser.
-     *
-     * @param playlist a {@link Playlist} to add to the collection.
-     */
-    public void addPlaylist(Playlist playlist) {
-        super.addToCollection(playlist);
+    @Override
+    public String getNamespace() {
+      return NAMESPACE;
     }
-    
-    
-    /**
-     * <p>Getter method for a single {@link Playlist} contained in the collection.</p>
-     *
-     * @param index the index of the desired Playlist.
-     * 
-     * @return a {@link Playlist} object.
-     */
-    public Playlist get(int index) {
-        return (Playlist) super.getItem(index);
-    }
-    
-    /**
-     * <p>Getter method for a single {@link Playlist} contained in the collection.</p>
-     *
-     * @param token the uuid of the desired Playlist.
-     * 
-     * @return a {@link Playlist} object.
-     */
-    public Playlist get(String token) {
-    	return (Playlist) super.getItem(token);
-    }
-    
-    /**
-     * <p>Getter method for a single {@link Playlist} contained in the collection.</p>
-     *
-     * @param name the name (case insensitive) of the desired Playlist.
-     * 
-     * @return a {@link Playlist} object if the playlist is in pool <code>null</code> otherwise.
-     */
-    public Playlist getPlaylistByName(String name) {
-        for (ModelItem playlist : super.getCollection()) {
-            if ( name.equalsIgnoreCase( playlist.getName() ) )
-                return (Playlist)playlist;
-        }
-        return null;
-    }
-    
-    /**
-     * <p>Getter method for a {@link List} of {@link Playlist} of a defined <code>type</code>.</p>
-     *
-     * @param type the {@link PlaylistTypes} of the desired Playlists group.
-     * 
-     * @return a {@link Playlist} {@link List} if any. An empty list otherwise.
-     */
-    public List<Playlist> getPlaylistsByType(PlaylistTypes type) {
-        List<Playlist> result = new ArrayList<Playlist>();
-        for (ModelItem playlist : super.getCollection() ) {
-            if ( type.name().equalsIgnoreCase( ((Playlist)playlist).getPlaylistType() ) )
-                result.add( (Playlist) playlist);
-        }
-        return result;
+
+    @Override
+    public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
+      return null;
     }
     
     

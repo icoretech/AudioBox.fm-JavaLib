@@ -13,7 +13,6 @@ public interface IEntity {
   public String getNamespace();
   
   
-  
   /**
    * Returns the unique token associated with this entity
    * @return {@link String} the token

@@ -26,22 +26,21 @@ public abstract class AbstractEntity extends Observable implements IEntity {
     this.connector = connector;
     this.configuration = config;
     this.properties = new ConcurrentHashMap<String, Object>();
-    if ( log.isInfoEnabled() ){
-      log.info("Entity instanciated: " + this.getNamespace() );
+    if ( log.isDebugEnabled() ){
+      log.debug("Entity instanciated: " + this.getNamespace() );
     }
   }
   
-  @Override
-  public String getNamespace() {
-    return null;
-  }
 
   @Override
   public String getToken() {
-    // TODO Auto-generated method stub
-    return null;
+    return this.token;
   }
 
+  public final void setToken(String tk){
+    this.token = tk;
+  }
+  
   /**
    * Returns the {@link IConnector} associated with this {@link IEntity}
    * @return the {@link IConnector}

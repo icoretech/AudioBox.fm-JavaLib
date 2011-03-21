@@ -1,13 +1,13 @@
 package fm.audiobox.core;
 
-import java.util.Observable;
-import java.util.Observer;
-
 import org.junit.Test;
 
 import fm.audiobox.AudioBox;
 import fm.audiobox.configurations.DefaultConfiguration;
+import fm.audiobox.core.exceptions.LoginException;
+import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Playlists;
+import fm.audiobox.core.models.User;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConfiguration.RequestFormat;
 
@@ -18,26 +18,33 @@ public class AudioBoxRefactorTest extends junit.framework.TestCase {
   public void testUserIsLoggedIn() {
     
     
-    IConfiguration configuration = new DefaultConfiguration();
+    IConfiguration configuration = new DefaultConfiguration("My test application");
     
-    configuration.setApplicationName("My App Name");
     configuration.setVersion(1, 0, 0);
-    configuration.setDefaultRequestFormat(RequestFormat.XML);
+    configuration.setRequestFormat(RequestFormat.XML);
     configuration.setShortResponse(false);
     configuration.setUseCache(false);
     
     AudioBox abx = new AudioBox(configuration);
     
     
-    User user = abx.login("username", "password");
+    User user = null;
+    try {
+      user = abx.login("fat@fatshotty.net", "?audi0b0x!");
+    } catch (LoginException e) {
+      e.printStackTrace();
+    } catch (ServiceException e) {
+      e.printStackTrace();
+    }
+    
+    assertNotNull(user);
+    
+    assertEquals(user.getUsername(), "fatshotty");
+    
     Playlists pls = user.getPlaylists();
-    pls.addObserver(new Observer() {
-      public void update(Observable o, Object arg) {
-      }
-    });
     
+    assertNotNull(pls);
     
-    pls.invoke();
     
   }
   

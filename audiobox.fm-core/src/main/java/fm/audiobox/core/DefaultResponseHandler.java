@@ -3,22 +3,34 @@ package fm.audiobox.core;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
+import fm.audiobox.core.parsers.XmlParser;
 import fm.audiobox.interfaces.IConfiguration;
+import fm.audiobox.interfaces.IConfiguration.RequestFormat;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
-import fm.audiobox.interfaces.IConfiguration.RequestFormat;
 
 public class DefaultResponseHandler implements ResponseHandler<String[]> {
 
+  
+  private static final Logger log = LoggerFactory.getLogger(DefaultResponseHandler.class);
   
   public IConfiguration configuration;
   public IEntity destEntity;
@@ -46,6 +58,10 @@ public class DefaultResponseHandler implements ResponseHandler<String[]> {
 
     int responseCode = response.getStatusLine().getStatusCode();
     long contentLength = response.getEntity().getContentLength();
+    
+    // TODO: fix me - When response is gzipped we couldn't know its content-length
+    if ( contentLength < 0 ) 
+      contentLength = 1;
     Header contentType = response.getEntity().getContentType();
     boolean isXml = contentType.getValue().contains( RequestFormat.XML.toString().toLowerCase() );
     boolean isText = contentType.getValue().contains( "text" );
@@ -54,6 +70,7 @@ public class DefaultResponseHandler implements ResponseHandler<String[]> {
     String responseString = "";
     
     try {
+      
       switch( responseCode ) {
 
         // 20*
@@ -75,7 +92,23 @@ public class DefaultResponseHandler implements ResponseHandler<String[]> {
             
           } else if ( contentLength > 0 ){
             
-            configuration.getParser().populateEntity( destEntity , response.getEntity().getContent() );
+            if ( isXml ){
+              
+              try {
+                SAXParserFactory spf = SAXParserFactory.newInstance();
+                SAXParser sp = spf.newSAXParser();
+                XMLReader xr = sp.getXMLReader();
+                xr.setContentHandler( new XmlParser(destEntity, configuration) );
+                xr.parse( new InputSource( response.getEntity().getContent() ) );
+              } catch (ParserConfigurationException e) {
+                log.error("An error occurred while instantiating XML Parser", e);
+                throw new ServiceException(ServiceException.GENERIC_ERROR, e.getMessage());
+              } catch (SAXException e) {
+                log.error("An error occurred while instantiating XML Parser", e);
+                throw new ServiceException(ServiceException.GENERIC_ERROR, e.getMessage());
+              }
+
+            }
           
           }
           
@@ -130,7 +163,10 @@ public class DefaultResponseHandler implements ResponseHandler<String[]> {
 
     }
     
-    return new String[]{ String.valueOf( responseCode ) , responseString };
+    String[] result = new String[2];
+    result[ IConfiguration.RESPONSE_CODE ] = String.valueOf(responseCode);
+    result[ IConfiguration.RESPONSE_BODY ] = responseString;
+    return result;
   }
 
 }

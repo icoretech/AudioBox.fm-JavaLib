@@ -29,7 +29,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fm.audiobox.core.api.Model;
-import fm.audiobox.core.api.ModelsCollection;
+import fm.audiobox.core.exceptions.LoginException;
+import fm.audiobox.core.exceptions.ModelException;
+import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
 
@@ -132,9 +134,9 @@ public class User extends AbstractEntity implements Serializable {
   
   // User's collection relations
   private Playlists playlists;
-  private Genres genres;
-  private Artists artists;
-  private Albums albums;
+//  private Genres genres;
+//  private Artists artists;
+//  private Albums albums;
 
   /**
    * <p>Constructor for User.</p>
@@ -146,6 +148,11 @@ public class User extends AbstractEntity implements Serializable {
   }
 
 
+  public String getNamespace(){
+    return NAMESPACE;
+  }
+  
+  
   /* ------------------- */
   /* Getters and setters */
   /* ------------------- */
@@ -598,10 +605,10 @@ public class User extends AbstractEntity implements Serializable {
 //  }
 
 
-  public boolean emptyTrash() throws LoginException, ServiceException {
-    String[] result = getConnector().put( new Playlists(), Playlists.EMPTY_TRASH_ACTION).send();
-    return HttpStatus.SC_OK == Integer.parseInt( result[ IConfiguration.RESPONSE_CODE ] );
-  }
+//  public boolean emptyTrash() throws LoginException, ServiceException {
+//    String[] result = getConnector().put( new Playlists(), Playlists.EMPTY_TRASH_ACTION).send();
+//    return HttpStatus.SC_OK == Integer.parseInt( result[ IConfiguration.RESPONSE_CODE ] );
+//  }
 
 
 
@@ -613,9 +620,9 @@ public class User extends AbstractEntity implements Serializable {
    * @throws LoginException
    * @throws ModelException
    */
-  public Track newTrack() {
-    return (Track) instanceChildEntity( Track.class );
-  }
+//  public Track newTrack() {
+//    return (Track) instanceChildEntity( Track.class );
+//  }
 
 
 
@@ -628,33 +635,36 @@ public class User extends AbstractEntity implements Serializable {
   }
 
 
-  public Genres getGenres() {
-    if ( this.genres == null ){
-      this.genres = (Genres) instanceChildEntity( Genres.class );
-    }
-    return genres;
-  }
-
-
-  public Artists getArtists() {
-    if ( this.artists == null ){
-      this.artists = (Artists) instanceChildEntity( Artists.class );
-    }
-    return artists;
-  }
-
-
-  public Albums getAlbums() {
-    if ( this.albums == null ){
-    }
-    return albums;
-  }
+//  public Genres getGenres() {
+//    if ( this.genres == null ){
+//      this.genres = (Genres) instanceChildEntity( Genres.class );
+//    }
+//    return genres;
+//  }
+//
+//
+//  public Artists getArtists() {
+//    if ( this.artists == null ){
+//      this.artists = (Artists) instanceChildEntity( Artists.class );
+//    }
+//    return artists;
+//  }
+//
+//
+//  public Albums getAlbums() {
+//    if ( this.albums == null ){
+//    }
+//    return albums;
+//  }
 
 
   
   public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException{
     
-    if ( tagName.equals("bytes_served") || tagName.equals("bs") ){
+    if ( tagName.equals("token") || tagName.equals("tk") ){
+      return this.getClass().getMethod("setToken", long.class);
+      
+    } else if ( tagName.equals("bytes_served") || tagName.equals("bs") ){
       return this.getClass().getMethod("setBytesServed", long.class);
       
     } else if ( tagName.equals("email") || tagName.equals("e") ){

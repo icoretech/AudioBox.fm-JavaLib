@@ -3,6 +3,7 @@ package fm.audiobox.configurations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fm.audiobox.core.DefaultRequestMethod;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IFactory;
@@ -24,7 +25,7 @@ public class DefaultConfiguration implements IConfiguration {
   public static final String PROTOCOL = "http";
   public static final String HOST = "audiobox.fm";
   public static final int PORT = 80;
-  public static final String PATH = "/api/";
+  public static final String PATH = "api";
 
   private static final String USER_AGENT = 
       "AudioBox.fm; " +
@@ -40,12 +41,12 @@ public class DefaultConfiguration implements IConfiguration {
   private RequestFormat requestFormat = RequestFormat.XML;
   private boolean useCache = false;
   private boolean shortResponse = false;
-  private IFactory factory;
+  private IFactory factory = new DefaultFactory();
   private IParser parser;
   private ILoginExceptionHandler loginHandler;
   private String appName = APPLICATION_NAME;
   private String version = VERSION;
-  private Class<? extends IConnectionMethod> connMethodClass;
+  private Class<? extends IConnectionMethod> connMethodClass = DefaultRequestMethod.class;
 
 
 

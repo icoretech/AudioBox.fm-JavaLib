@@ -41,6 +41,7 @@ import org.apache.http.HttpRequest;
 import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
+import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
@@ -163,6 +164,8 @@ public class AudioBox {
   
   /** Prefix used to store each property into properties file */
   public static final String PREFIX = "fm.audiobox.";
+  
+  private UsernamePasswordCredentials mCredentials;
 
   private IConfiguration configuration;
   private IConnector connector;
@@ -219,13 +222,22 @@ public class AudioBox {
    * @throws LoginException if user doesn't exists or is inactive.
    * @throws ServiceException if any connection problem occurs.
    */
-  public User login(String username, String password) throws LoginException, ServiceException, ModelException {
+  public User login(String username, String password) throws LoginException, ServiceException {
     log.info("Executing login for user: " + username);
 
-    User user = (User) this.configuration.getFactory().getEntity(User.TAG_NAME, this.getConfiguration() );
+    User user = (User) this.configuration.getFactory().getEntity(User.class, this.getConfiguration() );
     user.setUsername(username);
 
-    this.getConnector().get(user, null, null);
+    mCredentials = new UsernamePasswordCredentials(username, password);
+    
+    String[] result = this.getConnector().get(user, null, null).send();
+    
+    // Check response code
+    if (   ! String.valueOf( HttpStatus.SC_OK ).equals(  result[IConfiguration.RESPONSE_CODE]  )    ){
+      // User maybe invalid
+      log.error("Username or password may be invalid, User cannot be logged-in");
+      user = null;
+    }
 
     return user;
   }
@@ -262,13 +274,12 @@ public class AudioBox {
     private final String PROTOCOL = configuration.getProtocol();
     private final String HOST = configuration.getHost();
     private final String PORT = String.valueOf( configuration.getPort() ); 
-    private final String PATH = configuration.getPath();;
+    private final String PATH = configuration.getPath();
 
     private final String API_PATH = PROTOCOL + "://" + HOST + ":" + PORT + "/" + PATH + NAMESPACE_PARAMETER + TOKEN_PARAMETER + ACTION_PARAMETER;
     private HttpRoute mAudioBoxRoute;
     private ThreadSafeClientConnManager mCm;
     private DefaultHttpClient mClient;
-    private UsernamePasswordCredentials mCredentials;
     private BasicScheme mScheme = new BasicScheme();
 
     private final Log log = LogFactory.getLog(Connector.class);
@@ -327,9 +338,14 @@ public class AudioBox {
           request.addHeader("User-Agent",  getConfiguration().getUserAgent() );
           
           Header hostHeader = request.getFirstHeader("HOST");
-          if ( hostHeader.getValue().equals( HOST ) )
+          
+          /*
+           * Note: we have to add PORT because HttpClient is instantiated specifing PORT into URL
+           */
+          if ( hostHeader.getValue().equals( HOST + ":" + PORT) ) {
             log.debug("Request to AudioBox, add user credentials");
             request.addHeader( mScheme.authenticate(mCredentials,  request) );
+          }
         }
 
       });
@@ -355,7 +371,7 @@ public class AudioBox {
                     }
 
                     @Override
-                    public long getContentLength() { return -1; }
+                    public long getContentLength() { return 1; }
 
                   }); 
                   return;
@@ -418,7 +434,7 @@ public class AudioBox {
         httpVerb = IConnectionMethod.METHOD_GET;
       }
       
-      String url = this.buildRequestUrl(destEntity.getEndpoint(), destEntity.getToken(), action, httpVerb, params);
+      String url = this.buildRequestUrl(destEntity.getNamespace(), destEntity.getToken(), action, httpVerb, params);
 
       HttpRequestBase method = null;
 
@@ -506,7 +522,9 @@ public class AudioBox {
       }
       
       if ( httpVerb.equals( IConnectionMethod.METHOD_GET ) ){
-        url += "?" + URLEncodedUtils.format( params , HTTP.UTF_8 );
+        String query = URLEncodedUtils.format( params , HTTP.UTF_8 );
+        if ( query.length() > 0 )
+          url += "?" + query; 
       }
 
       log.debug("Request url built: " + url);

@@ -47,12 +47,12 @@ public class DefaultRequestMethod implements IConnectionMethod {
   
   
   @Override
-  public void send() throws ServiceException, LoginException {
-    send(null,null);
+  public String[] send() throws ServiceException, LoginException {
+    return send(null,null);
   }
 
   @Override
-  public void send(List<NameValuePair> params) throws ServiceException, LoginException {
+  public String[] send(List<NameValuePair> params) throws ServiceException, LoginException {
     HttpEntity entity = null;
     if (  (! isGET() && ! isDELETE() )  && params != null ){
       try {
@@ -61,20 +61,20 @@ public class DefaultRequestMethod implements IConnectionMethod {
         log.error("An error occurred while instanciating UrlEncodedFormEntity", e);
       }
     }
-    send(entity);
+    return send(entity);
   }
 
   @Override
-  public void send(HttpEntity params) throws ServiceException, LoginException {
-    send( params, null);
+  public String[] send(HttpEntity params) throws ServiceException, LoginException {
+    return send( params, null);
   }
   
   @Override
-  public void send(HttpEntity params, IResponseHandler responseHandler) throws ServiceException, LoginException {
+  public String[] send(HttpEntity params, IResponseHandler responseHandler) throws ServiceException, LoginException {
     if (   ( ! isGET() && ! isDELETE() )  && params != null ){
       ((HttpEntityEnclosingRequestBase) getHttpMethod() ).setEntity( params );
     }
-    this.connector.execute( this , responseHandler);
+    return this.connector.execute( this , responseHandler);
   }
 
   @Override

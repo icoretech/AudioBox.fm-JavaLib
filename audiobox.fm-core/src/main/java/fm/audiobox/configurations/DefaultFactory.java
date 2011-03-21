@@ -2,7 +2,6 @@ package fm.audiobox.configurations;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,9 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fm.audiobox.AudioBox;
+import fm.audiobox.core.models.Playlists;
 import fm.audiobox.core.models.User;
 import fm.audiobox.interfaces.IConfiguration;
-import fm.audiobox.interfaces.IConfiguration.Entities;
 import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IFactory;
@@ -40,6 +39,7 @@ public class DefaultFactory implements IFactory {
   static {
     gEntities = new HashMap<Class<? extends IEntity>, Class<? extends IEntity>>();
     gEntities.put(User.class, User.class);
+    gEntities.put(Playlists.class, Playlists.class);
     // TODO: populate data
   }
   
