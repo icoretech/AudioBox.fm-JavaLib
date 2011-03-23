@@ -8,7 +8,6 @@ import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IFactory;
 import fm.audiobox.interfaces.ILoginExceptionHandler;
-import fm.audiobox.interfaces.IParser;
 
 public class DefaultConfiguration implements IConfiguration {
 
@@ -42,7 +41,6 @@ public class DefaultConfiguration implements IConfiguration {
   private boolean useCache = false;
   private boolean shortResponse = false;
   private IFactory factory = new DefaultFactory();
-  private IParser parser;
   private ILoginExceptionHandler loginHandler;
   private String appName = APPLICATION_NAME;
   private String version = VERSION;
@@ -83,11 +81,6 @@ public class DefaultConfiguration implements IConfiguration {
   @Override
   public IFactory getFactory() {
     return this.factory;
-  }
-
-  @Override
-  public IParser getParser() {
-    return this.parser;
   }
 
   @Override

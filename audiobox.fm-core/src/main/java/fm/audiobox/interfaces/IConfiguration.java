@@ -35,12 +35,6 @@ public interface IConfiguration {
   public IFactory getFactory();
 
   /**
-   * Returns {@link IParser} associated with this configuration
-   * @return {@link IParser}
-   */
-  public IParser getParser();
-
-  /**
    * Sets the application name sent to server as "User-Agent" request header
    * @param appName the application name
    */
