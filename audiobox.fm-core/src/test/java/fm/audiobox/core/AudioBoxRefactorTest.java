@@ -8,6 +8,7 @@ import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Playlists;
 import fm.audiobox.core.models.User;
+import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConfiguration.RequestFormat;
 
@@ -30,7 +31,7 @@ public class AudioBoxRefactorTest extends junit.framework.TestCase {
     
     User user = null;
     try {
-      user = abx.login("fat@fatshotty.net", "?audi0b0x!");
+      user = abx.login( Fixtures.get( Fixtures.LOGIN ),  Fixtures.get( Fixtures.RIGHT_PASS ));
     } catch (LoginException e) {
       e.printStackTrace();
     } catch (ServiceException e) {
