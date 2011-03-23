@@ -70,21 +70,27 @@ public class XmlParser extends DefaultHandler {
     try {
        setterMethod = _entity.getSetterMethod(localName);
     } catch (SecurityException e) {
-      log.error("No accessible method found under key: " + localName, e);
+      log.error("No accessible method found under key: " + localName + " for class: " + _entity.getClass(), e);
     } catch (NoSuchMethodException e) {
-      log.error("No method found under key: " + localName, e);
+      log.error("No method found under key: " + localName + " for class: " + _entity.getClass(), e);
     }
     
     if ( setterMethod == null ){
       // no method found
-      log.warn("No method found for tag: " + localName );
+      log.warn("No method found for tag: " + localName + " for class: " + _entity.getClass() );
       this.stack.push(null);  // Prevent bug: we have to add an entity as null pointer
       return;
       
     } else if ( setterMethod.getParameterTypes().length == 1 ){
       // method found correctly
       Class<?> klass = setterMethod.getParameterTypes()[0]; 
-      if (  klass.equals( IEntity.class )  ) {
+      boolean isEntity = false;
+      try {
+        isEntity = klass.asSubclass( IEntity.class ) != null;
+      } catch( ClassCastException e){
+        ; // do nothing
+      }
+      if ( isEntity ) {
         // method represents an Entity object
         
         @SuppressWarnings("unchecked")
@@ -136,13 +142,11 @@ public class XmlParser extends DefaultHandler {
     if ( this.bodyContent != null )
       value = this.bodyContent.toString().replace("\n","").replace("\r", "").replace("\t", "");
     
+    if ( localName.trim().equals("") ) {
+      localName = qName;
+    }
+    
     if ( currentEntity != null ) {
-      
-      
-      if ( localName.trim().equals("") ) {
-        localName = qName;
-      }
-      
       
       Method setterMethod = null;
       try {
@@ -199,7 +203,7 @@ public class XmlParser extends DefaultHandler {
       
       // An error might have occurred
       // do nothing
-      log.debug("An error might have occurred while parsing tag: " + localName);
+      log.debug("An error might have occurred while parsing tag: " + localName );
       
     }
     

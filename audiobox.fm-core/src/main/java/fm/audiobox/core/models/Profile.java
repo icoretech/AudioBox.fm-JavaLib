@@ -22,7 +22,15 @@
 
 package fm.audiobox.core.models;
 
-import fm.audiobox.core.api.ModelItem;
+import java.io.Serializable;
+import java.lang.reflect.Method;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fm.audiobox.interfaces.IConfiguration;
+import fm.audiobox.interfaces.IConnector;
+
 
 
 /**
@@ -34,128 +42,95 @@ import fm.audiobox.core.api.ModelItem;
  * 
  * <pre>
  * {@code
- * <profile>
- *   <autoplay>false</autoplay>
- *   <real_name>Real User Name</real_name>
- *   <maximum_portability>false</maximum_portability>
- * </profile>
+   <profile> 
+     <autoplay>false</autoplay> 
+     <real_name>Name Surname</real_name> 
+   </profile>
  * }
  * </pre>
  * 
  * @author Valerio Chiodino
  * @author Fabio Tunno
- * @version 0.0.2
  */
-public class Profile extends ModelItem {
+public final class Profile extends AbstractEntity implements Serializable {
 
-    /** The XML tag name for the Profile element */
-    public static final String TAG_NAME = "profile";
+  private static final long serialVersionUID = 1L;
+
+  private static final Logger log = LoggerFactory.getLogger(Profile.class);
+
+  public static final String NAMESPACE = "profile";
+  
+  private boolean autoplay;
+  private String realName;
+
+  /**
+   * <p>Constructor for Profile.</p>
+   */
+  public Profile(IConnector connector, IConfiguration config) {
+    super(connector, config);
+    if ( log.isInfoEnabled() )
+      log.info("New Profile instanciated");
+  }
+
+
+
+  /**
+   * <p>Setter for the user real name: used by the parser.</p>
+   *
+   * @param realName the real name {@link String}.
+   */
+  public void setRealName(String realName) {
+    this.realName = realName;
+  }
+
+  /**
+   * <p>Getter for the user real name.</p>
+   *
+   * @return the user real name
+   */
+  public String getRealName() {
+    return this.realName;
+  }
+
+
+  /**
+   * <p>Setter for the autoplay option.</p>
+   *
+   * @param autoplay String representing the boolean value, true to enable false to disable.
+   */
+  public void setAutoplay(boolean autoplay) {
+    this.autoplay = autoplay;
+  }
+
+  /**
+   * Checks whether the user has enabled autoplay or not.
+   *
+   * @return the autoplay user option value
+   */
+  public boolean hasAutoplay() {
+    return this.autoplay;
+  }
+
+
+
+  @Override
+  public String getNamespace() {
+    return NAMESPACE;
+  }
+
+
+
+  @Override
+  public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
     
-    private boolean autoplay;
-    private String realName;
-    private boolean maximumPortability;
-    
-    /**
-     * <p>Constructor for Profile.</p>
-     */
-    protected Profile() { }
-
-
-    /* ------------------- */
-    /* Getters and setters */
-    /* ------------------- */
-
-
-    /**
-     * This method is used by the parser. Please use {@link Profile#setMaximumPortability(boolean)} instead.
-     * 
-     * <p>Setter for the Maximum Portability option: used by the parser.</p>
-     *
-     * @param maximumPortability String representing the boolean value, true to enable false to disable.
-     */
-    @Deprecated
-    public void setMaximumPortability(String maximumPortability) {
-        this.setAutoplay( Boolean.parseBoolean( maximumPortability ) );
-    }
-    
-    /**
-     * <p>Setter for the maximum portability option.</p>
-     *
-     * @param maximumPortability String representing the boolean value, true to enable false to disable.
-     */
-    public void setMaximumPortability(boolean maximumPortability) {
-        this.maximumPortability = maximumPortability;
-    }
-
-    /**
-     * Checks whether the user has enabled maximum portability or not.
-     *
-     * @return the maximum portability user option value
-     */
-    public boolean hasMaximumPortability() {
-        return this.maximumPortability;
-    }
-
-
-    /**
-     * <p>Setter for the user real name: used by the parser.</p>
-     *
-     * @param realName the real name {@link String}.
-     */
-    public void setRealName(String realName) {
-        this.realName = realName;
-    }
-
-    /**
-     * <p>Getter for the user real name.</p>
-     *
-     * @return the user real name
-     */
-    public String getRealName() {
-        return this.realName;
-    }
-    
-    
-    /**
-     * This method is used by the parser. Please use {@link Profile#setAutoplay(boolean)} instead.
-     * 
-     * <p>Setter for the autoplay option: used by the parser.</p>
-     *
-     * @param autoplay String representing the boolean value, true to enable false to disable.
-     */
-    @Deprecated
-    public void setAutoplay(String autoplay) {
-        this.setAutoplay( Boolean.parseBoolean( autoplay ) );
+    if ( tagName.equals("autoplay") ){
+      return this.getClass().getMethod("setAutoplay", boolean.class);
+    } else if ( tagName.equals("real_name") ){
+      return this.getClass().getMethod("setRealName", String.class);
     }
     
-    /**
-     * <p>Setter for the autoplay option.</p>
-     *
-     * @param autoplay String representing the boolean value, true to enable false to disable.
-     */
-    public void setAutoplay(boolean autoplay) {
-        this.autoplay = autoplay;
-    }
+    return null;
+  }
 
-    /**
-     * Checks whether the user has enabled autoplay or not.
-     *
-     * @return the autoplay user option value
-     */
-    public boolean hasAutoplay() {
-        return this.autoplay;
-    }
-
-
-    /* --------- */
-    /* Overrides */
-    /* --------- */
-
-    
-    /** {@inheritDoc} */
-    @Override
-    public String getName() {
-        return this.getRealName();
-    }
 
 }

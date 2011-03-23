@@ -46,37 +46,21 @@ import fm.audiobox.interfaces.IConnector;
  * 
  * <pre>
  * {@code
- * <user>
- *   <bytes_served>123456</bytes_served>
- *   <email>user@example.com</email>
- *   <play_count>1042</play_count>
- *   <quota>984354165</quota>
- *   <state>active</state>
- *   <tracks_count>1490</tracks_count>
- *   <username>Username</username>
- *   <available_storage>1232321123</available_storage>
- *   <allowed_formats>
- *      aac;mp3;mp2;m4a;m4b;m4p;m4v;m4r;mp4;3gp;ogg;flac;spx;wma;rm;ram;wav;mpc;mp+;mpp;aiff;aif;aifc;tta
- *   </allowed_formats>
- *   <time_zone>New York</time_zone>
- *   <profile>
- *      <autoplay>false</autoplay>
- *      <real_name>Real User Name</real_name>
- *      <maximum_portability>false</maximum_portability>
- *   </profile>
- *   <plan>
- *     <feat_api>true</feat_api>
- *     <feat_cloud_web_player>true</feat_cloud_web_player>
- *     <feat_dropbox>true</feat_dropbox>
- *     <feat_lastfm>true</feat_lastfm>
- *     <feat_manager>true</feat_manager>
- *     <feat_multiformat>true</feat_multiformat>
- *     <feat_social_networks>true</feat_social_networks>
- *     <feat_youtube_channel>true</feat_youtube_channel>
- *     <name>ultra</name>
- *   </plan>
- * </user>
- *
+ * 
+   <user> 
+     <bytes_served>25352551153</bytes_served> 
+     <email>user@domain.com</email> 
+     <play_count>3378</play_count> 
+     <quota>1318739344</quota> 
+     <tracks_count>273</tracks_count> 
+     <username>username</username> 
+     <available_storage>162135015424</available_storage> 
+     <allowed_formats>aac;mp3;mp2;m4a;m4b;m4r;mp4;3gp;ogg;oga;flac;spx;wma;rm;ram;wav;mpc;mp+;mpp;aiff;aif;aifc;tta</allowed_formats> 
+     <time_zone>Rome</time_zone> 
+     <trial_ends_at>2011-03-05 08:20:38 +0100</trial_ends_at> 
+     <profile>....</profile>
+     <plan>...</plan>
+   </user>
  * }
  * </pre>
  *
@@ -96,18 +80,20 @@ import fm.audiobox.interfaces.IConnector;
  * by getting its tracks:
  * 
  * <pre>
- * Artists artists = user.getPlaylists();
+ * Artists artists = user.getArtists();
+ * artists.invoke();
  * Artists artist = artists.get( "token" or "index" );
  * Tracks trs = artist.getTracks();
+ * trs.invoke();
+ * Track track = trs.get( "token" or "index" );
  * </pre>
  * 
  * Or you can get informations about a specific, token-known track's, by calling {@link User#getTrackByToken(String)}
  * 
  * @author Valerio Chiodino
  * @author Fabio Tunno
- * @version 0.0.2
  */
-public class User extends AbstractEntity implements Serializable {
+public final class User extends AbstractEntity implements Serializable {
 
   private static final long serialVersionUID = 1L;
   private static final Logger log = LoggerFactory.getLogger(User.class);
@@ -127,6 +113,7 @@ public class User extends AbstractEntity implements Serializable {
   private String username;
   private long availableStorage;
   private String timeZone;
+  private String trialEndsAt;
   private String[] allowedFormats;
   
   private Profile profile;
@@ -344,6 +331,24 @@ public class User extends AbstractEntity implements Serializable {
     return this.timeZone;
   }
 
+  
+  /**
+   * <p>Sets the expiration date of trial plan: used by the parser.</p>
+   *
+   * @param trialEndsAt the expiration date as {@link String}.
+   */
+  public void setTrialEndsAt(String trialEndsAt) {
+    this.trialEndsAt = trialEndsAt;
+  }
+  
+  
+  /**
+   * @return the expiration date of trial plan
+   */
+  public String getTrialEndsAt() {
+    return this.trialEndsAt;
+  }
+  
 
   /**
    * <p>Setter for the user profile: used by the parser.</p>
@@ -687,6 +692,9 @@ public class User extends AbstractEntity implements Serializable {
       
     } else if ( tagName.equals("time_zone") || tagName.equals("tz") ){
       return this.getClass().getMethod("setTimeZone", String.class);
+      
+    } else if ( tagName.equals("trial_ends_at") || tagName.equals("tea") ){
+      return this.getClass().getMethod("setTrialEndsAt", String.class);
       
     } else if ( tagName.equals("allowed_formats") || tagName.equals("af") ){
       return this.getClass().getMethod("setAllowedFormats", String.class);
