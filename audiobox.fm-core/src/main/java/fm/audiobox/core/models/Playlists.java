@@ -24,13 +24,11 @@ package fm.audiobox.core.models;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
-import fm.audiobox.core.api.ModelItem;
 import fm.audiobox.core.api.ModelsCollection;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
+import fm.audiobox.interfaces.IEntity;
 
 
 /**
@@ -40,7 +38,7 @@ import fm.audiobox.interfaces.IConnector;
  * @author Fabio Tunno
  * @version 0.0.1
  */
-public class Playlists extends AbstractEntity implements Serializable {
+public class Playlists extends AbstractCollectionEntity<Playlist> implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
@@ -65,9 +63,6 @@ public class Playlists extends AbstractEntity implements Serializable {
         /** The so called "Music" playlist, master audio media container */
         AUDIO,
         
-        /** Maximum portability audio media container, for media that are not Mpeg Layer 3 encoded */
-        NATIVE,
-        
         /** Recycle bin meta playlist */
         TRASH,
         
@@ -88,15 +83,40 @@ public class Playlists extends AbstractEntity implements Serializable {
       super(connector, config);
     }
 
-    @Override
-    public String getNamespace() {
+    
+    public static String getTagName(){
       return NAMESPACE;
     }
-
+    
     @Override
-    public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
-      return null;
+    public String getNamespace(){
+      return getTagName();
     }
     
     
+    
+    @Override
+    public boolean add(Playlist entity) {
+      return super.addEntity(entity);
+    }
+
+
+    @Override
+    public boolean remove(Object entity) {
+      return super.removeEntity( (IEntity)entity);
+    }
+    
+    
+    
+    @Override
+    public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
+      
+      if ( tagName.equals("playlist") ) {
+        return this.getClass().getMethod("add", Playlist.class);
+      }
+      
+      return null;
+    }
+
+
 }

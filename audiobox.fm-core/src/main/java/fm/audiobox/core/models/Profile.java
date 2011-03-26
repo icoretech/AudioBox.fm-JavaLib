@@ -72,6 +72,16 @@ public final class Profile extends AbstractEntity implements Serializable {
       log.info("New Profile instanciated");
   }
 
+  
+  
+  public static String getTagName(){
+    return NAMESPACE;
+  }
+  
+  @Override
+  public String getNamespace(){
+    return getTagName();
+  }
 
 
   /**
@@ -111,12 +121,6 @@ public final class Profile extends AbstractEntity implements Serializable {
     return this.autoplay;
   }
 
-
-
-  @Override
-  public String getNamespace() {
-    return NAMESPACE;
-  }
 
 
 

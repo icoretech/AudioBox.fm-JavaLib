@@ -47,6 +47,17 @@ public class AudioBoxRefactorTest extends junit.framework.TestCase {
     assertNotNull(pls);
     
     
+    try {
+      pls.load();
+    } catch (ServiceException e) {
+      assertNull( e );
+    } catch (LoginException e) {
+      assertNull( e );
+    }
+    
+    // All went right
+    assertTrue( true );
+    
   }
   
 }

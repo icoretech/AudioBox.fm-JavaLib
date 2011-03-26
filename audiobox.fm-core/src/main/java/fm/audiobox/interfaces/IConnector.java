@@ -128,10 +128,11 @@ public interface IConnector {
     public String[] send(HttpEntity params) throws ServiceException, LoginException;
     
     /**
-     * Invokes server passing a {@link HttpEntity} as request parameter
+     * Invokes server passing a {@link HttpEntity} as request parameter.
+     * The {@link IResponseHandler} is used as Response interceptor
      * 
      * @param params a {@link HttpEntity} used as request parameter
-     * @param responseHandler a {@link IResponseHandler} used as custom response parser
+     * @param responseHandler a {@link IResponseHandler} used as custom response interceptor
      * @return a String array containing Response status and response body
      * @throws ServiceException
      * @throws LoginException

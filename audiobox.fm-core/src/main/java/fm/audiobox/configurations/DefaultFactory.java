@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import fm.audiobox.AudioBox;
 import fm.audiobox.core.models.Plan;
+import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
 import fm.audiobox.core.models.Profile;
 import fm.audiobox.core.models.User;
@@ -23,19 +24,18 @@ public class DefaultFactory implements IFactory {
 
   private static final Logger log = LoggerFactory.getLogger(DefaultFactory.class);
   
-  @SuppressWarnings("unchecked")
-  private static final Class<? extends IEntity>[] EXCLUDED_EXTENDABLE_CLASSES = new Class[]{ User.class, Plan.class, Profile.class };
+  private static final String[] EXCLUDED_EXTENDABLE_CLASSES = new String[]{ User.getTagName(), Plan.getTagName(), Profile.getTagName() };
   
   /**
    * Default Entities map.
    * Used to store the default entity class
    */
-  private static Map<Class<? extends IEntity>, Class<? extends IEntity>> gEntities;
+  private static Map<String, Class<? extends IEntity>> gEntities;
   
   /**
    * Used to store the entity class associated with this {@link AudioBox} instance
    */
-  private Map<Class<? extends IEntity>, Class<? extends IEntity>> entities;
+  private Map<String, Class<? extends IEntity>> entities;
   
   /**
    * {@link IConnector} associated with this {@link AudioBox} instance
@@ -43,65 +43,74 @@ public class DefaultFactory implements IFactory {
   private IConnector connector;
   
   static {
-    gEntities = new HashMap<Class<? extends IEntity>, Class<? extends IEntity>>();
-    gEntities.put( User.class, User.class );
-    gEntities.put( Plan.class, Plan.class );
-    gEntities.put( Profile.class, Profile.class );
+    gEntities = new HashMap<String, Class<? extends IEntity>>();
+    gEntities.put( User.getTagName(), User.class );
+    gEntities.put( Plan.getTagName(), Plan.class );
+    gEntities.put( Profile.getTagName(), Profile.class );
     
-    gEntities.put( Playlists.class, Playlists.class );
+    gEntities.put( Playlists.getTagName(), Playlists.class );
+    gEntities.put( Playlist.getTagName(), Playlist.class );
     // TODO: populate data
   }
   
   
   @SuppressWarnings("unchecked")
   public DefaultFactory(){
-    entities = (Map<Class<? extends IEntity>, Class<? extends IEntity>>) 
-          ((HashMap<Class<? extends IEntity>, Class<? extends IEntity>>) gEntities).clone();
+    entities = (Map<String, Class<? extends IEntity>>) 
+          ((HashMap<String, Class<? extends IEntity>>) gEntities).clone();
   }
   
   
   @Override
-  public IEntity getEntity(Class<? extends IEntity> className, IConfiguration configuration) {
+  public boolean containsEntity(String tagName) {
+    return this.entities.containsKey(tagName);
+  }
+  
+  
+  @Override
+  public IEntity getEntity(String tagName, IConfiguration configuration) {
     
     IEntity entity = null;
-    Class<? extends IEntity> klass = entities.get(className);
-    if ( klass == null ) {
-      log.warn("No IEntity found under key: " + className.getSimpleName() );
+    
+    if ( ! this.containsEntity(tagName) ) {
+      log.warn("No IEntity found under key: " + tagName );
       return null;
     }
+    
+    Class<? extends IEntity> klass = this.entities.get(tagName);
     
     try {
       Constructor<? extends IEntity> constructor = klass.getConstructor(IConnector.class, IConfiguration.class);
       entity = constructor.newInstance(this.connector, configuration);
     } catch (SecurityException e) {
-      log.error("SecurityException while instanciating IEntity under key: " + className.getName(), e);
+      log.error("SecurityException while instanciating IEntity under key: " + tagName, e);
     } catch (NoSuchMethodException e) {
-      log.error("NoSuchMethodException while instanciating IEntity under key: " + className.getName(), e);
+      log.error("NoSuchMethodException while instanciating IEntity under key: " + tagName, e);
     } catch (IllegalArgumentException e) {
-      log.error("IllegalArgumentException while instanciating IEntity under key: " + className.getName(), e);
+      log.error("IllegalArgumentException while instanciating IEntity under key: " + tagName, e);
     } catch (InstantiationException e) {
-      log.error("InstantiationException while instanciating IEntity under key: " + className.getName(), e);
+      log.error("InstantiationException while instanciating IEntity under key: " + tagName, e);
     } catch (IllegalAccessException e) {
-      log.error("IllegalAccessException while instanciating IEntity under key: " + className.getName(), e);
+      log.error("IllegalAccessException while instanciating IEntity under key: " + tagName, e);
     } catch (InvocationTargetException e) {
-      log.error("InvocationTargetException while instanciating IEntity under key: " + className.getName(), e);
+      log.error("InvocationTargetException while instanciating IEntity under key: " + tagName, e);
     }
     
     return entity;
   }
 
   @Override
-  public void setEntity(Class<? extends IEntity> klass, Class<? extends IEntity> entity) {
-    if ( Arrays.asList( EXCLUDED_EXTENDABLE_CLASSES ).contains( klass ) ) {
-      log.warn("Cannot use '" + klass.getName() + "' as Entity. Use its default Entity instead");
+  public void setEntity(String tagName, Class<? extends IEntity> entity) {
+    if ( Arrays.asList( EXCLUDED_EXTENDABLE_CLASSES ).contains( tagName ) ) {
+      log.warn("Cannot use '" + tagName + "' as Entity. Use its default Entity instead");
       return;
     }
-    entities.put( klass, entity );
+    entities.put( tagName, entity );
   }
 
   @Override
   public void setConnector(IConnector connector) {
     this.connector = connector;
   }
-  
+
 }

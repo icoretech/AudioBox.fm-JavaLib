@@ -7,9 +7,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fm.audiobox.core.exceptions.LoginException;
+import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IEntity;
+import fm.audiobox.interfaces.IResponseHandler;
 
 public abstract class AbstractEntity extends Observable implements IEntity {
 
@@ -59,23 +62,45 @@ public abstract class AbstractEntity extends Observable implements IEntity {
 
   
   /**
-   * Sets a property value. This method is used by each {@link Entity} while parsing response content
+   * Sets a generic property. This method is used for general purposes
    * 
    * @param tagName the tagName found while parsing response content
    * @param value general Object as field value
    */
-  protected void setProperty(String tagName, Object value) {
-    this.properties.put(tagName, value);
+  public void setProperty(String key, Object value) {
+    this.properties.put(key, value);
+  }
+  
+  /**
+   * Returns an Object associated with given key
+   * 
+   * @param key String
+   * @return the Object associated with given key
+   */
+  public Object getProperty(String key) {
+    return this.properties.get(key);
   }
   
   
   /**
-   * Instantiates and returns a new {@link IEntity} object
-   * @param entityClass the default {@link Class} that represents the {@link IEntity} to be instantiated 
-   * @return requested {@link IEntity}
+   * Executes request populating this class
+   * 
+   * @throws ServiceException
+   * @throws LoginException
    */
-  protected IEntity instanceChildEntity(Class<? extends IEntity> entityClass ){
-    return getConfiguration().getFactory().getEntity(entityClass, getConfiguration() );
+  public void load() throws ServiceException, LoginException {
+    getConnector().get(this, null, null).send();
+  }
+  
+  /**
+   * Executes request populating this class
+   * 
+   * @param responseHandler the {@link IResponseHandler} used as response content parser
+   * @throws ServiceException
+   * @throws LoginException
+   */
+  public void load(IResponseHandler responseHandler) throws ServiceException, LoginException {
+    getConnector().get(this, null, null).send(null, responseHandler);
   }
   
 }

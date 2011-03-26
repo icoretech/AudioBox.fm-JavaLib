@@ -134,9 +134,15 @@ public final class User extends AbstractEntity implements Serializable {
       log.info("New User instanciated");
   }
 
-
-  public String getNamespace(){
+  
+  
+  public static String getTagName(){
     return NAMESPACE;
+  }
+  
+  @Override
+  public String getNamespace(){
+    return getTagName();
   }
   
   
@@ -634,7 +640,7 @@ public final class User extends AbstractEntity implements Serializable {
 
   public Playlists getPlaylists() {
     if ( this.playlists == null ){
-      this.playlists = (Playlists) instanceChildEntity( Playlists.class );
+      this.playlists = (Playlists) getConfiguration().getFactory().getEntity(Playlists.getTagName(), getConfiguration());
     }
     return playlists;
   }

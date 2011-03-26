@@ -89,6 +89,17 @@ public final class Plan extends AbstractEntity implements Serializable {
   }
 
   
+  public static String getTagName(){
+    return NAMESPACE;
+  }
+  
+  @Override
+  public String getNamespace(){
+    return getTagName();
+  }
+  
+  
+  
   /**
    * This method is used by the parser.
    * 
@@ -316,11 +327,6 @@ public final class Plan extends AbstractEntity implements Serializable {
     return this.featLastfm;
   }
 
-
-  @Override
-  public String getNamespace() {
-    return NAMESPACE;
-  }
 
 
   @Override

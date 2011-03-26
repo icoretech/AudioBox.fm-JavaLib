@@ -225,7 +225,7 @@ public class AudioBox {
   public User login(String username, String password) throws LoginException, ServiceException {
     log.info("Executing login for user: " + username);
 
-    User user = (User) this.configuration.getFactory().getEntity(User.class, this.getConfiguration() );
+    User user = (User) this.configuration.getFactory().getEntity(User.getTagName(), this.getConfiguration() );
     user.setUsername(username);
 
     mCredentials = new UsernamePasswordCredentials(username, password);

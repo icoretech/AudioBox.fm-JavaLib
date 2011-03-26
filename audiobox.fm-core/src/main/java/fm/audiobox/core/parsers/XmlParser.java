@@ -42,6 +42,7 @@ public class XmlParser extends DefaultHandler {
     this.stack.clear();
     this.stack = null;
     this.bodyContent = null;
+    log.info("Document finished: " + this.entity.getNamespace() );
     super.endDocument();
   }
 
@@ -49,102 +50,76 @@ public class XmlParser extends DefaultHandler {
   public void startDocument() throws SAXException {
     this.stack = new Stack<IEntity>();
     this.stack.push( this.entity );
+    log.info("Document started: " + this.entity.getNamespace() );
     super.startDocument();
   }
 
   @Override
   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-    IEntity _entity  = this.stack.peek();
-    if ( _entity == null ){
-      _entity = this.entity;
-    }
-    
-    
     
     if ( localName.trim().equals("") ) {
       localName = qName;
     }
     
-    
-    Method setterMethod = null;
-    try {
-       setterMethod = _entity.getSetterMethod(localName);
-    } catch (SecurityException e) {
-      log.error("No accessible method found under key: " + localName + " for class: " + _entity.getClass(), e);
-    } catch (NoSuchMethodException e) {
-      log.error("No method found under key: " + localName + " for class: " + _entity.getClass(), e);
+    if ( localName.equals( this.stack.peek().getNamespace() ) ){
+      // Start tag must be skipped
+      return;
     }
     
-    if ( setterMethod == null ){
-      // no method found
-      log.warn("No method found for tag: " + localName + " for class: " + _entity.getClass() );
-      this.stack.push(null);  // Prevent bug: we have to add an entity as null pointer
-      return;
+    
+    if ( this.config.getFactory().containsEntity(localName)  ){
       
-    } else if ( setterMethod.getParameterTypes().length == 1 ){
-      // method found correctly
-      Class<?> klass = setterMethod.getParameterTypes()[0]; 
-      boolean isEntity = false;
-      try {
-        isEntity = klass.asSubclass( IEntity.class ) != null;
-      } catch( ClassCastException e){
-        ; // do nothing
-      }
-      if ( isEntity ) {
-        // method represents an Entity object
-        
-        @SuppressWarnings("unchecked")
-        IEntity newEntity = this.config.getFactory().getEntity( (Class<? extends IEntity>) klass, this.config);
-        try {
-          
-          // Invoke method passing new Entity to be set into parent!
-          setterMethod.invoke(_entity, newEntity);
-
-          // New entity becomes next root entity 
-          this.stack.push( newEntity );
-          
-        } catch (IllegalArgumentException e) {
-          log.error("An Error occurred while incoking method: " + setterMethod.toString(), e);
-        } catch (IllegalAccessException e) {
-          log.error("An Error occurred while incoking method: " + setterMethod.toString(), e);
-        } catch (InvocationTargetException e) {
-          log.error("An Error occurred while incoking method: " + setterMethod.toString(), e);
-        }
-        
-      } else {
-        /*
-         *  Method represents a Entity field
-         *  Only in this case we have to instance a new bodyContent ready to be populated by 'characters' method
-         */
-        this.bodyContent = new StringBuffer("");
-        
-        /*
-         *  Prevent bug: we have to re-push the entity 
-         *  because 'endElement' method always performs a 'pop' action on stack
-         */
-        this.stack.push( _entity );
+      IEntity newEntity = this.config.getFactory().getEntity(localName, this.config);
+      this.stack.push( newEntity );
+      
+      if ( log.isDebugEnabled() ){
+        log.debug("New Entity '" + newEntity,getClass().getName() + "' for tag: " + localName );
       }
       
     } else {
-      // Method has no arguments or more than 1 argument. In this case we have to skip the tag value
-      log.info("Method seems to have no arguments or more than one argument");
-      log.warn("No valid method found for tag: " + localName);
+      
+      this.bodyContent = new StringBuffer("");
+      
     }
+    
+    
     
   }
   
   @Override
   public void endElement(String uri, String localName, String qName) throws SAXException {
     
-    IEntity currentEntity = this.stack.pop();
-    String value = "";
-    
-    if ( this.bodyContent != null )
-      value = this.bodyContent.toString().replace("\n","").replace("\r", "").replace("\t", "");
-    
     if ( localName.trim().equals("") ) {
       localName = qName;
     }
+    
+    // get the Entity from stack
+    IEntity currentEntity = this.stack.peek();
+    IEntity newEntity = null;
+    
+    if ( localName.equals( currentEntity.getNamespace() )  ){
+      // end element for current entity
+      log.debug("EndElement reached for tag: " + localName);
+      newEntity = this.stack.pop();
+      if ( this.stack.size() == 0 ){
+        if ( localName.equals( this.entity.getNamespace() )  ){
+          // XML parsed completely
+          return;
+        } else {
+          log.warn("*** XML isn't parsed correctly ***");
+          return;
+        }
+      }
+      currentEntity = this.stack.peek();
+    }
+    
+    
+    // FIX: remove obsolete characters
+    String value = "";
+    if ( this.bodyContent != null ){
+      value = this.bodyContent.toString().replaceAll("\n","").replaceAll("\r", "").replaceAll("\t", "");
+    }
+    
     
     if ( currentEntity != null ) {
       
@@ -153,27 +128,39 @@ public class XmlParser extends DefaultHandler {
          setterMethod = currentEntity.getSetterMethod(localName);
       } catch (SecurityException e) {
         log.error("No accessible method found under key: " + localName, e);
+        return;
       } catch (NoSuchMethodException e) {
         log.error("No method found under key: " + localName, e);
+        return;
       }
       
-      if ( setterMethod == null ){
-        // no method found
-        log.warn("No method found for tag: " + localName );
-        this.stack.push(null);  // Prevent bug: we have to add an entity as null pointer
-        return;
-        
-      } else if ( setterMethod.getParameterTypes().length == 1 ){
+      
+      // Setter method found!
+      if ( setterMethod.getParameterTypes().length == 1 ){
         
         Class<?> paramType = setterMethod.getParameterTypes()[0];
+        
         try {
+          /*
+           * Calculating the method parameters
+           */
           
           if ( paramType.equals( int.class ) ){
-            
-              setterMethod.invoke(currentEntity, Integer.parseInt( value ) );
+            /*
+             * FIX: 
+             * if value is an empty string the Integer.parseInt method fails.
+             * To prevent errors we set value to zero as string
+             */
+            value = value.equals("") ? "0" : value;
+            setterMethod.invoke(currentEntity, Integer.parseInt( value ) );
             
           } else if ( paramType.equals( long.class ) ){
-            
+            /*
+             * FIX: 
+             * if value is an empty string the Long.parseLong method fails.
+             * To prevent errors we set value to zero as string
+             */
+            value = value.equals("") ? "0" : value;
             setterMethod.invoke(currentEntity, Long.parseLong( value ) );
             
           } else if ( paramType.equals( boolean.class ) ){
@@ -184,10 +171,34 @@ public class XmlParser extends DefaultHandler {
             
             setterMethod.invoke(currentEntity, value );
             
+          } else {
+            /*
+             * In this case we have to check if method parameter is an IEntity
+             */
+            boolean isEntity = false;
+            try {
+              isEntity = paramType.asSubclass(IEntity.class) != null;
+            } catch(ClassCastException e){
+              ; // silent fail
+            }
+            
+            if ( isEntity ) {
+              /*
+               * Method parameter seems to be an IEntity.
+               * We invoke method passing current IEntity
+               */
+              setterMethod.invoke( currentEntity , newEntity );
+            }
+            
           }
           
         } catch (NumberFormatException e) {
-          log.warn("Method cannot be invoked for tag: " + localName, e);
+          // An error occurred while parsing String
+          if ( log.isDebugEnabled() ){
+            log.debug("Method cannot be invoked for tag: " + localName, e);
+          } else 
+            log.warn("Method cannot be invoked for tag: " + localName);
+          
         } catch (IllegalArgumentException e) {
           log.error("An error while invoking method '" + setterMethod + "' for tag: " + localName, e);
         } catch (IllegalAccessException e) {
@@ -211,7 +222,6 @@ public class XmlParser extends DefaultHandler {
 
     // blank bodyContent
     this.bodyContent = null;
-    // this.stack.pop();  NOTE: already invoked
     super.endElement(uri, localName, qName);
   }
   
