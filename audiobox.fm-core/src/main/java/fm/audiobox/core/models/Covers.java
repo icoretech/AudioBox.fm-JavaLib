@@ -33,59 +33,52 @@ import fm.audiobox.interfaces.IConnector;
 
 
 /**
- * Album class is one of the lighter models and offers defaults informations only.
+ * CoverUrls class class is one of the lighter models and offers defaults informations only.
  * 
  * <p>
  * 
- * Album XML looks like this: 
+ * CoverUrls XML looks like this: 
  * 
  * <pre>
  * {@code
- * 
- * <album>
- *   <name>Album name</name>
- *   <token>coq8FfgK</token>
  *   <covers> 
  *     <l>http://media.audiobox.fm/images/albums/HOBh1lMt/l.jpg?1277867432</l> 
  *     <m>http://media.audiobox.fm/images/albums/HOBh1lMt/m.jpg?1277867432</m> 
  *     <s>http://media.audiobox.fm/images/albums/HOBh1lMt/s.jpg?1277867432</s> 
- *   </covers> 
- *   <artist>
- *     <name>Artist name</name>
- *     <token>fs8d8g9d</token>
- *   </artist>
- * </album>
+ *   </covers>
  * }
  * </pre>
  *
  * @author Valerio Chiodino
  * @author Fabio Tunno
  */
-public class Album extends AbstractEntity implements Serializable {
+public class Covers extends AbstractEntity implements Serializable {
   
   private static final long serialVersionUID = 1L;
-  private static final Logger log = LoggerFactory.getLogger(Album.class);
-  
-  /** The XML tag name for the Album element */
-  public static final String NAMESPACE = "album";
+  private static final Logger log = LoggerFactory.getLogger(Covers.class);
 
-  private String name; 
-  private Covers covers;
-  private Artist artist;
+
+  /** The XML tag name for the Album element */
+  public static final String NAMESPACE = "covers";
+
+  private String large;
+  private String medium;
+  private String small;
+
 
   /**
-   * <p>Constructor for Album.</p>
+   * <p>Constructor for CoverUrls.</p>
    */
-  public Album(IConnector connector, IConfiguration config){
+  public Covers(IConnector connector, IConfiguration config){
     super(connector, config);
-    log.info("New Album instantiated");
+    log.info("New CoverUrls instantiated");
   }
 
   public static String getTagName() {
     return NAMESPACE;
   }
-  
-  
+
+
   public String getNamespace(){
     return getTagName();
   }
@@ -95,82 +88,85 @@ public class Album extends AbstractEntity implements Serializable {
   /* Getters and setters */
   /* ------------------- */
 
-  
-
   /**
-   * Returns the playlist name
-   * @return the playlist name
-   */
-  public String getName() {
-    return name;
-  }
-
-  /**
-   * Sets the playlists name. Used by the parser
-   * @param name the playlist name
+   * This method is used by the parser. Do not use it directly.
+   * 
+   * <p>Setter for the field <code>l</code>.</p>
+   *
+   * @param large a {@link java.lang.String} object.
    */
   @Deprecated
-  public void setName(String name) {
-    this.name = name;
-  }
-  
-  
-
-  /**
-   * <p>Setter for the field <code>coverUrls</code>.</p>
-   *
-   * @param coverUrls a {@link Covers} object.
-   */
-  public void setCovers(Covers covers ) {
-    this.covers = covers;
+  public void setLarge(String large) {
+    this.large = large;
   }
 
   /**
-   * <p>Getter for the field <code>coverUrls</code>.</p>
+   * <p>Getter for the field <code>l</code>.</p>
    *
-   * @return the coverUrls
+   * @return the large
    */
-  public Covers getCovers() {
-    return this.covers;
+  public String getLarge() {
+    return this.large;
   }
-
 
 
   /**
-   * <p>Setter for the field <code>artist</code>.</p>
+   * This method is used by the parser. Do not use it directly.
+   * 
+   * <p>Setter for the field <code>m</code>.</p>
    *
-   * @param artist a {@link fm.audiobox.core.models.Artist} object.
+   * @param medium a {@link java.lang.String} object.
    */
-  public void setArtist(Artist artist ) {
-    this.artist = artist;
+  @Deprecated
+  public void setMedium(String medium) {
+    this.medium = medium;
   }
 
   /**
-   * <p>Getter for the field <code>artist</code>.</p>
+   * <p>Getter for the field <code>m</code>.</p>
    *
-   * @return the artist
+   * @return the medium
    */
-  public Artist getArtist() {
-    return artist;
+  public String getMedium() {
+    return this.medium;
   }
+
+
+  /**
+   * This method is used by the parser. Do not use it directly.
+   * 
+   * <p>Setter for the field <code>s</code>.</p>
+   *
+   * @param small a {@link java.lang.String} object.
+   */
+  public void setSmall(String small) {
+    this.small = small;
+  }
+
+  /**
+   * <p>Getter for the field <code>s</code>.</p>
+   *
+   * @return the small
+   */
+  public String getSmall() {
+    return this.small;
+  }
+
 
   @Override
   public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
     
-    if ( tagName.equals("token") ){
-      return this.getClass().getMethod("setToken", String.class);
+    if ( tagName.equals("l") ){
+      return this.getClass().getMethod("setLarge", String.class);
       
-    } else if ( tagName.equals("name") ){
-      return this.getClass().getMethod("setName", String.class);
+    } else if ( tagName.equals("m") ){
+      return this.getClass().getMethod("setMedium", String.class);
       
-    } else if ( tagName.equals( Artist.getTagName() ) ){
-      return this.getClass().getMethod("setArtist", Artist.class);
-      
-    } else if ( tagName.equals(Covers.getTagName() ) ){
-      return this.getClass().getMethod("setCovers", Covers.class);
+    } else if ( tagName.equals("s") ){
+      return this.getClass().getMethod("setSmall", String.class);
       
     }
-    
+      
     return null;
   }
 

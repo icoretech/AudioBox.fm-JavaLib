@@ -121,17 +121,16 @@ public final class User extends AbstractEntity implements Serializable {
   
   // User's collection relations
   private Playlists playlists;
-//  private Genres genres;
-//  private Artists artists;
-//  private Albums albums;
+  private Genres genres;
+  private Artists artists;
+  private Albums albums;
 
   /**
    * <p>Constructor for User.</p>
    */
   public User(IConnector connector, IConfiguration config) {
     super(connector, config);
-    if ( log.isInfoEnabled() )
-      log.info("New User instanciated");
+    log.info("New User instanciated");
   }
 
   
@@ -646,29 +645,33 @@ public final class User extends AbstractEntity implements Serializable {
   }
 
 
-//  public Genres getGenres() {
-//    if ( this.genres == null ){
-//      this.genres = (Genres) instanceChildEntity( Genres.class );
-//    }
-//    return genres;
-//  }
-//
-//
-//  public Artists getArtists() {
-//    if ( this.artists == null ){
-//      this.artists = (Artists) instanceChildEntity( Artists.class );
-//    }
-//    return artists;
-//  }
-//
-//
-//  public Albums getAlbums() {
-//    if ( this.albums == null ){
-//    }
-//    return albums;
-//  }
+  public Genres getGenres() {
+    if ( this.genres == null ){
+      this.genres = (Genres) getConfiguration().getFactory().getEntity(Genres.getTagName(), getConfiguration());
+    }
+    return genres;
+  }
 
 
+  public Artists getArtists() {
+    if ( this.artists == null ){
+      this.artists = (Artists) getConfiguration().getFactory().getEntity(Artists.getTagName(), getConfiguration());
+    }
+    return artists;
+  }
+
+
+  public Albums getAlbums() {
+    if ( this.albums == null ){
+      this.albums = (Albums) getConfiguration().getFactory().getEntity(Albums.getTagName(), getConfiguration());
+    }
+    return albums;
+  }
+
+
+  
+  
+  
   
   public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException{
     

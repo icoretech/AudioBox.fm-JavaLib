@@ -22,72 +22,74 @@
 
 package fm.audiobox.core.models;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.Serializable;
+import java.lang.reflect.Method;
 
-import fm.audiobox.core.api.ModelsCollection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fm.audiobox.interfaces.IConfiguration;
+import fm.audiobox.interfaces.IConnector;
+import fm.audiobox.interfaces.IEntity;
 
 
 /**
- * <p>Artists is a {@link ModelsCollection} specialization for {@link Artist} collections.</p>
+ * <p>Artists is a {@link Artist} collection.</p>
  *
  * @author Valerio Chiodino
  * @author Fabio Tunno
- * @version 0.0.1
  */
-public class Artists extends ModelsCollection {
+public class Artists extends AbstractCollectionEntity<Artist> implements Serializable {
 
-    /** Tracks API end point */
-    public static final String END_POINT = "artists";
+  private static final long serialVersionUID = 1L;
+
+  private static final Logger log = LoggerFactory.getLogger(Artists.class);   
+
+  /** Tracks API end point */
+  public static final String NAMESPACE = "artists";
+
+
+  /**
+   * <p>Constructor for Artists.</p>
+   */
+  public Artists(IConnector connector, IConfiguration config){
+    super(connector, config);
+    log.info("New Artist collection instantiated");
+  }
+  
+  
+  public static String getTagName(){
+    return NAMESPACE;
+  }
+  
+  
+  
+  public String getNamespace() {
+    return getTagName();
+  }
+
+
+  @Override
+  public boolean add(Artist entity) {
+    return super.addEntity( (IEntity)entity );
+  }
+
+
+  @Override
+  public boolean remove(Object entity) {
+    return super.removeEntity( (IEntity) entity);
+  }
+  
+  
+  @Override
+  public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
     
-    protected List<Artist> collection = new ArrayList<Artist>();
-    
-    /**
-     * <p>Constructor for Artists.</p>
-     */
-    protected Artists(){
-        this.pEndPoint = END_POINT;
+    if ( tagName.equals( Artist.getTagName() ) ){
+      return this.getClass().getMethod("add", Artist.class);
     }
     
-    /**
-     * Getter method for the XML tag name of collection's elements.
-     * 
-     * @return the XML tag name {@link String} for Artists collection elements.
-     */
-    public String getTagName() {
-        return Artist.TAG_NAME;
-    }
-    
-    
-    /**
-     * Adds a Artist to the collection: this is mainly used by the parser.
-     *
-     * @param artist a {@link Artist} to add to the collection.
-     */
-    public void addArtist(Artist artist) {
-    	super.addToCollection(artist);
-    }
-    
-    
-    /**
-     * <p>Getter method for a single {@link Artist} contained in the collection.</p>
-     *
-     * @param index the index of the desired Artist.
-     * 
-     * @return a {@link Artist} object.
-     */
-    public Artist get(int index) {
-        return (Artist) super.getItem(index);
-    }
-    
-    /**
-     * <p>Getter method for a single {@link Artist} contained in the collection.</p>
-     *
-     * @param token the uuid of the desired Artist.
-     * 
-     * @return a {@link Artist} object.
-     */
-    public Artist get(String token) {
-    	return (Artist) super.getItem(token);
-    }
+    return null;
+  }
+
+
 }

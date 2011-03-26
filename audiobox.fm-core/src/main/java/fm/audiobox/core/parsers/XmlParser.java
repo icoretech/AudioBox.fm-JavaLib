@@ -130,10 +130,15 @@ public class XmlParser extends DefaultHandler {
         log.error("No accessible method found under key: " + localName, e);
         return;
       } catch (NoSuchMethodException e) {
-        log.error("No method found under key: " + localName, e);
+        log.error("No declared method found under key: " + localName, e);
         return;
       }
       
+      
+      if ( setterMethod == null ){
+        log.warn(currentEntity.getClass().getName() + " doesn't contain the request method for tag: " + localName);
+        return;
+      }
       
       // Setter method found!
       if ( setterMethod.getParameterTypes().length == 1 ){

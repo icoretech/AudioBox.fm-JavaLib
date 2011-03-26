@@ -10,6 +10,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fm.audiobox.AudioBox;
+import fm.audiobox.core.models.Album;
+import fm.audiobox.core.models.Albums;
+import fm.audiobox.core.models.Artist;
+import fm.audiobox.core.models.Artists;
+import fm.audiobox.core.models.Covers;
+import fm.audiobox.core.models.Genre;
+import fm.audiobox.core.models.Genres;
 import fm.audiobox.core.models.Plan;
 import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
@@ -50,6 +57,18 @@ public class DefaultFactory implements IFactory {
     
     gEntities.put( Playlists.getTagName(), Playlists.class );
     gEntities.put( Playlist.getTagName(), Playlist.class );
+    
+    
+    gEntities.put( Genres.getTagName(), Genres.class );
+    gEntities.put( Genre.getTagName(), Genre.class );
+    
+    gEntities.put( Albums.getTagName(), Albums.class );
+    gEntities.put( Album.getTagName(), Album.class );
+    gEntities.put( Covers.getTagName(), Covers.class );
+    
+    gEntities.put( Artists.getTagName(), Artists.class );
+    gEntities.put( Artist.getTagName(), Artist.class );
+    
     // TODO: populate data
   }
   

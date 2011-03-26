@@ -16,7 +16,7 @@ import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Albums;
-import fm.audiobox.core.models.CoverUrls;
+import fm.audiobox.core.models.Covers;
 import fm.audiobox.core.models.ModelFactory;
 import fm.audiobox.core.models.User;
 import fm.audiobox.core.test.mocks.fixtures.Fixtures;
@@ -70,7 +70,7 @@ public class CustomAlbumsTest extends junit.framework.TestCase {
             assertNotNull( al );
             assertSame( al, album);
             
-            CoverUrls c = al.getCoverUrls();
+            Covers c = al.getCoverUrls();
             assertNotNull( c.getBig() );
             assertNotNull( c.getThumb() );
             assertNotNull( c.getTiny() );

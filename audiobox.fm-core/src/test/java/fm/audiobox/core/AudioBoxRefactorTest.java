@@ -6,6 +6,9 @@ import fm.audiobox.AudioBox;
 import fm.audiobox.configurations.DefaultConfiguration;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
+import fm.audiobox.core.models.Albums;
+import fm.audiobox.core.models.Artists;
+import fm.audiobox.core.models.Genres;
 import fm.audiobox.core.models.Playlists;
 import fm.audiobox.core.models.User;
 import fm.audiobox.core.test.mocks.fixtures.Fixtures;
@@ -43,10 +46,17 @@ public class AudioBoxRefactorTest extends junit.framework.TestCase {
     assertEquals(user.getUsername(), "fatshotty");
     
     Playlists pls = user.getPlaylists();
+    Artists arts = user.getArtists();
+    Genres gnrs = user.getGenres();
+    Albums albs = user.getAlbums();
     
     assertNotNull(pls);
+    assertNotNull(arts);
+    assertNotNull(albs);
+    assertNotNull(gnrs);
     
     
+    // Loading playlists
     try {
       pls.load();
     } catch (ServiceException e) {
@@ -54,6 +64,35 @@ public class AudioBoxRefactorTest extends junit.framework.TestCase {
     } catch (LoginException e) {
       assertNull( e );
     }
+    
+    // Loading genres
+    try {
+      gnrs.load();
+    } catch (ServiceException e) {
+      assertNull( e );
+    } catch (LoginException e) {
+      assertNull( e );
+    }
+    
+    // Loading artists
+    try {
+      arts.load();
+    } catch (ServiceException e) {
+      assertNull( e );
+    } catch (LoginException e) {
+      assertNull( e );
+    }
+    
+    
+    // Loading albums
+    try {
+      albs.load();
+    } catch (ServiceException e) {
+      assertNull( e );
+    } catch (LoginException e) {
+      assertNull( e );
+    }
+    
     
     // All went right
     assertTrue( true );

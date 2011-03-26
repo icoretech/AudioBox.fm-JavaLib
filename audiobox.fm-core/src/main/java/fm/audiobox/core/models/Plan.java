@@ -84,8 +84,7 @@ public final class Plan extends AbstractEntity implements Serializable {
    */
   public Plan(IConnector connector, IConfiguration config) {
     super(connector, config);
-    if ( log.isInfoEnabled() )
-      log.info("New Plan instanciated");
+    log.info("New Plan instanciated");
   }
 
   

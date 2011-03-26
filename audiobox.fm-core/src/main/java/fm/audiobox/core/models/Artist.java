@@ -22,7 +22,14 @@
 
 package fm.audiobox.core.models;
 
-import fm.audiobox.core.api.ModelItem;
+import java.io.Serializable;
+import java.lang.reflect.Method;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fm.audiobox.interfaces.IConfiguration;
+import fm.audiobox.interfaces.IConnector;
 
 
 /**
@@ -43,17 +50,74 @@ import fm.audiobox.core.api.ModelItem;
  *
  * @author Valerio Chiodino
  * @author Fabio Tunno
- * @version 0.0.1
  */
-public class Artist extends ModelItem {
-	
-    /** The XML tag name for the Artist element */
-	public static final String TAG_NAME = "artist";
-	
-	/**
-	 * <p>Constructor for Artist.</p>
-	 */
-	protected Artist() {
-		this.pEndPoint = Artists.END_POINT;
-	}
+public class Artist extends AbstractEntity implements Serializable {
+
+  
+  private static final long serialVersionUID = 1L;
+  private static final Logger log = LoggerFactory.getLogger(Artist.class);
+  
+  
+  /** The XML tag name for the Artist element */
+  public static final String NAMESPACE = "artist";
+
+
+  private String name;
+  
+
+  /**
+   * <p>Constructor for Artist.</p>
+   */
+  public Artist(IConnector connector, IConfiguration config){
+    super(connector, config);
+    log.info("New Artist collection instantiated");
+  }
+
+
+  public static String getTagName() {
+     return NAMESPACE;
+  }
+  
+  @Override
+  public String getNamespace() {
+    return getTagName();
+  }
+
+
+  /**
+   * Returns the artist name
+   * @return the artist name
+   */
+  public String getName() {
+    return name;
+  }
+
+  /**
+   * Sets the artist name. Used by the parser
+   * @param name the artist name
+   */
+  @Deprecated
+  public void setName(String name) {
+    this.name = name;
+  }
+  
+  
+
+  @Override
+  public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
+    if ( tagName.equals("token") ) {
+      return this.getClass().getMethod("setToken", String.class);
+
+    } else if ( tagName.equals("name") ){
+      return this.getClass().getMethod("setName", String.class);
+
+    }
+    
+    return null;
+  }
+  
+  
+  
+  
+  
 }

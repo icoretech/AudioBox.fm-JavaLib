@@ -22,7 +22,14 @@
 
 package fm.audiobox.core.models;
 
-import fm.audiobox.core.api.ModelItem;
+import java.io.Serializable;
+import java.lang.reflect.Method;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fm.audiobox.interfaces.IConfiguration;
+import fm.audiobox.interfaces.IConnector;
 
 
 /**
@@ -43,17 +50,72 @@ import fm.audiobox.core.api.ModelItem;
  *
  * @author Valerio Chiodino
  * @author Fabio Tunno
- * @version 0.0.1
  */
-public class Genre extends ModelItem {
-	
-    /** The XML tag name for the Genre element */
-	public static final String TAG_NAME = "genre";
-	
-	/**
-	 * <p>Constructor for Genre.</p>
-	 */
-	protected Genre() {
-		this.pEndPoint = Genres.END_POINT;
-	}
+public class Genre extends AbstractEntity implements Serializable {
+
+  private static final long serialVersionUID = 1L;
+
+  /** The XML tag name for the Genre element */
+  public static final String NAMESPACE = "genre";
+
+  private static final Logger log = LoggerFactory.getLogger(Genre.class);
+
+  private String name;
+
+
+  /**
+   * <p>Constructor for Genre.</p>
+   */
+  public Genre(IConnector connector, IConfiguration config){
+    super(connector, config);
+    log.info("New Genre instantiated");
+  }
+
+  public static String getTagName(){
+    return NAMESPACE;
+  }
+
+
+  @Override
+  public String getNamespace() {
+    return getTagName();
+  }
+
+  /**
+   * Sets the genre name. Used by parser
+   * 
+   * @param name the genre name
+   */
+  @Deprecated
+  public void setName(String name){
+    this.name = name;
+  }
+
+  /**
+   * Returns the genre name
+   * 
+   * @return the genre name
+   */
+  public String getName() {
+    return this.name;
+  }
+
+
+  @Override
+  public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
+
+    if ( tagName.equals("token") ) {
+      return this.getClass().getMethod("setToken", String.class);
+
+    } else if ( tagName.equals("name") ){
+      return this.getClass().getMethod("setName", String.class);
+
+    }
+
+    return null;
+  }
+
+
+
+
 }

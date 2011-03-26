@@ -25,6 +25,9 @@ package fm.audiobox.core.models;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fm.audiobox.core.api.ModelsCollection;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
@@ -41,82 +44,86 @@ import fm.audiobox.interfaces.IEntity;
 public class Playlists extends AbstractCollectionEntity<Playlist> implements Serializable {
 
   private static final long serialVersionUID = 1L;
+  
+  private static final Logger log = LoggerFactory.getLogger(Playlists.class);
+  
 
-    /** Tracks API end point */
-    public static final String NAMESPACE = "playlists";
-    
-    public static final String EMPTY_TRASH_ACTION = "empty_trash";
-    public static final String ADD_TRACKS_ACTION = "add_tracks";
-    public static final String REMOVE_TRACKS_ACTION = "remove_tracks";
-    
-    /** 
-     * Playlists are grouped by types that are:
-     * <ul> 
-     *   <li>{@link PlaylistTypes#AUDIO audio}</li>
-     *   <li>{@link PlaylistTypes#NATIVE native}</li>
-     *   <li>{@link PlaylistTypes#TRASH trash}</li>
-     *   <li>{@link PlaylistTypes#VIDEO video}</li>
-     *   <li>{@link PlaylistTypes#CUSTOM custom}</li>
-     * </ul> 
-     */
-    public enum PlaylistTypes {
-        /** The so called "Music" playlist, master audio media container */
-        AUDIO,
-        
-        /** Recycle bin meta playlist */
-        TRASH,
-        
-        /** Mainly the YouTube&trade; Channel playlist */
-        VIDEO,
-        
-        /** User defined playlists */
-        CUSTOM,
-        
-        /** Offline playlist */
-        OFFLINE
-    }
-    
-    /**
-     * <p>Constructor for Playlists.</p>
-     */
-    public Playlists(IConnector connector, IConfiguration config){
-      super(connector, config);
-    }
+  /** Tracks API end point */
+  public static final String NAMESPACE = "playlists";
 
-    
-    public static String getTagName(){
-      return NAMESPACE;
-    }
-    
-    @Override
-    public String getNamespace(){
-      return getTagName();
-    }
-    
-    
-    
-    @Override
-    public boolean add(Playlist entity) {
-      return super.addEntity(entity);
-    }
+  public static final String EMPTY_TRASH_ACTION = "empty_trash";
+  public static final String ADD_TRACKS_ACTION = "add_tracks";
+  public static final String REMOVE_TRACKS_ACTION = "remove_tracks";
+
+  /** 
+   * Playlists are grouped by types that are:
+   * <ul> 
+   *   <li>{@link PlaylistTypes#AUDIO audio}</li>
+   *   <li>{@link PlaylistTypes#NATIVE native}</li>
+   *   <li>{@link PlaylistTypes#TRASH trash}</li>
+   *   <li>{@link PlaylistTypes#VIDEO video}</li>
+   *   <li>{@link PlaylistTypes#CUSTOM custom}</li>
+   * </ul> 
+   */
+  public enum PlaylistTypes {
+    /** The so called "Music" playlist, master audio media container */
+    AUDIO,
+
+    /** Recycle bin meta playlist */
+    TRASH,
+
+    /** Mainly the YouTube&trade; Channel playlist */
+    VIDEO,
+
+    /** User defined playlists */
+    CUSTOM,
+
+    /** Offline playlist */
+    OFFLINE
+  }
+
+  /**
+   * <p>Constructor for Playlists.</p>
+   */
+  public Playlists(IConnector connector, IConfiguration config){
+    super(connector, config);
+    log.info("New Playlist collection instantiated");
+  }
 
 
-    @Override
-    public boolean remove(Object entity) {
-      return super.removeEntity( (IEntity)entity);
+  public static String getTagName(){
+    return NAMESPACE;
+  }
+
+  @Override
+  public String getNamespace(){
+    return getTagName();
+  }
+
+
+
+  @Override
+  public boolean add(Playlist entity) {
+    return super.addEntity(entity);
+  }
+
+
+  @Override
+  public boolean remove(Object entity) {
+    return super.removeEntity( (IEntity)entity);
+  }
+
+
+
+  @Override
+  public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
+
+    if ( tagName.equals( Playlist.getTagName() ) ) {
+      return this.getClass().getMethod("add", Playlist.class);
     }
-    
-    
-    
-    @Override
-    public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
-      
-      if ( tagName.equals("playlist") ) {
-        return this.getClass().getMethod("add", Playlist.class);
-      }
-      
-      return null;
-    }
+
+    return null;
+  }
 
 
 }

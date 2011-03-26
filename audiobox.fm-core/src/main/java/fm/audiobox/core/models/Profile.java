@@ -68,8 +68,7 @@ public final class Profile extends AbstractEntity implements Serializable {
    */
   public Profile(IConnector connector, IConfiguration config) {
     super(connector, config);
-    if ( log.isInfoEnabled() )
-      log.info("New Profile instanciated");
+    log.info("New Profile instanciated");
   }
 
   

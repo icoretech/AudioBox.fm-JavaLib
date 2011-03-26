@@ -22,7 +22,16 @@
 
 package fm.audiobox.core.models;
 
+import java.io.Serializable;
+import java.lang.reflect.Method;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fm.audiobox.core.api.ModelsCollection;
+import fm.audiobox.interfaces.IConfiguration;
+import fm.audiobox.interfaces.IConnector;
+import fm.audiobox.interfaces.IEntity;
 
 
 /**
@@ -32,56 +41,60 @@ import fm.audiobox.core.api.ModelsCollection;
  * @author Fabio Tunno
  * @version 0.0.1
  */
-public class Albums extends ModelsCollection {
+public class Albums extends AbstractCollectionEntity<Album> implements Serializable {
 
-    /** Tracks API end point */
-    public static final String END_POINT = "albums";
-    
-    /**
-     * <p>Constructor for Albums.</p>
-     */
-    protected Albums(){
-        this.pEndPoint = END_POINT;
-    }
-    
-    /**
-     * Getter method for the XML tag name of collection's elements.
-     * 
-     * @return the XML tag name {@link String} for Albums collection elements.
-     */
-    public String getTagName() {
-        return Album.TAG_NAME;
-    }
-    
-    /**
-     * Adds a Album to the collection: this is mainly used by the parser.
-     *
-     * @param album a {@link Album} to add to the collection.
-     */
-    public void addAlbum(Album album) {
-        super.addToCollection(album);
-    }
+  private static final long serialVersionUID = 1L;
+  private static final Logger log = LoggerFactory.getLogger(Albums.class);
+  
+  
+  /** Tracks API end point */
+  public static final String NAMESPACE = "albums";
 
+  
+  /**
+   * <p>Constructor for Albums.</p>
+   */
+  public Albums(IConnector connector, IConfiguration config){
+    super(connector, config);
+    log.info("New Album collection instantiated");
+  }
+
+  public static String getTagName() {
+    return NAMESPACE;
+  }
+  
+  
+  public String getNamespace(){
+    return getTagName();
+  }
+
+  @Override
+  public boolean add(Album entity) {
+    return super.addEntity( (IEntity) entity );
+  }
+
+  @Override
+  public boolean remove(Object entity) {
+    return super.removeEntity((IEntity) entity);
+  }
+  
+  
+  
+  @Override
+  public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
     
-    /**
-     * <p>Getter method for a single {@link Album} contained in the collection.</p>
-     *
-     * @param index the index of the desired Album.
-     * 
-     * @return a {@link Album} object.
-     */
-    public Album get(int index) {
-        return (Album) super.getItem(index);
+    if ( tagName.equals( Album.getTagName() ) ){
+      return this.getClass().getMethod("add", Album.class );
     }
     
-    /**
-     * <p>Getter method for a single {@link Album} contained in the collection.</p>
-     *
-     * @param token the uuid of the desired Album.
-     * 
-     * @return a {@link Album} object.
-     */
-    public Album get(String token) {
-        return (Album) super.getItem(token);
-    }
+    
+    return null;
+  }
+
+  
+  
+  
+  
+  
+  
 }

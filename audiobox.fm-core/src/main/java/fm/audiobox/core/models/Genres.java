@@ -22,71 +22,69 @@
 
 package fm.audiobox.core.models;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.Serializable;
+import java.lang.reflect.Method;
 
-import fm.audiobox.core.api.ModelsCollection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fm.audiobox.interfaces.IConfiguration;
+import fm.audiobox.interfaces.IConnector;
+import fm.audiobox.interfaces.IEntity;
+
 
 
 /**
- * <p>Genres is a {@link ModelsCollection} specialization for {@link Genre} collections.</p>
+ * <p>Genres is a {@link Genre} collection.</p>
  *
  * @author Valerio Chiodino
  * @author Fabio Tunno
- * @version 0.0.1
  */
-public class Genres extends ModelsCollection {
+public class Genres extends AbstractCollectionEntity<Genre> implements Serializable {
 
-    /** Tracks API end point */
-    public static final String END_POINT = "genres";
-    
-    protected List<Genre> collection = new ArrayList<Genre>();
-    
-    /**
-     * <p>Constructor for Genres.</p>
-     */
-    protected Genres(){
-        this.pEndPoint = END_POINT;
+  private static final long serialVersionUID = 1L;
+  
+  private static final Logger log = LoggerFactory.getLogger(Genres.class);
+  
+  /** Tracks API end point */
+  public static final String NAMESPACE = "genres";
+
+  /**
+   * <p>Constructor for Genres.</p>
+   */
+  public Genres(IConnector connector, IConfiguration config){
+    super(connector, config);
+    log.info("New Genre collection instantiated");
+  }
+
+  
+  public static String getTagName() {
+    return NAMESPACE;
+  }
+  
+  @Override
+  public String getNamespace() {
+    return getTagName();
+  }
+
+  @Override
+  public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
+    if ( tagName.equals( Genre.getTagName() ) ){
+      return this.getClass().getMethod("add", Genre.class);
+      
     }
     
-    /**
-     * Getter method for the XML tag name of collection's elements.
-     * 
-     * @return the XML tag name {@link String} for Genres collection elements.
-     */
-    public String getTagName() {
-        return Genre.TAG_NAME;
-    }
-    
-    /**
-     * Adds a Genre to the collection: this is mainly used by the parser.
-     *
-     * @param genre a {@link Genre} to add to the collection.
-     */
-    public void addGenre(Genre genre) {
-        super.addToCollection(genre);
-    }
-    
-    
-    /**
-     * <p>Getter method for a single {@link Genre} contained in the collection.</p>
-     *
-     * @param index the index of the desired Genre.
-     * 
-     * @return a {@link Genre} object.
-     */
-    public Genre get(int index) {
-        return (Genre)super.getItem(index);
-    }
-    
-    /**
-     * <p>Getter method for a single {@link Genre} contained in the collection.</p>
-     *
-     * @param token the uuid of the desired Genre.
-     * 
-     * @return a {@link Genre} object.
-     */
-    public Genre get(String token) {
-        return (Genre)super.getItem(token);
-    }
+    return null;
+  }
+
+  @Override
+  public boolean add(Genre entity) {
+    return super.addEntity((IEntity)entity);
+  }
+
+  @Override
+  public boolean remove(Object entity) {
+    return super.removeEntity((IEntity)entity);
+  }
+
 }
