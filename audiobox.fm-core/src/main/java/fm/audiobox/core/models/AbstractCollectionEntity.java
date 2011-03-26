@@ -5,8 +5,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
@@ -96,28 +94,23 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
 
   
   
-  
-  
-  
 
   @Override
   public E remove(int index) {
-    IEntity entity = this.collection.get(index);
-    if ( this.remove(entity)  ) 
-      return (E)entity;  // everything's ok
-    else 
-      return null;    // cannot remove entity
+    return (E)this.collection.remove(index);
   }
 
   
   /**
+   * <b>Not implemented.</b>
    * Removes an {@link IEntity} associated with given token
    * 
    * @param token the {@link IEntity} token
    * @return true if everything went right
    */
+  @Deprecated
   public boolean remove(String token){
-    return false;// TODO: this.remove( this.indexes.get( token ) );
+    return false;
   }
 
   
@@ -125,8 +118,9 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
   public abstract boolean add(E entity);
   
   @Override
-  public abstract boolean remove(Object entity);  
-  
+  public boolean remove(Object entity){
+    return this.collection.remove( entity );
+  }
   
 
   /**
@@ -136,21 +130,9 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
    * @return true if everything's ok
    */
   protected boolean addEntity(IEntity entity) {
-    this.collection.add( entity );
-    return true;
+    return this.collection.add( entity );
   }
   
-  
-  /**
-   * This method removes permanently an {@link IEntity} from collection
-   * <p><b>Use this method carefully</b></p>
-   * 
-   * @param index the index associated with this {@link IEntity}
-   */
-  protected boolean removeEntity(IEntity entity){
-    return this.collection.remove(  entity.getToken() );
-  }
-
 
   @Override
   public int size() {

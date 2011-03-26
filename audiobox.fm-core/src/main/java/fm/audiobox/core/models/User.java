@@ -101,6 +101,7 @@ public final class User extends AbstractEntity implements Serializable {
 
   /** User API namespace */
   public static final String NAMESPACE = "user";
+  public static final String TAGNAME = NAMESPACE;
 
   /** Separator used to split the allowed formats string */
   public static final String ALLOWED_EXTENSIONS_SEPARATOR = ";";
@@ -135,13 +136,13 @@ public final class User extends AbstractEntity implements Serializable {
 
   
   
-  public static String getTagName(){
-    return NAMESPACE;
+  public String getTagName(){
+    return TAGNAME;
   }
   
   @Override
   public String getNamespace(){
-    return getTagName();
+    return NAMESPACE;
   }
   
   
@@ -639,7 +640,7 @@ public final class User extends AbstractEntity implements Serializable {
 
   public Playlists getPlaylists() {
     if ( this.playlists == null ){
-      this.playlists = (Playlists) getConfiguration().getFactory().getEntity(Playlists.getTagName(), getConfiguration());
+      this.playlists = (Playlists) getConfiguration().getFactory().getEntity(Playlists.TAGNAME, getConfiguration());
     }
     return playlists;
   }
@@ -647,7 +648,7 @@ public final class User extends AbstractEntity implements Serializable {
 
   public Genres getGenres() {
     if ( this.genres == null ){
-      this.genres = (Genres) getConfiguration().getFactory().getEntity(Genres.getTagName(), getConfiguration());
+      this.genres = (Genres) getConfiguration().getFactory().getEntity(Genres.TAGNAME, getConfiguration());
     }
     return genres;
   }
@@ -655,7 +656,7 @@ public final class User extends AbstractEntity implements Serializable {
 
   public Artists getArtists() {
     if ( this.artists == null ){
-      this.artists = (Artists) getConfiguration().getFactory().getEntity(Artists.getTagName(), getConfiguration());
+      this.artists = (Artists) getConfiguration().getFactory().getEntity(Artists.TAGNAME, getConfiguration());
     }
     return artists;
   }
@@ -663,7 +664,7 @@ public final class User extends AbstractEntity implements Serializable {
 
   public Albums getAlbums() {
     if ( this.albums == null ){
-      this.albums = (Albums) getConfiguration().getFactory().getEntity(Albums.getTagName(), getConfiguration());
+      this.albums = (Albums) getConfiguration().getFactory().getEntity(Albums.TAGNAME, getConfiguration());
     }
     return albums;
   }

@@ -59,10 +59,12 @@ public class Artist extends AbstractEntity implements Serializable {
   
   
   /** The XML tag name for the Artist element */
-  public static final String NAMESPACE = "artist";
+  public static final String NAMESPACE = Artists.TAGNAME;
+  public static final String TAGNAME = "artist";
 
 
   private String name;
+  private Tracks tracks;
   
 
   /**
@@ -74,13 +76,14 @@ public class Artist extends AbstractEntity implements Serializable {
   }
 
 
-  public static String getTagName() {
-     return NAMESPACE;
+  @Override
+  public String getTagName() {
+     return TAGNAME;
   }
   
   @Override
   public String getNamespace() {
-    return getTagName();
+    return NAMESPACE;
   }
 
 
@@ -102,13 +105,27 @@ public class Artist extends AbstractEntity implements Serializable {
   }
   
   
-
+  /**
+   * Returns a {@link Tracks} instance ready to be populated through {@link Tracks#load()} method
+   * 
+   * @return a {@link Tracks} instance
+   */
+  public Tracks getTracks(){
+    if ( this.tracks == null ){
+      this.tracks = (Tracks) getConfiguration().getFactory().getEntity( Tracks.TAGNAME , getConfiguration() );
+      this.tracks.setParent( this );
+    }
+    return this.tracks;
+  }
+  
+  
   @Override
   public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
-    if ( tagName.equals("token") ) {
+    
+    if ( tagName.equals("token")  || tagName.equals("tk") ) {
       return this.getClass().getMethod("setToken", String.class);
 
-    } else if ( tagName.equals("name") ){
+    } else if ( tagName.equals("name") || tagName.equals("n") ){
       return this.getClass().getMethod("setName", String.class);
 
     }

@@ -24,14 +24,17 @@ package fm.audiobox.core.models;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.Iterator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fm.audiobox.core.api.ModelsCollection;
+import fm.audiobox.core.exceptions.LoginException;
+import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
-import fm.audiobox.interfaces.IEntity;
+import fm.audiobox.interfaces.IResponseHandler;
 
 
 /**
@@ -50,6 +53,7 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
 
   /** Tracks API end point */
   public static final String NAMESPACE = "playlists";
+  public static final String TAGNAME = NAMESPACE;
 
   public static final String EMPTY_TRASH_ACTION = "empty_trash";
   public static final String ADD_TRACKS_ACTION = "add_tracks";
@@ -91,13 +95,14 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
   }
 
 
-  public static String getTagName(){
+  @Override
+  public String getTagName(){
     return NAMESPACE;
   }
 
   @Override
   public String getNamespace(){
-    return getTagName();
+    return TAGNAME;
   }
 
 
@@ -107,18 +112,29 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
     return super.addEntity(entity);
   }
 
+  
+  public Playlist getPlaylistByName(String name){
+    for ( Iterator<Playlist> it = this.iterator(); it.hasNext();  ){
+      Playlist pl = it.next();
+      if (  name.equals( pl.getName() )  ) {
+        return pl;
+      }
+    }
+    return null;
+  }
+  
 
   @Override
-  public boolean remove(Object entity) {
-    return super.removeEntity( (IEntity)entity);
+  public void load(IResponseHandler responseHandler) throws ServiceException, LoginException {
+    this.clear();
+    super.load(responseHandler);
   }
-
 
 
   @Override
   public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
 
-    if ( tagName.equals( Playlist.getTagName() ) ) {
+    if ( tagName.equals( Playlist.TAGNAME ) ) {
       return this.getClass().getMethod("add", Playlist.class);
     }
 

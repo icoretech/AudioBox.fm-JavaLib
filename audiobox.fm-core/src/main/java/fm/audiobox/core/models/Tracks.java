@@ -22,66 +22,104 @@
 
 package fm.audiobox.core.models;
 
-import fm.audiobox.core.api.ModelsCollection;
+import java.io.Serializable;
+import java.lang.reflect.Method;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fm.audiobox.interfaces.IConfiguration;
+import fm.audiobox.interfaces.IConnector;
+import fm.audiobox.interfaces.IEntity;
 
 
 /**
- * <p>Tracks is a {@link ModelsCollection} specialization for {@link Track} collections.</p>
+ * <p>Tracks is a {@link Track} collection.</p>
  *
  * @author Valerio Chiodino
  * @author Fabio Tunno
- * @version 0.0.1
  */
-public class Tracks extends ModelsCollection {
+public class Tracks extends AbstractCollectionEntity<Track> implements Serializable {
 
-    /** Tracks API end point */
-    public static final String END_POINT = "tracks";
+
+  private static final long serialVersionUID = 1L;
+
+  private static final Logger log = LoggerFactory.getLogger(Tracks.class);
+
+  /** Tracks API end point */
+  public static final String NAMESPACE = "tracks";
+  public static final String TAGNAME = NAMESPACE;
+  
+  private IEntity parent;
+  
+
+  /**
+   * <p>Constructor for Tracks.</p>
+   */
+  public Tracks(IConnector connector, IConfiguration config){
+    super(connector, config);
+    log.info("New Track collection instantiated");
+  }
+  
+  
+  @Override
+  public String getTagName() {
+    return TAGNAME;
+  }
+  
+  
+  /**
+   * Returns the parent token if parent is set.
+   * Retuns null if not.
+   */
+  public String getToken(){
+    if ( parent != null ){
+      return parent.getToken();
+    }
+    return super.getToken();
+  }
+  
+  /**
+   * Returns the parent namespace if parent is set.
+   * Retuns the {@link Tracks#NAMESPACE} if not.
+   */
+  public String getNamespace(){
+    if ( parent != null ){
+      return parent.getNamespace();
+    }
+    return NAMESPACE;
+  }
+  
+  
+  /**
+   * Sets the parent {@link IEntity}
+   * <p>
+   * <code>Tracks</code> can be a {@link Playlist} or {@link Genre} or {@link Artist} or {@link Album} child.
+   * So we have to manage each case setting this attribute
+   * </p>
+   * @param parent the {@link IEntity} parent object
+   */
+  protected void setParent(IEntity parent){
+    this.parent = parent;
+  }
+  
+
+
+  @Override
+  public boolean add(Track entity) {
+    return super.addEntity(entity);
+  }
+
+  
+  @Override
+  public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
     
-    /**
-     * <p>Constructor for Tracks.</p>
-     */
-    protected Tracks(){
-        this.pEndPoint = END_POINT;
+    if ( tagName.equals( Track.TAGNAME ) ){
+      return this.getClass().getMethod("add", Track.class);
     }
     
-    /**
-     * Getter method for the XML tag name of collection's elements.
-     * 
-     * @return the XML tag name {@link String} for Tracks collection elements.
-     */
-    public String getTagName() {
-        return Track.TAG_NAME;
-    }
-    
-    /**
-     * Adds a Track to the collection: this is mainly used by the parser.
-     *
-     * @param track a {@link Track} to add to the collection.
-     */
-    public void addTrack(Track track) {
-        super.addToCollection(track);
-    }
-    
-    
-    /**
-     * <p>Getter method for a single {@link Track} contained in the collection.</p>
-     *
-     * @param index the index of the desired Track.
-     * 
-     * @return a {@link Track} object.
-     */
-    public Track get(int index) {
-        return (Track)super.getItem(index);
-    }
-    
-    /**
-     * <p>Getter method for a single {@link Track} contained in the collection.</p>
-     *
-     * @param token the token of the desired Track.
-     * 
-     * @return a {@link Track} object.
-     */
-    public Track get(String token) {
-        return (Track) super.getItem(token);
-    }
+    return null;
+  }
+  
+  
 }

@@ -64,12 +64,14 @@ public class Playlist extends AbstractEntity implements Serializable {
   private static final Logger log = LoggerFactory.getLogger(Playlist.class);
 
   /** The XML tag name for the Playlist element */
-  public static final String NAMESPACE = "playlist";
+  public static final String NAMESPACE = Playlists.TAGNAME;
+  public static final String TAGNAME = "playlist";
 
   private String name;
   private int position = 0;
   private PlaylistTypes playlistType;
   private long tracksCount;
+  private Tracks tracks;
 
 
 
@@ -82,13 +84,14 @@ public class Playlist extends AbstractEntity implements Serializable {
   }
 
 
-  public static String getTagName(){
-    return NAMESPACE;
+  @Override
+  public String getTagName(){
+    return TAGNAME;
   }
 
   @Override
   public String getNamespace(){
-    return getTagName();
+    return NAMESPACE;
   }
 
 
@@ -179,6 +182,20 @@ public class Playlist extends AbstractEntity implements Serializable {
   }
 
 
+  
+  /**
+   * Returns a {@link Tracks} instance ready to be populated through {@link Tracks#load()} method
+   * 
+   * @return a {@link Tracks} instance
+   */
+  public Tracks getTracks(){
+    if ( this.tracks == null ){
+      this.tracks = (Tracks) getConfiguration().getFactory().getEntity( Tracks.TAGNAME , getConfiguration() );
+      this.tracks.setParent( this );
+    }
+    return this.tracks;
+  }
+  
 
   @Override
   public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {

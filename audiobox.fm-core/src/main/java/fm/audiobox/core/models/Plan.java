@@ -65,7 +65,8 @@ public final class Plan extends AbstractEntity implements Serializable {
 
   private static final Logger log = LoggerFactory.getLogger( Plan.class );
 
-  public static final String NAMESPACE = "plan";
+  public static final String NAMESPACE = null;
+  public static final String TAGNAME = "plan";
 
   private String name;
   private boolean featApi;
@@ -87,14 +88,14 @@ public final class Plan extends AbstractEntity implements Serializable {
     log.info("New Plan instanciated");
   }
 
-  
-  public static String getTagName(){
-    return NAMESPACE;
+  @Override
+  public String getTagName(){
+    return TAGNAME;
   }
   
   @Override
   public String getNamespace(){
-    return getTagName();
+    return NAMESPACE;
   }
   
   

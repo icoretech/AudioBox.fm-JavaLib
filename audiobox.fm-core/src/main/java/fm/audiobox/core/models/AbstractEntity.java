@@ -89,7 +89,7 @@ public abstract class AbstractEntity extends Observable implements IEntity {
    * @throws LoginException
    */
   public void load() throws ServiceException, LoginException {
-    getConnector().get(this, null, null).send();
+    this.load(null);
   }
   
   /**

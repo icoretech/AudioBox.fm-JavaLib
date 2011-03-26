@@ -67,11 +67,13 @@ public class Album extends AbstractEntity implements Serializable {
   private static final Logger log = LoggerFactory.getLogger(Album.class);
   
   /** The XML tag name for the Album element */
-  public static final String NAMESPACE = "album";
+  public static final String NAMESPACE = Albums.TAGNAME;
+  public static final String TAGNAME = "album";
 
   private String name; 
   private Covers covers;
   private Artist artist;
+  private Tracks tracks;
 
   /**
    * <p>Constructor for Album.</p>
@@ -81,13 +83,15 @@ public class Album extends AbstractEntity implements Serializable {
     log.info("New Album instantiated");
   }
 
-  public static String getTagName() {
-    return NAMESPACE;
+  
+  @Override
+  public String getTagName() {
+    return TAGNAME;
   }
   
-  
+  @Override
   public String getNamespace(){
-    return getTagName();
+    return NAMESPACE;
   }
 
 
@@ -154,19 +158,34 @@ public class Album extends AbstractEntity implements Serializable {
     return artist;
   }
 
+  
+  /**
+   * Returns a {@link Tracks} instance ready to be populated through {@link Tracks#load()} method
+   * 
+   * @return a {@link Tracks} instance
+   */
+  public Tracks getTracks(){
+    if ( this.tracks == null ){
+      this.tracks = (Tracks) getConfiguration().getFactory().getEntity( Tracks.TAGNAME , getConfiguration() );
+      this.tracks.setParent( this );
+    }
+    return this.tracks;
+  }
+  
+  
   @Override
   public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
     
-    if ( tagName.equals("token") ){
+    if ( tagName.equals("token") || tagName.equals("tk") ){
       return this.getClass().getMethod("setToken", String.class);
       
-    } else if ( tagName.equals("name") ){
+    } else if ( tagName.equals("name") || tagName.equals("n") ){
       return this.getClass().getMethod("setName", String.class);
       
-    } else if ( tagName.equals( Artist.getTagName() ) ){
+    } else if ( tagName.equals( Artist.TAGNAME ) || tagName.equals("ar") ){
       return this.getClass().getMethod("setArtist", Artist.class);
       
-    } else if ( tagName.equals(Covers.getTagName() ) ){
+    } else if ( tagName.equals(Covers.TAGNAME ) || tagName.equals("c") ){
       return this.getClass().getMethod("setCovers", Covers.class);
       
     }

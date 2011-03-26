@@ -61,7 +61,7 @@ public class XmlParser extends DefaultHandler {
       localName = qName;
     }
     
-    if ( localName.equals( this.stack.peek().getNamespace() ) ){
+    if ( localName.equals( this.stack.peek().getTagName() ) ){
       // Start tag must be skipped
       return;
     }
@@ -97,12 +97,12 @@ public class XmlParser extends DefaultHandler {
     IEntity currentEntity = this.stack.peek();
     IEntity newEntity = null;
     
-    if ( localName.equals( currentEntity.getNamespace() )  ){
+    if ( localName.equals( currentEntity.getTagName() )  ){
       // end element for current entity
       log.debug("EndElement reached for tag: " + localName);
       newEntity = this.stack.pop();
       if ( this.stack.size() == 0 ){
-        if ( localName.equals( this.entity.getNamespace() )  ){
+        if ( localName.equals( this.entity.getTagName() )  ){
           // XML parsed completely
           return;
         } else {

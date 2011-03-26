@@ -7,10 +7,18 @@ public interface IEntity {
 
   
   /**
-   * Returns the namespace path associated with this Entity
+   * Returns the namespace path associated with this Entity.
+   * <b>This method is used by connector</b>
    * @return {@link String} the namespace
    */
   public String getNamespace();
+  
+  /**
+   * Returns the tag name associated with this Entity
+   * <b>This method is used by parser</b>
+   * @return
+   */
+  public String getTagName();
   
   
   /**

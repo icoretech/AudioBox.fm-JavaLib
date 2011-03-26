@@ -6,10 +6,15 @@ import fm.audiobox.AudioBox;
 import fm.audiobox.configurations.DefaultConfiguration;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
+import fm.audiobox.core.models.Album;
 import fm.audiobox.core.models.Albums;
+import fm.audiobox.core.models.Artist;
 import fm.audiobox.core.models.Artists;
+import fm.audiobox.core.models.Genre;
 import fm.audiobox.core.models.Genres;
+import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
+import fm.audiobox.core.models.Tracks;
 import fm.audiobox.core.models.User;
 import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 import fm.audiobox.interfaces.IConfiguration;
@@ -92,6 +97,60 @@ public class AudioBoxRefactorTest extends junit.framework.TestCase {
     } catch (LoginException e) {
       assertNull( e );
     }
+    
+    
+    Playlist pl = pls.getPlaylistByName("Last uploaded");
+    Tracks plTracks = pl.getTracks();
+    
+    try {
+      plTracks.load();
+    } catch (ServiceException e) {
+      assertNull( e );
+    } catch (LoginException e) {
+      assertNull( e );
+    }
+    
+    assertEquals( pl.getTracksCount(), plTracks.size() );
+    
+    
+    Genre g = gnrs.get(0);
+    
+    Tracks gTracks = g.getTracks();
+    try {
+      gTracks.load();
+    } catch (ServiceException e) {
+      assertNull( e );
+    } catch (LoginException e) {
+      assertNull( e );
+    }
+    
+    
+    
+    Album a = albs.get(0);
+    
+    Tracks alTracks = a.getTracks();
+    try {
+      alTracks.load();
+    } catch (ServiceException e) {
+      assertNull( e );
+    } catch (LoginException e) {
+      assertNull( e );
+    }
+    
+    
+    
+    Artist ar = arts.get(0);
+    
+    Tracks arTracks = ar.getTracks();
+    try {
+      arTracks.load();
+    } catch (ServiceException e) {
+      assertNull( e );
+    } catch (LoginException e) {
+      assertNull( e );
+    }
+    
+    
     
     
     // All went right

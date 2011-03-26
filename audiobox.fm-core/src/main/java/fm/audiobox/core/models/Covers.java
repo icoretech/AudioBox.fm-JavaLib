@@ -59,7 +59,8 @@ public class Covers extends AbstractEntity implements Serializable {
 
 
   /** The XML tag name for the Album element */
-  public static final String NAMESPACE = "covers";
+  public static final String NAMESPACE = null;
+  public static final String TAGNAME = "covers";
 
   private String large;
   private String medium;
@@ -74,13 +75,15 @@ public class Covers extends AbstractEntity implements Serializable {
     log.info("New CoverUrls instantiated");
   }
 
-  public static String getTagName() {
-    return NAMESPACE;
+  
+  @Override
+  public String getTagName() {
+    return TAGNAME;
   }
 
-
+  @Override
   public String getNamespace(){
-    return getTagName();
+    return NAMESPACE;
   }
 
 

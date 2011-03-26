@@ -21,6 +21,8 @@ import fm.audiobox.core.models.Plan;
 import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
 import fm.audiobox.core.models.Profile;
+import fm.audiobox.core.models.Track;
+import fm.audiobox.core.models.Tracks;
 import fm.audiobox.core.models.User;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
@@ -31,7 +33,7 @@ public class DefaultFactory implements IFactory {
 
   private static final Logger log = LoggerFactory.getLogger(DefaultFactory.class);
   
-  private static final String[] EXCLUDED_EXTENDABLE_CLASSES = new String[]{ User.getTagName(), Plan.getTagName(), Profile.getTagName() };
+  private static final String[] EXCLUDED_EXTENDABLE_CLASSES = new String[]{ User.TAGNAME, Plan.TAGNAME, Profile.TAGNAME };
   
   /**
    * Default Entities map.
@@ -51,25 +53,27 @@ public class DefaultFactory implements IFactory {
   
   static {
     gEntities = new HashMap<String, Class<? extends IEntity>>();
-    gEntities.put( User.getTagName(), User.class );
-    gEntities.put( Plan.getTagName(), Plan.class );
-    gEntities.put( Profile.getTagName(), Profile.class );
+    gEntities.put( User.TAGNAME, User.class );
+    gEntities.put( Plan.TAGNAME, Plan.class );
+    gEntities.put( Profile.TAGNAME, Profile.class );
     
-    gEntities.put( Playlists.getTagName(), Playlists.class );
-    gEntities.put( Playlist.getTagName(), Playlist.class );
+    gEntities.put( Playlists.TAGNAME, Playlists.class );
+    gEntities.put( Playlist.TAGNAME, Playlist.class );
     
     
-    gEntities.put( Genres.getTagName(), Genres.class );
-    gEntities.put( Genre.getTagName(), Genre.class );
+    gEntities.put( Genres.TAGNAME, Genres.class );
+    gEntities.put( Genre.TAGNAME, Genre.class );
     
-    gEntities.put( Albums.getTagName(), Albums.class );
-    gEntities.put( Album.getTagName(), Album.class );
-    gEntities.put( Covers.getTagName(), Covers.class );
+    gEntities.put( Albums.TAGNAME, Albums.class );
+    gEntities.put( Album.TAGNAME, Album.class );
+    gEntities.put( Covers.TAGNAME, Covers.class );
     
-    gEntities.put( Artists.getTagName(), Artists.class );
-    gEntities.put( Artist.getTagName(), Artist.class );
+    gEntities.put( Artists.TAGNAME, Artists.class );
+    gEntities.put( Artist.TAGNAME, Artist.class );
     
-    // TODO: populate data
+    gEntities.put( Tracks.TAGNAME, Tracks.class );
+    gEntities.put( Track.TAGNAME, Track.class );
+    
   }
   
   

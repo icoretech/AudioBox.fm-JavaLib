@@ -58,7 +58,8 @@ public final class Profile extends AbstractEntity implements Serializable {
 
   private static final Logger log = LoggerFactory.getLogger(Profile.class);
 
-  public static final String NAMESPACE = "profile";
+  public static final String NAMESPACE = null;
+  public static final String TAGNAME = "profile";
   
   private boolean autoplay;
   private String realName;
@@ -72,14 +73,14 @@ public final class Profile extends AbstractEntity implements Serializable {
   }
 
   
-  
-  public static String getTagName(){
-    return NAMESPACE;
+  @Override
+  public String getTagName(){
+    return TAGNAME;
   }
   
   @Override
   public String getNamespace(){
-    return getTagName();
+    return NAMESPACE;
   }
 
 

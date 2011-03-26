@@ -29,9 +29,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fm.audiobox.core.api.ModelsCollection;
+import fm.audiobox.core.exceptions.LoginException;
+import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
-import fm.audiobox.interfaces.IEntity;
+import fm.audiobox.interfaces.IResponseHandler;
 
 
 /**
@@ -49,6 +51,7 @@ public class Albums extends AbstractCollectionEntity<Album> implements Serializa
   
   /** Tracks API end point */
   public static final String NAMESPACE = "albums";
+  public static final String TAGNAME = NAMESPACE;
 
   
   /**
@@ -59,31 +62,35 @@ public class Albums extends AbstractCollectionEntity<Album> implements Serializa
     log.info("New Album collection instantiated");
   }
 
-  public static String getTagName() {
-    return NAMESPACE;
+  
+  @Override
+  public String getTagName() {
+    return TAGNAME;
   }
   
-  
+  @Override
   public String getNamespace(){
-    return getTagName();
+    return NAMESPACE;
   }
 
   @Override
   public boolean add(Album entity) {
-    return super.addEntity( (IEntity) entity );
+    return super.addEntity(  entity );
   }
 
-  @Override
-  public boolean remove(Object entity) {
-    return super.removeEntity((IEntity) entity);
-  }
   
+  
+  @Override
+  public void load(IResponseHandler responseHandler) throws ServiceException, LoginException {
+    this.clear();
+    super.load(responseHandler);
+  }
   
   
   @Override
   public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
     
-    if ( tagName.equals( Album.getTagName() ) ){
+    if ( tagName.equals( Album.TAGNAME ) ){
       return this.getClass().getMethod("add", Album.class );
     }
     
