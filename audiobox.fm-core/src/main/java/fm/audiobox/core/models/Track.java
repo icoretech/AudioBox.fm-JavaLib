@@ -483,7 +483,7 @@ public class Track extends AbstractEntity implements Serializable {
    * @throws LoginException
    */
   public void load(IResponseHandler responseHandler) throws ServiceException, LoginException {
-    getConnector().get(this, null, null).send(null, responseHandler);
+    getConnector().get(this, null, null).send(false, null, responseHandler);
   }
   
   
@@ -510,7 +510,7 @@ public class Track extends AbstractEntity implements Serializable {
    * @throws ServiceException if any connection problem to AudioBox.fm occurs.
    */
   public void scrobble() throws ServiceException, LoginException {
-    String[] response = getConnector().post(this, SCROBBLE_ACTION).send();
+    String[] response = getConnector().post(this, SCROBBLE_ACTION).send(false);
     if ( Integer.parseInt( response[ IConfiguration.RESPONSE_CODE ] ) == HttpStatus.SC_OK)
       this.setPlayCount( this.getPlayCount() + 1 );
   }
@@ -541,9 +541,7 @@ public class Track extends AbstractEntity implements Serializable {
    * @throws ServiceException 
    */
   public boolean love() throws ServiceException, LoginException{
-    String[] result = this.getConnector().put(this, LOVE_ACTION ).send();
-    if ( HttpStatus.SC_OK == Integer.parseInt( result[ IConfiguration.RESPONSE_CODE ] )  )
-      this.setLoved( true );
+    this.getConnector().put(this, LOVE_ACTION ).send( false );
     return this.isLoved();
   }
   
@@ -555,9 +553,7 @@ public class Track extends AbstractEntity implements Serializable {
    * @throws ServiceException 
    */
   public boolean unlove() throws ServiceException, LoginException{
-    String[] result = this.getConnector().put(this, UNLOVE_ACTION ).send();
-    if ( HttpStatus.SC_OK == Integer.parseInt( result[ IConfiguration.RESPONSE_CODE ] )  )
-      this.setLoved( false );
+    this.getConnector().put(this, UNLOVE_ACTION ).send(false);
     return this.isLoved();
   }
   

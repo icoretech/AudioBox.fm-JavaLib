@@ -62,7 +62,7 @@ public class ObserversTests extends junit.framework.TestCase {
     });
     
     try {
-      pls.load();
+      pls.load(false);
     } catch (ServiceException e) {
       assertNull(e);
     } catch (LoginException e) {

@@ -170,8 +170,8 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
    * @throws ServiceException
    * @throws LoginException
    */
-  public String[] load() throws ServiceException, LoginException {
-    return this.load(null);
+  public String[] load(boolean async) throws ServiceException, LoginException {
+    return this.load(async, null);
   }
   
   
@@ -184,9 +184,9 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
    * @throws ServiceException
    * @throws LoginException
    */
-  public String[] load(IResponseHandler responseHandler) throws ServiceException, LoginException {
+  public String[] load(boolean async, IResponseHandler responseHandler) throws ServiceException, LoginException {
     this.clear();
-    return getConnector().get(this, null, null).send(null, responseHandler);
+    return getConnector().get(this, null, null).send(async, null, responseHandler);
   }
   
   

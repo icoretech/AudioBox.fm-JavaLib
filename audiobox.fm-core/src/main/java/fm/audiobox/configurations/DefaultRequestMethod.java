@@ -47,12 +47,12 @@ public class DefaultRequestMethod implements IConnectionMethod {
   
   
   @Override
-  public String[] send() throws ServiceException, LoginException {
-    return send(null,null);
+  public String[] send(boolean async) throws ServiceException, LoginException {
+    return send(async, null,null);
   }
 
   @Override
-  public String[] send(List<NameValuePair> params) throws ServiceException, LoginException {
+  public String[] send(boolean async, List<NameValuePair> params) throws ServiceException, LoginException {
     HttpEntity entity = null;
     if (  (! isGET() && ! isDELETE() )  && params != null ){
       try {
@@ -61,20 +61,37 @@ public class DefaultRequestMethod implements IConnectionMethod {
         log.error("An error occurred while instanciating UrlEncodedFormEntity", e);
       }
     }
-    return send(entity);
+    return send(async, entity);
   }
 
   @Override
-  public String[] send(HttpEntity params) throws ServiceException, LoginException {
-    return send( params, null);
+  public String[] send(boolean async, HttpEntity params) throws ServiceException, LoginException {
+    return send(async, params, null);
   }
   
   @Override
-  public String[] send(HttpEntity params, IResponseHandler responseHandler) throws ServiceException, LoginException {
+  public String[] send(boolean async, HttpEntity params, final IResponseHandler responseHandler) throws ServiceException, LoginException {
     if (   ( ! isGET() && ! isDELETE() )  && params != null ){
       ((HttpEntityEnclosingRequestBase) getHttpMethod() ).setEntity( params );
     }
-    return this.connector.execute( this , responseHandler);
+    
+    if ( async ){
+      final IConnectionMethod me = this;
+      (new Thread(){
+        public void run(){
+          try {
+            connector.execute( me , responseHandler);
+          } catch (ServiceException e) {
+            e.printStackTrace();
+          } catch (LoginException e) {
+            e.printStackTrace();
+          }
+        }
+      }).start();
+      return new String[]{"",""};
+    } else {
+      return this.connector.execute( this , responseHandler);
+    }
   }
 
   @Override

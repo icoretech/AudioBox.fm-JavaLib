@@ -114,10 +114,14 @@ public class DefaultResponseHandler implements ResponseHandler<String[]>, IRespo
           
           String body = streamToString(response.getEntity().getContent() );
           throw new LoginException( responseCode, body );
-
+        
+        case HttpStatus.SC_PAYMENT_REQUIRED:
+          
+          throw new LoginException( responseCode, "Unauthorized user plan" );
+          
+          
         // 50x
         default:
-          
           String message = "";
           
           if ( isXml ){

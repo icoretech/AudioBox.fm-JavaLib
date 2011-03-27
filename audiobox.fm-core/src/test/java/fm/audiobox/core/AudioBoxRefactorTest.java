@@ -77,7 +77,7 @@ public class AudioBoxRefactorTest extends junit.framework.TestCase {
     assertNotNull(pls);
     
     try {
-      pls.load();
+      pls.load(false);
     } catch (ServiceException e) {
       assertNull(e);
     } catch (LoginException e) {
@@ -107,7 +107,7 @@ public class AudioBoxRefactorTest extends junit.framework.TestCase {
     assertNotNull(arts);
     
     try {
-      arts.load();
+      arts.load(false);
     } catch (ServiceException e) {
       e.printStackTrace();
     } catch (LoginException e) {
@@ -132,7 +132,7 @@ public class AudioBoxRefactorTest extends junit.framework.TestCase {
     assertNotNull(albs);
     
     try {
-      albs.load();
+      albs.load(false);
     } catch (ServiceException e) {
       e.printStackTrace();
     } catch (LoginException e) {
@@ -160,7 +160,7 @@ public class AudioBoxRefactorTest extends junit.framework.TestCase {
     assertNotNull(gnrs);
     
     try {
-      gnrs.load();
+      gnrs.load(false);
     } catch (ServiceException e) {
       e.printStackTrace();
     } catch (LoginException e) {
@@ -205,7 +205,7 @@ public class AudioBoxRefactorTest extends junit.framework.TestCase {
     assertNotNull(pls);
     
     try {
-      pls.load();
+      pls.load(false);
     } catch (ServiceException e) {
       assertNull(e);
     } catch (LoginException e) {

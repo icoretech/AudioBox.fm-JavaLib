@@ -228,7 +228,7 @@ public class AudioBox {
 
     mCredentials = new UsernamePasswordCredentials(username, password);
     
-    String[] result = this.getConnector().get(user, null, null).send();
+    String[] result = this.getConnector().get(user, null, null).send(false);
     
     // Check response code
     if (   ! String.valueOf( HttpStatus.SC_OK ).equals(  result[IConfiguration.RESPONSE_CODE]  )    ){

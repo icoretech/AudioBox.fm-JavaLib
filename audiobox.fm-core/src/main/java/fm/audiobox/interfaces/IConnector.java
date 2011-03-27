@@ -106,7 +106,7 @@ public interface IConnector {
      * @throws ServiceException
      * @throws LoginException
      */
-    public String[] send() throws ServiceException, LoginException;
+    public String[] send(boolean async) throws ServiceException, LoginException;
     
     /**
      * Invokes server passing parameters.
@@ -115,7 +115,7 @@ public interface IConnector {
      * @param params {@link List} of {@link NameValuePair} used as request parameters
      * @return a String array containing Response status and response body
      */
-    public String[] send(List<NameValuePair> params) throws ServiceException, LoginException;
+    public String[] send(boolean async, List<NameValuePair> params) throws ServiceException, LoginException;
     
     /**
      * Invokes server passing an entire {@link HttpEntity}
@@ -125,7 +125,7 @@ public interface IConnector {
      * @param params the {@link HttpEntity} used as request parameter
      * @return a String array containing Response status and response body
      */
-    public String[] send(HttpEntity params) throws ServiceException, LoginException;
+    public String[] send(boolean async, HttpEntity params) throws ServiceException, LoginException;
     
     /**
      * Invokes server passing a {@link HttpEntity} as request parameter.
@@ -137,7 +137,7 @@ public interface IConnector {
      * @throws ServiceException
      * @throws LoginException
      */
-    public String[] send(HttpEntity params, IResponseHandler responseHandler) throws ServiceException, LoginException;
+    public String[] send(boolean async, HttpEntity params, IResponseHandler responseHandler) throws ServiceException, LoginException;
     
     
     /**

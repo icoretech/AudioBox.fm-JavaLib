@@ -25,6 +25,7 @@ package fm.audiobox.core.models;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
+import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -433,7 +434,7 @@ public final class User extends AbstractEntity implements Serializable {
   public String[] getUploadedTracks() throws ServiceException, LoginException {
     Tracks tracks = (Tracks) getConfiguration().getFactory().getEntity( Tracks.TAGNAME, getConfiguration() );
     
-    String[] response = tracks.load();
+    String[] response = tracks.load(false);
     
     String result = response[ IConfiguration.RESPONSE_BODY ];
     String[] resultSplitted = result.split( ";" , result.length() );
@@ -462,10 +463,12 @@ public final class User extends AbstractEntity implements Serializable {
 //  }
 
 
-//  public boolean emptyTrash() throws LoginException, ServiceException {
-//    String[] result = getConnector().put( new Playlists(), Playlists.EMPTY_TRASH_ACTION).send();
-//    return HttpStatus.SC_OK == Integer.parseInt( result[ IConfiguration.RESPONSE_CODE ] );
-//  }
+  public boolean emptyTrash() throws LoginException, ServiceException {
+    Playlists pls = (Playlists)getConfiguration().getFactory().getEntity( Playlists.NAMESPACE, getConfiguration() );
+    
+    String[] result = getConnector().put( pls, Playlists.EMPTY_TRASH_ACTION ).send(false);
+    return HttpStatus.SC_OK == Integer.parseInt( result[ IConfiguration.RESPONSE_CODE ] );
+  }
 
 
 
@@ -533,7 +536,7 @@ public final class User extends AbstractEntity implements Serializable {
    * @throws LoginException
    */
   public void load(IResponseHandler responseHandler) throws ServiceException, LoginException {
-    getConnector().get(this, null, null).send(null, responseHandler);
+    getConnector().get(this, null, null).send(false, null, responseHandler);
   }
   
   
