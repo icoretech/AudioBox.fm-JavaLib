@@ -2,6 +2,8 @@ package fm.audiobox.interfaces;
 
 import org.apache.http.HttpResponse;
 
+import fm.audiobox.core.exceptions.ServiceException;
+
 public interface IResponseHandler {
 
   
@@ -11,7 +13,7 @@ public interface IResponseHandler {
    * @param response the {@link HttpResponse} received
    * @return the body of response
    */
-  public String parseAsXml(HttpResponse response);
+  public String parseAsXml(HttpResponse response) throws ServiceException;
   
   /**
    * Used to parse a json response
@@ -19,7 +21,7 @@ public interface IResponseHandler {
    * @param response the {@link HttpResponse} received
    * @return the body of response
    */
-  public String parseAsJson(HttpResponse response);
+  public String parseAsJson(HttpResponse response) throws ServiceException;
   
   /**
    * Used to parse a text response
@@ -27,7 +29,7 @@ public interface IResponseHandler {
    * @param response the {@link HttpResponse} received
    * @return the body of response
    */
-  public String parseAsText(HttpResponse response);
+  public String parseAsText(HttpResponse response) throws ServiceException;
   
   /**
    * Used to parse a binary response
@@ -35,7 +37,7 @@ public interface IResponseHandler {
    * @param response the {@link HttpResponse} received
    * @return the body of response
    */
-  public String parseAsBinary(HttpResponse response);
+  public String parseAsBinary(HttpResponse response) throws ServiceException;
   
   
   /**
@@ -44,7 +46,7 @@ public interface IResponseHandler {
    * @param response the {@link HttpResponse} received
    * @return the body of response
    */  
-  public String parse(HttpResponse response);
+  public String parse(HttpResponse response) throws ServiceException;
   
   
 }

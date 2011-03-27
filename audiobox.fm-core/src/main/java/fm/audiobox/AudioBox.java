@@ -594,12 +594,31 @@ public class AudioBox {
         throw new ServiceException(e);
       } catch (IOException e) {
         log.error("IOException thrown while executing request method", e);
-        if ( e instanceof ServiceException)
-          throw (ServiceException)e;
-        else if ( e instanceof LoginException )
-          throw (LoginException)e;
-        else
-          throw new ServiceException(e);
+        if ( e instanceof ServiceException) {
+          
+          ServiceException se = (ServiceException)e;
+          if ( configuration.getDefaultServiceExceptionHandler() != null ){
+            configuration.getDefaultServiceExceptionHandler().handle( se );
+          }
+          
+          throw se;
+        } else if ( e instanceof LoginException ) {
+          
+          LoginException le = (LoginException)e;
+          if ( configuration.getDefaultLoginExceptionHandler() != null ){
+            configuration.getDefaultLoginExceptionHandler().handle( le );
+          }
+          throw le;
+          
+        } else {
+          ServiceException se = new ServiceException(e);
+          
+          if ( configuration.getDefaultServiceExceptionHandler() != null ){
+            configuration.getDefaultServiceExceptionHandler().handle( se );
+          }
+          
+          throw se;
+        }
       }
       
     }

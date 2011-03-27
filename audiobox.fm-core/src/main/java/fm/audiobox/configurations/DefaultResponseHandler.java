@@ -27,7 +27,7 @@ import fm.audiobox.interfaces.IConfiguration.RequestFormat;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
 
-public class DefaultResponseHandler implements ResponseHandler<String[]> {
+public class DefaultResponseHandler implements ResponseHandler<String[]>, IResponseHandler {
 
   
   private static final Logger log = LoggerFactory.getLogger(DefaultResponseHandler.class);
@@ -40,7 +40,7 @@ public class DefaultResponseHandler implements ResponseHandler<String[]> {
   public DefaultResponseHandler(IConfiguration config, IEntity destEntity, IResponseHandler responseHandler){
     this.configuration = config;
     this.destEntity = destEntity;
-    this.responseHandler = responseHandler;
+    this.responseHandler = responseHandler != null  ?  responseHandler  :  this;
   }
   
   public static String streamToString(InputStream stream) throws IOException{
@@ -76,44 +76,23 @@ public class DefaultResponseHandler implements ResponseHandler<String[]> {
         // 20*
         case HttpStatus.SC_OK:
 
-          if ( responseHandler != null ){
+          if ( isXml ) {
+            responseString = responseHandler.parseAsXml( response );
             
-            if ( isXml ) {
-              responseString = responseHandler.parseAsXml( response );
-            } else if ( isJson ) {
-              responseString = responseHandler.parseAsJson( response );
-            } else if ( isText ) {
-              responseString = responseHandler.parseAsText( response );
-            } else if ( isBinary ) {
-              responseString = responseHandler.parseAsBinary( response );
-            } else {
-              responseString = responseHandler.parse( response );
-            }
+          } else if ( isJson ) {
+            responseString = responseHandler.parseAsJson( response );
             
-          } else if ( contentLength > 0 ){
+          } else if ( isText ) {
+            responseString = responseHandler.parseAsText( response );
             
-            if ( isXml ){
-              
-              try {
-                SAXParserFactory spf = SAXParserFactory.newInstance();
-                SAXParser sp = spf.newSAXParser();
-                XMLReader xr = sp.getXMLReader();
-                xr.setContentHandler( new XmlParser(destEntity, configuration) );
-                xr.parse( new InputSource( response.getEntity().getContent() ) );
-              } catch (ParserConfigurationException e) {
-                log.error("An error occurred while instantiating XML Parser", e);
-                throw new ServiceException(ServiceException.GENERIC_ERROR, e.getMessage());
-              } catch (SAXException e) {
-                log.error("An error occurred while instantiating XML Parser", e);
-                throw new ServiceException(ServiceException.GENERIC_ERROR, e.getMessage());
-              }
-
-            } else if ( isText ){
-              responseString = streamToString( response.getEntity().getContent() );
-            }
-          
+          } else if ( isBinary ) {
+            responseString = responseHandler.parseAsBinary( response );
+            
+          } else {
+            responseString = responseHandler.parse( response );
+            
           }
-          
+            
           break;
 
         
@@ -132,28 +111,44 @@ public class DefaultResponseHandler implements ResponseHandler<String[]> {
         // 401, 403
         case HttpStatus.SC_UNAUTHORIZED:
         case HttpStatus.SC_FORBIDDEN:
-        {
+          
           String body = streamToString(response.getEntity().getContent() );
-          LoginException loginException = new LoginException( responseCode, body );
-          if ( configuration.getDefaultLoginExceptionHandler() != null ){
-            configuration.getDefaultLoginExceptionHandler().handle( loginException );
-          }
-          throw loginException;
-        }
+          throw new LoginException( responseCode, body );
 
         // 50x
         default:
-
-          String message = streamToString( response.getEntity().getContent() );
-
-//            fm.audiobox.core.models.Error error = new fm.audiobox.core.models.Error();
-//  
-//            try {
-//              error.parseXMLResponse( response.getEntity().getContent() );
-//              message = error.getMessage();
-//              status = error.getStatus();
-//            } catch(IOException e) { message = e.getMessage(); }
-
+          
+          String message = "";
+          
+          if ( isXml ){
+            fm.audiobox.core.models.Error error = new fm.audiobox.core.models.Error();
+            
+            try {
+              SAXParserFactory spf = SAXParserFactory.newInstance();
+              SAXParser sp = spf.newSAXParser();
+              XMLReader xr = sp.getXMLReader();
+              xr.setContentHandler( new XmlParser(error, configuration) );
+              xr.parse( new InputSource( response.getEntity().getContent() ) );
+            } catch (ParserConfigurationException e) {
+              log.error("An error occurred while instantiating XML Parser", e);
+              throw new ServiceException(ServiceException.GENERIC_ERROR, e.getMessage() );
+            } catch (SAXException e) {
+              log.error("An error occurred while instantiating XML Parser", e);
+              throw new ServiceException(ServiceException.GENERIC_ERROR, e.getMessage() );
+            } catch (IllegalStateException e) {
+              log.error("An error occurred while parsing response", e);
+              throw new ServiceException(ServiceException.GENERIC_ERROR, e.getMessage() );
+            }
+            
+            message = error.getMessage();
+            
+          } else if ( isJson ){
+            // TODO: Still not implemented
+          
+          }else {
+            message = streamToString( response.getEntity().getContent() );
+          }
+            
           throw new ServiceException( responseCode, message );
         }
       
@@ -170,5 +165,71 @@ public class DefaultResponseHandler implements ResponseHandler<String[]> {
     result[ IConfiguration.RESPONSE_BODY ] = responseString;
     return result;
   }
+
+  @Override
+  public String parseAsXml(HttpResponse response) throws ServiceException {
+    
+    try {
+      
+      SAXParserFactory spf = SAXParserFactory.newInstance();
+      SAXParser sp = spf.newSAXParser();
+      XMLReader xr = sp.getXMLReader();
+      xr.setContentHandler( new XmlParser(destEntity, configuration) );
+      xr.parse( new InputSource( response.getEntity().getContent() ) );
+      
+    } catch (ParserConfigurationException e) {
+      log.error("An error occurred while instantiating XML Parser", e);
+      throw new ServiceException(ServiceException.GENERIC_ERROR, e.getMessage() );
+    } catch (SAXException e) {
+      log.error("An error occurred while instantiating XML Parser", e);
+      throw new ServiceException(ServiceException.GENERIC_ERROR, e.getMessage() );
+    } catch (IllegalStateException e) {
+      log.error("An error occurred while parsing response", e);
+      throw new ServiceException(ServiceException.GENERIC_ERROR, e.getMessage() );
+    } catch (IOException e) {
+      log.error("An error occurred while parsing response", e);
+      throw new ServiceException(ServiceException.GENERIC_ERROR, e.getMessage() );
+    }
+    
+    return "";
+  }
+
+  @Override
+  public String parseAsJson(HttpResponse response) throws ServiceException {
+    return null;
+  }
+
+  @Override
+  public String parseAsText(HttpResponse response) throws ServiceException {
+    try {
+      
+      return streamToString( response.getEntity().getContent() );
+      
+    } catch (IllegalStateException e) {
+      log.error("An error occurred while parsing response", e);
+      throw new ServiceException(ServiceException.GENERIC_ERROR, e.getMessage() );
+      
+    } catch (IOException e) {
+      log.error("An error occurred while parsing response", e);
+      throw new ServiceException(ServiceException.GENERIC_ERROR, e.getMessage() );
+    }
+    
+  }
+
+  @Override
+  public String parseAsBinary(HttpResponse response) throws ServiceException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public String parse(HttpResponse response) throws ServiceException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  
+  
+  
+  
 
 }

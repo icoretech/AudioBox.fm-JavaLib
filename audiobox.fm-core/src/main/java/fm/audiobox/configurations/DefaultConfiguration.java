@@ -7,6 +7,7 @@ import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IFactory;
 import fm.audiobox.interfaces.ILoginExceptionHandler;
+import fm.audiobox.interfaces.IServiceExceptionHandler;
 
 public class DefaultConfiguration implements IConfiguration {
 
@@ -41,6 +42,7 @@ public class DefaultConfiguration implements IConfiguration {
   private boolean shortResponse = false;
   private IFactory factory = new DefaultFactory();
   private ILoginExceptionHandler loginHandler;
+  private IServiceExceptionHandler serviceHandler;
   private String appName = APPLICATION_NAME;
   private String version = VERSION;
   private Class<? extends IConnectionMethod> connMethodClass = DefaultRequestMethod.class;
@@ -161,6 +163,20 @@ public class DefaultConfiguration implements IConfiguration {
   public ILoginExceptionHandler getDefaultLoginExceptionHandler() {
     return this.loginHandler;
   }
+  
+  
+  @Override
+  public void setDefaultServiceExceptionHandler(IServiceExceptionHandler handler) {
+    this.serviceHandler = handler;
+  }
+
+
+  @Override
+  public IServiceExceptionHandler getDefaultServiceExceptionHandler() {
+    return this.serviceHandler;
+  }
+  
+  
 
 
   @Override

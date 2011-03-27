@@ -136,6 +136,22 @@ public interface IConfiguration {
    * @return
    */
   public ILoginExceptionHandler getDefaultLoginExceptionHandler();
+  
+  
+
+  /**
+   * Sets the default handler for {@link ServiceException}
+   * @param handler
+   */
+  public void setDefaultServiceExceptionHandler(IServiceExceptionHandler handler);
+
+  /**
+   * Returns the default handler for {@link ServiceException}
+   * @return
+   */
+  public IServiceExceptionHandler getDefaultServiceExceptionHandler();
+  
+  
 
 
   /**

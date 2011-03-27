@@ -41,10 +41,10 @@ public class TrackTests extends junit.framework.TestCase {
 
 
   @Test
-  public void testUser() {
+  public void testTrackActions() {
     Track t = null;
     try {
-      t = user.getTrackByToken("lFkCNNqjudJeSGByu2PZpZ");
+      t = user.getTrackByToken("lFkCNNqjudJeSGByu2PZpZs");
     } catch (ServiceException e) {
       assertNull(e);
     } catch (LoginException e) {

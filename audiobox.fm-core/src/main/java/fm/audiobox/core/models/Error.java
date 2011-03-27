@@ -22,11 +22,19 @@
 
 package fm.audiobox.core.models;
 
+import java.io.Serializable;
+import java.lang.reflect.Method;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fm.audiobox.interfaces.IEntity;
+
 
 
 
 /**
- * Error class is a {@link ModelItem} specialization for error XML elements.
+ * Error class is a specialization for error XML elements.
  * 
  * <p>
  * 
@@ -44,62 +52,106 @@ package fm.audiobox.core.models;
  * @author Valerio Chiodino
  * @author Fabio Tunno
  */
-public class Error extends ModelItem {
+public class Error implements IEntity, Serializable {
 
-    /** The XML tag name for the Error element */
-    public static final String TAG_NAME = "error";
+
+  private static final long serialVersionUID = 1L;
+  private static final Logger log = LoggerFactory.getLogger(Error.class);
+
+
+  /** The XML tag name for the Error element */
+  public static final String NAMESPACE = null;
+  public static final String TAGNAME = "error";
+
+  protected int status;
+  protected String message;
+
+  /**
+   * <p>Constructor for Error.</p>
+   */
+  public Error(){
+    log.info("New Error instantiated");
+  }
+
+
+  @Override
+  public String getTagName() {
+    return TAGNAME;
+  }
+
+
+  @Override
+  public String getNamespace(){
+    return NAMESPACE;
+  }
+  
+  
+  @Override
+  public String getToken() {
+    return null;
+  }
+  
+
+
+  /* ------------------- */
+  /* Getters and setters */
+  /* ------------------- */
+
+
+  /**
+   * <p>Setter for the field <code>status</code>.</p>
+   *
+   * @param status the error status to set
+   */
+  public void setStatus(int status) {
+    this.status = status;
+  }
+
+  /**
+   * <p>Getter for the field <code>status</code>.</p>
+   *
+   * @return the status
+   */
+  public int getStatus() {
+    return this.status;
+  }
+
+
+
+  /**
+   * <p>Setter for the field <code>message</code>.</p>
+   *
+   * @param message the error message to set.
+   */
+  public void setMessage(String message) {
+    this.message = message;
+  }
+
+  /**
+   * <p>Getter for the field <code>message</code>.</p>
+   *
+   * @return the message
+   */
+  public String getMessage() {
+    return message;
+  }
+
+
+  @Override
+  public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
     
-    protected int status;
-    protected String message;
-    
-    /**
-     * <p>Constructor for Error.</p>
-     */
-    public Error() { }
-    
-    
-    /* ------------------- */
-    /* Getters and setters */
-    /* ------------------- */
-    
-    
-    /**
-     * <p>Setter for the field <code>status</code>.</p>
-     *
-     * @param status the error status to set
-     */
-    public void setStatus(String status) {
-        this.status = Integer.parseInt(status, 10);
+    if ( tagName.equals("message") ){
+      return this.getClass().getMethod("setMessage", String.class);
+      
+    } else if ( tagName.equals("status") ){
+      return this.getClass().getMethod("setStatus", int.class);
+      
     }
     
-    /**
-     * <p>Getter for the field <code>status</code>.</p>
-     *
-     * @return the status
-     */
-    public int getStatus() {
-        return this.status;
-    }
-    
-    
-    
-    /**
-     * <p>Setter for the field <code>message</code>.</p>
-     *
-     * @param message the error message to set.
-     */
-    public void setMessage(String message) {
-        this.message = message;
-    }
-    
-    /**
-     * <p>Getter for the field <code>message</code>.</p>
-     *
-     * @return the message
-     */
-    public String getMessage() {
-        return message;
-    }
+    return null;
+  }
+
+
 
 }
 

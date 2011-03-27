@@ -74,6 +74,8 @@ public class DefaultFactory implements IFactory {
     gEntities.put( Tracks.TAGNAME, Tracks.class );
     gEntities.put( Track.TAGNAME, Track.class );
     
+    gEntities.put( fm.audiobox.core.models.Error.TAGNAME, fm.audiobox.core.models.Error.class );
+    
   }
   
   
