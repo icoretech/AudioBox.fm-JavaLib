@@ -1,4 +1,4 @@
-package fm.audiobox.core;
+package fm.audiobox.configurations;
 
 import java.io.IOException;
 import java.io.InputStream;

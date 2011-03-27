@@ -1,4 +1,4 @@
-package fm.audiobox.core;
+package fm.audiobox.configurations;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;

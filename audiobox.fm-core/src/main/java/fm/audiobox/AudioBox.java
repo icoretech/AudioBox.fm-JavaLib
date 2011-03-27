@@ -72,7 +72,7 @@ import org.apache.http.protocol.HttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fm.audiobox.core.DefaultResponseHandler;
+import fm.audiobox.configurations.DefaultResponseHandler;
 import fm.audiobox.core.api.Model;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ModelException;

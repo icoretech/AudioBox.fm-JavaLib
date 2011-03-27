@@ -44,7 +44,6 @@ import fm.audiobox.core.api.ModelItem;
  *
  * @author Valerio Chiodino
  * @author Fabio Tunno
- * @version 0.0.1
  */
 public class Error extends ModelItem {
 
