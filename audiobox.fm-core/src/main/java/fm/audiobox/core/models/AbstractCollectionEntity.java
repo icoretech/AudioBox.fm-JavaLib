@@ -8,6 +8,7 @@ import java.util.ListIterator;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
+import fm.audiobox.core.observables.Event;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IEntity;
@@ -32,6 +33,9 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
    */
   public void clear() {
     this.collection.clear();
+    this.setChanged();
+    Event event = new Event(this, Event.States.COLLECTION_CLEARED);
+    this.notifyObservers(event);
   }
 
   @Override
@@ -53,7 +57,12 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
    * @return the {@link IEntity} associated with this token
    */
   public E get(String token) {
-    return null;// TODO: (E)this.collection.get( this.indexes.get( token ) );
+    for (Iterator<IEntity> it = this.collection.iterator(); it.hasNext(); ){
+      IEntity entity = it.next();
+      if ( entity.getToken().equals( token ) )
+        return (E)entity;
+    }
+    return null;
   }
 
 
@@ -100,19 +109,22 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
 
   @Override
   public E remove(int index) {
-    return (E)this.collection.remove(index);
+    IEntity entity = this.collection.get(index);
+    this.remove(entity);
+    return (E)entity;
   }
 
   
   /**
-   * <b>Not implemented.</b>
    * Removes an {@link IEntity} associated with given token
    * 
    * @param token the {@link IEntity} token
    * @return true if everything went right
    */
-  @Deprecated
   public boolean remove(String token){
+    IEntity entity = (IEntity)this.get(token);
+    if ( entity != null )
+      return this.remove(entity);
     return false;
   }
 
@@ -122,7 +134,13 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
   
   @Override
   public boolean remove(Object entity){
-    return this.collection.remove( entity );
+    boolean result = this.collection.remove( entity );
+    if ( result ){
+      this.setChanged();
+      Event event = new Event(entity, Event.States.ENTITY_REMOVED);
+      this.notifyObservers(event);
+    }
+    return result;
   }
   
 
@@ -133,7 +151,13 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
    * @return true if everything's ok
    */
   protected boolean addEntity(IEntity entity) {
-    return this.collection.add( entity );
+    boolean result = this.collection.add( entity );
+    if ( result ){
+      this.setChanged();
+      Event event = new Event(entity, Event.States.ENTITY_ADDED);
+      this.notifyObservers(event);
+    }
+    return result;
   }
   
 
@@ -141,24 +165,28 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
   /**
    * Executes request populating this class
    * 
+   * @return a String array containing the response code and the response body ( used in {@link User#getUploadedTracks()}
+   * 
    * @throws ServiceException
    * @throws LoginException
    */
-  public void load() throws ServiceException, LoginException {
-    this.load(null);
+  public String[] load() throws ServiceException, LoginException {
+    return this.load(null);
   }
+  
   
   /**
    * Executes request populating this class.
    * <b>Note: this method invokes {@link AbstractCollectionEntity#clear()} before executing any request</b>
    * 
    * @param responseHandler the {@link IResponseHandler} used as response content parser
+   * @return a String array containing the response code and the response body ( used in {@link User#getUploadedTracks()}
    * @throws ServiceException
    * @throws LoginException
    */
-  public void load(IResponseHandler responseHandler) throws ServiceException, LoginException {
+  public String[] load(IResponseHandler responseHandler) throws ServiceException, LoginException {
     this.clear();
-    getConnector().get(this, null, null).send(null, responseHandler);
+    return getConnector().get(this, null, null).send(null, responseHandler);
   }
   
   

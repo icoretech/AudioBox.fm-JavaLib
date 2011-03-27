@@ -25,6 +25,7 @@ package fm.audiobox.core.models;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
+import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +33,7 @@ import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
+import fm.audiobox.interfaces.IResponseHandler;
 
 
 /**
@@ -79,6 +81,11 @@ public class Track extends AbstractEntity implements Serializable {
   /** The XML tag name for the Track element */
   public static final String NAMESPACE = Tracks.TAGNAME;
   public static final String TAGNAME = "track";
+  
+  public static final String SCROBBLE_ACTION = "scrobble";
+  public static final String LOVE_ACTION = "love";
+  public static final String UNLOVE_ACTION = "unlove";
+  
 
   // XML model fields
   private String duration;
@@ -457,53 +464,107 @@ public class Track extends AbstractEntity implements Serializable {
   }
 
 
+  
+  /**
+   * Executes request populating this class
+   * 
+   * @throws ServiceException
+   * @throws LoginException
+   */
+  public void load() throws ServiceException, LoginException {
+    this.load(null);
+  }
+  
+  /**
+   * Executes request populating this class and passing the {@link IResponseHandler} as response parser
+   * 
+   * @param responseHandler the {@link IResponseHandler} used as response content parser
+   * @throws ServiceException
+   * @throws LoginException
+   */
+  public void load(IResponseHandler responseHandler) throws ServiceException, LoginException {
+    getConnector().get(this, null, null).send(null, responseHandler);
+  }
+  
+  
 
-//  /* -------------- */
-//  /* Remote Actions */
-//  /* -------------- */
-//
-//
-//  /**
-//   * Use this method at the end of a "just listened" song to scrobble it to Last.fm and to keep track of the
-//   * plays count to AudioBox.fm
-//   *
-//   * <p>
-//   * 
-//   * Remember that scrobbles have to be done at least one for listening and at 96% of the listening progres or
-//   * at the end.
-//   * 
-//   * <p>
-//   * 
-//   * This method also increment the track's playcount if the scrobble is correctly received by AudioBox.fm.
-//   *
-//   * @throws LoginException if any authentication problem during the request occurs.
-//   * @throws ServiceException if any connection problem to AudioBox.fm occurs.
-//   */
-//  public void scrobble() throws ServiceException, LoginException {
-//    String[] response = this.getConnector().post( this, this, SCROBBLE_ACTION, null);
-//    if ( Integer.parseInt( response[ Connector.RESPONSE_CODE ] ) == HttpStatus.SC_OK)
-//      this.setPlayCount( this.getPlayCount() + 1 );
-//  }
-//
-//  /**
-//   * Use this method to mark the track as loved/unlove.
-//   * 
-//   * This method also sets to <code>true/false</code> the loved state.
-//   *
-//   * @return boolean the "love" state of this track instance
-//   * 
-//   * @throws LoginException if any authentication problem during the request occurs.
-//   * @throws ServiceException if any connection problem to AudioBox.fm occurs.
-//   */
-//  public boolean toggleLove() throws ServiceException, LoginException  {
-//    String[] result = this.getConnector().put( this, this, TOGGLE_LOVE_ACTION, null);
-//    if ( HttpStatus.SC_OK == Integer.parseInt( result[ Connector.RESPONSE_CODE ] )  )
-//      this.setLoved( ! this.isLoved() );
-//    return this.isLoved();
-//  }
-//
-//
-//
+  /* -------------- */
+  /* Remote Actions */
+  /* -------------- */
+
+
+  /**
+   * Use this method at the end of a "just listened" song to scrobble it to Last.fm and to keep track of the
+   * plays count to AudioBox.fm
+   *
+   * <p>
+   * 
+   * Remember that scrobbles have to be done at least one for listening and at 96% of the listening progres or
+   * at the end.
+   * 
+   * <p>
+   * 
+   * This method also increments the track's playcount if the scrobble is correctly received by AudioBox.fm.
+   *
+   * @throws LoginException if any authentication problem during the request occurs.
+   * @throws ServiceException if any connection problem to AudioBox.fm occurs.
+   */
+  public void scrobble() throws ServiceException, LoginException {
+    String[] response = getConnector().post(this, SCROBBLE_ACTION).send();
+    if ( Integer.parseInt( response[ IConfiguration.RESPONSE_CODE ] ) == HttpStatus.SC_OK)
+      this.setPlayCount( this.getPlayCount() + 1 );
+  }
+
+  /**
+   * Use this method to mark the track as loved/unlove.
+   * 
+   * This method also sets to <code>true/false</code> the loved state.
+   *
+   * @return boolean the "love" state of this track instance
+   * 
+   * @throws LoginException if any authentication problem during the request occurs.
+   * @throws ServiceException if any connection problem to AudioBox.fm occurs.
+   */
+  public boolean toggleLove() throws ServiceException, LoginException  {
+    if ( this.isLoved() ){
+      return this.unlove();
+    } else {
+      return this.love();
+    }
+  }
+  
+  
+  /**
+   * This method sets track as loved
+   * @return boolean the track's loved state
+   * @throws LoginException 
+   * @throws ServiceException 
+   */
+  public boolean love() throws ServiceException, LoginException{
+    String[] result = this.getConnector().put(this, LOVE_ACTION ).send();
+    if ( HttpStatus.SC_OK == Integer.parseInt( result[ IConfiguration.RESPONSE_CODE ] )  )
+      this.setLoved( true );
+    return this.isLoved();
+  }
+  
+  
+  /**
+   * This method sets track as unloved
+   * @return boolean the track's loved state
+   * @throws LoginException 
+   * @throws ServiceException 
+   */
+  public boolean unlove() throws ServiceException, LoginException{
+    String[] result = this.getConnector().put(this, UNLOVE_ACTION ).send();
+    if ( HttpStatus.SC_OK == Integer.parseInt( result[ IConfiguration.RESPONSE_CODE ] )  )
+      this.setLoved( false );
+    return this.isLoved();
+  }
+  
+  
+
+
+
 //  /**
 //   * <p>Download track and put binary data into given {@link FileOutputStream}.
 //   * 

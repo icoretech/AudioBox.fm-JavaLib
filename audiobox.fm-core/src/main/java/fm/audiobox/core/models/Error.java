@@ -22,7 +22,6 @@
 
 package fm.audiobox.core.models;
 
-import fm.audiobox.core.api.ModelItem;
 
 
 

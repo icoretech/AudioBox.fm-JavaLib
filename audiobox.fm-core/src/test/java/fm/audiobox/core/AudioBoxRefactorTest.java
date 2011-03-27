@@ -15,6 +15,7 @@ import fm.audiobox.core.models.Genres;
 import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
 import fm.audiobox.core.models.Playlists.PlaylistTypes;
+import fm.audiobox.core.models.Track;
 import fm.audiobox.core.models.User;
 import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 import fm.audiobox.interfaces.IConfiguration;
@@ -98,6 +99,8 @@ public class AudioBoxRefactorTest extends junit.framework.TestCase {
     
   }
   
+  
+  @Test
   public void testArtists(){
     Artists arts = user.getArtists();
     
@@ -122,6 +125,7 @@ public class AudioBoxRefactorTest extends junit.framework.TestCase {
   }
   
   
+  @Test
   public void testAlbums(){
     Albums albs = user.getAlbums();
     
@@ -148,6 +152,7 @@ public class AudioBoxRefactorTest extends junit.framework.TestCase {
   }
   
   
+  @Test
   public void testGenres(){
     Genres gnrs = user.getGenres();
     
@@ -173,5 +178,59 @@ public class AudioBoxRefactorTest extends junit.framework.TestCase {
     assertNull( alb );
     
   }
+  
+  
+  @Test
+  public void testSingleTrack(){
+    
+    Track t = null;
+    try {
+      t = user.getTrackByToken("lFkCNNqjudJeSGByu2PZpZ");
+    } catch (ServiceException e) {
+      assertNull(e);
+    } catch (LoginException e) {
+      assertNull(e);
+    }
+    
+    assertNotNull( t.getArtist() );
+    
+    assertEquals( t.getArtist().getName() , "Alborosie");
+    
+  }
+  
+  @Test
+  public void testUploadedTracks(){
+    Playlists pls = user.getPlaylists();
+    
+    assertNotNull(pls);
+    
+    try {
+      pls.load();
+    } catch (ServiceException e) {
+      assertNull(e);
+    } catch (LoginException e) {
+      assertNull(e);
+    }
+    
+    Playlist pl = pls.getPlaylistByType( PlaylistTypes.AUDIO );
+    assertNotNull(pl);
+    long tracksCount = pl.getTracksCount();
+    
+    pl = pls.getPlaylistByType(PlaylistTypes.TRASH );
+    assertNotNull(pl);
+    tracksCount += pl.getTracksCount();
+    
+    try {
+      String[] hashes = user.getUploadedTracks();
+      assertEquals( tracksCount , hashes.length );
+    } catch (ServiceException e) {
+      assertNull(e);
+    } catch (LoginException e) {
+      assertNull(e);
+    }
+    
+    
+  }
+  
   
 }

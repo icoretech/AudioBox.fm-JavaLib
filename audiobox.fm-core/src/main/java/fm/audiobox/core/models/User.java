@@ -28,9 +28,7 @@ import java.lang.reflect.Method;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fm.audiobox.core.api.Model;
 import fm.audiobox.core.exceptions.LoginException;
-import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
@@ -411,167 +409,12 @@ public final class User extends AbstractEntity implements Serializable {
    * @throws ServiceException if the requested resource doesn't exists or any other ServiceException occur.
    * @throws ModelException 
    */
-//  public Track getTrackByToken(String token) throws ServiceException, LoginException, ModelException {
-//    Track t = this.newTrack();
-//    t.setToken(token);
-//    t.refresh();
-//    return t;
-//  }
-
-
-  /**
-   * Use this method to get the {@link Playlists} user collection.
-   * 
-   * <p>
-   * 
-   * This method accept the parameter <code>async</code>. If <code>true</code> the collection is populated 
-   * asynchronously; in this case it may be necessary to specify a {@link CollectionListener} to keep track 
-   * of what is happening to the collection.
-   *
-   * @param async whether to make the request asynchronously.
-   * 
-   * @return the user {@link Playlists} collection
-   * 
-   * @throws ModelException if a custom model class was specified and an error while using it occurs.
-   */
-//  public Playlists getPlaylists(boolean async) throws ModelException {
-//    this.playlists = (Playlists) this.pUtils.getModelInstance(ModelFactory.PLAYLISTS_KEY);
-//    Thread t = populateCollection( Playlists.END_POINT, this.playlists );
-//    if (async)
-//      t.start();
-//    else
-//      t.run();
-//
-//    return playlists;
-//  }
-
-  /**
-   * <p>Same as calling {@link User#getPlaylists(boolean) User.getPlaylists(false)}.</p>
-   *
-   * @return the user {@link Playlists} collection
-   * 
-   * @throws ModelException if a custom model was specified and an error while using occurs.
-   */
-//  public Playlists getPlaylists() throws ModelException {
-//    return this.getPlaylists(false);
-//  }
-
-
-
-  /**
-   * Use this method to get the {@link Genres} user collection.
-   * 
-   * <p>
-   * 
-   * This method accept the parameter <code>async</code>. If <code>true</code> the collection is populated 
-   * asynchronously; in this case it may be necessary to specify a {@link CollectionListener} to keep track 
-   * of what is happening to the collection.
-   *
-   * @param async whether to make the request asynchronously.
-   * 
-   * @return the user {@link Genres} collection
-   * 
-   * @throws ModelException if a custom model class was specified and an error while using it occurs.
-   */
-//  public Genres getGenres(boolean async) throws ModelException {
-//    this.genres = (Genres) this.pUtils.getModelInstance(ModelFactory.GENRES_KEY);
-//    Thread t = populateCollection( Genres.END_POINT, this.genres );
-//    if (async)
-//      t.start();
-//    else
-//      t.run();
-//
-//    return this.genres;
-//  }
-
-  /**
-   * <p>Same as calling {@link User#getGenres(boolean) User.getGenres(false)}.</p>
-   *
-   * @return the user {@link Genres} collection
-   * 
-   * @throws ModelException if a custom model was specified and an error while using occurs.
-   */
-//  public Genres getGenres() throws ModelException {
-//    return this.getGenres(false);
-//  }
-
-
-
-  /**
-   * Use this method to get the {@link Artists} user collection.
-   * 
-   * <p>
-   * 
-   * This method accept the parameter <code>async</code>. If <code>true</code> the collection is populated 
-   * asynchronously; in this case it may be necessary to specify a {@link CollectionListener} to keep track 
-   * of what is happening to the collection.
-   *
-   * @param async whether to make the request asynchronously.
-   * 
-   * @return the user {@link Artists} collection
-   * 
-   * @throws ModelException if a custom model class was specified and an error while using it occurs.
-   */
-//  public Artists getArtists(boolean async) throws ModelException {
-//    this.artists = (Artists) this.pUtils.getModelInstance(ModelFactory.ARTISTS_KEY);
-//    Thread t = populateCollection( Artists.END_POINT, this.artists );
-//    if (async)
-//      t.start();
-//    else
-//      t.run();
-//
-//    return this.artists;
-//  }
-
-  /**
-   * <p>Same as calling {@link User#getArtists(boolean) User.getArtists(false)}.</p>
-   *
-   * @return the user {@link Artists} collection
-   * 
-   * @throws ModelException if a custom model was specified and an error while using occurs.
-   */
-//  public Artists getArtists() throws ModelException {
-//    return this.getArtists(false);
-//  }
-
-
-
-  /**
-   * Use this method to get the {@link Albums} user collection.
-   * 
-   * <p>
-   * 
-   * This method accept the parameter <code>async</code>. If <code>true</code> the collection is populated 
-   * asynchronously; in this case it may be necessary to specify a {@link CollectionListener} to keep track 
-   * of what is happening to the collection.
-   *
-   * @param async whether to make the request asynchronously.
-   * 
-   * @return the user {@link Albums} collection
-   * 
-   * @throws ModelException if a custom model class was specified and an error while using it occurs.
-   */
-//  public Albums getAlbums(boolean async) throws ModelException {
-//    this.albums = (Albums) this.pUtils.getModelInstance(ModelFactory.ALBUMS_KEY);
-//    Thread t = populateCollection( Albums.END_POINT, this.albums );
-//    if (async)
-//      t.start();
-//    else
-//      t.run();
-//
-//    return this.albums;
-//  }
-
-  /**
-   * <p>Same as calling {@link User#getAlbums(boolean) User.getAlbums(false)}.</p>
-   *
-   * @return the user {@link Albums} collection
-   * 
-   * @throws ModelException if a custom model was specified and an error while using occurs.
-   */
-//  public Albums getAlbums() throws ModelException {
-//    return this.getAlbums(false);
-//  }
+  public Track getTrackByToken(String token) throws ServiceException, LoginException {
+    Track t = (Track) getConfiguration().getFactory().getEntity( Track.TAGNAME, getConfiguration() );
+    t.setToken(token);
+    t.load();
+    return t;
+  }
 
 
 
@@ -582,23 +425,25 @@ public final class User extends AbstractEntity implements Serializable {
    * 
    * This method is useful for sync tools.
    *
-   * @return an array of {@link String} objects containing MD5 hashes of every user uploaded track.
+   * @return an array of {@link String} objects containing MD5 hashes for each uploaded track.
    * 
    * @throws ServiceException if any connection problem to AudioBox.fm services occurs.
    * @throws LoginException if any authentication problem occurs.
    */
-//  public String[] getUploadedTracks() throws ServiceException, LoginException {
-//    String[] result = this.getConnector().get(new Tracks(), this, null);
-//    String response = result[ Connector.RESPONSE_BODY ];
-//
-//    result = response.split( ";" , response.length() );
-//    String[] hashes = new String[ result.length ];
-//    int pos = 0;
-//    for ( String hash : result )
-//      hashes[ pos++ ] = hash.trim();
-//
-//    return hashes;
-//  }
+  public String[] getUploadedTracks() throws ServiceException, LoginException {
+    Tracks tracks = (Tracks) getConfiguration().getFactory().getEntity( Tracks.TAGNAME, getConfiguration() );
+    
+    String[] response = tracks.load();
+    
+    String result = response[ IConfiguration.RESPONSE_BODY ];
+    String[] resultSplitted = result.split( ";" , result.length() );
+    String[] hashes = new String[ resultSplitted.length ];
+    int pos = 0;
+    for ( String hash : resultSplitted )
+      hashes[ pos++ ] = hash.trim();
+
+    return hashes;
+  }
 
 
 //  public boolean dropTracks(List<Track> tracks) throws LoginException, ServiceException {
@@ -628,13 +473,10 @@ public final class User extends AbstractEntity implements Serializable {
    * Instantiates a new Track. This method is used to upload a track
    * 
    * @return a new {@link Track} instance
-   * @throws ServiceException
-   * @throws LoginException
-   * @throws ModelException
    */
-//  public Track newTrack() {
-//    return (Track) instanceChildEntity( Track.class );
-//  }
+  public Track newTrack() {
+    return (Track) getConfiguration().getFactory().getEntity( Track.TAGNAME, getConfiguration() );
+  }
 
 
 

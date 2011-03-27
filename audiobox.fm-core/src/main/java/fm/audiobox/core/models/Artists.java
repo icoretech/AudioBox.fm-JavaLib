@@ -29,11 +29,8 @@ import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fm.audiobox.core.exceptions.LoginException;
-import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
-import fm.audiobox.interfaces.IResponseHandler;
 
 
 /**
@@ -95,12 +92,6 @@ public class Artists extends AbstractCollectionEntity<Artist> implements Seriali
     return null;
   }
   
-  
-  @Override
-  public void load(IResponseHandler responseHandler) throws ServiceException, LoginException {
-    this.clear();
-    super.load(responseHandler);
-  }
   
   
   @Override

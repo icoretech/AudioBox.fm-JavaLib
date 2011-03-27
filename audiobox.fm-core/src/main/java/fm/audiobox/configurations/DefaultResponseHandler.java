@@ -43,7 +43,7 @@ public class DefaultResponseHandler implements ResponseHandler<String[]> {
     this.responseHandler = responseHandler;
   }
   
-  private String streamToString(InputStream stream) throws IOException{
+  public static String streamToString(InputStream stream) throws IOException{
     int read;
     byte[] bytes = new byte[ 1024 ];
     StringBuffer sb = new StringBuffer();
@@ -108,6 +108,8 @@ public class DefaultResponseHandler implements ResponseHandler<String[]> {
                 throw new ServiceException(ServiceException.GENERIC_ERROR, e.getMessage());
               }
 
+            } else if ( isText ){
+              responseString = streamToString( response.getEntity().getContent() );
             }
           
           }
