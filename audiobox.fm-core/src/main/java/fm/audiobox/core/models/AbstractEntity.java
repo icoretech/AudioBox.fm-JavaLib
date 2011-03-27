@@ -7,12 +7,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fm.audiobox.core.exceptions.LoginException;
-import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IEntity;
-import fm.audiobox.interfaces.IResponseHandler;
 
 public abstract class AbstractEntity extends Observable implements IEntity {
 
@@ -81,26 +78,5 @@ public abstract class AbstractEntity extends Observable implements IEntity {
     return this.properties.get(key);
   }
   
-  
-  /**
-   * Executes request populating this class
-   * 
-   * @throws ServiceException
-   * @throws LoginException
-   */
-  public void load() throws ServiceException, LoginException {
-    this.load(null);
-  }
-  
-  /**
-   * Executes request populating this class
-   * 
-   * @param responseHandler the {@link IResponseHandler} used as response content parser
-   * @throws ServiceException
-   * @throws LoginException
-   */
-  public void load(IResponseHandler responseHandler) throws ServiceException, LoginException {
-    getConnector().get(this, null, null).send(null, responseHandler);
-  }
   
 }

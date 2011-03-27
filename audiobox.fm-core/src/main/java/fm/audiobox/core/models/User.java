@@ -34,6 +34,7 @@ import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
+import fm.audiobox.interfaces.IResponseHandler;
 
 
 /**
@@ -670,6 +671,28 @@ public final class User extends AbstractEntity implements Serializable {
   }
 
 
+  
+  
+  /**
+   * Executes request populating this class
+   * 
+   * @throws ServiceException
+   * @throws LoginException
+   */
+  public void load() throws ServiceException, LoginException {
+    this.load(null);
+  }
+  
+  /**
+   * Executes request populating this class and passing the {@link IResponseHandler} as response parser
+   * 
+   * @param responseHandler the {@link IResponseHandler} used as response content parser
+   * @throws ServiceException
+   * @throws LoginException
+   */
+  public void load(IResponseHandler responseHandler) throws ServiceException, LoginException {
+    getConnector().get(this, null, null).send(null, responseHandler);
+  }
   
   
   

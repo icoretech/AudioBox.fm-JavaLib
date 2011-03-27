@@ -24,6 +24,7 @@ package fm.audiobox.core.models;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.Iterator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,6 +80,21 @@ public class Artists extends AbstractCollectionEntity<Artist> implements Seriali
   }
 
 
+  /**
+   * Returns the {@link Artist} associated with the given <code>name</code>
+   * @param name the Artist name
+   * @return the {@link Artist} associated with the given <code>name</code>
+   */
+  public Artist getArtistByName(String name){
+    for ( Iterator<Artist> it = this.iterator(); it.hasNext();  ){
+      Artist art = it.next();
+      if (  name.equals( art.getName() )  ) {
+        return art;
+      }
+    }
+    return null;
+  }
+  
   
   @Override
   public void load(IResponseHandler responseHandler) throws ServiceException, LoginException {

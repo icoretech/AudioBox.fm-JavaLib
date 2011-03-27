@@ -113,6 +113,11 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
   }
 
   
+  /**
+   * Returns the {@link Playlist} associated with the given <code>name</code>
+   * @param name the Playlist name
+   * @return the {@link Playlist} associated with the given <code>name</code>
+   */
   public Playlist getPlaylistByName(String name){
     for ( Iterator<Playlist> it = this.iterator(); it.hasNext();  ){
       Playlist pl = it.next();
@@ -122,6 +127,23 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
     }
     return null;
   }
+  
+  /**
+   * Returns the <b>first</b> {@link Playlist} that matches with the given {@link PlaylistTypes}
+   * 
+   * @param type the {@link PlaylistTypes}
+   * @return the first {@link Playlist} that matches with the given {@link PlaylistTypes}
+   */
+  public Playlist getPlaylistByType(PlaylistTypes type){
+    for ( Iterator<Playlist> it = this.iterator(); it.hasNext();  ){
+      Playlist pl = it.next();
+      if (  pl.getPlaylistType() == type  ) {
+        return pl;
+      }
+    }
+    return null;
+  }
+  
   
 
   @Override

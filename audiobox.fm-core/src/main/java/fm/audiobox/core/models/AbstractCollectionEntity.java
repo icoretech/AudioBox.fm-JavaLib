@@ -6,9 +6,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import fm.audiobox.core.exceptions.LoginException;
+import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IEntity;
+import fm.audiobox.interfaces.IResponseHandler;
 
 @SuppressWarnings("unchecked")
 public abstract class AbstractCollectionEntity<E> extends AbstractEntity implements List<E> {
@@ -134,6 +137,33 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
   }
   
 
+  
+  /**
+   * Executes request populating this class
+   * 
+   * @throws ServiceException
+   * @throws LoginException
+   */
+  public void load() throws ServiceException, LoginException {
+    this.load(null);
+  }
+  
+  /**
+   * Executes request populating this class.
+   * <b>Note: this method invokes {@link AbstractCollectionEntity#clear()} before executing any request</b>
+   * 
+   * @param responseHandler the {@link IResponseHandler} used as response content parser
+   * @throws ServiceException
+   * @throws LoginException
+   */
+  public void load(IResponseHandler responseHandler) throws ServiceException, LoginException {
+    this.clear();
+    getConnector().get(this, null, null).send(null, responseHandler);
+  }
+  
+  
+  
+  
   @Override
   public int size() {
     return this.collection.size();

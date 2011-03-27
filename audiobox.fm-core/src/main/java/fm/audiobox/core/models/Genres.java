@@ -24,15 +24,13 @@ package fm.audiobox.core.models;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.Iterator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fm.audiobox.core.exceptions.LoginException;
-import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
-import fm.audiobox.interfaces.IResponseHandler;
 
 
 
@@ -70,16 +68,23 @@ public class Genres extends AbstractCollectionEntity<Genre> implements Serializa
   public String getNamespace() {
     return TAGNAME;
   }
-
-  @Override
-  public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
-    if ( tagName.equals( Genre.TAGNAME ) ){
-      return this.getClass().getMethod("add", Genre.class);
-      
+  
+  
+  /**
+   * Returns the {@link Genre} associated with the given <code>name</code>
+   * @param name the Genre name
+   * @return the {@link Genre} associated with the given <code>name</code>
+   */
+  public Genre getGenreByName(String name){
+    for ( Iterator<Genre> it = this.iterator(); it.hasNext();  ){
+      Genre gnr = it.next();
+      if (  name.equals( gnr.getName() )  ) {
+        return gnr;
+      }
     }
-    
     return null;
   }
+  
 
   @Override
   public boolean add(Genre entity) {
@@ -88,9 +93,14 @@ public class Genres extends AbstractCollectionEntity<Genre> implements Serializa
 
   
   @Override
-  public void load(IResponseHandler responseHandler) throws ServiceException, LoginException {
-    this.clear();
-    super.load(responseHandler);
+  public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
+    
+    if ( tagName.equals( Genre.TAGNAME ) ){
+      return this.getClass().getMethod("add", Genre.class);
+      
+    }
+    
+    return null;
   }
   
 

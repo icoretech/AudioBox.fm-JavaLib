@@ -24,16 +24,14 @@ package fm.audiobox.core.models;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.Iterator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fm.audiobox.core.api.ModelsCollection;
-import fm.audiobox.core.exceptions.LoginException;
-import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
-import fm.audiobox.interfaces.IResponseHandler;
 
 
 /**
@@ -78,12 +76,20 @@ public class Albums extends AbstractCollectionEntity<Album> implements Serializa
     return super.addEntity(  entity );
   }
 
-  
-  
-  @Override
-  public void load(IResponseHandler responseHandler) throws ServiceException, LoginException {
-    this.clear();
-    super.load(responseHandler);
+
+  /**
+   * Returns the {@link Album} associated with the given <code>name</code>
+   * @param name the Album name
+   * @return the {@link Album} associated with the given <code>name</code>
+   */
+  public Album getAlbumByName(String name){
+    for ( Iterator<Album> it = this.iterator(); it.hasNext();  ){
+      Album alb = it.next();
+      if (  name.equals( alb.getName() )  ) {
+        return alb;
+      }
+    }
+    return null;
   }
   
   

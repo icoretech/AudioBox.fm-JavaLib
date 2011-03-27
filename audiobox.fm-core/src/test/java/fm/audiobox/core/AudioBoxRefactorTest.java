@@ -14,7 +14,7 @@ import fm.audiobox.core.models.Genre;
 import fm.audiobox.core.models.Genres;
 import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
-import fm.audiobox.core.models.Tracks;
+import fm.audiobox.core.models.Playlists.PlaylistTypes;
 import fm.audiobox.core.models.User;
 import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 import fm.audiobox.interfaces.IConfiguration;
@@ -23,9 +23,11 @@ import fm.audiobox.interfaces.IConfiguration.RequestFormat;
 public class AudioBoxRefactorTest extends junit.framework.TestCase {
 
   
-  @Test
-  public void testUserIsLoggedIn() {
-    
+  private User user;
+  
+  
+  @Override
+  protected void setUp() throws Exception {
     
     IConfiguration configuration = new DefaultConfiguration("My test application");
     
@@ -36,125 +38,139 @@ public class AudioBoxRefactorTest extends junit.framework.TestCase {
     
     AudioBox abx = new AudioBox(configuration);
     
-    
-    User user = null;
-    try {
-      user = abx.login( Fixtures.get( Fixtures.LOGIN ),  Fixtures.get( Fixtures.RIGHT_PASS ));
-    } catch (LoginException e) {
-      e.printStackTrace();
-    } catch (ServiceException e) {
-      e.printStackTrace();
-    }
+    user = abx.login( Fixtures.get( Fixtures.LOGIN ),  Fixtures.get( Fixtures.RIGHT_PASS ));
     
     assertNotNull(user);
+    assertEquals(user.getUsername(), "fatshotty");
+    
+    super.setUp();
+  }
+
+
+
+  @Test
+  public void testUser() {
     
     assertEquals(user.getUsername(), "fatshotty");
     
+    // used temporarly
+    user.setUsername("");
+    
+    try {
+      user.load();
+    } catch (ServiceException e) {
+      assertNull(e);
+    } catch (LoginException e) {
+      assertNull(e);
+    }
+    
+    assertEquals(user.getUsername(), "fatshotty");
+  }
+
+
+  @Test
+  public void testPlaylists() {
+    
     Playlists pls = user.getPlaylists();
-    Artists arts = user.getArtists();
-    Genres gnrs = user.getGenres();
-    Albums albs = user.getAlbums();
     
     assertNotNull(pls);
-    assertNotNull(arts);
-    assertNotNull(albs);
-    assertNotNull(gnrs);
     
-    
-    // Loading playlists
     try {
       pls.load();
     } catch (ServiceException e) {
-      assertNull( e );
+      assertNull(e);
     } catch (LoginException e) {
-      assertNull( e );
+      assertNull(e);
     }
     
-    // Loading genres
-    try {
-      gnrs.load();
-    } catch (ServiceException e) {
-      assertNull( e );
-    } catch (LoginException e) {
-      assertNull( e );
-    }
+    Playlist pl = pls.getPlaylistByName("Last uploaded");
     
-    // Loading artists
+    assertEquals( pl.getName(), "Last uploaded" );
+    
+    pl = pls.getPlaylistByType( PlaylistTypes.AUDIO );
+    
+    assertEquals( pl.getName(), "Music" );
+    
+    
+    pl = pls.getPlaylistByType( PlaylistTypes.OFFLINE );
+    
+    assertEquals( pl.getName(), "Offline" );
+    
+  }
+  
+  public void testArtists(){
+    Artists arts = user.getArtists();
+    
+    assertNotNull(arts);
+    
     try {
       arts.load();
     } catch (ServiceException e) {
-      assertNull( e );
+      e.printStackTrace();
     } catch (LoginException e) {
-      assertNull( e );
+      e.printStackTrace();
     }
     
+    Artist art = arts.getArtistByName("Alborosie");
     
-    // Loading albums
+    assertNotNull(art);
+    
+    art = arts.getArtistByName("abc");
+    
+    assertNull(art);
+    
+  }
+  
+  
+  public void testAlbums(){
+    Albums albs = user.getAlbums();
+    
+    assertNotNull(albs);
+    
     try {
       albs.load();
     } catch (ServiceException e) {
-      assertNull( e );
+      e.printStackTrace();
     } catch (LoginException e) {
-      assertNull( e );
+      e.printStackTrace();
     }
     
     
-    Playlist pl = pls.getPlaylistByName("Last uploaded");
-    Tracks plTracks = pl.getTracks();
+    Album alb = albs.getAlbumByName("Escape From Babylon");
+    
+    assertNotNull( alb );
+    
+    
+    alb = albs.getAlbumByName("abc");
+    
+    assertNull( alb );
+    
+  }
+  
+  
+  public void testGenres(){
+    Genres gnrs = user.getGenres();
+    
+    
+    assertNotNull(gnrs);
     
     try {
-      plTracks.load();
+      gnrs.load();
     } catch (ServiceException e) {
-      assertNull( e );
+      e.printStackTrace();
     } catch (LoginException e) {
-      assertNull( e );
-    }
-    
-    assertEquals( pl.getTracksCount(), plTracks.size() );
-    
-    
-    Genre g = gnrs.get(0);
-    
-    Tracks gTracks = g.getTracks();
-    try {
-      gTracks.load();
-    } catch (ServiceException e) {
-      assertNull( e );
-    } catch (LoginException e) {
-      assertNull( e );
+      e.printStackTrace();
     }
     
     
+    Genre alb = gnrs.getGenreByName("Raggae");
     
-    Album a = albs.get(0);
-    
-    Tracks alTracks = a.getTracks();
-    try {
-      alTracks.load();
-    } catch (ServiceException e) {
-      assertNull( e );
-    } catch (LoginException e) {
-      assertNull( e );
-    }
+    assertNotNull( alb );
     
     
+    alb = gnrs.getGenreByName("abc");
     
-    Artist ar = arts.get(0);
-    
-    Tracks arTracks = ar.getTracks();
-    try {
-      arTracks.load();
-    } catch (ServiceException e) {
-      assertNull( e );
-    } catch (LoginException e) {
-      assertNull( e );
-    }
-    
-    
-    
-    
-    // All went right
-    assertTrue( true );
+    assertNull( alb );
     
   }
   
