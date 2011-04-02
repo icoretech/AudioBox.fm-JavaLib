@@ -87,6 +87,18 @@ public class DefaultRequestMethod implements IConnectionMethod {
     if (   ( ! isGET() && ! isDELETE() )  && params != null ){
       ((HttpEntityEnclosingRequestBase) getHttpMethod() ).setEntity( params );
     }
+    
+
+    this.destEntity.setProperty(IEntity.REQUEST_URL, null);
+    
+    if ( isGET() && configuration.isUsingCache() ) {
+      String url = getHttpMethod().getRequestLine().getUri();
+      String etag = configuration.getCacheManager().getEtag( url );
+      if (etag != null) {
+        getHttpMethod().addHeader( IConnectionMethod.HTTP_HEADER_IF_NONE_MATCH, etag );
+      }
+      this.destEntity.setProperty(IEntity.REQUEST_URL, url);
+    }
 
     Callable<Response> start = new Callable<Response>() {
 

@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
+import fm.audiobox.interfaces.ICacheManager;
 import fm.audiobox.interfaces.IFactory;
 import fm.audiobox.interfaces.ILoginExceptionHandler;
 import fm.audiobox.interfaces.IServiceExceptionHandler;
@@ -50,6 +51,7 @@ public class DefaultConfiguration implements IConfiguration {
   private String version = VERSION;
   private Class<? extends IConnectionMethod> connMethodClass = DefaultRequestMethod.class;
   private ExecutorService executor;
+  private ICacheManager cacheManager;
 
 
 
@@ -62,6 +64,7 @@ public class DefaultConfiguration implements IConfiguration {
     log.debug("Request format: " + requestFormat.toString() );
     log.info("Configuration loaded");
     this.executor = Executors.newSingleThreadExecutor();
+    this.setCacheManager( new DefaultCacheManager() );
   }
 
 
@@ -197,6 +200,18 @@ public class DefaultConfiguration implements IConfiguration {
   @Override
   public ExecutorService getExecutor() {
     return executor;
+  }
+
+
+  @Override
+  public void setCacheManager(ICacheManager manager) {
+    this.cacheManager = manager;
+  }
+
+
+  @Override
+  public ICacheManager getCacheManager() {
+    return this.cacheManager;
   }
 
 }

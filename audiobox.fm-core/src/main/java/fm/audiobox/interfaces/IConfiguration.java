@@ -2,6 +2,8 @@ package fm.audiobox.interfaces;
 
 import java.util.concurrent.ExecutorService;
 
+import javax.swing.text.DefaultEditorKit.InsertContentAction;
+
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
@@ -150,9 +152,6 @@ public interface IConfiguration {
    * @return
    */
   public IServiceExceptionHandler getDefaultServiceExceptionHandler();
-  
-  
-
 
   /**
    * Sets the connection method class used for connection
@@ -174,5 +173,17 @@ public interface IConfiguration {
    */
   public ExecutorService getExecutor();
   
+
+  /**
+   * Use this method to set the {@link ICacheManager}
+   * @param manager the {@link ICacheManager} to set
+   */
+  public void setCacheManager(ICacheManager manager);
   
+  
+  /**
+   * Use this method to get the configured cache manager
+   * @return the {@link ICacheManager} 
+   */
+  public ICacheManager getCacheManager();
 }

@@ -37,6 +37,22 @@ public abstract class AbstractEntity extends Observable implements IEntity {
     return this.token;
   }
 
+  @Override
+  public void setProperty(String key, Object value) {
+    if ( value == null ) {
+      if ( this.properties.containsKey( key )  ) {
+        this.properties.remove(key);
+      }
+    } else {
+      this.properties.put(key, value);
+    }
+  }
+  
+  @Override
+  public Object getProperty(String key) {
+    return this.properties.get(key);
+  }
+  
   public final void setToken(String tk){
     this.token = tk;
   }
@@ -57,26 +73,5 @@ public abstract class AbstractEntity extends Observable implements IEntity {
     return this.configuration;
   }
 
-  
-  /**
-   * Sets a generic property. This method is used for general purposes
-   * 
-   * @param tagName the tagName found while parsing response content
-   * @param value general Object as field value
-   */
-  public void setProperty(String key, Object value) {
-    this.properties.put(key, value);
-  }
-  
-  /**
-   * Returns an Object associated with given key
-   * 
-   * @param key String
-   * @return the Object associated with given key
-   */
-  public Object getProperty(String key) {
-    return this.properties.get(key);
-  }
-  
   
 }

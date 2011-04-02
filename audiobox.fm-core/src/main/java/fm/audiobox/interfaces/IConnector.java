@@ -59,6 +59,8 @@ public interface IConnector {
     public static final String METHOD_POST = HttpPost.METHOD_NAME;
     public static final String METHOD_PUT = HttpPut.METHOD_NAME;
     public static final String METHOD_DELETE = HttpDelete.METHOD_NAME;
+    public static final String HTTP_HEADER_ETAG = "ETag";
+    public static final String HTTP_HEADER_IF_NONE_MATCH = "If-None-Match";
     
     /**
      * Initialization method. Sets all variables

@@ -24,6 +24,7 @@ import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.parsers.XmlParser;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConfiguration.RequestFormat;
+import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
 
@@ -65,6 +66,7 @@ public class DefaultResponseHandler implements ResponseHandler<Response>, IRespo
     boolean isText = contentType.getValue().contains( "text" );
     boolean isJson = contentType.getValue().contains( RequestFormat.JSON.toString().toLowerCase() );
     boolean isBinary  = contentType.getValue().contains( "audio" ); // TODO: check this code
+    String responseString = "";
 
     try {
 
@@ -72,21 +74,24 @@ public class DefaultResponseHandler implements ResponseHandler<Response>, IRespo
 
       // 20*
       case HttpStatus.SC_OK:
+      case HttpStatus.SC_NOT_MODIFIED:
+
+        InputStream in =  this.response.getStream();
 
         if ( isXml ) {
-          responseHandler.parseAsXml( response, this.response.getStream() );
+          responseString = responseHandler.parseAsXml( response, in );
 
         } else if ( isJson ) {
-          responseHandler.parseAsJson( response, this.response.getStream());
+          responseString = responseHandler.parseAsJson( response, in );
 
         } else if ( isText ) {
-          responseHandler.parseAsText( response, this.response.getStream() );
+          responseString = responseHandler.parseAsText( response, in );
 
         } else if ( isBinary ) {
-          responseHandler.parseAsBinary( response, this.response.getStream() );
+          responseString = responseHandler.parseAsBinary( response, in );
 
         } else {
-          responseString = responseHandler.parse( response, this.response.getStream() );
+          responseString = responseHandler.parse( response, in );
 
         }
 
@@ -161,19 +166,18 @@ public class DefaultResponseHandler implements ResponseHandler<Response>, IRespo
 
     }
 
-    return this.response;
+    return new Response(responseCode, responseString);
   }
 
   @Override
   public String parseAsXml(HttpResponse response, InputStream in) throws ServiceException {
-
     try {
 
       SAXParserFactory spf = SAXParserFactory.newInstance();
       SAXParser sp = spf.newSAXParser();
       XMLReader xr = sp.getXMLReader();
       xr.setContentHandler( new XmlParser(destEntity, configuration) );
-      xr.parse( new InputSource( in ) );
+      xr.parse( new InputSource( manageCache(response, in) ) );
 
     } catch (ParserConfigurationException e) {
       log.error("An error occurred while instantiating XML Parser", e);
@@ -194,22 +198,58 @@ public class DefaultResponseHandler implements ResponseHandler<Response>, IRespo
 
   @Override
   public String parseAsJson(HttpResponse response, InputStream in) throws ServiceException {
+    in = manageCache(response, in);
     return null;
   }
 
   @Override
   public String parseAsText(HttpResponse response, InputStream in) throws ServiceException {
+    in = manageCache(response, in);
     return this.response.getBody();
   }
 
   @Override
   public String parseAsBinary(HttpResponse response, InputStream in) throws ServiceException {
+    in = manageCache(response, in);
     return null;
   }
 
   @Override
   public String parse(HttpResponse response, InputStream in) throws ServiceException {
+    in = manageCache(response, in);
     return null;
+  }
+
+  protected InputStream manageCache(HttpResponse response, InputStream in) {
+    if ( this.configuration.isUsingCache() ) {
+      Header etag = response.getFirstHeader(IConnectionMethod.HTTP_HEADER_ETAG);
+      if (etag != null) {
+        int responseCode = response.getStatusLine().getStatusCode();
+        
+        switch( responseCode ) {
+
+        // 200
+        case HttpStatus.SC_OK:
+          String url = (String)this.destEntity.getProperty(IEntity.REQUEST_URL);
+          if ( url == null ) {
+            this.configuration.getCacheManager().store(
+                url,
+                etag.getValue(),
+                in
+             );
+          }
+
+
+          // 304
+        case HttpStatus.SC_NOT_MODIFIED:
+          return this.configuration.getCacheManager().getBody(etag.getValue());
+
+        }
+      }
+
+    }
+    return in;
+
   }
 
 }

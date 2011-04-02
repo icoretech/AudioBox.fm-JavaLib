@@ -1,6 +1,5 @@
 package fm.audiobox.configurations;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -21,14 +20,15 @@ public class DefaultCacheManager implements ICacheManager {
   }
 
   @Override
-  public String getBody(String etag) {
+  public InputStream getBody(String etag) {
     File cachedFile = cache.get(etag);
 
-    return "";
+    return null;
   }
 
   @Override
   public void store(String url, String etag, InputStream in) {
+    
     
 
   }

@@ -6,6 +6,9 @@ import java.lang.reflect.Method;
 public interface IEntity {
 
   
+  public static final String REQUEST_URL = "reqUrl";
+  
+  
   /**
    * Returns the namespace path associated with this Entity.
    * <b>This method is used by connector</b>
@@ -38,5 +41,22 @@ public interface IEntity {
    */
   public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException;
   
+  
+  /**
+   * Sets a generic property. This method is used for general purposes
+   * 
+   * @param tagName the tagName found while parsing response content
+   * @param value general Object as field value
+   */
+  public void setProperty(String key, Object value);
+  
+  
+  /**
+   * Returns an Object associated with given key
+   * 
+   * @param key String
+   * @return the Object associated with given key
+   */
+  public Object getProperty(String key);
   
 }

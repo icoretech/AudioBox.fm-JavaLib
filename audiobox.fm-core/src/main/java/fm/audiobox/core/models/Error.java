@@ -152,6 +152,17 @@ public class Error implements IEntity, Serializable {
   }
 
 
+  @Override
+  public void setProperty(String key, Object value) {
+  }
+
+
+  @Override
+  public Object getProperty(String key) {
+    return null;
+  }
+
+
 
 }
 

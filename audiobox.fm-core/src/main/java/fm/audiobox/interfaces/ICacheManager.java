@@ -8,7 +8,7 @@ public interface ICacheManager extends Serializable {
 
   public String getEtag(String url);
   
-  public String getBody(String etag);
+  public InputStream getBody(String etag);
   
   public void store(String url, String etag, InputStream in);
   
