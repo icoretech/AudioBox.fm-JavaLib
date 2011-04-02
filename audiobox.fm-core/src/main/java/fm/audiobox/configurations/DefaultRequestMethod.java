@@ -1,10 +1,13 @@
 package fm.audiobox.configurations;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
@@ -13,12 +16,13 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.params.ClientPNames;
+import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.log4j.Logger;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.interfaces.IConnector;
+import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
@@ -27,9 +31,10 @@ public class DefaultRequestMethod implements IConnectionMethod {
 
   private static final Logger log = Logger.getLogger(DefaultRequestMethod.class);
   
-  private volatile transient IConnector connector;
+  private volatile transient HttpClient connector;
   private volatile transient HttpRequestBase method;
   private volatile transient IEntity destEntity;
+  private volatile transient IConfiguration configuration;
   
   
   public DefaultRequestMethod(){
@@ -39,10 +44,11 @@ public class DefaultRequestMethod implements IConnectionMethod {
   
   
   @Override
-  public void init(IEntity destEntity, HttpRequestBase method, IConnector connector) {
+  public void init(IEntity destEntity, HttpRequestBase method, HttpClient connector, IConfiguration config) {
     this.connector = connector;
     this.method = method;
     this.destEntity = destEntity;
+    this.configuration = config;
   }
   
   
@@ -69,28 +75,55 @@ public class DefaultRequestMethod implements IConnectionMethod {
     return send(async, params, null);
   }
   
+  
+  
+  
   @Override
   public String[] send(boolean async, HttpEntity params, final IResponseHandler responseHandler) throws ServiceException, LoginException {
     if (   ( ! isGET() && ! isDELETE() )  && params != null ){
       ((HttpEntityEnclosingRequestBase) getHttpMethod() ).setEntity( params );
     }
     
-    if ( async ){
-      final IConnectionMethod me = this;
-      (new Thread(){
-        public void run(){
-          try {
-            connector.execute( me , responseHandler);
-          } catch (ServiceException e) {
-            e.printStackTrace();
-          } catch (LoginException e) {
-            e.printStackTrace();
-          }
+    
+    try {
+      
+      log.info("METHOD: " + getHttpMethod().getRequestLine().getUri() );
+      
+      return this.connector.execute( getHttpMethod(), new DefaultResponseHandler( this.configuration, this.destEntity, responseHandler), new BasicHttpContext() );
+      
+    } catch (ClientProtocolException e) {
+      
+      log.error("ClientProtocolException thrown while executing request method", e);
+      throw new ServiceException(e);
+      
+    } catch (IOException e) {
+      
+      log.error("IOException thrown while executing request method", e);
+      if ( e instanceof ServiceException) {
+        
+        ServiceException se = (ServiceException)e;
+        if ( configuration.getDefaultServiceExceptionHandler() != null ){
+          configuration.getDefaultServiceExceptionHandler().handle( se );
         }
-      }).start();
-      return new String[]{"",""};
-    } else {
-      return this.connector.execute( this , responseHandler);
+        
+        throw se;
+      } else if ( e instanceof LoginException ) {
+        
+        LoginException le = (LoginException)e;
+        if ( configuration.getDefaultLoginExceptionHandler() != null ){
+          configuration.getDefaultLoginExceptionHandler().handle( le );
+        }
+        throw le;
+        
+      } else {
+        ServiceException se = new ServiceException(e);
+        
+        if ( configuration.getDefaultServiceExceptionHandler() != null ){
+          configuration.getDefaultServiceExceptionHandler().handle( se );
+        }
+        
+        throw se;
+      }
     }
   }
 
@@ -106,7 +139,7 @@ public class DefaultRequestMethod implements IConnectionMethod {
   }
   
   @Override
-  public IEntity getEntity() {
+  public IEntity getDestinationEntity() {
     return this.destEntity;
   }
 

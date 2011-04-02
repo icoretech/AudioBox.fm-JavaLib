@@ -69,6 +69,7 @@ public class DefaultResponseHandler implements ResponseHandler<String[]>, IRespo
     boolean isBinary  = contentType.getValue().contains( "audio" ); // TODO: check this code
     String responseString = "";
     
+    
     try {
       
       switch( responseCode ) {

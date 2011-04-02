@@ -44,7 +44,6 @@ import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -66,20 +65,17 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
-import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fm.audiobox.configurations.DefaultResponseHandler;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.User;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IEntity;
-import fm.audiobox.interfaces.IResponseHandler;
 
 
 /**
@@ -537,7 +533,7 @@ public class AudioBox {
       
       if ( method != null ) {
         HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_GET, destEntity, action, params);
-        method.init(destEntity, originalMethod, this);
+        method.init(destEntity, originalMethod, this.mClient, getConfiguration() );
       }
       
       return method;
@@ -551,7 +547,7 @@ public class AudioBox {
       
       if ( method != null ) {
         HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_PUT, destEntity, action, null);
-        method.init(destEntity, originalMethod, this);
+        method.init(destEntity, originalMethod, this.mClient, getConfiguration() );
       }
       
       return method;
@@ -564,7 +560,7 @@ public class AudioBox {
       
       if ( method != null ) {
         HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_POST, destEntity, action, null);
-        method.init(destEntity, originalMethod, this);
+        method.init(destEntity, originalMethod, this.mClient, getConfiguration() );
       }
       
       return method;
@@ -577,51 +573,12 @@ public class AudioBox {
       
       if ( method != null ) {
         HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_DELETE, destEntity, action, null);
-        method.init(destEntity, originalMethod, this);
+        method.init(destEntity, originalMethod, this.mClient, getConfiguration() );
       }
       
       return method;
     }
 
-
-    public String[] execute(final IConnectionMethod method, IResponseHandler responseHandler) throws ServiceException, LoginException {
-      try {
-        
-        return mClient.execute( method.getHttpMethod(), new DefaultResponseHandler(getConfiguration(), method.getEntity(), responseHandler), new BasicHttpContext() );
-        
-      } catch (ClientProtocolException e) {
-        log.error("ClientProtocolException thrown while executing request method", e);
-        throw new ServiceException(e);
-      } catch (IOException e) {
-        log.error("IOException thrown while executing request method", e);
-        if ( e instanceof ServiceException) {
-          
-          ServiceException se = (ServiceException)e;
-          if ( configuration.getDefaultServiceExceptionHandler() != null ){
-            configuration.getDefaultServiceExceptionHandler().handle( se );
-          }
-          
-          throw se;
-        } else if ( e instanceof LoginException ) {
-          
-          LoginException le = (LoginException)e;
-          if ( configuration.getDefaultLoginExceptionHandler() != null ){
-            configuration.getDefaultLoginExceptionHandler().handle( le );
-          }
-          throw le;
-          
-        } else {
-          ServiceException se = new ServiceException(e);
-          
-          if ( configuration.getDefaultServiceExceptionHandler() != null ){
-            configuration.getDefaultServiceExceptionHandler().handle( se );
-          }
-          
-          throw se;
-        }
-      }
-      
-    }
     
   }
 

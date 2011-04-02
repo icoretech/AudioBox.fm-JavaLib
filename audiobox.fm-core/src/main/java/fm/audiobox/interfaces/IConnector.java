@@ -5,7 +5,6 @@ import java.util.List;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -17,16 +16,6 @@ import fm.audiobox.core.exceptions.ServiceException;
 
 
 public interface IConnector {
-
-  
-  /**
-   * Executes a Http request
-   * @param method {@link IConnectionMethod} to send to server
-   * @param responseHandler {@link ResponseHandler} that intercepts the response
-   * @return a {@link String} array contains all response information
-   */
-  public String[] execute(IConnectionMethod method, IResponseHandler responseHandler) throws ServiceException, LoginException;
-  
   
   /**
    * Builds {@link HttpMethodBase} using GET method and passing parameters
@@ -78,7 +67,7 @@ public interface IConnector {
      * @param connector the original {@link HttpClient} used as connector
      * @param followRedirect when {@code true} force request to follow redirect ( used by download method ) 
      */
-    public void init(IEntity destEntity, HttpRequestBase method, IConnector connector);
+    public void init(IEntity destEntity, HttpRequestBase method, HttpClient connector, IConfiguration config);
     
     /**
      * When {@code true} force request to follow redirects ( used by download method )
@@ -92,12 +81,13 @@ public interface IConnector {
      */
     public HttpRequestBase getHttpMethod();
     
+    
     /**
      * Returns the destination entity to populate while parsing response content
      * 
      * @return the destination {@link IEntity} to populate 
      */
-    public IEntity getEntity();
+    public IEntity getDestinationEntity();
     
     /**
      * Invokes server using
