@@ -1,14 +1,14 @@
 package fm.audiobox.interfaces;
 
+import java.util.concurrent.ExecutorService;
+
 import fm.audiobox.core.exceptions.LoginException;
+import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 
 public interface IConfiguration {
 
 
-  public static final int RESPONSE_CODE = 0;
-  public static final int RESPONSE_BODY = 1;
-  
   public enum RequestFormat {
     XML,
     JSON,
@@ -166,4 +166,13 @@ public interface IConfiguration {
    */
   public Class<? extends IConnectionMethod> getHttpMethodType();
 
+  
+  /**
+   * Use this method to get the configured {@link ExecutorService}
+   * 
+   * @return the configured {@link ExecutorService} used for requests
+   */
+  public ExecutorService getExecutor();
+  
+  
 }

@@ -42,7 +42,7 @@ public class AudioBoxRefactorTest extends junit.framework.TestCase {
     user = abx.login( Fixtures.get( Fixtures.LOGIN ),  Fixtures.get( Fixtures.RIGHT_PASS ));
     
     assertNotNull(user);
-    assertEquals(user.getUsername(), "fatshotty");
+    assertEquals(user.getUsername(), Fixtures.get( Fixtures.USERNAME ));
     
     super.setUp();
   }
@@ -51,8 +51,6 @@ public class AudioBoxRefactorTest extends junit.framework.TestCase {
 
   @Test
   public void testUser() {
-    
-    assertEquals(user.getUsername(), "fatshotty");
     
     // used temporarly
     user.setUsername("");
@@ -65,7 +63,6 @@ public class AudioBoxRefactorTest extends junit.framework.TestCase {
       assertNull(e);
     }
     
-    assertEquals(user.getUsername(), "fatshotty");
   }
 
 
@@ -84,9 +81,9 @@ public class AudioBoxRefactorTest extends junit.framework.TestCase {
       assertNull(e);
     }
     
-    Playlist pl = pls.getPlaylistByName("Last uploaded");
+    Playlist pl = pls.getPlaylistByName(Fixtures.get( Fixtures.SMALL_PLAYLIST_NAME ));
     
-    assertEquals( pl.getName(), "Last uploaded" );
+    assertEquals( pl.getName(), Fixtures.get( Fixtures.SMALL_PLAYLIST_NAME ) );
     
     pl = pls.getPlaylistByType( PlaylistTypes.AUDIO );
     

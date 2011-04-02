@@ -1,5 +1,8 @@
 package fm.audiobox.configurations;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +49,7 @@ public class DefaultConfiguration implements IConfiguration {
   private String appName = APPLICATION_NAME;
   private String version = VERSION;
   private Class<? extends IConnectionMethod> connMethodClass = DefaultRequestMethod.class;
+  private ExecutorService executor;
 
 
 
@@ -57,6 +61,7 @@ public class DefaultConfiguration implements IConfiguration {
     log.debug("Application version: " + this.getVersion() );
     log.debug("Request format: " + requestFormat.toString() );
     log.info("Configuration loaded");
+    this.executor = Executors.newSingleThreadExecutor();
   }
 
 
@@ -177,8 +182,6 @@ public class DefaultConfiguration implements IConfiguration {
   }
   
   
-
-
   @Override
   public void setHttpMethodType(Class<? extends IConnectionMethod> method) {
     this.connMethodClass = method; 
@@ -188,6 +191,12 @@ public class DefaultConfiguration implements IConfiguration {
   @Override
   public Class<? extends IConnectionMethod> getHttpMethodType() {
     return this.connMethodClass;
+  }
+
+
+  @Override
+  public ExecutorService getExecutor() {
+    return executor;
   }
 
 }

@@ -3,8 +3,12 @@ package fm.audiobox.configurations;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -29,20 +33,20 @@ import fm.audiobox.interfaces.IResponseHandler;
 
 public class DefaultRequestMethod implements IConnectionMethod {
 
-  private static final Logger log = Logger.getLogger(DefaultRequestMethod.class);
-  
+  private static Logger log = Logger.getLogger(DefaultRequestMethod.class);
+
   private volatile transient HttpClient connector;
   private volatile transient HttpRequestBase method;
   private volatile transient IEntity destEntity;
   private volatile transient IConfiguration configuration;
-  
-  
+  private volatile transient Future<Response> futureResponse;
+
+
   public DefaultRequestMethod(){
     super();
   }
-  
-  
-  
+
+
   @Override
   public void init(IEntity destEntity, HttpRequestBase method, HttpClient connector, IConfiguration config) {
     this.connector = connector;
@@ -50,15 +54,16 @@ public class DefaultRequestMethod implements IConnectionMethod {
     this.destEntity = destEntity;
     this.configuration = config;
   }
-  
-  
-  @Override
-  public String[] send(boolean async) throws ServiceException, LoginException {
-    return send(async, null,null);
-  }
+
 
   @Override
-  public String[] send(boolean async, List<NameValuePair> params) throws ServiceException, LoginException {
+  public void send(boolean async) throws ServiceException, LoginException {
+    send(async, null,null);
+  }
+
+
+  @Override
+  public void send(boolean async, List<NameValuePair> params) throws ServiceException, LoginException {
     HttpEntity entity = null;
     if (  (! isGET() && ! isDELETE() )  && params != null ){
       try {
@@ -67,64 +72,82 @@ public class DefaultRequestMethod implements IConnectionMethod {
         log.error("An error occurred while instanciating UrlEncodedFormEntity", e);
       }
     }
-    return send(async, entity);
+    send(async, entity);
   }
 
+
   @Override
-  public String[] send(boolean async, HttpEntity params) throws ServiceException, LoginException {
-    return send(async, params, null);
+  public void send(boolean async, HttpEntity params) throws ServiceException, LoginException {
+    send(async, params, null);
   }
-  
-  
-  
-  
+
+
   @Override
-  public String[] send(boolean async, HttpEntity params, final IResponseHandler responseHandler) throws ServiceException, LoginException {
+  public void send(boolean async, HttpEntity params, final IResponseHandler responseHandler) throws ServiceException, LoginException {
     if (   ( ! isGET() && ! isDELETE() )  && params != null ){
       ((HttpEntityEnclosingRequestBase) getHttpMethod() ).setEntity( params );
     }
-    
-    
-    try {
-      
-      log.info("METHOD: " + getHttpMethod().getRequestLine().getUri() );
-      
-      return this.connector.execute( getHttpMethod(), new DefaultResponseHandler( this.configuration, this.destEntity, responseHandler), new BasicHttpContext() );
-      
-    } catch (ClientProtocolException e) {
-      
-      log.error("ClientProtocolException thrown while executing request method", e);
-      throw new ServiceException(e);
-      
-    } catch (IOException e) {
-      
-      log.error("IOException thrown while executing request method", e);
-      if ( e instanceof ServiceException) {
-        
-        ServiceException se = (ServiceException)e;
-        if ( configuration.getDefaultServiceExceptionHandler() != null ){
-          configuration.getDefaultServiceExceptionHandler().handle( se );
+
+    Callable<Response> start = new Callable<Response>() {
+
+      @Override
+      public Response call() throws ServiceException, LoginException {
+        try {
+
+          return connector.execute( getHttpMethod(), new DefaultResponseHandler( configuration, destEntity, responseHandler), new BasicHttpContext() );
+
+        } catch (ClientProtocolException e) {
+
+          log.error("ClientProtocolException thrown while executing request method", e);
+          throw new ServiceException(e);
+
+        } catch (IOException e) {
+
+          log.error("IOException thrown while executing request method", e);
+          if ( e instanceof ServiceException) {
+
+            ServiceException se = (ServiceException)e;
+            if ( configuration.getDefaultServiceExceptionHandler() != null ){
+              configuration.getDefaultServiceExceptionHandler().handle( se );
+            }
+
+            throw se;
+          } else if ( e instanceof LoginException ) {
+
+            LoginException le = (LoginException)e;
+            if ( configuration.getDefaultLoginExceptionHandler() != null ){
+              configuration.getDefaultLoginExceptionHandler().handle( le );
+            }
+            throw le;
+
+          } else {
+            ServiceException se = new ServiceException(e);
+
+            if ( configuration.getDefaultServiceExceptionHandler() != null ){
+              configuration.getDefaultServiceExceptionHandler().handle( se );
+            }
+
+            throw se;
+          }
         }
-        
-        throw se;
-      } else if ( e instanceof LoginException ) {
-        
-        LoginException le = (LoginException)e;
-        if ( configuration.getDefaultLoginExceptionHandler() != null ){
-          configuration.getDefaultLoginExceptionHandler().handle( le );
-        }
-        throw le;
-        
-      } else {
-        ServiceException se = new ServiceException(e);
-        
-        if ( configuration.getDefaultServiceExceptionHandler() != null ){
-          configuration.getDefaultServiceExceptionHandler().handle( se );
-        }
-        
-        throw se;
       }
+
+    };
+
+    futureResponse = this.configuration.getExecutor().submit( start ); 
+    if ( !async )
+      this.getResponse();
+  }
+
+  public Response getResponse() {
+    try {
+      return futureResponse.get();
+    } catch (InterruptedException e) {
+      log.error(e.getMessage(), e);
+    } catch (ExecutionException e) {
+      log.error(e.getMessage(), e);
     }
+    return new Response(HttpStatus.SC_PRECONDITION_FAILED, "");
   }
 
   @Override
@@ -137,7 +160,7 @@ public class DefaultRequestMethod implements IConnectionMethod {
   public HttpRequestBase getHttpMethod() {
     return this.method;
   }
-  
+
   @Override
   public IEntity getDestinationEntity() {
     return this.destEntity;

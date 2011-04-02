@@ -11,6 +11,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 
+import fm.audiobox.configurations.Response;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 
@@ -92,20 +93,18 @@ public interface IConnector {
     /**
      * Invokes server using
      * 
-     * @return a String array containing Response status and response body
      * @throws ServiceException
      * @throws LoginException
      */
-    public String[] send(boolean async) throws ServiceException, LoginException;
+    public void send(boolean async) throws ServiceException, LoginException;
     
     /**
      * Invokes server passing parameters.
      * (Used with all methods exclusing GET)
      * 
      * @param params {@link List} of {@link NameValuePair} used as request parameters
-     * @return a String array containing Response status and response body
      */
-    public String[] send(boolean async, List<NameValuePair> params) throws ServiceException, LoginException;
+    public void send(boolean async, List<NameValuePair> params) throws ServiceException, LoginException;
     
     /**
      * Invokes server passing an entire {@link HttpEntity}
@@ -113,9 +112,8 @@ public interface IConnector {
      * 
      * @param destEntity
      * @param params the {@link HttpEntity} used as request parameter
-     * @return a String array containing Response status and response body
      */
-    public String[] send(boolean async, HttpEntity params) throws ServiceException, LoginException;
+    public void send(boolean async, HttpEntity params) throws ServiceException, LoginException;
     
     /**
      * Invokes server passing a {@link HttpEntity} as request parameter.
@@ -123,12 +121,17 @@ public interface IConnector {
      * 
      * @param params a {@link HttpEntity} used as request parameter
      * @param responseHandler a {@link IResponseHandler} used as custom response interceptor
-     * @return a String array containing Response status and response body
      * @throws ServiceException
      * @throws LoginException
      */
-    public String[] send(boolean async, HttpEntity params, IResponseHandler responseHandler) throws ServiceException, LoginException;
+    public void send(boolean async, HttpEntity params, IResponseHandler responseHandler) throws ServiceException, LoginException;
     
+
+    /**
+     * Use this method to get the {@link Response} of this request 
+     * @return the {@link Response} of the request
+     */
+    public Response getResponse();
     
     /**
      * Cancels current request

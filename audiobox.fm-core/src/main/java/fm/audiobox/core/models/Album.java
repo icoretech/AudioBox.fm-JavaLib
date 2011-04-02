@@ -64,7 +64,7 @@ import fm.audiobox.interfaces.IConnector;
 public class Album extends AbstractEntity implements Serializable {
   
   private static final long serialVersionUID = 1L;
-  private static final Logger log = LoggerFactory.getLogger(Album.class);
+  private static Logger log = LoggerFactory.getLogger(Album.class);
   
   /** The XML tag name for the Album element */
   public static final String NAMESPACE = Albums.TAGNAME;
@@ -80,7 +80,7 @@ public class Album extends AbstractEntity implements Serializable {
    */
   public Album(IConnector connector, IConfiguration config){
     super(connector, config);
-    log.info("New Album instantiated");
+    log.trace("New Album instantiated");
   }
 
   

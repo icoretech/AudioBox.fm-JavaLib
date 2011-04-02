@@ -13,7 +13,7 @@ import fm.audiobox.interfaces.IEntity;
 
 public abstract class AbstractEntity extends Observable implements IEntity {
 
-  private static final Logger log = LoggerFactory.getLogger(AbstractEntity.class);
+  private static Logger log = LoggerFactory.getLogger(AbstractEntity.class);
   
   private IConnector connector;
   private IConfiguration configuration; 
@@ -27,7 +27,7 @@ public abstract class AbstractEntity extends Observable implements IEntity {
     this.configuration = config;
     this.properties = new ConcurrentHashMap<String, Object>();
     if ( log.isDebugEnabled() ){
-      log.debug("Entity instanciated: " + this.getNamespace() );
+      log.trace("Entity instantiated: " + this.getNamespace() );
     }
   }
   

@@ -43,7 +43,7 @@ import fm.audiobox.interfaces.IConnector;
 public class Albums extends AbstractCollectionEntity<Album> implements Serializable {
 
   private static final long serialVersionUID = 1L;
-  private static final Logger log = LoggerFactory.getLogger(Albums.class);
+  private static Logger log = LoggerFactory.getLogger(Albums.class);
   
   
   /** Tracks API end point */
@@ -56,7 +56,7 @@ public class Albums extends AbstractCollectionEntity<Album> implements Serializa
    */
   public Albums(IConnector connector, IConfiguration config){
     super(connector, config);
-    log.info("New Album collection instantiated");
+    log.trace("New Album collection instantiated");
   }
 
   

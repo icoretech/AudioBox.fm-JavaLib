@@ -25,7 +25,6 @@ package fm.audiobox.core.models;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
-import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -510,9 +509,8 @@ public class Track extends AbstractEntity implements Serializable {
    * @throws ServiceException if any connection problem to AudioBox.fm occurs.
    */
   public void scrobble() throws ServiceException, LoginException {
-    String[] response = getConnector().post(this, SCROBBLE_ACTION).send(false);
-    if ( Integer.parseInt( response[ IConfiguration.RESPONSE_CODE ] ) == HttpStatus.SC_OK)
-      this.setPlayCount( this.getPlayCount() + 1 );
+    getConnector().post(this, SCROBBLE_ACTION).send(false);
+    this.setPlayCount( this.getPlayCount() + 1 );
   }
 
   /**

@@ -41,7 +41,6 @@ import org.apache.http.HttpRequest;
 import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
-import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpDelete;
@@ -224,16 +223,9 @@ public class AudioBox {
 
     mCredentials = new UsernamePasswordCredentials(username, password);
     
-    String[] result = this.getConnector().get(user, null, null).send(false);
+    this.getConnector().get(user, null, null).send(false);
     
-    // Check response code
-    if (   ! String.valueOf( HttpStatus.SC_OK ).equals(  result[IConfiguration.RESPONSE_CODE]  )    ){
-      // User maybe invalid
-      log.error("Username or password may be invalid, User cannot be logged-in");
-      user = null;
-    }
-
-    return user;
+    return this.user = user;
   }
 
   

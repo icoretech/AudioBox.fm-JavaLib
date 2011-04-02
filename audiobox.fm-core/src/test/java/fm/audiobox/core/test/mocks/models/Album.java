@@ -1,21 +1,31 @@
 package fm.audiobox.core.test.mocks.models;
 
+import fm.audiobox.interfaces.IConfiguration;
+import fm.audiobox.interfaces.IConnector;
+
 public class Album extends fm.audiobox.core.models.Album {
 
-    private String test;
+  private static final long serialVersionUID = 1L;
 
-    /**
-     * @param test the test to set
-     */
-    public void setTest(String test) {
-        this.test = test;
-    }
+  public Album(IConnector connector, IConfiguration config) {
+    super(connector, config);
+    // TODO Auto-generated constructor stub
+  }
 
-    /**
-     * @return the test
-     */
-    public String getTest() {
-        return test;
-    }
-    
+  private String test;
+
+  /**
+   * @param test the test to set
+   */
+  public void setTest(String test) {
+    this.test = test;
+  }
+
+  /**
+   * @return the test
+   */
+  public String getTest() {
+    return test;
+  }
+
 }

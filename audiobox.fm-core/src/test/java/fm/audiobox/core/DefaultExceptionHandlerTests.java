@@ -39,7 +39,7 @@ public class DefaultExceptionHandlerTests extends junit.framework.TestCase {
     user = abx.login( Fixtures.get( Fixtures.LOGIN ),  Fixtures.get( Fixtures.RIGHT_PASS ));
     
     assertNotNull(user);
-    assertEquals(user.getUsername(), "fatshotty");
+    assertEquals(user.getUsername(), Fixtures.get( Fixtures.USERNAME ));
     
     super.setUp();
   }
