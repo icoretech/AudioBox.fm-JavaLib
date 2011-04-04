@@ -133,7 +133,7 @@ public interface IConnector {
      * Use this method to get the {@link Response} of this request 
      * @return the {@link Response} of the request
      */
-    public Response getResponse();
+    public Response getResponse() throws ServiceException, LoginException;
     
     /**
      * Cancels current request

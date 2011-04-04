@@ -35,7 +35,7 @@ public class AudioBoxRefactorTest extends junit.framework.TestCase {
     configuration.setVersion(1, 0, 0);
     configuration.setRequestFormat(RequestFormat.XML);
     configuration.setShortResponse(false);
-    configuration.setUseCache(false);
+    configuration.setUseCache(true);
     
     AudioBox abx = new AudioBox(configuration);
     

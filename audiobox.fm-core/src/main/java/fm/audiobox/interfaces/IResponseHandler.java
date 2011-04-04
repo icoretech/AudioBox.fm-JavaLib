@@ -2,54 +2,59 @@ package fm.audiobox.interfaces;
 
 import java.io.InputStream;
 
-import org.apache.http.HttpResponse;
-
 import fm.audiobox.core.exceptions.ServiceException;
+import fm.audiobox.interfaces.IConfiguration.RequestFormat;
 
 public interface IResponseHandler {
 
-  
   /**
-   * Used to parse a XML response
+   * This method parses the {@link InputStream} associated with this response and populates given {@link IEntity}
    * 
-   * @param response the {@link HttpResponse} received
-   * @param inputStream the {@link InputStream} to parse data from
-   * @return the body of response
+   * @param inputStream the the {@link InputStream} associated this response
+   * @param destEntity  the {@link IEntity} to populate
+   * @throws ServiceException
    */
-  public String parseAsXml(HttpResponse response, InputStream inputStream) throws ServiceException;
+  public void parseAsXml(InputStream inputStream, IEntity destEntity) throws ServiceException;
   
   /**
-   * Used to parse a json response
+   * This method parses the {@link InputStream} associated with this response and populates given {@link IEntity}
    * 
-   * @param response the {@link HttpResponse} received
-   * @return the body of response
+   * @param inputStream the the {@link InputStream} associated this response
+   * @param destEntity  the {@link IEntity} to populate
+   * @throws ServiceException
    */
-  public String parseAsJson(HttpResponse response, InputStream inputStream) throws ServiceException;
+  public void parseAsJson(InputStream inputStream, IEntity destEntity) throws ServiceException;
   
   /**
-   * Used to parse a text response
+   * This method parses the {@link InputStream} associated with this response and populates given {@link IEntity}
    * 
-   * @param response the {@link HttpResponse} received
-   * @return the body of response
+   * @param inputStream the the {@link InputStream} associated this response
+   * @param destEntity  the {@link IEntity} to populate
+   * @return {@link String} that represents the response content
+   * @throws ServiceException
    */
-  public String parseAsText(HttpResponse response, InputStream inputStream) throws ServiceException;
+  public String parseAsText(InputStream inputStream, IEntity destEntity) throws ServiceException;
   
   /**
-   * Used to parse a binary response
+   * This method parses the {@link InputStream} associated with this response and populates given {@link IEntity}
    * 
-   * @param response the {@link HttpResponse} received
-   * @return the body of response
+   * @param inputStream the the {@link InputStream} associated this response
+   * @param destEntity  the {@link IEntity} to populate
+   * @throws ServiceException
    */
-  public String parseAsBinary(HttpResponse response, InputStream inputStream) throws ServiceException;
+  public void parseAsBinary(InputStream inputStream, IEntity destEntity) throws ServiceException;
   
   
   /**
-   * Used to parse an Undefined response
+   * This method parses the {@link InputStream} associated with this response and populates given {@link IEntity}
    * 
-   * @param response the {@link HttpResponse} received
-   * @return the body of response
-   */  
-  public String parse(HttpResponse response, InputStream inputStream) throws ServiceException;
+   * @param inputStream the the {@link InputStream} associated this response
+   * @param destEntity  the {@link IEntity} to populate
+   * @param format  the response format identified with {@link RequestFormat}
+   * @return {@link String} that represents the response content
+   * @throws ServiceException
+   */ 
+  public String parse(InputStream inputStream, IEntity destEntity, RequestFormat format) throws ServiceException;
   
   
 }

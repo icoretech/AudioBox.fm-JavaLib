@@ -69,7 +69,7 @@ public abstract class AbstractEntity extends Observable implements IEntity {
    * Returns the {@link IConfiguration} associated with this {@link IEntity}
    * @return the {@link IConfiguration}
    */
-  protected IConfiguration getConfiguration(){
+  public IConfiguration getConfiguration(){
     return this.configuration;
   }
 

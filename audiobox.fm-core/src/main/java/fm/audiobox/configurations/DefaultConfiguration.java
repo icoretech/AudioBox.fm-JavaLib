@@ -148,7 +148,7 @@ public class DefaultConfiguration implements IConfiguration {
   }
 
   @Override
-  public boolean isUsingCache() {
+  public boolean isCacheEnabled() {
     return this.useCache;
   }
 
@@ -158,7 +158,7 @@ public class DefaultConfiguration implements IConfiguration {
   }
 
   @Override
-  public boolean isUsingShortResponse() {
+  public boolean isShortResponseEnabled() {
     return this.shortResponse;
   }
 

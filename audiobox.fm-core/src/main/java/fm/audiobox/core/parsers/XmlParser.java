@@ -24,9 +24,9 @@ public class XmlParser extends DefaultHandler {
   private Stack<IEntity> stack;
   private StringBuffer bodyContent;
   
-  public XmlParser(IEntity entity, IConfiguration config){
+  public XmlParser(IEntity entity){
     this.entity = entity;
-    this.config = config;
+    this.config = entity.getConfiguration();
   }
   
   

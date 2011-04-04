@@ -28,6 +28,7 @@ import java.lang.reflect.Method;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IEntity;
 
 
@@ -63,13 +64,16 @@ public class Error implements IEntity, Serializable {
   public static final String NAMESPACE = null;
   public static final String TAGNAME = "error";
 
-  protected int status;
-  protected String message;
+  
+  private IConfiguration configuration;
+  private int status;
+  private String message;
 
   /**
    * <p>Constructor for Error.</p>
    */
-  public Error(){
+  public Error(IConfiguration config){
+    this.configuration = config;
     log.info("New Error instantiated");
   }
 
@@ -160,6 +164,12 @@ public class Error implements IEntity, Serializable {
   @Override
   public Object getProperty(String key) {
     return null;
+  }
+
+
+  @Override
+  public IConfiguration getConfiguration() {
+    return this.configuration;
   }
 
 

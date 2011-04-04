@@ -8,6 +8,8 @@ import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fm.audiobox.core.exceptions.AudioBoxException;
+
 public class Response implements Serializable {
 
   private static Logger log = LoggerFactory.getLogger(Response.class);
@@ -16,6 +18,12 @@ public class Response implements Serializable {
   private int status;
   private String body;
   private InputStream in;
+  
+  /**
+   * Used to store the {@link AudioBoxException} as generic exception.
+   * This attribute is used while executing an asynchronous request
+   */
+  private AudioBoxException exception;
   
   
   /**
@@ -62,6 +70,7 @@ public class Response implements Serializable {
     return body;
   }
   
+  
   public InputStream getStream() {
     return this.in;
   }
@@ -73,6 +82,22 @@ public class Response implements Serializable {
   public String streamToString() throws IOException{
     return this.body = Response.streamToString(this.in);
   }
+  
+  
+  /**
+   * @see {@link Response#exception}
+   */
+  public AudioBoxException getException() {
+    return exception;
+  }
+
+  /**
+   * @see {@link Response#exception}
+   */
+  public void setException(AudioBoxException exception) {
+    this.exception = exception;
+  }
+  
   
   /**
    * Use this method to read the response from {@link InputStream}

@@ -503,7 +503,7 @@ public class AudioBox {
       // add extension to request path
       url += "." + getConfiguration().getRequestFormat().toString().toLowerCase();
 
-      if ( getConfiguration().isUsingShortResponse() ){
+      if ( getConfiguration().isShortResponseEnabled() ){
         params.add( new BasicNameValuePair("short", "true") );
       }
       

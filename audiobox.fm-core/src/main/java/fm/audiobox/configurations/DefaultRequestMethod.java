@@ -24,8 +24,10 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.log4j.Logger;
 
+import fm.audiobox.core.exceptions.AudioBoxException;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
+import fm.audiobox.core.parsers.ResponseParser;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
@@ -89,32 +91,31 @@ public class DefaultRequestMethod implements IConnectionMethod {
     }
     
 
-    this.destEntity.setProperty(IEntity.REQUEST_URL, null);
-    
-    if ( isGET() && configuration.isUsingCache() ) {
+    if ( isGET() && configuration.isCacheEnabled() ) {
       String url = getHttpMethod().getRequestLine().getUri();
-      String etag = configuration.getCacheManager().getEtag( url );
+      String etag = this.configuration.getCacheManager().getEtag(destEntity, url);
       if (etag != null) {
         getHttpMethod().addHeader( IConnectionMethod.HTTP_HEADER_IF_NONE_MATCH, etag );
       }
-      this.destEntity.setProperty(IEntity.REQUEST_URL, url);
     }
 
     Callable<Response> start = new Callable<Response>() {
 
       @Override
       public Response call() throws ServiceException, LoginException {
+        Response response = null;
         try {
 
-          return connector.execute( getHttpMethod(), new DefaultResponseHandler( configuration, destEntity, responseHandler), new BasicHttpContext() );
+          return connector.execute( getHttpMethod(), new ResponseParser( configuration, DefaultRequestMethod.this, responseHandler), new BasicHttpContext() );
 
         } catch (ClientProtocolException e) {
-
+          response = new Response(AudioBoxException.GENERIC_ERROR, e.getMessage() );
           log.error("ClientProtocolException thrown while executing request method", e);
-          throw new ServiceException(e);
+          response.setException( new ServiceException(e) );
 
         } catch (IOException e) {
-
+          response = new Response(AudioBoxException.GENERIC_ERROR, e.getMessage() );
+          
           log.error("IOException thrown while executing request method", e);
           if ( e instanceof ServiceException) {
 
@@ -123,14 +124,14 @@ public class DefaultRequestMethod implements IConnectionMethod {
               configuration.getDefaultServiceExceptionHandler().handle( se );
             }
 
-            throw se;
+            response.setException( se );
           } else if ( e instanceof LoginException ) {
 
             LoginException le = (LoginException)e;
             if ( configuration.getDefaultLoginExceptionHandler() != null ){
               configuration.getDefaultLoginExceptionHandler().handle( le );
             }
-            throw le;
+            response.setException( le );
 
           } else {
             ServiceException se = new ServiceException(e);
@@ -139,9 +140,10 @@ public class DefaultRequestMethod implements IConnectionMethod {
               configuration.getDefaultServiceExceptionHandler().handle( se );
             }
 
-            throw se;
+            response.setException( se );
           }
         }
+        return response;
       }
 
     };
@@ -151,19 +153,29 @@ public class DefaultRequestMethod implements IConnectionMethod {
       this.getResponse();
   }
 
-  public Response getResponse() {
+  public Response getResponse()  throws ServiceException, LoginException{
     try {
-      return futureResponse.get();
+      Response response = futureResponse.get();
+      if ( response.getException() != null ) {
+        AudioBoxException ex = response.getException();
+        if ( ex instanceof LoginException ){
+          throw (LoginException) ex;
+        } else {
+          throw (ServiceException) ex;
+        }
+      }
+      return response;
     } catch (InterruptedException e) {
       log.error(e.getMessage(), e);
     } catch (ExecutionException e) {
       log.error(e.getMessage(), e);
     }
-    return new Response(HttpStatus.SC_PRECONDITION_FAILED, "");
+    throw new ServiceException(HttpStatus.SC_PRECONDITION_FAILED, "No response found");
   }
 
   @Override
   public void abort() {
+    futureResponse.cancel(true);
     getHttpMethod().abort();
   }
 

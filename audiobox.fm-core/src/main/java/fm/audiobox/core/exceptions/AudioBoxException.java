@@ -7,6 +7,9 @@ public class AudioBoxException extends IOException {
 
   private static final long serialVersionUID = 1L;
   
+  /** Generic error code. Usually used to identify an undefined error */
+  public static final int GENERIC_ERROR = -1;
+  
   protected int errorCode = -1;
   protected Throwable cause;
   protected String message;

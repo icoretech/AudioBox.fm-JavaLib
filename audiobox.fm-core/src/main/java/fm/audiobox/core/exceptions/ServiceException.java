@@ -50,9 +50,6 @@ public class ServiceException extends AudioBoxException {
     /** Timeout exception error code */
     public static final int TIMEOUT_ERROR = 3;
     
-    /** Generic error code. Usually used to identify an undefined error */
-    public static final int GENERIC_ERROR = -1;
-
     private static final long serialVersionUID = 1L;
 
     

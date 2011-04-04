@@ -59,4 +59,11 @@ public interface IEntity {
    */
   public Object getProperty(String key);
   
+  /**
+   * Returns the {@link IConfiguration} associated with this {@link IEntity}
+   * @return the {@link IConfiguration} associated with this {@link IEntity}
+   */
+  public IConfiguration getConfiguration();
+  
+  
 }

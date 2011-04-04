@@ -2,8 +2,6 @@ package fm.audiobox.interfaces;
 
 import java.util.concurrent.ExecutorService;
 
-import javax.swing.text.DefaultEditorKit.InsertContentAction;
-
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
@@ -11,10 +9,14 @@ import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 public interface IConfiguration {
 
 
+  /**
+   * Identifies each request and response format type 
+   */
   public enum RequestFormat {
     XML,
     JSON,
-    TXT
+    TXT,
+    BINARY
   }
 
 
@@ -110,7 +112,7 @@ public interface IConfiguration {
    * Returns true if AudioBox is using cache sistem
    * @return
    */
-  public boolean isUsingCache();
+  public boolean isCacheEnabled();
 
 
   /**
@@ -124,7 +126,7 @@ public interface IConfiguration {
    * Returns {@code true} if AudioBox is using the {@code short} request parameter. {@code False} if not
    * @return
    */
-  public boolean isUsingShortResponse();
+  public boolean isShortResponseEnabled();
 
 
   /**
