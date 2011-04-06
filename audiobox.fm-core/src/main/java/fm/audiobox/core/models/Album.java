@@ -80,7 +80,6 @@ public class Album extends AbstractEntity implements Serializable {
    */
   public Album(IConnector connector, IConfiguration config){
     super(connector, config);
-    log.trace("New Album instantiated");
   }
 
   

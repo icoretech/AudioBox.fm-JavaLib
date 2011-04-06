@@ -72,7 +72,6 @@ public class Artist extends AbstractEntity implements Serializable {
    */
   public Artist(IConnector connector, IConfiguration config){
     super(connector, config);
-    log.info("New Artist collection instantiated");
   }
 
 

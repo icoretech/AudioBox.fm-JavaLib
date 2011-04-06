@@ -56,7 +56,6 @@ public class Albums extends AbstractCollectionEntity<Album> implements Serializa
    */
   public Albums(IConnector connector, IConfiguration config){
     super(connector, config);
-    log.trace("New Album collection instantiated");
   }
 
   

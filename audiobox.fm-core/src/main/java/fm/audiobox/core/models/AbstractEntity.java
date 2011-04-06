@@ -26,7 +26,7 @@ public abstract class AbstractEntity extends Observable implements IEntity {
     this.connector = connector;
     this.configuration = config;
     this.properties = new ConcurrentHashMap<String, Object>();
-    if ( log.isDebugEnabled() ){
+    if ( log.isTraceEnabled() ){
       log.trace("Entity instantiated: " + this.getNamespace() );
     }
   }

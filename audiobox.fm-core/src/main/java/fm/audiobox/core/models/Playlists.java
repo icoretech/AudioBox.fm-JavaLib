@@ -87,7 +87,6 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
    */
   public Playlists(IConnector connector, IConfiguration config){
     super(connector, config);
-    log.info("New Playlist collection instantiated");
   }
 
 

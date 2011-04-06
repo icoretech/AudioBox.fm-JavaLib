@@ -131,7 +131,6 @@ public final class User extends AbstractEntity implements Serializable {
    */
   public User(IConnector connector, IConfiguration config) {
     super(connector, config);
-    log.info("New User instanciated");
   }
 
   

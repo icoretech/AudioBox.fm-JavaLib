@@ -72,7 +72,6 @@ public class Covers extends AbstractEntity implements Serializable {
    */
   public Covers(IConnector connector, IConfiguration config){
     super(connector, config);
-    log.info("New CoverUrls instantiated");
   }
 
   

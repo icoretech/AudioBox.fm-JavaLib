@@ -145,7 +145,6 @@ public class Track extends AbstractEntity implements Serializable {
    */
   public Track(IConnector connector, IConfiguration config){
     super(connector, config);
-    log.info("New Track collection instantiated");
   }
 
 

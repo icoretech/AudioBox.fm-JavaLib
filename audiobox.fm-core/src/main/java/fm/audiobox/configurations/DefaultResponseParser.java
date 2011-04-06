@@ -43,7 +43,7 @@ public class DefaultResponseParser implements IResponseHandler  {
       
     }
     
-    return "OK";
+    return "";
       
   }
   

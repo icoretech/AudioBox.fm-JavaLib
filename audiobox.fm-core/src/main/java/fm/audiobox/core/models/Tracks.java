@@ -58,7 +58,6 @@ public class Tracks extends AbstractCollectionEntity<Track> implements Serializa
    */
   public Tracks(IConnector connector, IConfiguration config){
     super(connector, config);
-    log.info("New Track collection instantiated");
   }
   
   

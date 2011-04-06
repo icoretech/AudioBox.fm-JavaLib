@@ -164,6 +164,7 @@ public class AudioBox {
   private IConnector connector;
   private User user;
   
+  
   /**
    * <p>Constructor for AudioBox.</p>
    * 
@@ -332,6 +333,7 @@ public class AudioBox {
             log.debug("Request to AudioBox, add user credentials");
             request.addHeader( mScheme.authenticate(mCredentials,  request) );
           }
+          
         }
 
       });

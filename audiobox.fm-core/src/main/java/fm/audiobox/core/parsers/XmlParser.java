@@ -42,7 +42,7 @@ public class XmlParser extends DefaultHandler {
     this.stack.clear();
     this.stack = null;
     this.bodyContent = null;
-    log.info("Document finished: " + this.entity.getNamespace() );
+    log.debug("Document finished: " + this.entity.getNamespace() );
     super.endDocument();
   }
 
@@ -50,7 +50,7 @@ public class XmlParser extends DefaultHandler {
   public void startDocument() throws SAXException {
     this.stack = new Stack<IEntity>();
     this.stack.push( this.entity );
-    log.info("Document started: " + this.entity.getNamespace() );
+    log.debug("Document started: " + this.entity.getNamespace() );
     super.startDocument();
   }
 
@@ -72,8 +72,8 @@ public class XmlParser extends DefaultHandler {
       IEntity newEntity = this.config.getFactory().getEntity(localName, this.config);
       this.stack.push( newEntity );
       
-      if ( log.isDebugEnabled() ){
-        log.debug("New Entity '" + newEntity,getClass().getName() + "' for tag: " + localName );
+      if ( log.isTraceEnabled() ){
+        log.trace("New Entity '" + newEntity,getClass().getName() + "' for tag: " + localName );
       }
       
     } else {
@@ -99,7 +99,7 @@ public class XmlParser extends DefaultHandler {
     
     if ( localName.equals( currentEntity.getTagName() )  ){
       // end element for current entity
-      log.debug("EndElement reached for tag: " + localName);
+      log.trace("EndElement reached for tag: " + localName);
       newEntity = this.stack.pop();
       if ( this.stack.size() == 0 ){
         if ( localName.equals( this.entity.getTagName() )  ){
@@ -200,9 +200,9 @@ public class XmlParser extends DefaultHandler {
         } catch (NumberFormatException e) {
           // An error occurred while parsing String
           if ( log.isDebugEnabled() ){
-            log.debug("Method cannot be invoked for tag: " + localName, e);
+            log.info("Method cannot be invoked for tag: " + localName, e);
           } else 
-            log.warn("Method cannot be invoked for tag: " + localName);
+            log.info("Method cannot be invoked for tag: " + localName);
           
         } catch (IllegalArgumentException e) {
           log.error("An error while invoking method '" + setterMethod + "' for tag: " + localName, e);

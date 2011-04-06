@@ -74,7 +74,6 @@ public class Error implements IEntity, Serializable {
    */
   public Error(IConfiguration config){
     this.configuration = config;
-    log.info("New Error instantiated");
   }
 
 

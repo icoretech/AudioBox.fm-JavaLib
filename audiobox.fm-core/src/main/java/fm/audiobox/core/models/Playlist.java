@@ -79,7 +79,6 @@ public class Playlist extends AbstractEntity implements Serializable {
    */
   public Playlist(IConnector connector, IConfiguration config){
     super(connector, config);
-    log.info("New Playlist instantiated");
   }
 
 

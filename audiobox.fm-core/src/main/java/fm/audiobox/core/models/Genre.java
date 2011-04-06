@@ -70,7 +70,6 @@ public class Genre extends AbstractEntity implements Serializable {
    */
   public Genre(IConnector connector, IConfiguration config){
     super(connector, config);
-    log.info("New Genre instantiated");
   }
 
   

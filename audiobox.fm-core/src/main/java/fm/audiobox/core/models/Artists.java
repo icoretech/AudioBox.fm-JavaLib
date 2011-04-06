@@ -55,7 +55,6 @@ public class Artists extends AbstractCollectionEntity<Artist> implements Seriali
    */
   public Artists(IConnector connector, IConfiguration config){
     super(connector, config);
-    log.info("New Artist collection instantiated");
   }
   
   

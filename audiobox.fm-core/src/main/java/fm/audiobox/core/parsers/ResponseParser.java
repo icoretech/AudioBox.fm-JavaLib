@@ -32,6 +32,7 @@ public class ResponseParser implements ResponseHandler<Response> {
   private IEntity destEntity;
 
   
+  
   public ResponseParser(IConfiguration config, IConnectionMethod method){
     this(config,method,null);
   }
@@ -55,6 +56,7 @@ public class ResponseParser implements ResponseHandler<Response> {
     
     Header contentType = httpResponse.getEntity().getContentType();
     Header etag = httpResponse.getFirstHeader(IConnectionMethod.HTTP_HEADER_ETAG);
+    String respondedEtag = etag != null ? etag.getValue().replaceAll("\"","") : null;
     
     boolean isXml = contentType.getValue().contains( RequestFormat.XML.toString().toLowerCase() );
     boolean isText = contentType.getValue().contains( "text" );
@@ -71,25 +73,32 @@ public class ResponseParser implements ResponseHandler<Response> {
       switch( responseCode ){
       
         case HttpStatus.SC_OK:
+        case HttpStatus.SC_NOT_MODIFIED:
           
-          if ( this.configuration.isCacheEnabled() && etag != null ){
+          InputStream in = null;
           
-            this.configuration.getCacheManager().store( destEntity , etag.getValue().replaceAll("\"",""), httpResponse.getEntity().getContent() );
-          
-          } else {
-            String content = this.responseHandler.parse(httpResponse.getEntity().getContent(), destEntity, format);
-            response = new Response(responseCode, content);
-            break;
+          if ( this.configuration.isCacheEnabled() ){
+            String cachedEtag = this.configuration.getCacheManager().getEtag(destEntity, this.method.getHttpMethod().getRequestLine().getUri() );
+            
+            if ( cachedEtag != null ){
+              if ( cachedEtag.equals( respondedEtag ) ){
+                in = this.configuration.getCacheManager().getBody( this.destEntity, cachedEtag );
+              }
+            }
+            
+            if ( in == null && respondedEtag != null ){
+              this.configuration.getCacheManager().store( destEntity , respondedEtag, httpResponse.getEntity().getContent() );
+              in = this.configuration.getCacheManager().getBody( this.destEntity, respondedEtag );
+            }
+            
           }
           
-        case HttpStatus.SC_NOT_MODIFIED:
-          log.info("Loaded from cache");
-          InputStream in = this.configuration.getCacheManager().getBody( this.destEntity, etag.getValue() );
+          if ( in == null ){
+            in = httpResponse.getEntity().getContent();
+          }
           
-          String content = this.responseHandler.parse(in, destEntity, format);
-          
+          String content = this.responseHandler.parse( in, destEntity, format);
           response = new Response(responseCode, content);
-          
           break;
           
         case HttpStatus.SC_CREATED:
@@ -121,7 +130,7 @@ public class ResponseParser implements ResponseHandler<Response> {
             } else {
               this.responseHandler.parseAsJson(httpResponse.getEntity().getContent(), error );
             }
-            response = new Response(responseCode, error.getMessage() );
+            response = new Response(error.getStatus(), error.getMessage() );
             
           } else {
             

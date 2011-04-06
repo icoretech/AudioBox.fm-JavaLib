@@ -1,7 +1,6 @@
 package fm.audiobox.configurations;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -14,15 +13,15 @@ public class DefaultCacheManager implements ICacheManager {
 
   private static final long serialVersionUID = 1L;
 
-  Map<String, String> etags = new HashMap<String, String>();
-  Map<String, File> cache = new HashMap<String, File>();
+  private Map<String, String> entities = new HashMap<String,String>();
+  private Map<String, String> etags = new HashMap<String,String>();
   
   
   @Override
   public InputStream getBody(IEntity destEntity, String etag) {
-    String str = (String) destEntity.getProperty( "cache" );
-    if ( str != null ){
-      return new ByteArrayInputStream( str.getBytes() );
+    String body = etags.get(etag);
+    if ( body != null ){
+      return new ByteArrayInputStream( body.getBytes() );
     }
     return null;
   }
@@ -32,8 +31,8 @@ public class DefaultCacheManager implements ICacheManager {
   public void store(IEntity destEntity, String etag, InputStream in) {
     
     try {
-      destEntity.setProperty( "cache", Response.streamToString(in) );
-      destEntity.setProperty("etag", etag);
+      entities.put(destEntity.getTagName(), etag);
+      etags.put( etag, Response.streamToString(in) );
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -43,7 +42,14 @@ public class DefaultCacheManager implements ICacheManager {
   
   @Override
   public String getEtag(IEntity destEntity, String url) {
-    return (String) destEntity.getProperty("etag");
+    return entities.get( destEntity.getTagName() );
+  }
+
+
+  @Override
+  public void clear() throws IOException {
+    etags.clear();
+    entities.clear();
   }
   
 

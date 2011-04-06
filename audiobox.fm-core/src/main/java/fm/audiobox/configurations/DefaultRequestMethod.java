@@ -90,14 +90,16 @@ public class DefaultRequestMethod implements IConnectionMethod {
       ((HttpEntityEnclosingRequestBase) getHttpMethod() ).setEntity( params );
     }
     
-
+    
     if ( isGET() && configuration.isCacheEnabled() ) {
       String url = getHttpMethod().getRequestLine().getUri();
       String etag = this.configuration.getCacheManager().getEtag(destEntity, url);
       if (etag != null) {
         getHttpMethod().addHeader( IConnectionMethod.HTTP_HEADER_IF_NONE_MATCH, etag );
+        getHttpMethod().addHeader( "Cache-Control", "max-age=0");
       }
     }
+    
 
     Callable<Response> start = new Callable<Response>() {
 

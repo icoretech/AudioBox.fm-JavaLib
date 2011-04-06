@@ -55,7 +55,6 @@ public class Genres extends AbstractCollectionEntity<Genre> implements Serializa
    */
   public Genres(IConnector connector, IConfiguration config){
     super(connector, config);
-    log.info("New Genre collection instantiated");
   }
 
   
