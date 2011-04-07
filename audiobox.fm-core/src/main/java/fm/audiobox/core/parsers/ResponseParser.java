@@ -53,11 +53,11 @@ public class ResponseParser implements ResponseHandler<Response> {
   public Response handleResponse(HttpResponse httpResponse) throws ClientProtocolException, IOException {
     
     int responseCode = httpResponse.getStatusLine().getStatusCode();
-    
-    Header contentType = httpResponse.getEntity().getContentType();
+        
     Header etag = httpResponse.getFirstHeader(IConnectionMethod.HTTP_HEADER_ETAG);
     String respondedEtag = etag != null ? etag.getValue().replaceAll("\"","") : null;
     
+    Header contentType = httpResponse.getEntity().getContentType();
     boolean isXml = contentType.getValue().contains( RequestFormat.XML.toString().toLowerCase() );
     boolean isText = contentType.getValue().contains( "text" );
     boolean isJson = contentType.getValue().contains( RequestFormat.JSON.toString().toLowerCase() );
