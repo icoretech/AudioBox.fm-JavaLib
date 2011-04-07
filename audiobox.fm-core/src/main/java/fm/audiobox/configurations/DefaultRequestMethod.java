@@ -95,7 +95,7 @@ public class DefaultRequestMethod implements IConnectionMethod {
       String url = getHttpMethod().getRequestLine().getUri();
       String etag = this.configuration.getCacheManager().getEtag(destEntity, url);
       if (etag != null) {
-        getHttpMethod().addHeader( IConnectionMethod.HTTP_HEADER_IF_NONE_MATCH, etag );
+        getHttpMethod().addHeader( IConnectionMethod.HTTP_HEADER_IF_NONE_MATCH,  "\"" + etag + "\"" );
         getHttpMethod().addHeader( "Cache-Control", "max-age=0");
       }
     }
