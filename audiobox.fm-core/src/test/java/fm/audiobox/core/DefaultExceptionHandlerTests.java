@@ -13,7 +13,7 @@ import fm.audiobox.core.models.Track;
 import fm.audiobox.core.models.User;
 import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 import fm.audiobox.interfaces.IConfiguration;
-import fm.audiobox.interfaces.IConfiguration.RequestFormat;
+import fm.audiobox.interfaces.IConfiguration.ContentFormat;
 import fm.audiobox.interfaces.ILoginExceptionHandler;
 import fm.audiobox.interfaces.IServiceExceptionHandler;
 
@@ -30,7 +30,7 @@ public class DefaultExceptionHandlerTests extends junit.framework.TestCase {
     config = new DefaultConfiguration("My test application");
     
     config.setVersion(1, 0, 0);
-    config.setRequestFormat(RequestFormat.XML);
+    config.setRequestFormat(ContentFormat.XML);
     config.setShortResponse(false);
     config.setUseCache(false);
     

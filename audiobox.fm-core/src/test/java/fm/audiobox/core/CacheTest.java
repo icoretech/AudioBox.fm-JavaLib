@@ -19,7 +19,7 @@ import fm.audiobox.core.models.Tracks;
 import fm.audiobox.core.models.User;
 import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 import fm.audiobox.interfaces.IConfiguration;
-import fm.audiobox.interfaces.IConfiguration.RequestFormat;
+import fm.audiobox.interfaces.IConfiguration.ContentFormat;
 
 
 public class CacheTest {
@@ -36,7 +36,7 @@ public class CacheTest {
     config = new DefaultConfiguration("My test application");
     
     config.setVersion(1, 0, 0);
-    config.setRequestFormat(RequestFormat.XML);
+    config.setRequestFormat(ContentFormat.XML);
     config.setShortResponse(false);
     config.setUseCache(true);
     
@@ -69,7 +69,7 @@ public class CacheTest {
     long average = 0;
     int i = 0;
     
-    for (; i < 10; i++){
+    for (; i < 2; i++){
       long start = System.currentTimeMillis();
       long end = 0;
       log.debug( "Start request at: " + start );

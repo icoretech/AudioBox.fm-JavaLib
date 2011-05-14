@@ -29,6 +29,7 @@ import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.parsers.ResponseParser;
 import fm.audiobox.interfaces.IConfiguration;
+import fm.audiobox.interfaces.IConfiguration.ContentFormat;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
@@ -110,12 +111,14 @@ public class DefaultRequestMethod implements IConnectionMethod {
           return connector.execute( getHttpMethod(), new ResponseParser( configuration, DefaultRequestMethod.this, responseHandler), new BasicHttpContext() );
 
         } catch (ClientProtocolException e) {
-          response = new Response(AudioBoxException.GENERIC_ERROR, e.getMessage() );
+          
+          response = new Response(ContentFormat.XML, AudioBoxException.GENERIC_ERROR, e.getMessage() );
           log.error("ClientProtocolException thrown while executing request method", e);
           response.setException( new ServiceException(e) );
 
         } catch (IOException e) {
-          response = new Response(AudioBoxException.GENERIC_ERROR, e.getMessage() );
+          
+          response = new Response(ContentFormat.XML, AudioBoxException.GENERIC_ERROR, e.getMessage() );
           
           log.error("IOException thrown while executing request method", e);
           if ( e instanceof ServiceException) {

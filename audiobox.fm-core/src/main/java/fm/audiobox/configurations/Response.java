@@ -11,6 +11,7 @@ import java.io.Serializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fm.audiobox.core.exceptions.AudioBoxException;
 import fm.audiobox.interfaces.IConfiguration.ContentFormat;
 
 /**
@@ -46,6 +47,11 @@ public class Response implements Serializable {
    */
   private String body;
   
+  /**
+   * Contains the {@link AudioBoxException} that is thrown.
+   */
+  private AudioBoxException exception;
+  
   public Response(ContentFormat format, int status, InputStream stream){
     super();
     this.format = format;
@@ -79,7 +85,28 @@ public class Response implements Serializable {
    * @return the {@code InputStream} containing the body of the response
    */
   public InputStream getStream(){
+    try {
+      this.stream.reset();
+    } catch (IOException e) {
+      log.error("No resettable stream!!!!");
+    }
     return this.stream;
+  }
+  
+  /**
+   * Sets the exception that is thrown
+   * @param exception the {@link AudioBoxException} that is thrown
+   */
+  public void setException(AudioBoxException exception){
+    this.exception = exception;
+  }
+  
+  /**
+   * Returns the exception that is thrown
+   * @return the {@link AudioBoxException exception} that is thrown
+   */
+  public AudioBoxException getException(){
+    return this.exception;
   }
   
   

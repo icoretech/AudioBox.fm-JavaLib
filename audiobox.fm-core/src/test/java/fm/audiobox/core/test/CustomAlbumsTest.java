@@ -16,7 +16,7 @@ import fm.audiobox.core.models.User;
 import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 import fm.audiobox.core.test.mocks.models.Album;
 import fm.audiobox.interfaces.IConfiguration;
-import fm.audiobox.interfaces.IConfiguration.RequestFormat;
+import fm.audiobox.interfaces.IConfiguration.ContentFormat;
 
 /**
  * @author keytwo
@@ -32,7 +32,7 @@ public class CustomAlbumsTest extends junit.framework.TestCase {
     IConfiguration configuration = new DefaultConfiguration("My test application");
 
     configuration.setVersion(1, 0, 0);
-    configuration.setRequestFormat(RequestFormat.XML);
+    configuration.setRequestFormat(ContentFormat.XML);
     configuration.setShortResponse(false);
     configuration.setUseCache(false);
     

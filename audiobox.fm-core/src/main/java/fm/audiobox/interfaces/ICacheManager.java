@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 
+import fm.audiobox.configurations.Response;
+
 public interface ICacheManager extends Serializable {
 
   
@@ -14,7 +16,7 @@ public interface ICacheManager extends Serializable {
    * @param etag the String representing the etag returned by the server
    * @return the {@link InputStream} where reading the response from
    */
-  public InputStream getBody(IEntity destEntity, String etag);
+  public Response getResponse(IEntity destEntity, String etag);
   
   /**
    * This method must save the response content represented by {@link InputStream}
@@ -23,7 +25,7 @@ public interface ICacheManager extends Serializable {
    * @param etag the univoque string linked to the {@link IEntity destEntity}
    * @param in the {@link InputStream} where reading the response from
    */
-  public void store(IEntity destEntity, String etag, InputStream in);
+  public void store(IEntity destEntity, String etag, Response response);
   
   
   /**

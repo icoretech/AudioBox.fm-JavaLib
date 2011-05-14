@@ -1,10 +1,11 @@
 package fm.audiobox.configurations;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fm.audiobox.interfaces.ICacheManager;
 import fm.audiobox.interfaces.IEntity;
@@ -12,29 +13,28 @@ import fm.audiobox.interfaces.IEntity;
 public class DefaultCacheManager implements ICacheManager {
 
   private static final long serialVersionUID = 1L;
+  private static Logger log = LoggerFactory.getLogger(DefaultCacheManager.class);
 
   private Map<String, String> entities = new HashMap<String,String>();
-  private Map<String, String> etags = new HashMap<String,String>();
+  private Map<String, Response> etags = new HashMap<String,Response>();
   
   
   @Override
-  public InputStream getBody(IEntity destEntity, String etag) {
-    String body = etags.get(etag);
-    if ( body != null ){
-      return new ByteArrayInputStream( body.getBytes() );
-    }
-    return null;
+  public Response getResponse(IEntity destEntity, String etag) {
+    Response body = etags.get(etag);
+    return body;
   }
   
   
   @Override
-  public void store(IEntity destEntity, String etag, InputStream in) {
+  public void store(IEntity destEntity, String etag, Response response) {
+    entities.put(destEntity.getTagName(), etag);
     
     try {
-      entities.put(destEntity.getTagName(), etag);
-      etags.put( etag, Response.streamToString(in) );
+      response = new Response( response.getFormat(), response.getStatus(), Response.streamToString(response.getStream() ));
+      etags.put( etag, response );
     } catch (IOException e) {
-      e.printStackTrace();
+      log.error("An error occurred while storing Reponse", e);
     }
     
   }
@@ -51,6 +51,6 @@ public class DefaultCacheManager implements ICacheManager {
     etags.clear();
     entities.clear();
   }
-  
+
 
 }

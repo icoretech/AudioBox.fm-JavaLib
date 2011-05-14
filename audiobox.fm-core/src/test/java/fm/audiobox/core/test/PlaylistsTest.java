@@ -13,9 +13,7 @@ import org.junit.Test;
 
 import fm.audiobox.AudioBox;
 import fm.audiobox.configurations.DefaultConfiguration;
-import fm.audiobox.core.api.Model;
 import fm.audiobox.core.exceptions.LoginException;
-import fm.audiobox.core.exceptions.ModelException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Album;
 import fm.audiobox.core.models.Playlist;
@@ -26,7 +24,7 @@ import fm.audiobox.core.models.Tracks;
 import fm.audiobox.core.models.User;
 import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 import fm.audiobox.interfaces.IConfiguration;
-import fm.audiobox.interfaces.IConfiguration.RequestFormat;
+import fm.audiobox.interfaces.IConfiguration.ContentFormat;
 
 /**
  * @author keytwo
@@ -42,7 +40,7 @@ public class PlaylistsTest extends junit.framework.TestCase {
     IConfiguration configuration = new DefaultConfiguration("My test application");
 
     configuration.setVersion(1, 0, 0);
-    configuration.setRequestFormat(RequestFormat.XML);
+    configuration.setRequestFormat(ContentFormat.XML);
     configuration.setShortResponse(false);
     configuration.setUseCache(false);
 

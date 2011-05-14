@@ -1,9 +1,9 @@
 package fm.audiobox.core.parsers;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
@@ -53,64 +53,100 @@ public class ResponseParser implements ResponseHandler<Response> {
   public Response handleResponse(HttpResponse httpResponse) throws ClientProtocolException, IOException {
     
     int responseCode = httpResponse.getStatusLine().getStatusCode();
+    
+    log.info("Response code: " + responseCode );
         
     Header etag = httpResponse.getFirstHeader(IConnectionMethod.HTTP_HEADER_ETAG);
     String respondedEtag = etag != null ? etag.getValue().replaceAll("\"","") : null;
     
-    Header contentType = httpResponse.getEntity().getContentType();
-    boolean isXml = contentType.getValue().contains( ContentFormat.XML.toString().toLowerCase() );
-    boolean isText = contentType.getValue().contains( "text" );
-    boolean isJson = contentType.getValue().contains( ContentFormat.JSON.toString().toLowerCase() );
-    
-    ContentFormat format = isXml ? ContentFormat.XML :
-                            isJson ? ContentFormat.JSON :
-                            isText ? ContentFormat.TXT : ContentFormat.BINARY;
-                            
-    
     Response response = null;
     
+    if ( this.configuration.isCacheEnabled() ){
+      /*
+       * Try to retrieve response from CacheManager
+       */
+      response = this.configuration.getCacheManager().getResponse(this.destEntity, respondedEtag);
+    }
+    
+    if ( response == null ){
+      /*
+       * No response found.
+       * Build a new Response
+       */
+      HttpEntity entity = httpResponse.getEntity();
+      if ( entity == null ){
+        /*
+         * Entity is null.
+         * We're assuming we are in case of 304, 201 or 204
+         */
+        throw new IOException("No content found");
+      }
+      Header contentType = httpResponse.getEntity().getContentType();
+      boolean isXml = contentType.getValue().contains( ContentFormat.XML.toString().toLowerCase() );
+      boolean isJson = contentType.getValue().contains( ContentFormat.JSON.toString().toLowerCase() );
+      boolean isText = contentType.getValue().contains( "text" );
+      
+      ContentFormat format = isXml ? ContentFormat.XML :
+                            isJson ? ContentFormat.JSON :
+                            isText ? ContentFormat.TXT :
+                              ContentFormat.BINARY;
+      
+      /*
+       * Build a new Response
+       */
+      response = new Response( format, httpResponse.getStatusLine().getStatusCode(), entity.getContent() );
+      
+      if ( this.configuration.isCacheEnabled() && responseCode == HttpStatus.SC_OK ){
+        /*
+         * CacheManager is enabled.
+         * So we have to store Response before parsing it.
+         * Note: we have to store Response in case of presence of response body ( response code should be 200 )
+         */
+        this.configuration.getCacheManager().store(this.destEntity, respondedEtag, response);
+        
+        /*
+         * Retrive Response from CacheManager.
+         * In this way we bypass some bug caused by non reparsing httpresponse InputStream
+         */
+        Response tmpResponse = this.configuration.getCacheManager().getResponse(this.destEntity, respondedEtag);
+        if ( tmpResponse != null ){
+          /*
+           * CacheManager returned a Response.
+           * We have to use that
+           */
+          response = tmpResponse;
+        }
+      }
+      
+    }
+    
+    
     try {
-      switch( responseCode ){
+      switch( response.getStatus() ){
       
         case HttpStatus.SC_OK:
         case HttpStatus.SC_NOT_MODIFIED:
-          
-          InputStream in = null;
-          
-          if ( this.configuration.isCacheEnabled() ){
-            String cachedEtag = this.configuration.getCacheManager().getEtag(destEntity, this.method.getHttpMethod().getRequestLine().getUri() );
-            
-            if ( cachedEtag != null ){
-              if ( cachedEtag.equals( respondedEtag ) ){
-                in = this.configuration.getCacheManager().getBody( this.destEntity, cachedEtag );
-              }
-            }
-            
-            if ( in == null && respondedEtag != null ){
-              this.configuration.getCacheManager().store( destEntity , respondedEtag, httpResponse.getEntity().getContent() );
-              in = this.configuration.getCacheManager().getBody( this.destEntity, respondedEtag );
-            }
-            
-          }
-          
-          if ( in == null ){
-            in = httpResponse.getEntity().getContent();
-          }
-          
-          String content = this.responseHandler.parse( in, destEntity, format);
-          response = new Response(responseCode, content);
+          /*
+           * Try to parse response body
+           */
+          String content = this.responseHandler.parse( response.getStream(), destEntity, response.getFormat() );
+          response = new Response( response.getFormat(), response.getStatus(), content );
           break;
           
+        /*
+         * In all other cases new response will be instantiated and returned
+         */
         case HttpStatus.SC_CREATED:
-          response = new Response( responseCode, "Created" );
+          
+          response = new Response( response.getFormat(), response.getStatus(), "Created" );
           break;
           
         case HttpStatus.SC_NO_CONTENT:
-          response = new Response( responseCode, "resource not ready" );
+          response = new Response( response.getFormat(), response.getStatus(), "resource not ready" );
           break;
           
         case HttpStatus.SC_SEE_OTHER:
-          response = new Response( responseCode, httpResponse.getFirstHeader("Location").getValue() );
+          response = new Response( response.getFormat() , response.getStatus() , httpResponse.getFirstHeader("Location").getValue() );
           break;
         
         case HttpStatus.SC_PAYMENT_REQUIRED:
@@ -118,27 +154,27 @@ public class ResponseParser implements ResponseHandler<Response> {
           
         case HttpStatus.SC_UNAUTHORIZED:
         case HttpStatus.SC_FORBIDDEN:
-          throw new LoginException(responseCode, Response.streamToString( httpResponse.getEntity().getContent() ) );
+          throw new LoginException(responseCode,  Response.streamToString( httpResponse.getEntity().getContent() )  );
           
           
         default:
-          
-          if ( isXml || isJson ){
+          /*
+           * We're assuming we are in case of server error
+           */
+          if ( response.getFormat() == ContentFormat.XML || response.getFormat() == ContentFormat.JSON ){
             Error error = new Error( this.configuration );
-            if ( isXml ) {
+            if ( response.getFormat() == ContentFormat.XML ) {
               this.responseHandler.parseAsXml(httpResponse.getEntity().getContent(), error );
             } else {
               this.responseHandler.parseAsJson(httpResponse.getEntity().getContent(), error );
             }
-            response = new Response(error.getStatus(), error.getMessage() );
+            response = new Response( response.getFormat() , error.getStatus() , error.getMessage() );
             
           } else {
-            
-            response = new Response( responseCode, Response.streamToString(httpResponse.getEntity().getContent() ) );
-            
+            // default: do nothing
           }
+          
           throw new ServiceException(response.getStatus(), response.getBody() );
-      
       }
       
     } finally {
@@ -147,7 +183,6 @@ public class ResponseParser implements ResponseHandler<Response> {
         httpResponse.getEntity().consumeContent();
       
     }
-    
     
     return response;
   }
