@@ -15,7 +15,7 @@ import org.xml.sax.XMLReader;
 
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.parsers.XmlParser;
-import fm.audiobox.interfaces.IConfiguration.RequestFormat;
+import fm.audiobox.interfaces.IConfiguration.ContentFormat;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
 
@@ -23,21 +23,21 @@ public class DefaultResponseParser implements IResponseHandler  {
 
   private static Logger log = LoggerFactory.getLogger(DefaultResponseParser.class);
   
-  public String parse(InputStream in, IEntity destEntity, RequestFormat format ) throws ServiceException {
+  public String parse(InputStream in, IEntity destEntity, ContentFormat format ) throws ServiceException {
     
-    if ( format == RequestFormat.XML ) {
+    if ( format == ContentFormat.XML ) {
         
       this.parseAsXml(in, destEntity );
     
-    } else if ( format == RequestFormat.JSON ) {
+    } else if ( format == ContentFormat.JSON ) {
       
       this.parseAsJson(in, destEntity );
       
-    } else if ( format == RequestFormat.TXT ) {
+    } else if ( format == ContentFormat.TXT ) {
       
       return this.parseAsText(in, destEntity );
       
-    } else if ( format == RequestFormat.BINARY ) {
+    } else if ( format == ContentFormat.BINARY ) {
       
       this.parseAsBinary(in, destEntity );
       

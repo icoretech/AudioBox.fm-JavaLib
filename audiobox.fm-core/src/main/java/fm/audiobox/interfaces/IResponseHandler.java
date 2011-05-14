@@ -3,7 +3,7 @@ package fm.audiobox.interfaces;
 import java.io.InputStream;
 
 import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.interfaces.IConfiguration.RequestFormat;
+import fm.audiobox.interfaces.IConfiguration.ContentFormat;
 
 public interface IResponseHandler {
 
@@ -54,7 +54,7 @@ public interface IResponseHandler {
    * @return {@link String} that represents the response content
    * @throws ServiceException
    */ 
-  public String parse(InputStream inputStream, IEntity destEntity, RequestFormat format) throws ServiceException;
+  public String parse(InputStream inputStream, IEntity destEntity, ContentFormat format) throws ServiceException;
   
   
 }

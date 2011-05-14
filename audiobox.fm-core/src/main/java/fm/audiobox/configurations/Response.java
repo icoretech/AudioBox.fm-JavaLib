@@ -1,116 +1,180 @@
 package fm.audiobox.configurations;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
 
-import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fm.audiobox.core.exceptions.AudioBoxException;
+import fm.audiobox.interfaces.IConfiguration.ContentFormat;
 
+/**
+ * This class is an abstract representation of a response content
+ */
 public class Response implements Serializable {
 
   private static Logger log = LoggerFactory.getLogger(Response.class);
   private static final long serialVersionUID = 1L;
 
+  /**
+   * The default byte array length used while parsing a stream
+   */
+  public static final int CHUNK = 1024;
+  
+  /**
+   * Indentifies the type of the response
+   */
+  private ContentFormat format;
+  
+  /**
+   * Indentifies the status code of the response
+   */
   private int status;
+  
+  /**
+   * Contains the {@link InputStream} which read data from
+   */
+  private InputStream stream;
+  
+  /**
+   * Contains the {@link InputStream} represented as String
+   */
   private String body;
-  private InputStream in;
   
-  /**
-   * Used to store the {@link AudioBoxException} as generic exception.
-   * This attribute is used while executing an asynchronous request
-   */
-  private AudioBoxException exception;
-  
-  
-  /**
-   * Default {@link Response} constructor.
-   * 
-   * @param status the {@link HttpStatus} code to set
-   * @param body the response content body to set
-   */
-  public Response(int status, String body) {
+  public Response(ContentFormat format, int status, InputStream stream){
+    super();
+    this.format = format;
     this.status = status;
-    this.body = body;
+    this.stream = stream;
   }
   
-  /**
-   * Response constructor given an {@link InputStream}
-   * 
-   * @param status the {@link HttpStatus} code to set
-   * @param in the {@link InputStream} to read the body from
-   */
-  public Response(int status, InputStream in) {
-    this.status = status;
-    this.in = in;
+  public Response(ContentFormat format, int status, String body){
+    this(format, status, new ByteArrayInputStream( body.getBytes() ) );
   }
+
   
   /**
-   * @return the response status
+   * Returns the {@link ContentFormat} associated with this {@link Response}
+   * @return the {@code ContentFormat}
+   */
+  public ContentFormat getFormat() {
+    return format;
+  }
+
+  /**
+   * Returns the {@code status} code associated with this {@link Response}
+   * @return the status code
    */
   public int getStatus() {
     return status;
   }
   
   /**
-   * @return the body of the response
+   * Returns the {@link InputStream} containing the body of the response 
+   * @return the {@code InputStream} containing the body of the response
    */
-  public String getBody() {
-    if (this.in != null && body == null) {
-      try {
-        streamToString();
-      } catch (IOException e) {
-        log.error(e.getMessage(), e);
-      }
+  public InputStream getStream(){
+    return this.stream;
+  }
+  
+  
+  /**
+   * Returns the {@link InputStream} as string
+   * <p>
+   *  This method parses the InputStream associated with this Response once only
+   * </p>
+   * 
+   * @return the {@code InputStream} as string
+   */
+  public String getBody(){
+    
+    if ( this.body != null ){
+      return this.body;
     }
+    try {
+      this.body = streamToString( this.stream );
+      return this.body;
+    } catch (IOException e) {
+      log.error("An error occurred while parsing the stream", e);
+    }
+    return null;
+  }
+  
+  
+  /**
+   * Serializes the Response into an {@link OutputStream}
+   * 
+   * @param outStream the {@link OutputStream} which write objects to
+   * @throws IOException the OutputStream default exception
+   */
+  public final void serialize(OutputStream outStream) throws IOException {
+    ObjectOutputStream out = new ObjectOutputStream(outStream);
+    out.writeInt( this.format.ordinal() );
+    out.writeInt( this.status );
+    out.writeObject( this.getBody() );
+    out.close();
+  }
+  
+  
+  /**
+   * Instantiates a new {@link Response} by reading a given {@link InputStream}
+   * @param inStream the {@link InputStream} which read objects from
+   * @return a new {@link Response}
+   * @throws IOException the InputStream default exception
+   */
+  public static Response deserialize(InputStream inStream) throws IOException {
+    ObjectInputStream in = new ObjectInputStream( inStream );
+    ContentFormat format = ContentFormat.values()[ in.readInt() ];
+    int status = in.readInt();
+    InputStream stream = null;
+    try {
+      stream = new ByteArrayInputStream( ((String)in.readObject()).getBytes() );
+    } catch (ClassNotFoundException e) {
+      log.error("An error occurred while deserializing Response", e);
+      return null;
+    }
+    in.close();
     
-    return body;
-  }
-  
-  
-  public InputStream getStream() {
-    return this.in;
+    return new Response( format, status, stream );
+    
   }
   
   /**
-   * Use this method to read the response from {@link InputStream}
-   * @return the response body
+   * Returns the String reading a given {@link InputStream}
+   * <p>
+   *  This method invokes the {@link #streamToString(InputStream, int)} passing default {@link #CHUNK}
+   * </p>
+   * 
+   * @param stream the {@link InputStream} where read data from
+   * @return the String representing the parsed {@code InputStream}
+   * 
+   * @throws IOException the InputStream default exception
    */
-  public String streamToString() throws IOException{
-    return this.body = Response.streamToString(this.in);
+  public static String streamToString(InputStream stream) throws IOException{
+    return streamToString(stream, CHUNK);
   }
   
-  
   /**
-   * @see {@link Response#exception}
+   * Returns the String reading a given {@link InputStream}
+   * 
+   * @param stream the {@link InputStream} where read data from
+   * @param chunk the {@code byte array} used as chunk
+   * @return the String representing the parsed {@code InputStream}
+   * @throws IOException the InputStream default exception
    */
-  public AudioBoxException getException() {
-    return exception;
-  }
-
-  /**
-   * @see {@link Response#exception}
-   */
-  public void setException(AudioBoxException exception) {
-    this.exception = exception;
-  }
-  
-  
-  /**
-   * Use this method to read the response from {@link InputStream}
-   * @param in the {@link InputStream} to read response from
-   * @return the response body
-   */
-  public static synchronized String streamToString(InputStream in) throws IOException {
-    int read;
-    byte[] bytes = new byte[ 1024 ];
+  public static String streamToString(InputStream stream, int chunk) throws IOException{
+    byte[] bytes = new byte[ chunk ];
+    int read = -1;
     StringBuffer sb = new StringBuffer();
-    while(  ( read = in.read( bytes) ) != -1 )
-        sb.append( new String( bytes, 0, read ));
-    
+    while(  (read = stream.read(bytes) ) != -1 ){
+      sb.append( new String(bytes,0,read) );
+    }
     return sb.toString();
   }
+  
 }

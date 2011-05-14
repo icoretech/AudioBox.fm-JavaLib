@@ -6,9 +6,9 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fm.audiobox.interfaces.ICacheManager;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
-import fm.audiobox.interfaces.ICacheManager;
 import fm.audiobox.interfaces.IFactory;
 import fm.audiobox.interfaces.ILoginExceptionHandler;
 import fm.audiobox.interfaces.IServiceExceptionHandler;
@@ -41,7 +41,7 @@ public class DefaultConfiguration implements IConfiguration {
       APP_NAME_PLACEHOLDER + "/" + VERSION_PLACEHOLDER;
 
 
-  private RequestFormat requestFormat = RequestFormat.XML;
+  private ContentFormat requestFormat = ContentFormat.XML;
   private boolean useCache = false;
   private boolean shortResponse = false;
   private IFactory factory = new DefaultFactory();
@@ -55,7 +55,7 @@ public class DefaultConfiguration implements IConfiguration {
 
 
 
-  public DefaultConfiguration(String appName, int major, int minor, int revision, RequestFormat requestFormat){
+  public DefaultConfiguration(String appName, int major, int minor, int revision, ContentFormat requestFormat){
     this.setApplicationName(appName);
     this.setVersion(major, minor, revision);
     this.setRequestFormat(requestFormat);
@@ -69,7 +69,7 @@ public class DefaultConfiguration implements IConfiguration {
 
 
   public DefaultConfiguration(String appName, int major, int minor, int revision){
-    this(appName, major, minor, revision, RequestFormat.XML);
+    this(appName, major, minor, revision, ContentFormat.XML);
   }
 
   public DefaultConfiguration(String appName){
@@ -78,12 +78,12 @@ public class DefaultConfiguration implements IConfiguration {
 
 
   @Override
-  public void setRequestFormat(RequestFormat requestFormat) {
+  public void setRequestFormat(ContentFormat requestFormat) {
     this.requestFormat = requestFormat;
   }
 
   @Override
-  public RequestFormat getRequestFormat() {
+  public ContentFormat getRequestFormat() {
     return this.requestFormat;
   }
 

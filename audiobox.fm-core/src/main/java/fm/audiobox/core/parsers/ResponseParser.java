@@ -17,7 +17,7 @@ import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Error;
 import fm.audiobox.interfaces.IConfiguration;
-import fm.audiobox.interfaces.IConfiguration.RequestFormat;
+import fm.audiobox.interfaces.IConfiguration.ContentFormat;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
@@ -58,13 +58,13 @@ public class ResponseParser implements ResponseHandler<Response> {
     Header etag = httpResponse.getFirstHeader(IConnectionMethod.HTTP_HEADER_ETAG);
     String respondedEtag = etag != null ? etag.getValue().replaceAll("\"","") : null;
     
-    boolean isXml = contentType.getValue().contains( RequestFormat.XML.toString().toLowerCase() );
+    boolean isXml = contentType.getValue().contains( ContentFormat.XML.toString().toLowerCase() );
     boolean isText = contentType.getValue().contains( "text" );
     boolean isJson = contentType.getValue().contains( RequestFormat.JSON.toString().toLowerCase() );
     
-    RequestFormat format = isXml ? RequestFormat.XML :
-                            isJson ? RequestFormat.JSON :
-                            isText ? RequestFormat.TXT : RequestFormat.BINARY;
+    ContentFormat format = isXml ? ContentFormat.XML :
+                            isJson ? ContentFormat.JSON :
+                            isText ? ContentFormat.TXT : ContentFormat.BINARY;
                             
     
     Response response = null;

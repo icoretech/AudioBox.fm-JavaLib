@@ -12,7 +12,7 @@ public interface IConfiguration {
   /**
    * Identifies each request and response format type 
    */
-  public enum RequestFormat {
+  public static enum ContentFormat {
     XML,
     JSON,
     TXT,
@@ -24,13 +24,13 @@ public interface IConfiguration {
    * Sets the default extension for each request
    * @param requestFormat
    */
-  public void setRequestFormat(RequestFormat requestFormat);
+  public void setRequestFormat(ContentFormat requestFormat);
 
   /**
    * Returns the default extension for each request
    * @return
    */
-  public RequestFormat getRequestFormat();
+  public ContentFormat getRequestFormat();
 
   /**
    * Retruns current {@link IFactory} associated with this configuration
