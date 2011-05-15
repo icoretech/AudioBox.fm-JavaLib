@@ -4,6 +4,11 @@ import java.util.concurrent.ExecutorService;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
+import fm.audiobox.core.models.Album;
+import fm.audiobox.core.models.Artist;
+import fm.audiobox.core.models.Genre;
+import fm.audiobox.core.models.Playlist;
+import fm.audiobox.core.models.Track;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 
 public interface IConfiguration {
@@ -19,6 +24,29 @@ public interface IConfiguration {
     BINARY
   }
 
+  
+  
+  public boolean hasPlaylist(String token);
+  public Playlist getPlaylist(String token);
+  public void addPlaylist(Playlist pl);
+  
+  public boolean hasTrack(String token);
+  public Track getTrack(String token);
+  public void addTrack(Track tr);
+  
+  public boolean hasAlbum(String token);
+  public Album getAlbum(String token);
+  public void addAlbum(Album al);
+  
+  public boolean hasGenre(String token);
+  public Genre getGenre(String token);
+  public void addGenre(Genre gr);
+  
+  public boolean hasArtist(String token);
+  public Artist getArtist(String token);
+  public void addArtist(Artist ar);
+  
+  
 
   /**
    * Sets the default extension for each request

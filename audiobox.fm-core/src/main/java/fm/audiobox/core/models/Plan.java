@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
+import fm.audiobox.interfaces.IEntity;
 
 
 /**
@@ -326,6 +327,11 @@ public final class Plan extends AbstractEntity implements Serializable {
     return this.featLastfm;
   }
 
+  
+  @Override
+  protected void copy(IEntity entity) {
+    // default: do nothing
+  }
 
 
   @Override

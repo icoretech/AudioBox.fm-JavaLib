@@ -28,8 +28,10 @@ import java.lang.reflect.Method;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fm.audiobox.core.observables.Event;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
+import fm.audiobox.interfaces.IEntity;
 
 
 /**
@@ -130,6 +132,17 @@ public class Artist extends AbstractEntity implements Serializable {
     }
     
     return null;
+  }
+
+
+  @Override
+  protected void copy(IEntity entity) {
+    Artist artist = (Artist) entity;
+    this.name = artist.getName();
+    
+    this.setChanged();
+    Event event = new Event( this, Event.States.ENTITY_REFRESHED );
+    this.notifyObservers(event);
   }
   
   

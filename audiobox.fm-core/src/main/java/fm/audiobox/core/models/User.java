@@ -32,6 +32,7 @@ import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
+import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IResponseHandler;
 
@@ -409,13 +410,14 @@ public final class User extends AbstractEntity implements Serializable {
    * @throws ServiceException if the requested resource doesn't exists or any other ServiceException occur.
    * @throws ModelException 
    */
-  public Track getTrackByToken(String token) throws ServiceException, LoginException {
+  public Track newTrackByToken(String token) throws ServiceException, LoginException {
     Track t = (Track) getConfiguration().getFactory().getEntity( Track.TAGNAME, getConfiguration() );
     t.setToken(token);
     t.load();
     return t;
   }
-
+  
+  
 
 
   /**
@@ -539,6 +541,11 @@ public final class User extends AbstractEntity implements Serializable {
   }
   
   
+  
+  @Override
+  protected void copy(IEntity entity) {
+    // default: do nothing
+  }
   
   
   public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException{

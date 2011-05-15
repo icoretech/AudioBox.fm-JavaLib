@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
+import fm.audiobox.interfaces.IEntity;
 
 
 /**
@@ -71,6 +72,14 @@ public class Albums extends AbstractCollectionEntity<Album> implements Serializa
 
   @Override
   public boolean add(Album entity) {
+    String token = entity.getToken();
+    if ( getConfiguration().hasAlbum( token ) ) {
+      Album al = this.getConfiguration().getAlbum( token );
+      al.copy( entity );
+      entity = al;
+    } else {
+      getConfiguration().addAlbum( entity );
+    }
     return super.addEntity(  entity );
   }
 
@@ -102,10 +111,10 @@ public class Albums extends AbstractCollectionEntity<Album> implements Serializa
     return null;
   }
 
-  
-  
-  
-  
-  
+
+  @Override
+  protected void copy(IEntity entity) {
+    // default: do nothing
+  }
   
 }

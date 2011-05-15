@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
+import fm.audiobox.interfaces.IEntity;
 
 
 
@@ -87,9 +88,22 @@ public class Genres extends AbstractCollectionEntity<Genre> implements Serializa
 
   @Override
   public boolean add(Genre entity) {
+    String token = entity.getToken();
+    if ( getConfiguration().hasGenre( token ) ) {
+      Genre gr = this.getConfiguration().getGenre( token );
+      gr.copy( entity );
+      entity = gr;
+    } else {
+      getConfiguration().addGenre( entity );
+    }
     return super.addEntity( entity );
   }
 
+  @Override
+  protected void copy(IEntity entity) {
+    // default: do nothing
+  }
+  
   
   @Override
   public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {

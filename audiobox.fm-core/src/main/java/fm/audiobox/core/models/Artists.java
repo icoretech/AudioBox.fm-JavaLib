@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
+import fm.audiobox.interfaces.IEntity;
 
 
 /**
@@ -72,6 +73,14 @@ public class Artists extends AbstractCollectionEntity<Artist> implements Seriali
 
   @Override
   public boolean add(Artist entity) {
+    String token = entity.getToken();
+    if ( getConfiguration().hasArtist( token ) ) {
+      Artist ar = this.getConfiguration().getArtist( token );
+      ar.copy( entity );
+      entity = ar;
+    } else {
+      getConfiguration().addArtist( entity );
+    }
     return super.addEntity( entity );
   }
 
@@ -91,7 +100,10 @@ public class Artists extends AbstractCollectionEntity<Artist> implements Seriali
     return null;
   }
   
-  
+  @Override
+  protected void copy(IEntity entity) {
+    // default: do nothing
+  }
   
   @Override
   public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {

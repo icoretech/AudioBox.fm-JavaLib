@@ -74,4 +74,10 @@ public abstract class AbstractEntity extends Observable implements IEntity {
   }
 
   
+  /**
+   * Copies data from an {@link IEntity}
+   * @param entity the {@link IEntity} where copy data from
+   */
+  protected abstract void copy(IEntity entity);
+  
 }

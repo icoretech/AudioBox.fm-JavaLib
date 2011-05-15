@@ -7,11 +7,13 @@ public class Event extends EventObject {
   
   private static final long serialVersionUID = 1L;
 
+  public int detail = -1;
 
   public static enum States {
     ENTITY_ADDED,
     ENTITY_REMOVED,
-    COLLECTION_CLEARED
+    COLLECTION_CLEARED,
+    ENTITY_REFRESHED
   };
   
   

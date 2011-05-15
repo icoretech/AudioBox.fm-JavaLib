@@ -1,11 +1,18 @@
 package fm.audiobox.configurations;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fm.audiobox.core.models.Album;
+import fm.audiobox.core.models.Artist;
+import fm.audiobox.core.models.Genre;
+import fm.audiobox.core.models.Playlist;
+import fm.audiobox.core.models.Track;
 import fm.audiobox.interfaces.ICacheManager;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
@@ -52,7 +59,12 @@ public class DefaultConfiguration implements IConfiguration {
   private Class<? extends IConnectionMethod> connMethodClass = DefaultRequestMethod.class;
   private ExecutorService executor;
   private ICacheManager cacheManager;
-
+  
+  private Map<String, Track> tracks = new HashMap<String, Track>();
+  private Map<String, Playlist> playlists = new HashMap<String, Playlist>();
+  private Map<String, Album> albums = new HashMap<String, Album>();
+  private Map<String, Genre> genres = new HashMap<String, Genre>();
+  private Map<String, Artist> artists = new HashMap<String, Artist>();
 
 
   public DefaultConfiguration(String appName, int major, int minor, int revision, ContentFormat requestFormat){
@@ -212,6 +224,115 @@ public class DefaultConfiguration implements IConfiguration {
   @Override
   public ICacheManager getCacheManager() {
     return this.cacheManager;
+  }
+
+
+  
+  
+  
+  /* 
+   * Following code manages internal cache of {@link IEntities}
+   */
+  
+  // ---------------------------------------------------
+  
+  @Override
+  public boolean hasPlaylist(String token) {
+    return this.playlists.containsKey(token);
+  }
+
+
+  @Override
+  public Playlist getPlaylist(String token) {
+    return this.playlists.get(token);
+  }
+
+
+  @Override
+  public boolean hasTrack(String token) {
+    return this.tracks.containsKey(token);
+  }
+
+
+  @Override
+  public Track getTrack(String token) {
+    return this.tracks.get(token);
+  }
+
+
+  @Override
+  public boolean hasAlbum(String token) {
+    return this.albums.containsKey(token);
+  }
+
+
+  @Override
+  public Album getAlbum(String token) {
+    return this.albums.get(token);
+  }
+
+
+  @Override
+  public boolean hasGenre(String token) {
+    return this.genres.containsKey(token);
+  }
+
+
+  @Override
+  public Genre getGenre(String token) {
+    return this.genres.get(token);
+  }
+
+
+  @Override
+  public boolean hasArtist(String token) {
+    return this.artists.containsKey(token);
+  }
+
+
+  @Override
+  public Artist getArtist(String token) {
+    return this.artists.get(token);
+  }
+
+
+  @Override
+  public void addPlaylist(Playlist pl) {
+    if ( ! this.hasPlaylist(pl.getToken() ) ){
+      this.playlists.put( pl.getToken(), pl);
+    }
+  }
+
+
+  @Override
+  public void addTrack(Track tr) {
+    if ( ! this.hasTrack(tr.getToken() ) ){
+      this.tracks.put( tr.getToken(), tr);
+    }
+  }
+
+
+  @Override
+  public void addAlbum(Album al) {
+    if ( ! this.hasAlbum(al.getToken() ) ){
+      this.albums.put( al.getToken(), al);
+    }
+  }
+
+
+  @Override
+  public void addGenre(Genre gr) {
+    if ( ! this.hasGenre(gr.getToken() ) ){
+      this.genres.put( gr.getToken(), gr);
+    }
+  }
+
+
+  @Override
+  public void addArtist(Artist ar) {
+    if ( ! this.hasArtist(ar.getToken() ) ){
+      this.artists.put( ar.getToken(), ar);
+    }
   }
 
 }

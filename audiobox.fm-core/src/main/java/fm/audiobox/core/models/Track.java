@@ -30,8 +30,10 @@ import org.slf4j.LoggerFactory;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
+import fm.audiobox.core.observables.Event;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
+import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
 
 
@@ -693,6 +695,52 @@ public class Track extends AbstractEntity implements Serializable {
     }
       
     return null;
+  }
+
+
+  @Override
+  protected void copy(IEntity entity) {
+    Track track = (Track) entity;
+    
+    this.duration =  track.getDuration();
+    this.durationInSeconds = track.getDurationInSeconds();
+    this.loved = this.isLoved();
+    this.playCount = this.getPlayCount();
+    this.title = this.getTitle();
+    this.trackNumber = this.getTrackNumber();
+    this.discNumber = this.getDiscNumber();
+    this.year = this.getYear();
+    this.fileName = this.getFileName();
+    this.audioFileSize = this.getAudioFileSize();
+    this.originalFileName = this.getOriginalFileName();
+    
+    if ( track.getAlbum() != null ){
+      if ( this.album == null ){
+        this.album = track.getAlbum();
+      } else {
+        this.album.copy( track.getAlbum() );
+      }
+    }
+    if ( track.getArtist() != null ){
+      if ( this.artist == null ){
+        this.artist = track.getArtist();
+      } else {
+        this.artist.copy( track.getArtist() );
+      }
+    }
+    if ( track.getGenre() != null ){
+      if ( this.genre == null ){
+        this.genre = track.getGenre();
+      } else {
+        this.genre.copy( track.getGenre() );
+      }
+    }
+    
+    
+    this.setChanged();
+    Event event = new Event( this, Event.States.ENTITY_REFRESHED );
+    this.notifyObservers(event);
+    
   }
 
 

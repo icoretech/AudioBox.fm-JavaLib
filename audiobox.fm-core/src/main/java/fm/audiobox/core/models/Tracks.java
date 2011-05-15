@@ -102,10 +102,24 @@ public class Tracks extends AbstractCollectionEntity<Track> implements Serializa
     this.parent = parent;
   }
   
+  
+  
+  @Override
+  protected void copy(IEntity entity) {
+    // default: do nothing
+  }
 
 
   @Override
   public boolean add(Track entity) {
+    String token = entity.getToken();
+    if ( getConfiguration().hasTrack( token ) ) {
+      Track track = this.getConfiguration().getTrack( token );
+      track.copy( entity );
+      entity = track;
+    } else {
+      getConfiguration().addTrack( entity );
+    }
     return super.addEntity(entity);
   }
 

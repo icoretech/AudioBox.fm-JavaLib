@@ -29,8 +29,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fm.audiobox.core.models.Playlists.PlaylistTypes;
+import fm.audiobox.core.observables.Event;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
+import fm.audiobox.interfaces.IEntity;
 
 
 /**
@@ -216,6 +218,24 @@ public class Playlist extends AbstractEntity implements Serializable {
     }
 
     return null;
+  }
+
+
+  @Override
+  protected void copy(IEntity entity) {
+    
+    Playlist pl = (Playlist) entity;
+    
+    this.name = pl.getName();
+    this.position = pl.getPosition();
+    this.playlistType = pl.getPlaylistType();
+    this.tracksCount = pl.getTracksCount();
+    
+    
+    this.setChanged();
+    Event event = new Event( this, Event.States.ENTITY_REFRESHED );
+    this.notifyObservers(event);
+    
   }
 
 

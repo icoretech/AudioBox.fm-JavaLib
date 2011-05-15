@@ -28,8 +28,10 @@ import java.lang.reflect.Method;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fm.audiobox.core.observables.Event;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
+import fm.audiobox.interfaces.IEntity;
 
 
 /**
@@ -170,6 +172,21 @@ public class Covers extends AbstractEntity implements Serializable {
     }
       
     return null;
+  }
+
+
+  @Override
+  protected void copy(IEntity entity) {
+    Covers covers = (Covers) entity;
+    
+    this.large = covers.getLarge();
+    this.medium = covers.getMedium();
+    this.small = covers.getSmall();
+    
+    this.setChanged();
+    Event event = new Event( this, Event.States.ENTITY_REFRESHED );
+    this.notifyObservers(event);
+    
   }
 
 }

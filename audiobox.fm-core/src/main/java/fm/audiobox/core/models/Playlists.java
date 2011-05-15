@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
+import fm.audiobox.interfaces.IEntity;
 
 
 /**
@@ -104,6 +105,14 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
 
   @Override
   public boolean add(Playlist entity) {
+    String token = entity.getToken();
+    if ( getConfiguration().hasPlaylist( token ) ) {
+      Playlist pl = this.getConfiguration().getPlaylist( token );
+      pl.copy( entity );
+      entity = pl;
+    } else {
+      getConfiguration().addPlaylist( entity );
+    }
     return super.addEntity(entity);
   }
 
@@ -139,7 +148,10 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
     return null;
   }
   
-  
+  @Override
+  protected void copy(IEntity entity) {
+    // default: do nothing
+  }
 
 
   @Override

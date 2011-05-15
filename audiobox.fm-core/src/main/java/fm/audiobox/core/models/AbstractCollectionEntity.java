@@ -155,6 +155,7 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
     if ( result ){
       this.setChanged();
       Event event = new Event(entity, Event.States.ENTITY_ADDED);
+      event.detail = this.collection.size();
       this.notifyObservers(event);
     }
     return result;
