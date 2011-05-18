@@ -12,6 +12,7 @@ import fm.audiobox.core.models.Genre;
 import fm.audiobox.core.models.Genres;
 import fm.audiobox.core.models.Track;
 import fm.audiobox.core.models.Tracks;
+import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 
 /**
  * @author keytwo
@@ -24,6 +25,28 @@ public class GenresTest extends AudioBoxTestCase {
     loginCatched();
   }
 
+  @Test
+  public void testGenres(){
+    Genres gnrs = user.getGenres();
+    
+    assertNotNull(gnrs);
+    
+    try {
+      gnrs.load(false);
+    } catch (ServiceException e) {
+      e.printStackTrace();
+    } catch (LoginException e) {
+      e.printStackTrace();
+    }
+    
+    Genre alb = gnrs.getGenreByName(Fixtures.get(Fixtures.GENRE_NAME));
+    assertNotNull( alb );
+    
+    alb = gnrs.getGenreByName("abc");
+    assertNull( alb );
+    
+  }
+  
   @Test
   public void testGenresShouldBePopulated() {
     try {

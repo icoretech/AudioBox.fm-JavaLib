@@ -89,7 +89,7 @@ public class ResponseParser implements ResponseHandler<Response> {
       /*
        * Build a new Response
        */
-      response = new Response(format, httpResponse.getStatusLine().getStatusCode(), entity.getContent());
+      response = new Response(format, responseCode, entity.getContent());
 
       if (this.configuration.isCacheEnabled() && responseCode == HttpStatus.SC_OK) {
         /*
@@ -122,7 +122,7 @@ public class ResponseParser implements ResponseHandler<Response> {
        * Try to parse response body
        */
       String content = this.responseHandler.parse(response.getStream(), destEntity, response.getFormat());
-      response = new Response(response.getFormat(), response.getStatus(), content);
+      response = new Response(response.getFormat(), responseCode, content);
       break;
 
     /*
@@ -130,15 +130,15 @@ public class ResponseParser implements ResponseHandler<Response> {
      */
     case HttpStatus.SC_CREATED:
 
-      response = new Response(response.getFormat(), response.getStatus(), "Created");
+      response = new Response(response.getFormat(), responseCode, "Created");
       break;
 
     case HttpStatus.SC_NO_CONTENT:
-      response = new Response(response.getFormat(), response.getStatus(), "resource not ready");
+      response = new Response(response.getFormat(), responseCode, "Resource not ready");
       break;
 
     case HttpStatus.SC_SEE_OTHER:
-      response = new Response(response.getFormat(), response.getStatus(), httpResponse.getFirstHeader("Location").getValue());
+      response = new Response(response.getFormat(), responseCode, httpResponse.getFirstHeader("Location").getValue());
       break;
 
     case HttpStatus.SC_PAYMENT_REQUIRED:

@@ -26,14 +26,7 @@ public abstract class AudioBoxTestCase extends junit.framework.Assert {
     log.info("========================= Test started =========================");
     startTime = System.currentTimeMillis();
     
-    IConfiguration configuration = new DefaultConfiguration("My test application");
-
-    configuration.setVersion(1, 0, 0);
-    configuration.setRequestFormat(ContentFormat.XML);
-    configuration.setShortResponse(false);
-    configuration.setUseCache(false);
-    
-    abc = new AudioBox(configuration);
+    abc = new AudioBox(getConfig());
     assertNotNull(abc);
     
   }
@@ -55,4 +48,16 @@ public abstract class AudioBoxTestCase extends junit.framework.Assert {
     }
     assertNotNull(user);
   }
+  
+  protected IConfiguration getConfig() {
+    IConfiguration configuration = new DefaultConfiguration("My test application");
+
+    configuration.setVersion(1, 0, 0);
+    configuration.setRequestFormat(ContentFormat.XML);
+    configuration.setShortResponse(false);
+    configuration.setUseCache(false);
+    
+    return configuration;
+  }
+  
 }

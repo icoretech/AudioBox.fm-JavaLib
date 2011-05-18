@@ -9,6 +9,7 @@ import fm.audiobox.core.models.Artist;
 import fm.audiobox.core.models.Artists;
 import fm.audiobox.core.models.Track;
 import fm.audiobox.core.models.Tracks;
+import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 
 /**
  * @author keytwo
@@ -21,6 +22,28 @@ public class ArtistsTest extends AudioBoxTestCase {
     loginCatched();
   }
 
+  @Test
+  public void testArtists(){
+    Artists arts = user.getArtists();
+    
+    assertNotNull(arts);
+    
+    try {
+      arts.load(false);
+    } catch (ServiceException e) {
+      e.printStackTrace();
+    } catch (LoginException e) {
+      e.printStackTrace();
+    }
+    
+    Artist art = arts.getArtistByName(Fixtures.get(Fixtures.ARTIST_NAME));
+    assertNotNull(art);
+    
+    art = arts.getArtistByName("abc");
+    assertNull(art);
+    
+  }
+  
   @Test
   public void testArtistsShouldBePopulated() {
 

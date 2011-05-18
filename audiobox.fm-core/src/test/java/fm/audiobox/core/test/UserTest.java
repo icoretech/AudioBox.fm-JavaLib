@@ -16,6 +16,7 @@ import fm.audiobox.core.models.Genres;
 import fm.audiobox.core.models.Plan;
 import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
+import fm.audiobox.core.models.Track;
 import fm.audiobox.core.models.Playlists.PlaylistTypes;
 import fm.audiobox.core.models.Profile;
 import fm.audiobox.core.models.User;
@@ -130,6 +131,24 @@ public class UserTest extends AudioBoxTestCase {
       fail(e.getMessage());
     }
   }
+  
+  @Test
+  public void testSingleTrack(){
+    
+    Track t = null;
+    try {
+      t = user.newTrackByToken(Fixtures.get(Fixtures.TRACK_TOKEN));
+    } catch (ServiceException e) {
+      assertNull(e);
+    } catch (LoginException e) {
+      assertNull(e);
+    }
+    
+    assertNotNull( t.getArtist() );
+    
+    assertEquals( t.getArtist().getName() , Fixtures.get(Fixtures.ARTIST_NAME));
+    
+  }
 
   @Test
   public void testUserCollections() {
@@ -194,6 +213,40 @@ public class UserTest extends AudioBoxTestCase {
       fail(e.getMessage());
     }
   }
+  
+  @Test
+  public void testUploadedTracks(){
+    Playlists pls = user.getPlaylists();
+    
+    assertNotNull(pls);
+    
+    try {
+      pls.load(false);
+    } catch (ServiceException e) {
+      assertNull(e);
+    } catch (LoginException e) {
+      assertNull(e);
+    }
+    
+    Playlist pl = pls.getPlaylistByType( PlaylistTypes.AUDIO );
+    assertNotNull(pl);
+    long tracksCount = pl.getTracksCount();
+    
+    pl = pls.getPlaylistByType( PlaylistTypes.TRASH );
+    assertNotNull(pl);
+    tracksCount += pl.getTracksCount();
+    
+    try {
+      String[] hashes = user.getUploadedTracks();
+      assertEquals( tracksCount , hashes.length );
+    } catch (ServiceException e) {
+      assertNull(e);
+    } catch (LoginException e) {
+      assertNull(e);
+    }
+    
+  }
+  
 
   private void loginInactiveUser() throws LoginException, ServiceException {
     user = (User) abc.login(Fixtures.get(Fixtures.INACTIVE_LOGIN), Fixtures.get(Fixtures.INACTIVE_RIGHT_PASS));

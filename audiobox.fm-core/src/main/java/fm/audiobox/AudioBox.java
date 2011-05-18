@@ -298,7 +298,6 @@ public class AudioBox {
       this.mCm = new ThreadSafeClientConnManager(params, schemeRegistry);
       this.mClient = new DefaultHttpClient( this.mCm, params );
       
-      log.trace("New ThreadSafeClientConnManager and HttpClient instantiated");
 
       // Increase max total connection to 200
       ConnManagerParams.setMaxTotalConnections(params, 200);
@@ -314,23 +313,24 @@ public class AudioBox {
 
         public void process( final HttpRequest request,  final HttpContext context) throws HttpException, IOException {
           
-          log.debug("New request detected");
+          log.trace("New request detected");
           
           if (!request.containsHeader("Accept-Encoding")) {
             request.addHeader("Accept-Encoding", "gzip");
           }
           
-          log.debug("User-Agent: " + getConfiguration().getUserAgent() );
+          if (log.isTraceEnabled())
+            log.trace("User-Agent: " + getConfiguration().getUserAgent() );
           
           request.addHeader("User-Agent",  getConfiguration().getUserAgent() );
           
           Header hostHeader = request.getFirstHeader("HOST");
           
           /*
-           * Note: we have to add PORT because HttpClient is instantiated specifing PORT into URL
+           * NOTE: we have to add PORT because HttpClient is instantiated specifing PORT into URL
            */
           if ( hostHeader.getValue().equals( HOST + ":" + PORT) ) {
-            log.debug("Request to AudioBox, add user credentials");
+            log.trace("Request to AudioBox, add user credentials");
             request.addHeader( mScheme.authenticate(mCredentials,  request) );
           }
           
@@ -341,7 +341,7 @@ public class AudioBox {
       this.mClient.addResponseInterceptor(new HttpResponseInterceptor() {
 
         public void process( final HttpResponse response, final HttpContext context) throws HttpException, IOException {
-          log.debug("New response detected");
+          log.trace("New response intercepted");
           HttpEntity entity = response.getEntity();
           if (entity != null) {
             Header ceheader = entity.getContentEncoding();
@@ -349,7 +349,7 @@ public class AudioBox {
               HeaderElement[] codecs = ceheader.getElements();
               for (int i = 0; i < codecs.length; i++) {
                 if (codecs[i].getName().equalsIgnoreCase("gzip")) {
-                  log.debug("Response seems to be gzipped");
+                  log.trace("Response is gzipped");
                   response.setEntity( new HttpEntityWrapper(entity){
                     @Override
                     public InputStream getContent() throws IOException, IllegalStateException {
@@ -370,8 +370,6 @@ public class AudioBox {
         }
       });
 
-      log.info("HttpClient ready");
-      
     }
 
 
@@ -427,16 +425,16 @@ public class AudioBox {
       HttpRequestBase method = null;
 
       if ( IConnectionMethod.METHOD_POST.equals( httpVerb ) ) {
-        log.debug("Building HttpMethod POST");
+        log.trace("Building HttpMethod POST");
         method = new HttpPost(url);
       } else if ( IConnectionMethod.METHOD_PUT.equals( httpVerb ) ) {
-        log.debug("Building HttpMethod PUT");
+        log.trace("Building HttpMethod PUT");
         method = new HttpPut(url);
       } else if ( IConnectionMethod.METHOD_DELETE.equals( httpVerb ) ) {
-        log.debug("Building HttpMethod DELETE");
+        log.trace("Building HttpMethod DELETE");
         method = new HttpDelete(url);
       } else {
-        log.debug("Building HttpMethod GET");
+        log.trace("Building HttpMethod GET");
         method = new HttpGet(url);
       }
 
@@ -453,7 +451,7 @@ public class AudioBox {
       Class<? extends IConnectionMethod> klass = getConfiguration().getHttpMethodType();
       
       if ( log.isDebugEnabled() )
-        log.debug("Instanciating IConnectionMethod by class: " + klass.getName() );
+        log.trace("Instantiating IConnectionMethod by class: " + klass.getName() );
       
       try {
         return klass.newInstance();
@@ -484,8 +482,6 @@ public class AudioBox {
      */
     private String buildRequestUrl(String namespace, String token, String action, String httpVerb, List<NameValuePair> params) {
       
-      log.debug("Building request url");
-      
       if ( params == null ){
         params = new ArrayList<NameValuePair>();
       }
@@ -513,8 +509,6 @@ public class AudioBox {
           url += "?" + query; 
       }
 
-      log.debug("Request url built: " + url);
-      
       return url;
     }
 

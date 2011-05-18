@@ -60,13 +60,13 @@ public class DefaultRequestMethod implements IConnectionMethod {
 
 
   @Override
-  public void send(boolean async) throws ServiceException, LoginException {
-    send(async, null,null);
+  public Response send(boolean async) throws ServiceException, LoginException {
+    return send(async, null,null);
   }
 
 
   @Override
-  public void send(boolean async, List<NameValuePair> params) throws ServiceException, LoginException {
+  public Response send(boolean async, List<NameValuePair> params) throws ServiceException, LoginException {
     HttpEntity entity = null;
     if (  (! isGET() && ! isDELETE() )  && params != null ){
       try {
@@ -75,18 +75,18 @@ public class DefaultRequestMethod implements IConnectionMethod {
         log.error("An error occurred while instantiating UrlEncodedFormEntity", e);
       }
     }
-    send(async, entity);
+    return send(async, entity);
   }
 
 
   @Override
-  public void send(boolean async, HttpEntity params) throws ServiceException, LoginException {
-    send(async, params, null);
+  public Response send(boolean async, HttpEntity params) throws ServiceException, LoginException {
+    return send(async, params, null);
   }
 
 
   @Override
-  public void send(boolean async, HttpEntity params, final IResponseHandler responseHandler) throws ServiceException, LoginException {
+  public Response send(boolean async, HttpEntity params, final IResponseHandler responseHandler) throws ServiceException, LoginException {
     if (   ( ! isGET() && ! isDELETE() )  && params != null ){
       ((HttpEntityEnclosingRequestBase) getHttpMethod() ).setEntity( params );
     }
@@ -147,8 +147,8 @@ public class DefaultRequestMethod implements IConnectionMethod {
     };
 
     futureResponse = this.configuration.getExecutor().submit( start ); 
-    if ( !async )
-      this.getResponse();
+
+    return async ? null : this.getResponse();
   }
 
   public Response getResponse()  throws ServiceException, LoginException{

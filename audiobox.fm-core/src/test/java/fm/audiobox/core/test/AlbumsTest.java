@@ -10,6 +10,7 @@ import fm.audiobox.core.models.Albums;
 import fm.audiobox.core.models.Covers;
 import fm.audiobox.core.models.Track;
 import fm.audiobox.core.models.Tracks;
+import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 
 /**
  * @author keytwo
@@ -21,6 +22,29 @@ public class AlbumsTest extends AudioBoxTestCase {
     loginCatched();
   }
 
+  @Test
+  public void testAlbums(){
+    Albums albs = user.getAlbums();
+    
+    assertNotNull(albs);
+    
+    try {
+      albs.load(false);
+    } catch (ServiceException e) {
+      e.printStackTrace();
+    } catch (LoginException e) {
+      e.printStackTrace();
+    }
+    
+    
+    Album alb = albs.getAlbumByName(Fixtures.get(Fixtures.ALBUM_NAME));
+    assertNotNull( alb );
+    
+    alb = albs.getAlbumByName("abc");
+    assertNull( alb );
+    
+  }
+  
   @Test
   public void testAlbumsShouldBePopulated() {
     Albums albums = user.getAlbums();

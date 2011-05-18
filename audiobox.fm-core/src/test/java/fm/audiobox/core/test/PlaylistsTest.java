@@ -31,6 +31,30 @@ public class PlaylistsTest extends AudioBoxTestCase {
   }
 
   @Test
+  public void testPlaylists() {
+    Playlists pls = user.getPlaylists();
+    assertNotNull(pls);
+    
+    try {
+      pls.load(false);
+    } catch (ServiceException e) {
+      assertNull(e);
+    } catch (LoginException e) {
+      assertNull(e);
+    }
+    
+    Playlist pl = pls.getPlaylistByName(Fixtures.get( Fixtures.SMALL_PLAYLIST_NAME ));
+    assertEquals( pl.getName(), Fixtures.get( Fixtures.SMALL_PLAYLIST_NAME ) );
+    
+    pl = pls.getPlaylistByType( PlaylistTypes.AUDIO );
+    assertEquals( pl.getName(), "Music" );
+    
+    pl = pls.getPlaylistByType( PlaylistTypes.OFFLINE );
+    assertEquals( pl.getName(), "Offline" );
+    
+  }
+  
+  @Test
   public void testPlaylistsShouldBePopulated() throws ServiceException, LoginException {
     Playlists playlists = user.getPlaylists();
     assertNotNull(playlists);

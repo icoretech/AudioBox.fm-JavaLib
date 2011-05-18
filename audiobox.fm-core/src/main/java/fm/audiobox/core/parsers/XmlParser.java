@@ -18,6 +18,7 @@ public class XmlParser extends DefaultHandler {
 
   private static Logger log = LoggerFactory.getLogger(XmlParser.class);
   
+  private long startParse = 0;
   private IEntity entity;
   private IConfiguration config;
   
@@ -41,7 +42,9 @@ public class XmlParser extends DefaultHandler {
   public void startDocument() throws SAXException {
     this.stack = new Stack<IEntity>();
     this.stack.push( this.entity );
-    log.debug("Document started: " + this.entity.getNamespace() );
+    if (log.isDebugEnabled()) {
+      startParse = System.currentTimeMillis();
+    }
     super.startDocument();
   }
 
@@ -50,7 +53,9 @@ public class XmlParser extends DefaultHandler {
     this.stack.clear();
     this.stack = null;
     this.bodyContent = null;
-    log.debug("Document finished: " + this.entity.getNamespace() );
+    if (log.isDebugEnabled()) {
+      log.debug("Document parsed in " + (System.currentTimeMillis() - startParse) + "ms (" + this.entity.getNamespace() + ")");
+    }
     super.endDocument();
   }
   

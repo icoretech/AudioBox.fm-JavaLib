@@ -1,46 +1,38 @@
 package fm.audiobox.core.test;
 
-import static junit.framework.Assert.*;
-import java.io.File;
-import java.io.IOException;
-import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.http.HttpStatus;
-import org.apache.http.entity.mime.content.FileBody;
-import org.junit.Before;
-import org.junit.Test;
-
-import fm.audiobox.AudioBox;
-import fm.audiobox.configurations.DefaultConfiguration;
-import fm.audiobox.core.exceptions.LoginException;
-import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.models.Albums;
-import fm.audiobox.core.models.Playlist;
-import fm.audiobox.core.models.Playlists;
-import fm.audiobox.core.models.Track;
-import fm.audiobox.core.models.Tracks;
-import fm.audiobox.core.models.User;
-import fm.audiobox.core.test.mocks.fixtures.Fixtures;
-import fm.audiobox.core.test.mocks.models.Album;
-import fm.audiobox.interfaces.IConfiguration;
-import fm.audiobox.interfaces.IConfiguration.ContentFormat;
 
 /**
  * @author keytwo
  * 
  */
-public class TrackTest extends AudioBoxTestCase {
+public class TrackTest {
+/*
+  AudioBox abc;
+
+  User user;
+
+  Albums albums;
 
   @Before
   public void setUp() {
-    loginCatched();
+
+    IConfiguration configuration = new DefaultConfiguration("My test application");
+
+    configuration.setVersion(1, 0, 0);
+    configuration.setRequestFormat(ContentFormat.XML);
+    configuration.setShortResponse(false);
+    configuration.setUseCache(false);
+    configuration.getFactory().setEntity(Album.TAGNAME, Album.class);
+    
+    abc = new AudioBox(configuration);
   }
 
   @Test
   public void testTrack() {
 
+    assertNotNull(abc);
+    
+    loginCatched();
     assertNotNull(user);
 
     try {
@@ -144,7 +136,7 @@ public class TrackTest extends AudioBoxTestCase {
        * restore previous state } else { assertTrue( testTr.love() );
        * assertTrue( testTr.isLoved() ); assertTrue( testTr.unlove() ); //
        * restore previous state }
-       */
+       * /
       int playcount = testTr.getPlayCount();
       testTr.setPlayCount(playcount + 1);
       assertTrue(testTr.getPlayCount() == (playcount + 1));
@@ -208,4 +200,15 @@ public class TrackTest extends AudioBoxTestCase {
     track.removeFrom(dev);
     assertEquals(originalDevTracksCount, dev.getTracksCount());
   }
+
+  private void loginCatched() {
+    try {
+      user = abc.login(Fixtures.get(Fixtures.LOGIN), Fixtures.get(Fixtures.RIGHT_PASS));
+    } catch (LoginException e) {
+      fail(e.getMessage());
+    } catch (ServiceException e) {
+      fail(e.getMessage());
+    }
+  }
+  */
 }

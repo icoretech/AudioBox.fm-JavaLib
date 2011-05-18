@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import fm.audiobox.configurations.Response;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.observables.Event;
@@ -171,8 +172,8 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
    * @throws ServiceException
    * @throws LoginException
    */
-  public void load(boolean async) throws ServiceException, LoginException {
-    this.load(async, null);
+  public Response load(boolean async) throws ServiceException, LoginException {
+    return this.load(async, null);
   }
   
   
@@ -185,9 +186,9 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
    * @throws ServiceException
    * @throws LoginException
    */
-  public void load(boolean async, IResponseHandler responseHandler) throws ServiceException, LoginException {
+  public Response load(boolean async, IResponseHandler responseHandler) throws ServiceException, LoginException {
     this.clear();
-    getConnector().get(this, null, null).send(async, null, responseHandler);
+    return getConnector().get(this, null, null).send(async, null, responseHandler);
   }
   
   
