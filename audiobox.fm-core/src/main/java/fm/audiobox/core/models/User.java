@@ -25,15 +25,12 @@ package fm.audiobox.core.models;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
-import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
+import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
 
 
@@ -97,8 +94,6 @@ import fm.audiobox.interfaces.IResponseHandler;
 public final class User extends AbstractEntity implements Serializable {
 
   private static final long serialVersionUID = 1L;
-  private static final Logger log = LoggerFactory.getLogger(User.class);
-
 
   /** User API namespace */
   public static final String NAMESPACE = "user";

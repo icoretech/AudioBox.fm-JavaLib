@@ -16,7 +16,7 @@ import fm.audiobox.interfaces.IEntity;
 
 public class XmlParser extends DefaultHandler {
 
-  private static final Logger log = LoggerFactory.getLogger(XmlParser.class);
+  private static Logger log = LoggerFactory.getLogger(XmlParser.class);
   
   private IEntity entity;
   private IConfiguration config;
@@ -38,15 +38,6 @@ public class XmlParser extends DefaultHandler {
   }
 
   @Override
-  public void endDocument() throws SAXException {
-    this.stack.clear();
-    this.stack = null;
-    this.bodyContent = null;
-    log.debug("Document finished: " + this.entity.getNamespace() );
-    super.endDocument();
-  }
-
-  @Override
   public void startDocument() throws SAXException {
     this.stack = new Stack<IEntity>();
     this.stack.push( this.entity );
@@ -55,9 +46,18 @@ public class XmlParser extends DefaultHandler {
   }
 
   @Override
+  public void endDocument() throws SAXException {
+    this.stack.clear();
+    this.stack = null;
+    this.bodyContent = null;
+    log.debug("Document finished: " + this.entity.getNamespace() );
+    super.endDocument();
+  }
+  
+  @Override
   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
     
-    if ( localName.trim().equals("") ) {
+    if ( "".equals(localName.trim()) ) {
       localName = qName;
     }
     
@@ -89,7 +89,7 @@ public class XmlParser extends DefaultHandler {
   @Override
   public void endElement(String uri, String localName, String qName) throws SAXException {
     
-    if ( localName.trim().equals("") ) {
+    if ( "".equals(localName.trim()) ) {
       localName = qName;
     }
     
@@ -106,7 +106,7 @@ public class XmlParser extends DefaultHandler {
           // XML parsed completely
           return;
         } else {
-          log.warn("*** XML isn't parsed correctly ***");
+          log.warn("*** XML wasn't parsed correctly ***");
           return;
         }
       }
@@ -114,10 +114,13 @@ public class XmlParser extends DefaultHandler {
     }
     
     
-    // FIX: remove obsolete characters
+    // FIX: remove uneeded characters
     String value = "";
     if ( this.bodyContent != null ){
-      value = this.bodyContent.toString().replaceAll("\n","").replaceAll("\r", "").replaceAll("\t", "");
+      value = this.bodyContent.toString().replaceAll("\\n|\\r|\\t", "");
+      if (log.isTraceEnabled() ) {
+        log.trace("Body content: " + value);
+      }
     }
     
     
@@ -156,7 +159,7 @@ public class XmlParser extends DefaultHandler {
              * if value is an empty string the Integer.parseInt method fails.
              * To prevent errors we set value to zero as string
              */
-            value = value.equals("") ? "0" : value;
+            value = "".equals(value) ? "0" : value;
             setterMethod.invoke(currentEntity, Integer.parseInt( value ) );
             
           } else if ( paramType.equals( long.class ) ){
@@ -165,7 +168,7 @@ public class XmlParser extends DefaultHandler {
              * if value is an empty string the Long.parseLong method fails.
              * To prevent errors we set value to zero as string
              */
-            value = value.equals("") ? "0" : value;
+            value = "".equals(value) ? "0" : value;
             setterMethod.invoke(currentEntity, Long.parseLong( value ) );
             
           } else if ( paramType.equals( boolean.class ) ){
@@ -199,11 +202,11 @@ public class XmlParser extends DefaultHandler {
           
         } catch (NumberFormatException e) {
           // An error occurred while parsing String
-          if ( log.isDebugEnabled() ){
+          if ( log.isDebugEnabled() ) {
             log.info("Method cannot be invoked for tag: " + localName, e);
-          } else 
+          } else  {
             log.info("Method cannot be invoked for tag: " + localName);
-          
+          }
         } catch (IllegalArgumentException e) {
           log.error("An error while invoking method '" + setterMethod + "' for tag: " + localName, e);
         } catch (IllegalAccessException e) {
@@ -224,7 +227,6 @@ public class XmlParser extends DefaultHandler {
     }
     
     
-
     // blank bodyContent
     this.bodyContent = null;
     super.endElement(uri, localName, qName);

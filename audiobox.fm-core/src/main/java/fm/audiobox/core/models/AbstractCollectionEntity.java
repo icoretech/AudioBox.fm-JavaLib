@@ -191,8 +191,6 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
   }
   
   
-  
-  
   @Override
   public int size() {
     return this.collection.size();
@@ -212,7 +210,6 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
   public <T> T[] toArray(T[] a) {
     return this.collection.toArray(a);
   }
-
 
 
   /**

@@ -72,7 +72,7 @@ public abstract class AbstractEntity extends Observable implements IEntity {
   public IConfiguration getConfiguration(){
     return this.configuration;
   }
-
+  
   
   /**
    * Copies data from an {@link IEntity}

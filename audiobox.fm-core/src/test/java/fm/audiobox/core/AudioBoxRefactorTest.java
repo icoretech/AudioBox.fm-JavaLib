@@ -111,7 +111,7 @@ public class AudioBoxRefactorTest extends junit.framework.TestCase {
       e.printStackTrace();
     }
     
-    Artist art = arts.getArtistByName("Alborosie");
+    Artist art = arts.getArtistByName(Fixtures.get(Fixtures.ARTIST_NAME));
     
     assertNotNull(art);
     
@@ -137,7 +137,7 @@ public class AudioBoxRefactorTest extends junit.framework.TestCase {
     }
     
     
-    Album alb = albs.getAlbumByName("Escape From Babylon");
+    Album alb = albs.getAlbumByName(Fixtures.get(Fixtures.ALBUM_NAME));
     
     assertNotNull( alb );
     
@@ -165,7 +165,7 @@ public class AudioBoxRefactorTest extends junit.framework.TestCase {
     }
     
     
-    Genre alb = gnrs.getGenreByName("Raggae");
+    Genre alb = gnrs.getGenreByName(Fixtures.get(Fixtures.GENRE_NAME));
     
     assertNotNull( alb );
     
@@ -182,7 +182,7 @@ public class AudioBoxRefactorTest extends junit.framework.TestCase {
     
     Track t = null;
     try {
-      t = user.getTrackByToken("lFkCNNqjudJeSGByu2PZpZ");
+      t = user.newTrackByToken(Fixtures.get(Fixtures.TRACK_TOKEN));
     } catch (ServiceException e) {
       assertNull(e);
     } catch (LoginException e) {
@@ -191,7 +191,7 @@ public class AudioBoxRefactorTest extends junit.framework.TestCase {
     
     assertNotNull( t.getArtist() );
     
-    assertEquals( t.getArtist().getName() , "Alborosie");
+    assertEquals( t.getArtist().getName() , Fixtures.get(Fixtures.ARTIST_NAME));
     
   }
   

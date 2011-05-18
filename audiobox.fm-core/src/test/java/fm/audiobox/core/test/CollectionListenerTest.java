@@ -1,70 +1,86 @@
-/**
- * 
- */
 package fm.audiobox.core.test;
 
-
-import java.net.SocketException;
+import java.util.Observable;
+import java.util.Observer;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import fm.audiobox.AudioBox;
 import fm.audiobox.core.exceptions.LoginException;
-import fm.audiobox.core.exceptions.ModelException;
-import fm.audiobox.core.interfaces.CollectionListener;
-import fm.audiobox.core.models.Albums;
+import fm.audiobox.core.exceptions.ServiceException;
+import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
-import fm.audiobox.core.models.User;
+import fm.audiobox.core.models.Track;
+import fm.audiobox.core.models.Tracks;
+import fm.audiobox.core.observables.Event;
 import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 
 /**
  * @author keytwo
- *
  */
-public class CollectionListenerTest extends junit.framework.TestCase {
+public class CollectionListenerTest extends AudioBoxTestCase {
 
-    AudioBox abc;
-    User user;
-    Albums albums;
-    Fixtures fx = new Fixtures();
-    
-    @Before
-    public void setUp() throws Exception {
-        abc = new AudioBox();
-    }
+  @Before
+  public void setUp() {
+    loginCatched();
+  }
 
+  @Test
+  public void testCL() throws ServiceException, LoginException {
 
-    @Test
-    public void testCL() {
-        
-        assertNotNull( abc );
-        loginCatched();
-        assertNotNull( user );
-        
-        try {
+    assertNotNull(abc);
 
-            Playlists pls = user.getPlaylists();
-            assertNotNull( pls );
-            
-        } catch (ModelException e) {
-            e.printStackTrace();
+    Playlists pls = user.getPlaylists();
+    assertNotNull(pls);
+    pls.addObserver(new Observer() {
+
+      @Override
+      public void update(Observable o, Object arg) {
+        Event ev = (Event) arg;
+        log.debug("Event occurred: " + ev.state);
+        if (ev.state == Event.States.ENTITY_ADDED) {
+          assertTrue(ev.getSource() instanceof Playlist);
+          Playlist pl = (Playlist) ((Event) arg).getSource();
+          log.info("Playlists size is: " + ((Playlists) o).size() + " | " + pl.getName());
         }
+      }
+    });
+
+    pls.load(false);
+
+    Playlist dev = user.getPlaylists().getPlaylistByName(Fixtures.get(Fixtures.SMALL_PLAYLIST_NAME));
+
+    /*
+     * Let's test "reusability"
+     */
+    Playlist dev2 = null;
+    for (Playlist p : pls) {
+      if (p.getName().equals(Fixtures.get(Fixtures.SMALL_PLAYLIST_NAME))) {
+        dev2 = p;
+        break;
+      }
     }
 
+    assertNotNull(dev);
+    assertSame(dev, dev2);
 
-    private void loginCatched() {
-        try {
-            user = abc.login( Fixtures.get( Fixtures.LOGIN ), Fixtures.get( Fixtures.RIGHT_PASS ) );
-        } catch (LoginException e) {
-            fail(e.getMessage());
-        } catch (SocketException e) {
-            fail(e.getMessage());
-        } catch (ModelException e) {
-            fail(e.getMessage());
+    dev.getTracks().addObserver(new Observer() {
+
+      @Override
+      public void update(Observable o, Object arg) {
+        Event ev = (Event) arg;
+        if (ev.state == Event.States.ENTITY_ADDED) {
+          assertTrue(ev.getSource() instanceof Track);
+          Track trk = (Track) ev.getSource();
+          log.info("Tracks count is: " + ((Tracks) o).size() + " | " + trk.getTitle());
         }
-    }
-    
+
+      }
+
+    });
+
+    dev.getTracks().load(false);
+
+  }
+
 }

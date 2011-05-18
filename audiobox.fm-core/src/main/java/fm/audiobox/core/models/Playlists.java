@@ -24,10 +24,9 @@ package fm.audiobox.core.models;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Iterator;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.List;
 
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
@@ -45,9 +44,6 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
 
   private static final long serialVersionUID = 1L;
   
-  private static final Logger log = LoggerFactory.getLogger(Playlists.class);
-  
-
   /** Tracks API end point */
   public static final String NAMESPACE = "playlists";
   public static final String TAGNAME = NAMESPACE;
@@ -146,6 +142,23 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
       }
     }
     return null;
+  }
+  
+  /**
+   * Returns a list of {@link Playlist} that matches the given {@link PlaylistTypes}
+   * 
+   * @param type the {@link PlaylistTypes}
+   * @return the first {@link Playlist} that matches with the given {@link PlaylistTypes}
+   */
+  public List<Playlist> getPlaylistsByType(PlaylistTypes type){
+    List<Playlist> pls = new ArrayList<Playlist>();
+    for ( Iterator<Playlist> it = this.iterator(); it.hasNext();  ){
+      Playlist pl = it.next();
+      if (  pl.getPlaylistType() == type  ) {
+        pls.add(pl);
+      }
+    }
+    return pls;
   }
   
   @Override

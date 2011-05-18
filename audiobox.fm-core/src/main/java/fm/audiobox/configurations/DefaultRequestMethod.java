@@ -72,7 +72,7 @@ public class DefaultRequestMethod implements IConnectionMethod {
       try {
         entity = new UrlEncodedFormEntity(params, HTTP.UTF_8);
       } catch (UnsupportedEncodingException e) {
-        log.error("An error occurred while instanciating UrlEncodedFormEntity", e);
+        log.error("An error occurred while instantiating UrlEncodedFormEntity", e);
       }
     }
     send(async, entity);
@@ -119,33 +119,27 @@ public class DefaultRequestMethod implements IConnectionMethod {
         } catch (IOException e) {
           
           response = new Response(ContentFormat.XML, AudioBoxException.GENERIC_ERROR, e.getMessage() );
+          AudioBoxException responseException = null;
           
-          log.error("IOException thrown while executing request method", e);
-          if ( e instanceof ServiceException) {
-
-            ServiceException se = (ServiceException)e;
-            if ( configuration.getDefaultServiceExceptionHandler() != null ){
-              configuration.getDefaultServiceExceptionHandler().handle( se );
-            }
-
-            response.setException( se );
-          } else if ( e instanceof LoginException ) {
-
-            LoginException le = (LoginException)e;
+          if ( e instanceof LoginException ) {
+            
+            LoginException le = (LoginException) e;
             if ( configuration.getDefaultLoginExceptionHandler() != null ){
               configuration.getDefaultLoginExceptionHandler().handle( le );
             }
-            response.setException( le );
-
+            responseException = le;
+            
           } else {
-            ServiceException se = new ServiceException(e);
-
+            
+            ServiceException se = e instanceof ServiceException ? (ServiceException) e : new ServiceException(e);
             if ( configuration.getDefaultServiceExceptionHandler() != null ){
               configuration.getDefaultServiceExceptionHandler().handle( se );
             }
-
-            response.setException( se );
+            responseException = se;
           }
+          
+          response.setException( responseException );
+          
         }
         return response;
       }

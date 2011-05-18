@@ -26,9 +26,6 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IEntity;
@@ -44,7 +41,6 @@ import fm.audiobox.interfaces.IEntity;
 public class Albums extends AbstractCollectionEntity<Album> implements Serializable {
 
   private static final long serialVersionUID = 1L;
-  private static Logger log = LoggerFactory.getLogger(Albums.class);
   
   
   /** Tracks API end point */

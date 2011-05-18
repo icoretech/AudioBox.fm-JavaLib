@@ -25,9 +25,6 @@ package fm.audiobox.core.models;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.observables.Event;
@@ -50,23 +47,23 @@ import fm.audiobox.interfaces.IResponseHandler;
  *
  * <pre>
  * {@code
- <track> 
-    <token>{token}</token> 
-    <title>Title</title> 
-    <duration>3:41</duration> 
-    <duration_in_seconds>221</duration_in_seconds> 
-    <stream_url>http://audiobox.fm/api/tracks/{token}/stream</stream_url> 
-    <year>2007</year> 
-    <loved>false</loved> 
-    <play_count>25</play_count> 
-    <audio_file_size>5297412</audio_file_size> 
-    <track_number>1</track_number> 
-    <disc_number>1</disc_number> 
-    <file_name>file.mp3</file_name> 
-    <album>...</album> 
-    <artist>...</artist> 
-    <genre>...</genre> 
-  </track>
+ * <track> 
+ *   <token>{token}</token> 
+ *   <title>Title</title> 
+ *   <duration>3:41</duration> 
+ *   <duration_in_seconds>221</duration_in_seconds> 
+ *   <stream_url>http://audiobox.fm/api/tracks/{token}/stream</stream_url> 
+ *   <year>2007</year> 
+ *   <loved>false</loved> 
+ *   <play_count>25</play_count> 
+ *   <audio_file_size>5297412</audio_file_size> 
+ *   <track_number>1</track_number> 
+ *   <disc_number>1</disc_number> 
+ *   <file_name>file.mp3</file_name> 
+ *   <album>...</album> 
+ *   <artist>...</artist> 
+ *   <genre>...</genre> 
+ * </track>
  * }
  * </pre>
  *
@@ -77,7 +74,6 @@ import fm.audiobox.interfaces.IResponseHandler;
 public class Track extends AbstractEntity implements Serializable {
 
   private static final long serialVersionUID = 1L;
-  private static Logger log = LoggerFactory.getLogger(Track.class);
 
   /** The XML tag name for the Track element */
   public static final String NAMESPACE = Tracks.TAGNAME;

@@ -25,9 +25,6 @@ package fm.audiobox.core.models;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import fm.audiobox.core.observables.Event;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
@@ -66,7 +63,6 @@ import fm.audiobox.interfaces.IEntity;
 public class Album extends AbstractEntity implements Serializable {
   
   private static final long serialVersionUID = 1L;
-  private static Logger log = LoggerFactory.getLogger(Album.class);
   
   /** The XML tag name for the Album element */
   public static final String NAMESPACE = Albums.TAGNAME;

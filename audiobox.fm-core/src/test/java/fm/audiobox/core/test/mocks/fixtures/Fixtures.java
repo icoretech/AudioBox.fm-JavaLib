@@ -25,6 +25,12 @@ public class Fixtures {
     public static final String SMALL_PLAYLIST_NAME = "small_playlist_name";
     public static final String DEV_PLAYLIST_NAME = "dev_playlist";
     
+    public static final String ARTIST_NAME = "artist_name";
+    public static final String TRACK_TOKEN = "track_token";
+    public static final String TRACK_TITLE = "track_title";
+    public static final String GENRE_NAME = "genre_name";
+    public static final String ALBUM_NAME = "album_name";
+    
     public static final String TEST_FILE = "test_file";
     
     private static Properties ps = new Properties();

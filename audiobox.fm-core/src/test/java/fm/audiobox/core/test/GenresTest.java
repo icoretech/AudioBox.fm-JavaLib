@@ -3,113 +3,87 @@
  */
 package fm.audiobox.core.test;
 
-
 import org.junit.Before;
 import org.junit.Test;
 
-import fm.audiobox.AudioBox;
-import fm.audiobox.configurations.DefaultConfiguration;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Genre;
 import fm.audiobox.core.models.Genres;
 import fm.audiobox.core.models.Track;
 import fm.audiobox.core.models.Tracks;
-import fm.audiobox.core.models.User;
-import fm.audiobox.core.test.mocks.fixtures.Fixtures;
-import fm.audiobox.interfaces.IConfiguration;
-import fm.audiobox.interfaces.IConfiguration.ContentFormat;
 
 /**
  * @author keytwo
- *
+ * 
  */
-public class GenresTest extends junit.framework.TestCase {
-
-  AudioBox abx;
-  User user;
+public class GenresTest extends AudioBoxTestCase {
 
   @Before
-  public void setUp() throws Exception {
-    IConfiguration configuration = new DefaultConfiguration("My test application");
+  public void setUp() {
+    loginCatched();
+  }
 
-    configuration.setVersion(1, 0, 0);
-    configuration.setRequestFormat(ContentFormat.XML);
-    configuration.setShortResponse(false);
-    configuration.setUseCache(false);
-
-    abx = new AudioBox(configuration);
-
+  @Test
+  public void testGenresShouldBePopulated() {
     try {
-      user = abx.login( Fixtures.get( Fixtures.LOGIN ), Fixtures.get( Fixtures.RIGHT_PASS ) );
+      Genres genres = user.getGenres();
+      assertNotNull(genres);
+      assertEquals(0, genres.size());
+
+      genres.load(false);
+      assertTrue(0 < genres.size());
+
+      Genre genre = null;
+
+      for (Genre g : genres) {
+        assertNotNull(g);
+        assertNotNull(g.getName());
+        genre = g;
+      }
+
+      Genre g = (Genre) genres.get(genre.getToken());
+      assertNotNull(g);
+      assertSame(g, genre);
+
     } catch (LoginException e) {
       fail(e.getMessage());
     } catch (ServiceException e) {
       fail(e.getMessage());
     }
-
-    assertNotNull( user );
-
-  }
-
-
-  @Test
-  public void testGenresShouldBePopulated() {
-      Genres genres = user.getGenres();
-      assertNotNull(genres);
-
-      try {
-        genres.load(false);
-      } catch (LoginException e) {
-        fail(e.getMessage());
-      } catch (ServiceException e) {
-        fail(e.getMessage());
-      }
-      
-      Genre genre = null;
-
-      for (Genre g : genres) {
-        assertNotNull(g);
-        genre = g;
-      }
-
-      Genre g = (Genre) genres.get( genre.getToken() );
-      assertNotNull( g );
-      assertSame( g, genre);
-
   }
 
   @Test
   public void testGenreShouldBePopulatedAndContainsTracks() {
 
+    try {
       Genres genres = user.getGenres();
       assertNotNull(genres);
-      
-      try {
-        genres.load(false);
-      } catch (LoginException e) {
-        fail(e.getMessage());
-      } catch (ServiceException e) {
-        fail(e.getMessage());
-      }
+      assertEquals(0, genres.size());
+
+      genres.load(false);
+      assertTrue(0 < genres.size());
+
+      genres.load(false);
 
       Genre gnr = (Genre) genres.get(0);
       assertNotNull(gnr);
 
       Tracks trs = (Tracks) gnr.getTracks();
+      assertEquals(0, trs.size());
       assertNotNull(trs);
-      
-      try {
-        trs.load(false);
-      } catch (LoginException e) {
-        fail(e.getMessage());
-      } catch (ServiceException e) {
-        fail(e.getMessage());
-      }
+
+      trs.load(false);
+      assertTrue(0 < trs.size());
 
       Track tr = (Track) trs.get(0);
       assertNotNull(tr);
 
+    } catch (LoginException e) {
+      fail(e.getMessage());
+    } catch (ServiceException e) {
+      fail(e.getMessage());
+    }
   }
 
 }

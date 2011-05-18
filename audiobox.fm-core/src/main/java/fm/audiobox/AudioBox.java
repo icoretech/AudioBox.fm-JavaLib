@@ -172,11 +172,11 @@ public class AudioBox {
    * 
    */
   public AudioBox(IConfiguration config) {
-    log.info("New AudioBox is going to be instanciated");
+    log.trace("New AudioBox is going to be instantiated");
     this.configuration = config;
     this.connector = new Connector();
     config.getFactory().setConnector( getConnector() );
-    log.debug("New AudioBox instanciated correctly");
+    log.trace("New AudioBox correctly instantiated");
   }
 
 
@@ -273,8 +273,8 @@ public class AudioBox {
 
     /** Default constructor builds http connector */
     private Connector() {
-      log.info("New Connector is going to be instanciated");
-      log.info("Remote host will be: " + API_PATH );
+      log.trace("New Connector is going to be instantiated");
+      log.debug("Remote host will be: " + API_PATH );
       buildClient();
     }
 
@@ -298,7 +298,7 @@ public class AudioBox {
       this.mCm = new ThreadSafeClientConnManager(params, schemeRegistry);
       this.mClient = new DefaultHttpClient( this.mCm, params );
       
-      log.info("New ThreadSafeClientConnManager and HttpClient instanciated");
+      log.trace("New ThreadSafeClientConnManager and HttpClient instantiated");
 
       // Increase max total connection to 200
       ConnManagerParams.setMaxTotalConnections(params, 200);
@@ -458,15 +458,13 @@ public class AudioBox {
       try {
         return klass.newInstance();
       } catch (InstantiationException e) {
-        log.error("An error occurred while instanciating IConnectionMethod class", e);
+        log.error("An error occurred while instantiating IConnectionMethod class", e);
       } catch (IllegalAccessException e) {
         log.error("An error occurred while accessing to IConnectionMethod class", e);
       }
       return null;
     }
     
-
-
 
 
     /* --------------- */

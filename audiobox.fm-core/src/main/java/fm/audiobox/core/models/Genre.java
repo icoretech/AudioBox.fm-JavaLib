@@ -25,9 +25,6 @@ package fm.audiobox.core.models;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import fm.audiobox.core.observables.Event;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
@@ -60,8 +57,6 @@ public class Genre extends AbstractEntity implements Serializable {
   /** The XML tag name for the Genre element */
   public static final String NAMESPACE = Genres.TAGNAME;
   public static final String TAGNAME = "genre";
-
-  private static final Logger log = LoggerFactory.getLogger(Genre.class);
 
   private String name;
   private Tracks tracks;

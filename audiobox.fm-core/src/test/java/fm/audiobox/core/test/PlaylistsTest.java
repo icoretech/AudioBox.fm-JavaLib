@@ -3,16 +3,12 @@
  */
 package fm.audiobox.core.test;
 
-
-import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import fm.audiobox.AudioBox;
-import fm.audiobox.configurations.DefaultConfiguration;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Album;
@@ -21,120 +17,110 @@ import fm.audiobox.core.models.Playlists;
 import fm.audiobox.core.models.Playlists.PlaylistTypes;
 import fm.audiobox.core.models.Track;
 import fm.audiobox.core.models.Tracks;
-import fm.audiobox.core.models.User;
 import fm.audiobox.core.test.mocks.fixtures.Fixtures;
-import fm.audiobox.interfaces.IConfiguration;
-import fm.audiobox.interfaces.IConfiguration.ContentFormat;
 
 /**
  * @author keytwo
- *
+ * 
  */
-public class PlaylistsTest extends junit.framework.TestCase {
-
-  AudioBox abx;
-  User user;
+public class PlaylistsTest extends AudioBoxTestCase {
 
   @Before
-  public void setUp() throws Exception {
-    IConfiguration configuration = new DefaultConfiguration("My test application");
+  public void setUp() {
+    loginCatched();
+  }
 
-    configuration.setVersion(1, 0, 0);
-    configuration.setRequestFormat(ContentFormat.XML);
-    configuration.setShortResponse(false);
-    configuration.setUseCache(false);
+  @Test
+  public void testPlaylistsShouldBePopulated() throws ServiceException, LoginException {
+    Playlists playlists = user.getPlaylists();
+    assertNotNull(playlists);
+    assertEquals(0, playlists.size());
 
-    abx = new AudioBox(configuration);
+    playlists.load(false);
+    assertTrue(0 < playlists.size());
+    
+    Playlist playlist = null;
 
-    try {
-      user = abx.login( Fixtures.get( Fixtures.LOGIN ), Fixtures.get( Fixtures.RIGHT_PASS ) );
-    } catch (LoginException e) {
-      fail(e.getMessage());
-    } catch (ServiceException e) {
-      fail(e.getMessage());
+    for (Playlist pls : playlists) {
+      assertNotNull(pls);
+      playlist = pls;
     }
 
-    assertNotNull( user );
+    Playlist p = (Playlist) playlists.get(playlist.getToken());
+    assertNotNull(p);
+    assertSame(p, playlist);
 
   }
 
   @Test
-  public void testPlaylistsShouldBePopulated() {
-      Playlists playlists = user.getPlaylists(false);
-      assertNotNull(playlists);
+  public void testPlaylistShouldBePopulatedAndContainsTracks() throws ServiceException, LoginException {
 
-      Playlist playlist = null;
-
-      for (Model p : playlists.getCollection()) {
-        Playlist pls = (Playlist) p;
-        assertNotNull(pls);
-        playlist = pls;
-      }
-
-      Playlist p = (Playlist) playlists.get(playlist.getToken());
-      assertNotNull( p );
-      assertSame( p, playlist);
-
-  }
-
-  @Test
-  public void testPlaylistShouldBePopulatedAndContainsTracks() throws ModelException {
-
-    Playlists playlists = user.getPlaylists(false);
+    Playlists playlists = user.getPlaylists();
     assertNotNull(playlists);
+    assertEquals(0, playlists.size());
 
-
+    playlists.load(false);
+    assertTrue(0 < playlists.size());
+    
     Playlist testPl = null;
 
-    for (Playlist pl : playlists.getCollection()) {
-      assertNotNull( pl );
-      assertNotNull( pl.getName() );
-      assertNotNull( pl.getToken() );
-      assertNotNull( pl.getPlaylistType() );
-      assertNotNull( pl.getPlaylistTracksCount() );
-      assertNotNull( pl.getPosition() );
+    for (Playlist pl : playlists) {
+      assertNotNull(pl);
+      assertNotNull(pl.getName());
+      assertNotNull(pl.getToken());
+      assertNotNull(pl.getPlaylistType());
+      assertNotNull(pl.getTracksCount());
+      assertNotNull(pl.getPosition());
       testPl = pl;
     }
 
-    assertNotNull( testPl ); 
+    assertNotNull(testPl);
 
     Tracks trs = (Tracks) testPl.getTracks();
     assertNotNull(trs);
+    assertEquals(0, trs.size());
 
-    //trs.invoke();
+    trs.load(false);
+    assertTrue(0 < trs.size());
+
     Track tr = (Track) trs.get(0);
     assertNotNull(tr);
-    assertNotNull( tr.getName() );
-    assertNotNull( tr.getToken() );
+    assertNotNull(tr.getName());
+    assertNotNull(tr.getToken());
 
-    assertNotNull( tr.getArtist() );
-    assertNotNull( tr.getArtist().getToken());
+    assertNotNull(tr.getArtist());
+    assertNotNull(tr.getArtist().getToken());
 
-    assertNotNull( tr.getAlbum() );
-    assertNotNull( tr.getAlbum().getToken() );
+    assertNotNull(tr.getAlbum());
+    assertNotNull(tr.getAlbum().getToken());
 
-    assertNull( ((Album) tr.getAlbum()).getArtist() );
-
-  }
-
-
-  @Test
-  public void testPlaylistShouldBeNullIfItDoesNotExists() throws ModelException {
-    loginCatched();
-
-    Playlists playlists = user.getPlaylists(false);
-    assertNotNull(playlists);
-
-    assertNull( playlists.getPlaylistByName("Not existings playlist") );
+    assertNotNull(((Album) tr.getAlbum()).getArtist());
 
   }
 
   @Test
-  public void testPlaylistsTypes() throws ModelException {
-    loginCatched();
+  public void testPlaylistShouldBeNullIfItDoesNotExists() throws ServiceException, LoginException {
 
-    Playlists playlists = user.getPlaylists(false);
+    Playlists playlists = user.getPlaylists();
     assertNotNull(playlists);
+    assertEquals(0, playlists.size());
+    
+    playlists.load(false);
+    assertTrue(0 < playlists.size());
+    
+    assertNull(playlists.getPlaylistByName("Not existings playlist"));
+
+  }
+
+  @Test
+  public void testPlaylistsTypes() throws ServiceException, LoginException {
+
+    Playlists playlists = user.getPlaylists();
+    assertNotNull(playlists);
+    assertEquals(0, playlists.size());
+    
+    playlists.load(false);
+    assertTrue(0 < playlists.size());
 
     List<Playlist> pls = playlists.getPlaylistsByType(PlaylistTypes.AUDIO);
     assertEquals(1, pls.size());
@@ -146,115 +132,100 @@ public class PlaylistsTest extends junit.framework.TestCase {
     assertEquals(1, pls.size());
 
     pls = playlists.getPlaylistsByType(PlaylistTypes.CUSTOM);
-    assertNotNull( pls );
+    assertNotNull(pls);
   }
 
-
-  @Test
-  public void testMoveSingleTrackToPlaylist() throws ModelException, LoginException, ServiceException {
+  //@Test
+  public void testMoveSingleTrackToPlaylist() throws LoginException, ServiceException {
     loginCatched();
 
-    Playlists playlists = user.getPlaylists(false);
+    Playlists playlists = user.getPlaylists();
     assertNotNull(playlists);
 
-    Playlist smallPlaylist = playlists.getPlaylistByName(Fixtures.get( Fixtures.SMALL_PLAYLIST_NAME ));
-    Playlist dev = playlists.getPlaylistByName( Fixtures.get( Fixtures.DEV_PLAYLIST_NAME ) );
+    Playlist smallPlaylist = playlists.getPlaylistByName(Fixtures.get(Fixtures.SMALL_PLAYLIST_NAME));
+    Playlist dev = playlists.getPlaylistByName(Fixtures.get(Fixtures.DEV_PLAYLIST_NAME));
     Track trk = smallPlaylist.getTracks().get(0);
 
-    int previousTracksCount = dev.getPlaylistTracksCount();
+    long previousTracksCount = dev.getTracksCount();
 
     boolean result = dev.addTrack(trk);
     if (result) {
-      assertEquals( previousTracksCount + 1 , dev.getPlaylistTracksCount() );
-      assertNotNull( dev.getTrack( trk.getToken() ) );
+      assertEquals(previousTracksCount + 1, dev.getTracksCount());
+      assertNotNull(dev.getTracks().get(trk.getToken()));
     } else {
       // Fail and exit
-      fail( "Unable to move track to the selected playlist" );
+      fail("Unable to move track to the selected playlist");
     }
 
-    result = dev.removeTrack( trk );
+    result = dev.removeTrack(trk);
     if (result) {
-      assertNull( dev.getTrack( trk.getToken() ));
+      assertNull(dev.getTracks().get(trk.getToken()));
     } else {
       // Fail and exit
-      fail( "Unable to move track to the selected playlist" );
+      fail("Unable to move track to the selected playlist");
     }
 
-  } 
+  }
 
-  @Test
-  public void testMoveMultipleTracksToPlaylist() throws ModelException, LoginException, ServiceException {
+  //@Test
+  public void testMoveMultipleTracksToPlaylist() throws LoginException, ServiceException {
     loginCatched();
 
-    Playlists playlists = user.getPlaylists(false);
+    Playlists playlists = user.getPlaylists();
     assertNotNull(playlists);
 
-    Playlist soundtracks = playlists.getPlaylistByName( Fixtures.get( Fixtures.SMALL_PLAYLIST_NAME));
-    Playlist dev = playlists.getPlaylistByName(Fixtures.get( Fixtures.DEV_PLAYLIST_NAME));
+    Playlist soundtracks = playlists.getPlaylistByName(Fixtures.get(Fixtures.SMALL_PLAYLIST_NAME));
+    Playlist dev = playlists.getPlaylistByName(Fixtures.get(Fixtures.DEV_PLAYLIST_NAME));
 
     Tracks musicTracks = soundtracks.getTracks();
 
     List<Track> tracks = new ArrayList<Track>();
     int numberOfTracksToAdd = 10;
     for (int i = 0; i < numberOfTracksToAdd; i++) {
-      tracks.add( musicTracks.get(i));
+      tracks.add(musicTracks.get(i));
     }
 
-    int previousTracksCount = dev.getPlaylistTracksCount();
+    long previousTracksCount = dev.getTracksCount();
 
     boolean result = dev.addTracks(tracks);
     if (result) {
-      assertEquals( previousTracksCount + numberOfTracksToAdd, dev.getPlaylistTracksCount() );
+      assertEquals(previousTracksCount + numberOfTracksToAdd, dev.getTracksCount());
       for (Track trk : tracks) {
-        assertNotNull( dev.getTrack( trk.getToken() ) );
+        assertNotNull(dev.getTracks().get(trk.getToken()));
       }
     } else {
       // Fail and exit
-      fail( "Unable to move track to the selected playlist" );
+      fail("Unable to move track to the selected playlist");
     }
 
-    result = dev.removeTracks( tracks );
+    result = dev.removeTracks(tracks);
     if (result) {
       for (Track trk : tracks)
-        assertNull( dev.getTrack( trk.getToken() ));
+        assertNull(dev.getTracks().get(trk.getToken()));
     } else {
       // Fail and exit
-      fail( "Unable to move track to the selected playlist" );
+      fail("Unable to move track to the selected playlist");
     }
-
 
   }
 
-  @Test
-  public void testMoveUnexistingsTrackShouldRiseErrors() throws ModelException, LoginException, ServiceException {
+  //@Test
+  public void testMoveUnexistingsTrackShouldRiseErrors() throws LoginException, ServiceException {
     loginCatched();
 
-    Playlists playlists = user.getPlaylists(false);
+    Playlists playlists = user.getPlaylists();
     assertNotNull(playlists);
 
-    Playlist dev = playlists.getPlaylistByName( Fixtures.get( Fixtures.DEV_PLAYLIST_NAME ));
+    Playlist dev = playlists.getPlaylistByName(Fixtures.get(Fixtures.DEV_PLAYLIST_NAME));
     Track trk = user.newTrack();
 
-    assertNotNull( trk );
+    assertNotNull(trk);
 
     trk.setToken("foo-bar");
 
-    assertFalse( dev.addTrack(trk) );
-    assertFalse( dev.removeTrack( trk ) );
+    assertFalse(dev.addTrack(trk));
+    assertFalse(dev.removeTrack(trk));
 
-  }
-
-
-  private void loginCatched() {
-    try {
-      user = abc.login( Fixtures.get( Fixtures.LOGIN ), Fixtures.get( Fixtures.RIGHT_PASS ) );
-    } catch (LoginException e) {
-      fail(e.getMessage());
-    } catch (SocketException e) {
-      fail(e.getMessage());
-    } catch (ModelException e) {
-      fail(e.getMessage());
-    }
   }
 
 }

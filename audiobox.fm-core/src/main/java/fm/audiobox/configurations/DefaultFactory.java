@@ -108,17 +108,17 @@ public class DefaultFactory implements IFactory {
       Constructor<? extends IEntity> constructor = klass.getConstructor(IConnector.class, IConfiguration.class);
       entity = constructor.newInstance(this.connector, configuration);
     } catch (SecurityException e) {
-      log.error("SecurityException while instanciating IEntity under key: " + tagName, e);
+      log.error("SecurityException while instantiating IEntity under key: " + tagName, e);
     } catch (NoSuchMethodException e) {
-      log.error("NoSuchMethodException while instanciating IEntity under key: " + tagName, e);
+      log.error("NoSuchMethodException while instantiating IEntity under key: " + tagName, e);
     } catch (IllegalArgumentException e) {
-      log.error("IllegalArgumentException while instanciating IEntity under key: " + tagName, e);
+      log.error("IllegalArgumentException while instantiating IEntity under key: " + tagName, e);
     } catch (InstantiationException e) {
-      log.error("InstantiationException while instanciating IEntity under key: " + tagName, e);
+      log.error("InstantiationException while instantiating IEntity under key: " + tagName, e);
     } catch (IllegalAccessException e) {
-      log.error("IllegalAccessException while instanciating IEntity under key: " + tagName, e);
+      log.error("IllegalAccessException while instantiating IEntity under key: " + tagName, e);
     } catch (InvocationTargetException e) {
-      log.error("InvocationTargetException while instanciating IEntity under key: " + tagName, e);
+      log.error("InvocationTargetException while instantiating IEntity under key: " + tagName, e);
     }
     
     return entity;

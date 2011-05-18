@@ -60,7 +60,7 @@ public class DefaultExceptionHandlerTests extends junit.framework.TestCase {
     
     Track t = null;
     try {
-      t = user.getTrackByToken("token_fake");
+      t = user.newTrackByToken("token_fake");
     } catch (ServiceException e) {
       assertEquals( new Boolean( params.containsKey("serviceException") ) , new Boolean(true) );
     } catch (LoginException e) {
@@ -86,9 +86,9 @@ public class DefaultExceptionHandlerTests extends junit.framework.TestCase {
     
     try {
       AudioBox abx = new AudioBox(config);
-      abx.login("fale_username", "fake_passwrd");
+      abx.login("fake_username", "fake_passwrd");
     } catch (LoginException e) {
-      assertEquals( new Boolean( params.containsKey("loginException") ) , new Boolean(true) );
+      assertTrue( params.containsKey("loginException") );
     } catch (ServiceException e) {
       assertNull(e);
     }

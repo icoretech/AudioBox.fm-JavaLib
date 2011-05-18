@@ -25,9 +25,6 @@ package fm.audiobox.core.models;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IEntity;
 
@@ -57,8 +54,6 @@ public class Error implements IEntity, Serializable {
 
 
   private static final long serialVersionUID = 1L;
-  private static final Logger log = LoggerFactory.getLogger(Error.class);
-
 
   /** The XML tag name for the Error element */
   public static final String NAMESPACE = null;
