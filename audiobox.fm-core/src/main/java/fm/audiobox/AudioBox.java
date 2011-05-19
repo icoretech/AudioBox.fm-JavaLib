@@ -30,8 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
@@ -249,6 +247,8 @@ public class AudioBox {
    */
   public class Connector implements Serializable, IConnector {
 
+    private final Logger log = LoggerFactory.getLogger(Connector.class);
+    
     private static final long serialVersionUID = -1947929692214926338L;
 
     private static final String URI_SEPARATOR = "/";
@@ -269,7 +269,6 @@ public class AudioBox {
     private DefaultHttpClient mClient;
     private BasicScheme mScheme = new BasicScheme();
 
-    private final Log log = LogFactory.getLog(Connector.class);
 
     /**
      * This method is used to close all connections and reinstantiate the HttpClient.

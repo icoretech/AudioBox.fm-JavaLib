@@ -1,8 +1,9 @@
 package fm.audiobox.core.test;
 
-import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fm.audiobox.AudioBox;
 import fm.audiobox.configurations.DefaultConfiguration;
@@ -15,7 +16,7 @@ import fm.audiobox.interfaces.IConfiguration.ContentFormat;
 
 public abstract class AudioBoxTestCase extends junit.framework.Assert {
 
-  protected static Logger log = Logger.getLogger("AudioBox Test");
+  protected static Logger log = LoggerFactory.getLogger("AudioBox Test");
   
   protected AudioBox abc;
   protected User user;

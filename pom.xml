@@ -303,13 +303,6 @@
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<version>4.8.1</version>
-				<type>jar</type>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
 				<version>1.6.1</version>
@@ -317,19 +310,26 @@
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
-				<groupId>log4j</groupId>
-				<artifactId>log4j</artifactId>
-				<version>1.2.15</version>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-core</artifactId>
+				<version>0.9.28</version>
+				<type>jar</type>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-classic</artifactId>
+				<version>0.9.28</version>
 				<type>jar</type>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-log4j12</artifactId>
-				<version>1.6.1</version>
-				<type>jar</type>
-				<scope>test</scope>
-			</dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.8.1</version>
+        <type>jar</type>
+        <scope>test</scope>
+      </dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -372,8 +372,8 @@
 			</activation>
 			<properties>
 				<fm.audiobox.protocol>http</fm.audiobox.protocol>
-				<fm.audiobox.host>audiobox.dev</fm.audiobox.host>
-				<fm.audiobox.port>80</fm.audiobox.port>
+				<fm.audiobox.host>0.0.0.0</fm.audiobox.host>
+				<fm.audiobox.port>3000</fm.audiobox.port>
 				<fm.audiobox.skipTests>true</fm.audiobox.skipTests>
 				<fm.audiobox.logLevel>DEBUG</fm.audiobox.logLevel>
 				<maven.javadoc.skip>true</maven.javadoc.skip>
@@ -408,8 +408,8 @@
 			</activation>
 			<properties>
 				<fm.audiobox.protocol>http</fm.audiobox.protocol>
-				<fm.audiobox.host>audiobox.dev</fm.audiobox.host>
-				<fm.audiobox.port>80</fm.audiobox.port>
+				<fm.audiobox.host>0.0.0.0</fm.audiobox.host>
+				<fm.audiobox.port>3000</fm.audiobox.port>
 				<fm.audiobox.skipTests>false</fm.audiobox.skipTests>
 				<fm.audiobox.logLevel>INFO</fm.audiobox.logLevel>
 			</properties>

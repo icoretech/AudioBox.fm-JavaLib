@@ -22,7 +22,8 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fm.audiobox.core.exceptions.AudioBoxException;
 import fm.audiobox.core.exceptions.LoginException;
@@ -36,7 +37,7 @@ import fm.audiobox.interfaces.IResponseHandler;
 
 public class DefaultRequestMethod implements IConnectionMethod {
 
-  private static Logger log = Logger.getLogger(DefaultRequestMethod.class);
+  private static Logger log = LoggerFactory.getLogger(DefaultRequestMethod.class);
 
   private volatile transient HttpClient connector;
   private volatile transient HttpRequestBase method;

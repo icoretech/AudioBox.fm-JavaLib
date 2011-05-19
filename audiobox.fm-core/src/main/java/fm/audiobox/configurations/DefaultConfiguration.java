@@ -1,7 +1,10 @@
 package fm.audiobox.configurations;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -22,30 +25,29 @@ import fm.audiobox.interfaces.IServiceExceptionHandler;
 
 public class DefaultConfiguration implements IConfiguration {
 
-  private static final Logger log = LoggerFactory.getLogger(DefaultConfiguration.class);
+  private static Logger log = LoggerFactory.getLogger(DefaultConfiguration.class);
 
   private static final String APP_NAME_PLACEHOLDER = "${APP_NAME}";
   private static final String VERSION_PLACEHOLDER = "${VERSION}";
-
+  
+  /** Prefix for properties keys */
+  private static final String PROP_PREFIX = "libaudioboxfm-core.";
+  
+  /** Keyword used to check if libs have GA */
+  private static final String SNAPSHOT = "-SNAPSHOT";
+  
   public static final String APPLICATION_NAME = "Java libs";
-  public static final int MAJOR = 1;
-  public static final int MINOR = 0;
-  public static final int REVISION = 0;
+  public static final int MAJOR = 2;
+  public static final int MINOR = 1;
+  public static final int REVISION = 1;
   public static final String VERSION = MAJOR + "." + MINOR + "." + REVISION;
   public static final String PROTOCOL = "http";
   public static final String HOST = "audiobox.fm";
   public static final int PORT = 80;
   public static final String PATH = "api";
-
-  private static final String USER_AGENT = 
-      "AudioBox.fm; " +
-      System.getProperty("os.name") + " " +
-      System.getProperty("os.arch") + "; " + 
-      System.getProperty("user.language") + "; " +
-      System.getProperty("java.runtime.version") +  ") " +
-      System.getProperty("java.vm.name") + "/" + 
-      System.getProperty("java.vm.version") + " " + 
-      APP_NAME_PLACEHOLDER + "/" + VERSION_PLACEHOLDER;
+  
+  /** Properties descriptor reader */
+  private static Properties sProperties = new Properties();
 
 
   private ContentFormat requestFormat = ContentFormat.XML;
@@ -65,7 +67,7 @@ public class DefaultConfiguration implements IConfiguration {
   private Map<String, Album> albums = new HashMap<String, Album>();
   private Map<String, Genre> genres = new HashMap<String, Genre>();
   private Map<String, Artist> artists = new HashMap<String, Artist>();
-
+  private String mUserAgent;
 
   public DefaultConfiguration(String appName, int major, int minor, int revision, ContentFormat requestFormat){
     this.setApplicationName(appName);
@@ -77,6 +79,27 @@ public class DefaultConfiguration implements IConfiguration {
     log.info("Configuration loaded");
     this.executor = Executors.newSingleThreadExecutor();
     this.setCacheManager( new DefaultCacheManager() );
+    
+    String version = "unattended";
+    String ga_flag = "S";
+    try {
+      version = DefaultConfiguration.getProperty("version");
+      ga_flag = version.contains(SNAPSHOT) ? ga_flag : "GA";
+      version = version.replace(SNAPSHOT, "");
+    } catch (FileNotFoundException e) {
+      log.error("Environment properties file not found: " + e.getMessage());
+    } catch (IOException e) {
+      log.error("Unable to access the environment properties file: " + e.getMessage());
+    }
+    
+    mUserAgent = "AudioBox.fm/" + version + " (Java; " + ga_flag + "; " +
+    System.getProperty("os.name") + " " +
+    System.getProperty("os.arch") + "; " + 
+    System.getProperty("user.language") + "; " +
+    System.getProperty("java.runtime.version") +  ") " +
+    System.getProperty("java.vm.name") + "/" + 
+    System.getProperty("java.vm.version") + 
+    " " + APP_NAME_PLACEHOLDER + "/" + VERSION_PLACEHOLDER;
   }
 
 
@@ -128,30 +151,36 @@ public class DefaultConfiguration implements IConfiguration {
 
   @Override
   public String getUserAgent(){
-    return USER_AGENT
-      .replace(APP_NAME_PLACEHOLDER, getApplicationName() )
-      .replace(VERSION_PLACEHOLDER, getVersion() );
+    mUserAgent = mUserAgent
+    .replace(APP_NAME_PLACEHOLDER, getApplicationName() )
+    .replace(VERSION_PLACEHOLDER, getVersion() );
+    log.debug("Computed UA: " + mUserAgent);
+    return mUserAgent;
   }
 
 
   @Override
   public String getProtocol() {
-    return PROTOCOL;
+    String prop = safelyGetProperty("protocol");
+    return prop != null ? prop : PROTOCOL;
   }
 
   @Override
   public String getHost() {
-    return HOST;
+    String prop = safelyGetProperty("host");
+    return prop != null ? prop : HOST;
   }
 
   public int getPort(){
-    return PORT;
+    String prop = safelyGetProperty("port");
+    return prop != null ? Integer.parseInt(prop, 10) : PORT;
   }
 
 
   @Override
   public String getPath() {
-    return PATH;
+    String prop = safelyGetProperty("path");
+    return prop != null ? prop : PATH;
   }
 
   @Override
@@ -334,5 +363,51 @@ public class DefaultConfiguration implements IConfiguration {
       this.artists.put( ar.getToken(), ar);
     }
   }
-
+  
+  
+  
+  /* --------------- */
+  /* Private methods */
+  /* --------------- */
+  
+  
+  /**
+   * This method returns the AudioBox.fm properties file reader.
+   * 
+   * <p>
+   * 
+   * It has to be used for internal logics only.
+   * 
+   * @param key the property you are looking for
+   * 
+   * @return the value of the property
+   * 
+   * @throws IOException if property files is not accessible or does not exists
+   */
+  private static String getProperty(String key) throws IOException {
+    if (sProperties == null || sProperties.isEmpty()) {
+      sProperties.load(DefaultConfiguration.class.getResourceAsStream("/fm/audiobox/core/config/env.properties"));
+    }
+    
+    return sProperties.getProperty(PROP_PREFIX + key);
+  }
+  
+  
+  /**
+   * Use this method to get the property in a safe way.<br/>
+   * This method will return null if the property file is not accessible for any reason.
+   * 
+   * @param key the property you are looking for
+   * 
+   * @return the value of the property
+   */
+  private static String safelyGetProperty(String key) {
+    try {
+      return getProperty(key);
+    } catch (IOException e) {
+      log.warn("Error accessing environment properties file. Default values will be used");
+    }
+    return null;
+  }
+  
 }

@@ -1,7 +1,6 @@
 package fm.audiobox.core.test;
 
 import org.junit.Before;
-import org.junit.Test;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
