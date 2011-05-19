@@ -88,7 +88,7 @@ public class AlbumsTest extends AudioBoxTestCase {
       assertEquals(0, albums.size());
 
       albums.load(false);
-      assertFalse(0 != albums.size());
+      assertTrue(0 < albums.size());
       
       Album al = (Album) albums.get(0);
       assertNotNull(al);
@@ -98,7 +98,7 @@ public class AlbumsTest extends AudioBoxTestCase {
       assertEquals(0, trs.size());
 
       trs.load(false);
-      assertFalse(0 != trs.size());
+      assertTrue(0 < trs.size());
       log.info("Found " + trs.size() + " tracks");
 
       Track tr = (Track) trs.get(0);

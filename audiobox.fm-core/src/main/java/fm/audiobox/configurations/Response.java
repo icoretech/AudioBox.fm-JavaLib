@@ -88,7 +88,7 @@ public class Response implements Serializable {
     try {
       this.stream.reset();
     } catch (IOException e) {
-      log.error("No resettable stream!!!!");
+      log.warn("Stream cannot be resetted: " + e.getMessage());
     }
     return this.stream;
   }
