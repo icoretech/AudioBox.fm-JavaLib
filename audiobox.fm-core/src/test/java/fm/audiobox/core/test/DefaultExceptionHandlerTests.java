@@ -1,50 +1,29 @@
-package fm.audiobox.core;
+package fm.audiobox.core.test;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.http.HttpStatus;
+import org.junit.Before;
 import org.junit.Test;
 
 import fm.audiobox.AudioBox;
-import fm.audiobox.configurations.DefaultConfiguration;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Track;
-import fm.audiobox.core.models.User;
-import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 import fm.audiobox.interfaces.IConfiguration;
-import fm.audiobox.interfaces.IConfiguration.ContentFormat;
 import fm.audiobox.interfaces.ILoginExceptionHandler;
 import fm.audiobox.interfaces.IServiceExceptionHandler;
 
-public class DefaultExceptionHandlerTests extends junit.framework.TestCase {
+public class DefaultExceptionHandlerTests extends AudioBoxTestCase {
 
   
-  private User user;
   private IConfiguration config;
   
-  
-  @Override
-  protected void setUp() throws Exception {
-    
-    config = new DefaultConfiguration("My test application");
-    
-    config.setVersion(1, 0, 0);
-    config.setRequestFormat(ContentFormat.XML);
-    config.setShortResponse(false);
-    config.setUseCache(false);
-    
-    AudioBox abx = new AudioBox(config);
-    
-    user = abx.login( Fixtures.get( Fixtures.LOGIN ),  Fixtures.get( Fixtures.RIGHT_PASS ));
-    
-    assertNotNull(user);
-    assertEquals(user.getUsername(), Fixtures.get( Fixtures.USERNAME ));
-    
-    super.setUp();
+  @Before
+  public void setUp() {
+    loginCatched();
   }
-
-
 
   @Test
   public void testServiceException() {
@@ -57,14 +36,14 @@ public class DefaultExceptionHandlerTests extends junit.framework.TestCase {
       }
     });
     
-    
     Track t = null;
     try {
       t = user.newTrackByToken("token_fake");
     } catch (ServiceException e) {
+      assertEquals(e.getErrorCode(), HttpStatus.SC_NOT_FOUND);
       assertEquals( new Boolean( params.containsKey("serviceException") ) , new Boolean(true) );
     } catch (LoginException e) {
-      assertNull(e);
+      fail(e.getMessage());
     }
     
     assertNull(t);
@@ -83,17 +62,21 @@ public class DefaultExceptionHandlerTests extends junit.framework.TestCase {
       }
     });
     
-    
     try {
       AudioBox abx = new AudioBox(config);
       abx.login("fake_username", "fake_passwrd");
     } catch (LoginException e) {
+      assertEquals(e.getErrorCode(), HttpStatus.SC_UNAUTHORIZED);
       assertTrue( params.containsKey("loginException") );
     } catch (ServiceException e) {
-      assertNull(e);
+      fail(e.getMessage());
     }
     
   }
   
+  protected IConfiguration getConfig() {
+    config = super.getConfig();
+    return config;
+  }
 
 }

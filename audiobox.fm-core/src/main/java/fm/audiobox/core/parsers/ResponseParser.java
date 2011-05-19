@@ -62,21 +62,15 @@ public class ResponseParser implements ResponseHandler<Response> {
     Response response = null;
 
     if (this.configuration.isCacheEnabled()) {
-      /*
-       * Try to retrieve response from CacheManager
-       */
+      // Try to retrieve response from CacheManager
       response = this.configuration.getCacheManager().getResponse(this.destEntity, respondedEtag);
     }
 
     if (response == null) {
-      /*
-       * No response found. Build a new Response
-       */
+      // No response found. Build a new Response
       HttpEntity entity = httpResponse.getEntity();
       if (entity == null) {
-        /*
-         * Entity is null. We're assuming we are in case of 304, 201 or 204
-         */
+        // Entity is null. We're assuming we are in case of 304, 201 or 204
         throw new IOException("No content found");
       }
       Header contentType = httpResponse.getEntity().getContentType();
@@ -86,9 +80,7 @@ public class ResponseParser implements ResponseHandler<Response> {
 
       ContentFormat format = isXml ? ContentFormat.XML : isJson ? ContentFormat.JSON : isText ? ContentFormat.TXT : ContentFormat.BINARY;
 
-      /*
-       * Build a new Response
-       */
+      // Build a new Response
       response = new Response(format, responseCode, entity.getContent());
 
       if (this.configuration.isCacheEnabled() && responseCode == HttpStatus.SC_OK) {
@@ -105,9 +97,7 @@ public class ResponseParser implements ResponseHandler<Response> {
          */
         Response tmpResponse = this.configuration.getCacheManager().getResponse(this.destEntity, respondedEtag);
         if (tmpResponse != null) {
-          /*
-           * CacheManager returned a Response. We have to use that
-           */
+          // CacheManager returned a Response. We have to use that
           response = tmpResponse;
         }
       }
@@ -118,16 +108,12 @@ public class ResponseParser implements ResponseHandler<Response> {
 
     case HttpStatus.SC_OK:
     case HttpStatus.SC_NOT_MODIFIED:
-      /*
-       * Try to parse response body
-       */
+      // Try to parse response body
       String content = this.responseHandler.parse(response.getStream(), destEntity, response.getFormat());
       response = new Response(response.getFormat(), responseCode, content);
       break;
 
-    /*
-     * In all other cases new response will be instantiated and returned
-     */
+    // In all other cases new response will be instantiated and returned
     case HttpStatus.SC_CREATED:
 
       response = new Response(response.getFormat(), responseCode, "Created");
@@ -149,15 +135,13 @@ public class ResponseParser implements ResponseHandler<Response> {
       throw new LoginException(responseCode, response.getBody());
 
     default:
-      /*
-       * We're assuming we are in case of server error
-       */
+      // Assuming we are in case of server error
       if (response.getFormat() == ContentFormat.XML || response.getFormat() == ContentFormat.JSON) {
         Error error = new Error(this.configuration);
         if (response.getFormat() == ContentFormat.XML) {
-          this.responseHandler.parseAsXml(httpResponse.getEntity().getContent(), error);
+          this.responseHandler.parseAsXml(response.getStream(), error);
         } else {
-          this.responseHandler.parseAsJson(httpResponse.getEntity().getContent(), error);
+          this.responseHandler.parseAsJson(response.getStream(), error);
         }
         response = new Response(response.getFormat(), error.getStatus(), error.getMessage());
 

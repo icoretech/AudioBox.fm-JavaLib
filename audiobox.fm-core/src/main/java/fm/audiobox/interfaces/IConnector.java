@@ -1,3 +1,25 @@
+
+/***************************************************************************
+ *   Copyright (C) 2010 iCoreTech research labs                            *
+ *   Contributed code from:                                                *
+ *   - Valerio Chiodino - keytwo at keytwo dot net                         *
+ *   - Fabio Tunno      - fat at fatshotty dot net                         *
+ *                                                                         *
+ *   This program is free software: you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation, either version 3 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program. If not, see http://www.gnu.org/licenses/     *
+ *                                                                         *
+ ***************************************************************************/
+
 package fm.audiobox.interfaces;
 
 import java.util.List;
@@ -15,72 +37,96 @@ import fm.audiobox.configurations.Response;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 
-
+/**
+ * This interface specifies how a connector should behave.
+ * 
+ * @author Fabio Tunno
+ */
 public interface IConnector {
   
   /**
    * Builds {@link HttpMethodBase} using GET method and passing parameters
    * 
-   * @param destEntity  {@link IEntity} to populate retriving response content
-   * @param action  action to invoke
-   * @param params  request parameters to send
-   * @return
+   * @param destEntity the {@link IEntity} to populate retriving response content
+   * @param action the action to invoke
+   * @param params the request parameters to send
+   * 
+   * @return the {@link IConnectionMethod} used for a GET request
    */
   public IConnectionMethod get(IEntity destEntity, String action, List<NameValuePair> params);
   
+  
   /**
    * Builds {@link HttpMethodBase} using PUT method
-   * @param destEntity  {@link IEntity} to populate retriving response content
-   * @param action  action to invoke
-   * @return
+   * 
+   * @param destEntity the {@link IEntity} to populate retriving response content
+   * @param action the action to invoke
+   * 
+   * @return the {@link IConnectionMethod} used for a PUT request
    */
   public IConnectionMethod put(IEntity destEntity, String action);
   
+  
   /**
    * Builds {@link HttpMethodBase} using POST method
-   * @param destEntity  {@link IEntity} to populate retriving response content
-   * @param action  action to invoke
-   * @return
+   * 
+   * @param destEntity {@link IEntity} to populate retriving response content
+   * @param action the action to invoke
+   * 
+   * @return the {@link IConnectionMethod} used for a POST request
    */
   public IConnectionMethod post(IEntity destEntity, String action);
   
+  
   /**
    * Builds {@link HttpMethodBase} using DELETE method
-   * @param destEntity  {@link IEntity} to populate retriving response content
-   * @param action  action to invoke
-   * @return
+   * 
+   * @param destEntity the {@link IEntity} to populate retriving response content
+   * @param action the action to invoke
+   * 
+   * @return the {@link IConnectionMethod} used for a DELETE request
    */
   public IConnectionMethod delete(IEntity destEntity, String action);
   
-  
+  /**
+   * The {@link IConnectionMethod} interface is used to build a specific request using
+   * one of four Http verbs in POST, PUT, GET or DELETE.
+   */
   public interface IConnectionMethod {
     
+    /* Constants */
     public static final String METHOD_GET = HttpGet.METHOD_NAME;
     public static final String METHOD_POST = HttpPost.METHOD_NAME;
     public static final String METHOD_PUT = HttpPut.METHOD_NAME;
     public static final String METHOD_DELETE = HttpDelete.METHOD_NAME;
+    
     public static final String HTTP_HEADER_ETAG = "ETag";
     public static final String HTTP_HEADER_IF_NONE_MATCH = "If-None-Match";
     
+    
     /**
-     * Initialization method. Sets all variables
+     * Initializes an {@link IConnectionMethod} object with given values.
      * 
      * @param destEntity the {@link IEntity} to pupulate while parsing response content
      * @param method the original {@link HttpRequestBase} used for connection
      * @param connector the original {@link HttpClient} used as connector
-     * @param followRedirect when {@code true} force request to follow redirect ( used by download method ) 
+     * @param config the {@link IConfiguration} object to reffer configuration to
      */
     public void init(IEntity destEntity, HttpRequestBase method, HttpClient connector, IConfiguration config);
     
+    
     /**
-     * When {@code true} force request to follow redirects ( used by download method )
-     * @param followRedirect
+     * Use this method if you want your request to follow redirects.
+     * 
+     * @param followRedirect if <coode>true</code> forces request to follow redirects ( used by download method )
      */
     public void setFollowRedirect(boolean followRedirect);
     
+    
     /**
-     * Returns the original {@link HttpRequestBase} method
-     * @return the original {@link HttpRequestBase} method
+     * Returns the {@link HttpRequestBase} used by the {@link HttpClient} wrapped by this object.
+     * 
+     * @return the {@link HttpRequestBase} object
      */
     public HttpRequestBase getHttpMethod();
     
@@ -92,58 +138,106 @@ public interface IConnector {
      */
     public IEntity getDestinationEntity();
     
+    
     /**
-     * Invokes server using
+     * Start the request.
      * 
-     * @throws ServiceException
-     * @throws LoginException
+     * @param async whether to make the request asynchronous or not.
+     * 
+     * @return the {@link Response} if the request is not asynchronous
+     * 
+     * @throws ServiceException if any exception remote exception occurs
+     * @throws LoginException if any unauthorized exception occurs
+     * 
      */
     public Response send(boolean async) throws ServiceException, LoginException;
     
+    
     /**
-     * Invokes server passing parameters.
-     * (Used with all methods exclusing GET)
+     * Start the request passing parameters.
+     * (Used with all verbs but GET)
      * 
+     * @param async whether to make the request asynchronous or not.
      * @param params {@link List} of {@link NameValuePair} used as request parameters
+     * 
+     * @return the {@link Response} if the request is not asynchronous
+     * 
+     * @throws ServiceException if any exception remote exception occurs
+     * @throws LoginException if any unauthorized exception occurs
      */
     public Response send(boolean async, List<NameValuePair> params) throws ServiceException, LoginException;
     
+    
     /**
-     * Invokes server passing an entire {@link HttpEntity}
-     * (Used with POST method)
+     * Invokes AudioBox.fm passing an entire {@link HttpEntity}
+     * (Used by POST method)
      * 
-     * @param destEntity
+     * @param async whether to make the request asynchronous or not.
      * @param params the {@link HttpEntity} used as request parameter
+     * 
+     * @return the {@link Response} if the request is not asynchronous
+     * 
+     * @throws ServiceException if any exception remote exception occurs
+     * @throws LoginException if any unauthorized exception occurs
      */
     public Response send(boolean async, HttpEntity params) throws ServiceException, LoginException;
     
+    
     /**
-     * Invokes server passing a {@link HttpEntity} as request parameter.
-     * The {@link IResponseHandler} is used as Response interceptor
+     * Invokes AudioBox.fm passing a {@link HttpEntity} as request parameter.
+     * The {@link IResponseHandler} is used as custom response handler.
      * 
+     * @param async whether to make the request asynchronous or not.
      * @param params a {@link HttpEntity} used as request parameter
-     * @param responseHandler a {@link IResponseHandler} used as custom response interceptor
-     * @throws ServiceException
-     * @throws LoginException
+     * @param responseHandler a {@link IResponseHandler} used as custom response handler
+     * 
+     * @return the {@link Response} if the request is not asynchronous
+     * 
+     * @throws ServiceException if any exception remote exception occurs
+     * @throws LoginException if any unauthorized exception occurs
+     * 
      */
-    public Response send(boolean async, HttpEntity params, IResponseHandler responseHandler) throws ServiceException, LoginException;
+    public Response send(boolean async, HttpEntity entity, IResponseHandler responseHandler) throws ServiceException, LoginException;
     
 
     /**
      * Use this method to get the {@link Response} of this request 
+     * 
      * @return the {@link Response} of the request
+     * 
+     * @throws ServiceException if any exception remote exception occurs
+     * @throws LoginException if any unauthorized exception occurs
      */
     public Response getResponse() throws ServiceException, LoginException;
     
+    
     /**
-     * Cancels current request
-     * (I.E. used to cancel an upload 
+     * Aborts all current pending requests 
      */
     public void abort();
     
+    
+    /**
+     * @return true if the verb used is GET
+     */
     public boolean isGET();
+    
+    
+    /**
+     * @return true if the verb used is POST
+     */
     public boolean isPOST();
+    
+    
+    /**
+     * @return true if the verb used is PUT
+     */
     public boolean isPUT();
+    
+    
+    /**
+     * @return true if the verb used is DELETE
+     */
     public boolean isDELETE();
     
   }

@@ -271,14 +271,140 @@ public class AudioBox {
 
     private final Log log = LogFactory.getLog(Connector.class);
 
+    /**
+     * This method is used to close all connections and reinstantiate the HttpClient.
+     */
+    public void abort() {
+      log.warn("All older requests will be aborted");
+      this.mCm.shutdown();
+      buildClient();
+    }
+
+    /**
+     * Use this method to configure the timeout limit for reqests made against AudioBox.fm.
+     * 
+     * @param timeout the milliseconds of the timeout limit
+     */
+    public void setTimeout(long timeout) {
+      log.info("Setting timeout parameter to: " + timeout);
+      mClient.getParams().setParameter(ConnManagerParams.TIMEOUT, timeout);
+    }
+
+
+    /**
+     * Returns the requests timeout limit.
+     * 
+     * @return timeout limit
+     */
+    public long getTimeout() {
+      return (Long) mClient.getParams().getParameter(ConnManagerParams.TIMEOUT);
+    }
+
+
+    /**
+     * Creates a HttpRequestBase
+     * 
+     * @param httpVerb the HTTP method to use for the request (ie: GET, PUT, POST and DELETE)
+     * @param source usually reffers the Model that invokes method
+     * @param dest Model that intercepts the response
+     * @param action the remote action to execute on the model that executes the action (ex. "scrobble")
+     * @param entity HttpEntity used by POST and PUT method
+     * 
+     * @return the HttpRequestBase 
+     */
+    public HttpRequestBase createConnectionMethod(String httpVerb, IEntity destEntity, String action, List<NameValuePair> params) {
+
+      if ( httpVerb == null ) {
+        httpVerb = IConnectionMethod.METHOD_GET;
+      }
+      
+      String url = this.buildRequestUrl(destEntity.getNamespace(), destEntity.getToken(), action, httpVerb, params);
+
+      HttpRequestBase method = null;
+
+      if ( IConnectionMethod.METHOD_POST.equals( httpVerb ) ) {
+        log.trace("Building HttpMethod POST");
+        method = new HttpPost(url);
+      } else if ( IConnectionMethod.METHOD_PUT.equals( httpVerb ) ) {
+        log.trace("Building HttpMethod PUT");
+        method = new HttpPut(url);
+      } else if ( IConnectionMethod.METHOD_DELETE.equals( httpVerb ) ) {
+        log.trace("Building HttpMethod DELETE");
+        method = new HttpDelete(url);
+      } else {
+        log.trace("Building HttpMethod GET");
+        method = new HttpGet(url);
+      }
+
+      log.info( "[ " + httpVerb + " ] Next request will be: " + url );
+
+      return method;
+    }
+
+
+    @Override
+    public IConnectionMethod get(IEntity destEntity, String action, List<NameValuePair> params) {
+      IConnectionMethod method = getConnectionMethod();
+      
+      if ( method != null ) {
+        HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_GET, destEntity, action, params);
+        method.init(destEntity, originalMethod, this.mClient, getConfiguration() );
+      }
+      
+      return method;
+    }
+
+
+    @Override
+    public IConnectionMethod put(IEntity destEntity, String action) {
+      IConnectionMethod method = getConnectionMethod();
+      
+      if ( method != null ) {
+        HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_PUT, destEntity, action, null);
+        method.init(destEntity, originalMethod, this.mClient, getConfiguration() );
+      }
+      
+      return method;
+    }
+
+
+    @Override
+    public IConnectionMethod post(IEntity destEntity, String action) {
+      IConnectionMethod method = getConnectionMethod();
+      
+      if ( method != null ) {
+        HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_POST, destEntity, action, null);
+        method.init(destEntity, originalMethod, this.mClient, getConfiguration() );
+      }
+      
+      return method;
+    }
+
+
+    @Override
+    public IConnectionMethod delete(IEntity destEntity, String action) {
+      IConnectionMethod method = getConnectionMethod();
+      
+      if ( method != null ) {
+        HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_DELETE, destEntity, action, null);
+        method.init(destEntity, originalMethod, this.mClient, getConfiguration() );
+      }
+      
+      return method;
+    }
+
+
+    /* --------------- */
+    /* Private methods */
+    /* --------------- */
+    
     /** Default constructor builds http connector */
     private Connector() {
       log.trace("New Connector is going to be instantiated");
       log.debug("Remote host will be: " + API_PATH );
       buildClient();
     }
-
-
+    
     /**
      * This method is used to build the HttpClient to use for connections
      */
@@ -371,81 +497,12 @@ public class AudioBox {
       });
 
     }
-
-
+    
+    
     /**
-     * This method is used to close all connections and reinstantiate the HttpClient.
-     */
-    public void abort() {
-      log.warn("All older requests will be aborted");
-      this.mCm.shutdown();
-      buildClient();
-    }
-
-    /**
-     * Use this method to configure the timeout limit for reqests made against AudioBox.fm.
      * 
-     * @param timeout the milliseconds of the timeout limit
+     * @return
      */
-    public void setTimeout(long timeout) {
-      log.info("Setting timeout parameter to: " + timeout);
-      mClient.getParams().setParameter(ConnManagerParams.TIMEOUT, timeout);
-    }
-
-
-    /**
-     * Returns the requests timeout limit.
-     * 
-     * @return timeout limit
-     */
-    public long getTimeout() {
-      return (Long) mClient.getParams().getParameter(ConnManagerParams.TIMEOUT);
-    }
-
-
-    /**
-     * Creates a HttpRequestBase
-     * 
-     * @param httpVerb the HTTP method to use for the request (ie: GET, PUT, POST and DELETE)
-     * @param source usually reffers the Model that invokes method
-     * @param dest Model that intercepts the response
-     * @param action the remote action to execute on the model that executes the action (ex. "scrobble")
-     * @param entity HttpEntity used by POST and PUT method
-     * 
-     * @return the HttpRequestBase 
-     */
-    public HttpRequestBase createConnectionMethod(String httpVerb, IEntity destEntity, String action, List<NameValuePair> params) {
-
-      if ( httpVerb == null ) {
-        httpVerb = IConnectionMethod.METHOD_GET;
-      }
-      
-      String url = this.buildRequestUrl(destEntity.getNamespace(), destEntity.getToken(), action, httpVerb, params);
-
-      HttpRequestBase method = null;
-
-      if ( IConnectionMethod.METHOD_POST.equals( httpVerb ) ) {
-        log.trace("Building HttpMethod POST");
-        method = new HttpPost(url);
-      } else if ( IConnectionMethod.METHOD_PUT.equals( httpVerb ) ) {
-        log.trace("Building HttpMethod PUT");
-        method = new HttpPut(url);
-      } else if ( IConnectionMethod.METHOD_DELETE.equals( httpVerb ) ) {
-        log.trace("Building HttpMethod DELETE");
-        method = new HttpDelete(url);
-      } else {
-        log.trace("Building HttpMethod GET");
-        method = new HttpGet(url);
-      }
-
-      log.info( "[ " + httpVerb + " ] Next request will be: " + url );
-
-      return method;
-    }
-
-
-
-
     private IConnectionMethod getConnectionMethod(){
       
       Class<? extends IConnectionMethod> klass = getConfiguration().getHttpMethodType();
@@ -462,14 +519,8 @@ public class AudioBox {
       }
       return null;
     }
+
     
-
-
-    /* --------------- */
-    /* Private methods */
-    /* --------------- */
-
-
     /**
      * Creates the correct url starting from parameters
      * 
@@ -510,59 +561,6 @@ public class AudioBox {
       }
 
       return url;
-    }
-
-
-    @Override
-    public IConnectionMethod get(IEntity destEntity, String action, List<NameValuePair> params) {
-      IConnectionMethod method = getConnectionMethod();
-      
-      if ( method != null ) {
-        HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_GET, destEntity, action, params);
-        method.init(destEntity, originalMethod, this.mClient, getConfiguration() );
-      }
-      
-      return method;
-    }
-
-
-
-    @Override
-    public IConnectionMethod put(IEntity destEntity, String action) {
-      IConnectionMethod method = getConnectionMethod();
-      
-      if ( method != null ) {
-        HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_PUT, destEntity, action, null);
-        method.init(destEntity, originalMethod, this.mClient, getConfiguration() );
-      }
-      
-      return method;
-    }
-
-
-    @Override
-    public IConnectionMethod post(IEntity destEntity, String action) {
-      IConnectionMethod method = getConnectionMethod();
-      
-      if ( method != null ) {
-        HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_POST, destEntity, action, null);
-        method.init(destEntity, originalMethod, this.mClient, getConfiguration() );
-      }
-      
-      return method;
-    }
-
-
-    @Override
-    public IConnectionMethod delete(IEntity destEntity, String action) {
-      IConnectionMethod method = getConnectionMethod();
-      
-      if ( method != null ) {
-        HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_DELETE, destEntity, action, null);
-        method.init(destEntity, originalMethod, this.mClient, getConfiguration() );
-      }
-      
-      return method;
     }
 
     
