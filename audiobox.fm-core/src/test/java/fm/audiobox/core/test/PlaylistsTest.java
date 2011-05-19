@@ -159,15 +159,19 @@ public class PlaylistsTest extends AudioBoxTestCase {
     assertNotNull(pls);
   }
 
-  //@Test
+  @Test
   public void testMoveSingleTrackToPlaylist() throws LoginException, ServiceException {
-    loginCatched();
 
     Playlists playlists = user.getPlaylists();
     assertNotNull(playlists);
-
+    playlists.load(false);
+    
     Playlist smallPlaylist = playlists.getPlaylistByName(Fixtures.get(Fixtures.SMALL_PLAYLIST_NAME));
     Playlist dev = playlists.getPlaylistByName(Fixtures.get(Fixtures.DEV_PLAYLIST_NAME));
+    
+    smallPlaylist.getTracks().load(false);
+    dev.getTracks().load(false);
+    
     Track trk = smallPlaylist.getTracks().get(0);
 
     long previousTracksCount = dev.getTracksCount();
@@ -183,6 +187,7 @@ public class PlaylistsTest extends AudioBoxTestCase {
 
     result = dev.removeTrack(trk);
     if (result) {
+      assertEquals(previousTracksCount, dev.getTracksCount());
       assertNull(dev.getTracks().get(trk.getToken()));
     } else {
       // Fail and exit
@@ -191,17 +196,20 @@ public class PlaylistsTest extends AudioBoxTestCase {
 
   }
 
-  //@Test
+  @Test
   public void testMoveMultipleTracksToPlaylist() throws LoginException, ServiceException {
-    loginCatched();
 
     Playlists playlists = user.getPlaylists();
     assertNotNull(playlists);
+    playlists.load(false);
 
-    Playlist soundtracks = playlists.getPlaylistByName(Fixtures.get(Fixtures.SMALL_PLAYLIST_NAME));
+    Playlist smallPlaylist = playlists.getPlaylistByName(Fixtures.get(Fixtures.SMALL_PLAYLIST_NAME));
     Playlist dev = playlists.getPlaylistByName(Fixtures.get(Fixtures.DEV_PLAYLIST_NAME));
-
-    Tracks musicTracks = soundtracks.getTracks();
+    
+    smallPlaylist.getTracks().load(false);
+    dev.getTracks().load(false);
+    
+    Tracks musicTracks = smallPlaylist.getTracks();
 
     List<Track> tracks = new ArrayList<Track>();
     int numberOfTracksToAdd = 10;
@@ -224,8 +232,10 @@ public class PlaylistsTest extends AudioBoxTestCase {
 
     result = dev.removeTracks(tracks);
     if (result) {
-      for (Track trk : tracks)
+      assertEquals(previousTracksCount , dev.getTracksCount());
+      for (Track trk : tracks) {
         assertNull(dev.getTracks().get(trk.getToken()));
+      }
     } else {
       // Fail and exit
       fail("Unable to move track to the selected playlist");
@@ -233,12 +243,12 @@ public class PlaylistsTest extends AudioBoxTestCase {
 
   }
 
-  //@Test
+  @Test
   public void testMoveUnexistingsTrackShouldRiseErrors() throws LoginException, ServiceException {
-    loginCatched();
 
     Playlists playlists = user.getPlaylists();
     assertNotNull(playlists);
+    playlists.load(false);
 
     Playlist dev = playlists.getPlaylistByName(Fixtures.get(Fixtures.DEV_PLAYLIST_NAME));
     Track trk = user.newTrack();

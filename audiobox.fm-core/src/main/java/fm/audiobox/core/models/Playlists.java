@@ -121,7 +121,7 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
   public Playlist getPlaylistByName(String name){
     for ( Iterator<Playlist> it = this.iterator(); it.hasNext();  ){
       Playlist pl = it.next();
-      if (  name.equals( pl.getName() )  ) {
+      if (  pl.getName().equalsIgnoreCase( name )  ) {
         return pl;
       }
     }
@@ -148,7 +148,7 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
    * Returns a list of {@link Playlist} that matches the given {@link PlaylistTypes}
    * 
    * @param type the {@link PlaylistTypes}
-   * @return the first {@link Playlist} that matches with the given {@link PlaylistTypes}
+   * @return a list of {@link Playlist} that matches with the given {@link PlaylistTypes}
    */
   public List<Playlist> getPlaylistsByType(PlaylistTypes type){
     List<Playlist> pls = new ArrayList<Playlist>();

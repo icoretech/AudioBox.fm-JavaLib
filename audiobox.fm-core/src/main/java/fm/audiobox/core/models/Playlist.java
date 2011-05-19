@@ -273,9 +273,9 @@ public class Playlist extends AbstractEntity implements Serializable {
    * @throws ServiceException if any connection problem to AudioBox.fm occurs.
    */
   public boolean addTrack(Track track) throws LoginException, ServiceException {
-  	List<Track> tracks = new ArrayList<Track>();
-  	tracks.add(track);
-      return this.addTracks(tracks);
+    List<Track> tracks = new ArrayList<Track>();
+    tracks.add(track);
+    return this.addTracks(tracks);
   }
 
   
@@ -301,8 +301,9 @@ public class Playlist extends AbstractEntity implements Serializable {
     			}
     		}
     	}
+    	return true;
   	}
-      return true;
+    return false;
   }
       
       
@@ -346,8 +347,9 @@ public class Playlist extends AbstractEntity implements Serializable {
           }
         }
       }
+      return true;
     }
-    return true;
+    return false;
   }
       
       
