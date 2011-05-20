@@ -679,13 +679,13 @@ public class Track extends AbstractEntity implements Serializable {
     } else if ( tagName.equals("file_name") || tagName.equals("fn") ){
       return this.getClass().getMethod("setFileName", String.class);
       
-    } else if ( tagName.equals( Album.TAGNAME ) || tagName.equals("al") ){
+    } else if ( tagName.matches( Album.TAGNAME ) ){
       return this.getClass().getMethod("setAlbum", Album.class);
       
-    } else if ( tagName.equals( Artist.TAGNAME ) || tagName.equals("ar") ){
+    } else if ( tagName.matches( Artist.TAGNAME ) ){
       return this.getClass().getMethod("setArtist", Artist.class);
       
-    } else if ( tagName.equals( Genre.TAGNAME ) || tagName.equals("g") ){
+    } else if ( tagName.matches( Genre.TAGNAME ) ){
       return this.getClass().getMethod("setGenre", Genre.class);
       
     }

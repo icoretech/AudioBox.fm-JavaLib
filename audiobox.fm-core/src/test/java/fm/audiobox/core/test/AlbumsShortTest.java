@@ -11,11 +11,12 @@ import fm.audiobox.core.models.Covers;
 import fm.audiobox.core.models.Track;
 import fm.audiobox.core.models.Tracks;
 import fm.audiobox.core.test.mocks.fixtures.Fixtures;
+import fm.audiobox.interfaces.IConfiguration;
 
 /**
  * @author keytwo
  */
-public class AlbumsTest extends AudioBoxTestCase {
+public class AlbumsShortTest extends AudioBoxTestCase {
 
   @Before
   public void setUp() {
@@ -113,6 +114,13 @@ public class AlbumsTest extends AudioBoxTestCase {
     } catch (ServiceException e) {
       fail(e.getMessage());
     }
+  }
+  
+  @Override
+  protected IConfiguration getConfig() {
+    IConfiguration config = super.getConfig();
+    config.setShortResponse(true);
+    return config;
   }
 
 }

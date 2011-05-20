@@ -57,8 +57,7 @@ public class Artist extends AbstractEntity implements Serializable {
   
   /** The XML tag name for the Artist element */
   public static final String NAMESPACE = Artists.TAGNAME;
-  public static final String TAGNAME = "artist";
-
+  public static final String TAGNAME = "artist|ar";
 
   private String name;
   private Tracks tracks;

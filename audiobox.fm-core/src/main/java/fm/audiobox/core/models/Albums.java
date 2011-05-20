@@ -99,7 +99,7 @@ public class Albums extends AbstractCollectionEntity<Album> implements Serializa
   @Override
   public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
     
-    if ( tagName.equals( Album.TAGNAME ) ){
+    if ( tagName.matches( Album.TAGNAME ) ){
       return this.getClass().getMethod("add", Album.class );
     }
     

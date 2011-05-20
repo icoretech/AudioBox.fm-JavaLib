@@ -56,7 +56,7 @@ public class Genre extends AbstractEntity implements Serializable {
 
   /** The XML tag name for the Genre element */
   public static final String NAMESPACE = Genres.TAGNAME;
-  public static final String TAGNAME = "genre";
+  public static final String TAGNAME = "genre|g";
 
   private String name;
   private Tracks tracks;

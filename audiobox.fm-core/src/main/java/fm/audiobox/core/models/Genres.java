@@ -103,7 +103,7 @@ public class Genres extends AbstractCollectionEntity<Genre> implements Serializa
   @Override
   public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
     
-    if ( tagName.equals( Genre.TAGNAME ) ){
+    if ( tagName.matches( Genre.TAGNAME ) ){
       return this.getClass().getMethod("add", Genre.class);
       
     }

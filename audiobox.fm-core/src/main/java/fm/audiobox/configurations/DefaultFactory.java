@@ -88,7 +88,19 @@ public class DefaultFactory implements IFactory {
   
   @Override
   public boolean containsEntity(String tagName) {
-    return this.entities.containsKey(tagName);
+    for (String k : this.entities.keySet()) {
+      if (tagName.matches(k))
+        return true;
+    }
+    return false;
+  }
+  
+  public Class<? extends IEntity> getEntityByTag(String tagName) {
+    for (String k : this.entities.keySet()) {
+      if (tagName.matches(k))
+        return this.entities.get(k);
+    }
+    return null;
   }
   
   
@@ -102,7 +114,7 @@ public class DefaultFactory implements IFactory {
       return null;
     }
     
-    Class<? extends IEntity> klass = this.entities.get(tagName);
+    Class<? extends IEntity> klass = getEntityByTag(tagName);
     
     try {
       Constructor<? extends IEntity> constructor = klass.getConstructor(IConnector.class, IConfiguration.class);

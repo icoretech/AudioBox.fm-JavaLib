@@ -65,7 +65,7 @@ public class Album extends AbstractEntity implements Serializable {
   
   /** The XML tag name for the Album element */
   public static final String NAMESPACE = Albums.TAGNAME;
-  public static final String TAGNAME = "album";
+  public static final String TAGNAME = "album|al";
 
   private String name; 
   private Covers covers;
@@ -178,10 +178,10 @@ public class Album extends AbstractEntity implements Serializable {
     } else if ( tagName.equals("name") || tagName.equals("n") ){
       return this.getClass().getMethod("setName", String.class);
       
-    } else if ( tagName.equals( Artist.TAGNAME ) || tagName.equals("ar") ){
+    } else if ( tagName.matches( Artist.TAGNAME ) ){
       return this.getClass().getMethod("setArtist", Artist.class);
       
-    } else if ( tagName.equals(Covers.TAGNAME ) || tagName.equals("c") ){
+    } else if ( tagName.matches(Covers.TAGNAME ) ){
       return this.getClass().getMethod("setCovers", Covers.class);
       
     }

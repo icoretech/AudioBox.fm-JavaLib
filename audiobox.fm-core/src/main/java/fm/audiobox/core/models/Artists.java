@@ -103,7 +103,7 @@ public class Artists extends AbstractCollectionEntity<Artist> implements Seriali
   @Override
   public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
     
-    if ( tagName.equals( Artist.TAGNAME ) ){
+    if ( tagName.matches( Artist.TAGNAME ) ){
       return this.getClass().getMethod("add", Artist.class);
     }
     

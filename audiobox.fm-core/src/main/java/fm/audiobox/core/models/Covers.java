@@ -57,8 +57,8 @@ public class Covers extends AbstractEntity implements Serializable {
 
   /** The XML tag name for the Album element */
   public static final String NAMESPACE = null;
-  public static final String TAGNAME = "covers";
-
+  public static final String TAGNAME = "covers|c";
+  
   private String large;
   private String medium;
   private String small;
