@@ -39,13 +39,13 @@ import fm.audiobox.interfaces.IEntity;
  * CoverUrls XML looks like this: 
  * 
  * <pre>
- * {@code
- *   <covers> 
- *     <l>http://media.audiobox.fm/images/albums/HOBh1lMt/l.jpg?1277867432</l> 
- *     <m>http://media.audiobox.fm/images/albums/HOBh1lMt/m.jpg?1277867432</m> 
- *     <s>http://media.audiobox.fm/images/albums/HOBh1lMt/s.jpg?1277867432</s> 
- *   </covers>
- * }
+ * @code
+ * <covers> 
+ *   <l>http://media.audiobox.fm/images/albums/HOBh1lMt/l.jpg?1277867432</l> 
+ *   <m>http://media.audiobox.fm/images/albums/HOBh1lMt/m.jpg?1277867432</m> 
+ *   <s>http://media.audiobox.fm/images/albums/HOBh1lMt/s.jpg?1277867432</s> 
+ * </covers>
+ * @endcode
  * </pre>
  *
  * @author Valerio Chiodino

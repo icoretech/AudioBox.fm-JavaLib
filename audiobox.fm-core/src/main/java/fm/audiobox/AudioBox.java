@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observer;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.http.Header;
@@ -67,17 +68,20 @@ import org.apache.http.protocol.HttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fm.audiobox.configurations.DefaultConfiguration;
+import fm.audiobox.configurations.DefaultFactory;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
+import fm.audiobox.core.models.AbstractCollectionEntity;
 import fm.audiobox.core.models.User;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IEntity;
+import fm.audiobox.interfaces.IFactory;
 
 
 /**
  * AudioBox is the main library class. Every request to AudioBox.fm should pass through this object.
- * This class is used mainly to configure every aspect of the library itself.<br/>
  * To populate and get informations about user library use the {@link User} (or an extended User) model instead.
  * <p>
  * 
@@ -91,29 +95,32 @@ import fm.audiobox.interfaces.IEntity;
  *
  * <p>
  *
- * In order to make AudioBox load your extended models you will need to provide your {@link Model} extension
- * through the {@link AudioBox#setCollectionListenerFor(String, CollectionListener)} method.<br/>
+ * In order to make AudioBox load your extended models you will need to provide your {@link AbstractEntity} extension
+ * through an {@link IFactory#setEntity(String, Class)} implementation. If you don't want to implement one you can use
+ * the {@link DefaultFactory}.<br/>
  *
  * <p>
  * 
- * Note that some of the requests, such as the ModelsCollection population requests, can be done asynchronously.<br/>
- * To keep track of the collection building process you can make use of the {@link CollectionListener} object.
+ * Note that some of the requests, such as the {@link AbstractCollectionEntity} population requests, can be done 
+ * asynchronously.<br/>
+ * To keep track of the collection building process you can use {@link Observer Observers}.
  * 
  * <p>
  *
  * The usual execution flow can be demonstrated by the code snippet below:
  *
  * <pre>
+ * @code
+ * // With this object you can configure many aspects of the libs
+ * IConfiguration configuration = new DefaultConfiguration("My test application");
+ * 
  * // Creating the new AudioBox instance
- * abc = new AudioBox();
+ * abc = new AudioBox(configuration);
  *
  * // If you extended the {@link User} model AudioBox should 
  * // be informed before the login take place.
- * AudioBox.setModelClassFor(AudioBox.USER_KEY , MyUser.class );
+ * abc.getConfiguration().getFactory().setEntity(User.TAGNAME, MyUser.class);
  * 
- * // Suppose we want to limit requests timeout to 5 seconds
- * abc.getMainConnector().setTimeout( 5000 );
- *  
  * // Now we can try to perform a login...
  * try {
  *
@@ -124,12 +131,18 @@ import fm.audiobox.interfaces.IEntity;
  *    // To browse user library we have some nice utils methods
  *    // We can get the user's playlists...
  *    Playlists pls = user.getPlaylists();
+ *    // This object is still empty because you may want to add some observer to it or do 
+ *    // something else with it.
+ *    
+ *    // To populate the playlists call load method:
+ *    pls.load(false);
  *    
  *    // ...and get more details on a specific one
  *    Playlist pl = playlists.get(0);
  *    
  *    // Get playlist's tracks
  *    Tracks trs = pl.getTracks();
+ *    trs.load(false);
  *    
  *    // Track informations
  *    Track tr = trs.get(0);
@@ -139,6 +152,7 @@ import fm.audiobox.interfaces.IEntity;
  * } catch (ServiceException e) {
  *    // Handle {@link ServiceException}
  * }
+ * @endcode
  * </pre>
  *
  * This is briefly the navigation loop. Moreover each model offer some action that can be performed. To know what a model
@@ -146,7 +160,7 @@ import fm.audiobox.interfaces.IEntity;
  * 
  * @author Valerio Chiodino
  * @author Fabio Tunno
- * @version 0.0.1
+ * @version 1.0.0
  */
 public class AudioBox {
 

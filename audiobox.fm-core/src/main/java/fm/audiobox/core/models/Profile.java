@@ -39,12 +39,12 @@ import fm.audiobox.interfaces.IEntity;
  * Profile XML looks like this: 
  * 
  * <pre>
- * {@code
-   <profile> 
-     <autoplay>false</autoplay> 
-     <real_name>Name Surname</real_name> 
-   </profile>
- * }
+ * @code
+ * <profile> 
+ *   <autoplay>false</autoplay> 
+ *   <real_name>Name Surname</real_name> 
+ * </profile>
+ * @endcode
  * </pre>
  * 
  * @author Valerio Chiodino

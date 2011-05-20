@@ -39,12 +39,12 @@ import fm.audiobox.interfaces.IEntity;
  * Genre XML looks like this: 
  * 
  * <pre>
- * {@code
+ * @code
  * <genre>
  *   <name>Genre name</name>
  *   <token>sjKzpds9Tk</token>
  * </genre>
- * }
+ * @endcode
  * </pre>
  *
  * @author Valerio Chiodino

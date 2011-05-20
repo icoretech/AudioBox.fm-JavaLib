@@ -39,12 +39,12 @@ import fm.audiobox.interfaces.IEntity;
  * Artist XML looks like this: 
  * 
  * <pre>
- * {@code
+ * @code
  * <artist>
  *   <name>Artist name</name>
  *   <token>cd8sa09df</token>
  * </artist>
- * }
+ * @endcode
  * </pre>
  *
  * @author Valerio Chiodino

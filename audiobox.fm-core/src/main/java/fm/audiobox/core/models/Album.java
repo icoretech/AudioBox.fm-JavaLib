@@ -39,8 +39,7 @@ import fm.audiobox.interfaces.IEntity;
  * Album XML looks like this: 
  * 
  * <pre>
- * {@code
- * 
+ * @code
  * <album>
  *   <name>Album name</name>
  *   <token>coq8FfgK</token>
@@ -54,7 +53,7 @@ import fm.audiobox.interfaces.IEntity;
  *     <token>fs8d8g9d</token>
  *   </artist>
  * </album>
- * }
+ * @endcode
  * </pre>
  *
  * @author Valerio Chiodino

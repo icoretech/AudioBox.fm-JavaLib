@@ -39,12 +39,12 @@ import fm.audiobox.interfaces.IEntity;
  * Error XML looks like this: 
  * 
  * <pre>
- * {@code
+ * @code
  * <error>
  *   <status>500</name>
  *   <message>This is an error message</token>
  * </error>
- * }
+ * @endcode
  * </pre>
  *
  * @author Valerio Chiodino

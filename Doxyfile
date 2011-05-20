@@ -1,0 +1,22 @@
+CREATE_SUBDIRS       = YES
+ALPHABETICAL_INDEX   = YES
+COLS_IN_ALPHA_INDEX  = 3
+GENERATE_HTML        = YES
+EXCLUDE_PATTERNS     = **/.git **/test **/target **/.settings **/resources **/com/twmacinta
+FILE_PATTERNS        = *.java
+INPUT                = audiobox.fm-core/src/main/java/fm audiobox.fm-sync/src/main/java/fm
+PROJECT_NAME         = AudioBox.fm Java Libs
+PROJECT_NUMBER       = 2.0-SNAPSHOT
+RECURSIVE            = YES
+OUTPUT_DIRECTORY     = target
+JAVADOC_AUTOBRIEF    = YES
+OPTIMIZE_OUTPUT_JAVA = YES
+EXTRACT_ALL          = YES
+GENERATE_TODOLIST    = YES
+QUIET                = YES
+WARNINGS             = NO
+WARN_IF_UNDOCUMENTED = YES
+WARN_IF_DOC_ERROR    = YES
+WARN_NO_PARAMDOC     = YES
+WARN_LOGFILE         = target/doxygen.log
+

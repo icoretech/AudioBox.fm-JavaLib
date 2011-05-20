@@ -59,7 +59,7 @@ import fm.audiobox.interfaces.IResponseHandler;
  * Profile XML looks like this: 
  * 
  * <pre>
- * {@code
+ * @code
  * <playlist>
  *   <token>as89d7h4sa</token>
  *   <name>Music</name>
@@ -67,7 +67,7 @@ import fm.audiobox.interfaces.IResponseHandler;
  *   <playlist_type>audio</playlist_type>
  *   <playlist_tracks_count>12312</playlist_tracks_count>
  * </playlist>
- * }
+ * @endcode
  * </pre>
  *
  * @author Valerio Chiodino

@@ -34,6 +34,8 @@ import fm.audiobox.core.models.Track;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 
 /**
+ * This interface describes how an implementation of the AudioBox configuration should behave.<br/>
+ * An implementing class is mainly used to configure every aspect of the library itself.
  * 
  * @author Fabio Tunno
  */

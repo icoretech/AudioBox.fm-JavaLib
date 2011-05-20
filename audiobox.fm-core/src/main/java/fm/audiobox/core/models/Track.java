@@ -46,7 +46,7 @@ import fm.audiobox.interfaces.IResponseHandler;
  * The XML response looks like this:
  *
  * <pre>
- * {@code
+ * @code
  * <track> 
  *   <token>{token}</token> 
  *   <title>Title</title> 
@@ -64,7 +64,7 @@ import fm.audiobox.interfaces.IResponseHandler;
  *   <artist>...</artist> 
  *   <genre>...</genre> 
  * </track>
- * }
+ * @endcode
  * </pre>
  *
  * @author Valerio Chiodino

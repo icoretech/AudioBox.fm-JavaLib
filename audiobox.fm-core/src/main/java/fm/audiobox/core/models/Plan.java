@@ -38,20 +38,20 @@ import fm.audiobox.interfaces.IEntity;
  * Plan XML looks like this: 
  * 
  * <pre>
- * {@code
-   <plan>
-     <feat_api>true</feat_api> 
-     <feat_cloud_web_player>true</feat_cloud_web_player> 
-     <feat_dropbox>true</feat_dropbox> 
-     <feat_gigjunkie>true</feat_gigjunkie> 
-     <feat_lastfm>true</feat_lastfm> 
-     <feat_manager>true</feat_manager> 
-     <feat_multiformat>true</feat_multiformat> 
-     <feat_social_networks>true</feat_social_networks> 
-     <feat_youtube_channel>true</feat_youtube_channel> 
-     <name>plan</name>
-   </plan>
- * }
+ * @code
+ * <plan>
+ *  <feat_api>true</feat_api> 
+ *  <feat_cloud_web_player>true</feat_cloud_web_player> 
+ *  <feat_dropbox>true</feat_dropbox> 
+ *  <feat_gigjunkie>true</feat_gigjunkie> 
+ *  <feat_lastfm>true</feat_lastfm> 
+ *  <feat_manager>true</feat_manager> 
+ *  <feat_multiformat>true</feat_multiformat> 
+ *  <feat_social_networks>true</feat_social_networks> 
+ *  <feat_youtube_channel>true</feat_youtube_channel> 
+ *  <name>plan</name>
+ * </plan>
+ * @endcode
  * </pre>
  * 
  * @author Valerio Chiodino

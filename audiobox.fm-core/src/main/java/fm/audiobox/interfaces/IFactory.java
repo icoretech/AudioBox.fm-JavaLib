@@ -16,15 +16,17 @@ public interface IFactory {
   
   /**
    * Sets the right entity associated with its default class
-   * @param klass default {@link Class}
-   * @param entity new {@link Class} to be instantiated
+   * 
+   * @param tagName the name of the tag to associate to the class
+   * @param entityClass new {@link Class} to be instantiated
    */
-  public void setEntity(String tagName, Class<? extends IEntity> entity);
+  public void setEntity(String tagName, Class<? extends IEntity> entityClass);
   
   /**
    * Returns true if an {@link IEntity} has been set
    * 
    * @param tagName the {@link IEntity} tag name
+   * 
    * @return true if an {@link IEntity} has been set
    */
   public boolean containsEntity(String tagName);

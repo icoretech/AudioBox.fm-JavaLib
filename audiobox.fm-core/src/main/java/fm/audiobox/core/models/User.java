@@ -43,23 +43,22 @@ import fm.audiobox.interfaces.IResponseHandler;
  * When a login is successfully performed an XML like the following is received and parsed:
  * 
  * <pre>
- * {@code
- * 
-   <user> 
-     <bytes_served>25352551153</bytes_served> 
-     <email>user@domain.com</email> 
-     <play_count>3378</play_count> 
-     <quota>1318739344</quota> 
-     <tracks_count>273</tracks_count> 
-     <username>username</username> 
-     <available_storage>162135015424</available_storage> 
-     <allowed_formats>aac;mp3;mp2;m4a;m4b;m4r;mp4;3gp;ogg;oga;flac;spx;wma;rm;ram;wav;mpc;mp+;mpp;aiff;aif;aifc;tta</allowed_formats> 
-     <time_zone>Rome</time_zone> 
-     <trial_ends_at>2011-03-05 08:20:38 +0100</trial_ends_at> 
-     <profile>....</profile>
-     <plan>...</plan>
-   </user>
- * }
+ * @code
+ * <user> 
+ *  <bytes_served>25352551153</bytes_served> 
+ *  <email>user@domain.com</email> 
+ *  <play_count>3378</play_count> 
+ *  <quota>1318739344</quota> 
+ *  <tracks_count>273</tracks_count> 
+ *  <username>username</username> 
+ *  <available_storage>162135015424</available_storage> 
+ *  <allowed_formats>aac;mp3;mp2;m4a;m4b;m4r;mp4;3gp;ogg;oga;flac;spx;wma;rm;ram;wav;mpc;mp+;mpp;aiff;aif;aifc;tta</allowed_formats> 
+ *  <time_zone>Rome</time_zone> 
+ *  <trial_ends_at>2011-03-05 08:20:38 +0100</trial_ends_at> 
+ *  <profile>....</profile>
+ *  <plan>...</plan>
+ * </user>
+ * @endcode
  * </pre>
  *
  * Through the User object you have access to its library that can be browsed by:
