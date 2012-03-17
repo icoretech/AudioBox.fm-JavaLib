@@ -43,7 +43,7 @@ public class UserTest extends AudioBoxTestCase {
     
     try {
     	user.getPlaylists().load(false);
-		user.getUploadedTracks();
+    	user.getUploadedTracks();
 	} catch (ServiceException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
