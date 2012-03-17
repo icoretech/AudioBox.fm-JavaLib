@@ -59,7 +59,7 @@ public class Genre extends AbstractEntity implements Serializable {
   public static final String TAGNAME = "genre|g";
 
   private String name;
-  private Tracks tracks;
+  private Files files;
 
 
   /**
@@ -103,16 +103,16 @@ public class Genre extends AbstractEntity implements Serializable {
   
   
   /**
-   * Returns a {@link Tracks} instance ready to be populated through {@link Tracks#load()} method
+   * Returns a {@link Files} instance ready to be populated through {@link Files#load()} method
    * 
-   * @return a {@link Tracks} instance
+   * @return a {@link Files} instance
    */
-  public Tracks getTracks(){
-    if ( this.tracks == null ){
-      this.tracks = (Tracks) getConfiguration().getFactory().getEntity( Tracks.TAGNAME , getConfiguration() );
-      this.tracks.setParent( this );
+  public Files getFiles(){
+    if ( this.files == null ){
+      this.files = (Files) getConfiguration().getFactory().getEntity( Files.TAGNAME , getConfiguration() );
+      this.files.setParent( this );
     }
-    return this.tracks;
+    return this.files;
   }
   
 

@@ -15,14 +15,14 @@ import fm.audiobox.core.models.Albums;
 import fm.audiobox.core.models.Artist;
 import fm.audiobox.core.models.Artists;
 import fm.audiobox.core.models.Covers;
+import fm.audiobox.core.models.File;
+import fm.audiobox.core.models.Files;
 import fm.audiobox.core.models.Genre;
 import fm.audiobox.core.models.Genres;
+import fm.audiobox.core.models.MediaFiles;
 import fm.audiobox.core.models.Plan;
-import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
 import fm.audiobox.core.models.Profile;
-import fm.audiobox.core.models.Track;
-import fm.audiobox.core.models.Tracks;
 import fm.audiobox.core.models.User;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
@@ -58,8 +58,8 @@ public class DefaultFactory implements IFactory {
     gEntities.put( Profile.TAGNAME, Profile.class );
     
     gEntities.put( Playlists.TAGNAME, Playlists.class );
-    gEntities.put( Playlist.TAGNAME, Playlist.class );
-    
+//    gEntities.put( Playlist.TAGNAME, Playlist.class );
+    gEntities.put( MediaFiles.TAGNAME, MediaFiles.class );
     
     gEntities.put( Genres.TAGNAME, Genres.class );
     gEntities.put( Genre.TAGNAME, Genre.class );
@@ -71,8 +71,11 @@ public class DefaultFactory implements IFactory {
     gEntities.put( Artists.TAGNAME, Artists.class );
     gEntities.put( Artist.TAGNAME, Artist.class );
     
-    gEntities.put( Tracks.TAGNAME, Tracks.class );
-    gEntities.put( Track.TAGNAME, Track.class );
+//    gEntities.put( Tracks.TAGNAME, Tracks.class );
+//    gEntities.put( Track.TAGNAME, Track.class );    
+    
+    gEntities.put( Files.TAGNAME, Files.class );
+    gEntities.put( File.TAGNAME, File.class );
     
     gEntities.put( fm.audiobox.core.models.Error.TAGNAME, fm.audiobox.core.models.Error.class );
     

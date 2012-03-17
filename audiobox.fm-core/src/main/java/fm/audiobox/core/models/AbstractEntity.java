@@ -80,4 +80,6 @@ public abstract class AbstractEntity extends Observable implements IEntity {
    */
   protected abstract void copy(IEntity entity);
   
+  
+  
 }

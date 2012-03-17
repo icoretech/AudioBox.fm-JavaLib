@@ -316,5 +316,10 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
     return null;
   }
 
-
+  /**
+   * Returns the tag name associated with the Entity content in this list
+   * <b>This method is used by parser</b>
+   * @return
+   */
+  public abstract String getSubTagName();
 }

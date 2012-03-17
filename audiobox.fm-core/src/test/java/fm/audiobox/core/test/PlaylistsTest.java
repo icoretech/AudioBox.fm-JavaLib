@@ -14,7 +14,7 @@ import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Album;
 import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
-import fm.audiobox.core.models.Playlists.PlaylistTypes;
+import fm.audiobox.core.models.Playlists.Types;
 import fm.audiobox.core.models.Track;
 import fm.audiobox.core.models.Tracks;
 import fm.audiobox.core.test.mocks.fixtures.Fixtures;
@@ -46,10 +46,10 @@ public class PlaylistsTest extends AudioBoxTestCase {
     Playlist pl = pls.getPlaylistByName(Fixtures.get( Fixtures.SMALL_PLAYLIST_NAME ));
     assertEquals( pl.getName(), Fixtures.get( Fixtures.SMALL_PLAYLIST_NAME ) );
     
-    pl = pls.getPlaylistByType( PlaylistTypes.AUDIO );
+    pl = pls.getPlaylistByType( Types.AUDIO );
     assertEquals( pl.getName(), "Music" );
     
-    pl = pls.getPlaylistByType( PlaylistTypes.OFFLINE );
+    pl = pls.getPlaylistByType( Types.OFFLINE );
     assertEquals( pl.getName(), "Offline" );
     
   }
@@ -92,7 +92,7 @@ public class PlaylistsTest extends AudioBoxTestCase {
       assertNotNull(pl);
       assertNotNull(pl.getName());
       assertNotNull(pl.getToken());
-      assertNotNull(pl.getPlaylistType());
+      assertNotNull(pl.getType());
       assertNotNull(pl.getTracksCount());
       assertNotNull(pl.getPosition());
       testPl = pl;
@@ -146,16 +146,16 @@ public class PlaylistsTest extends AudioBoxTestCase {
     playlists.load(false);
     assertTrue(0 < playlists.size());
 
-    List<Playlist> pls = playlists.getPlaylistsByType(PlaylistTypes.AUDIO);
+    List<Playlist> pls = playlists.getPlaylistsByType(Types.AUDIO);
     assertEquals(1, pls.size());
 
-    pls = playlists.getPlaylistsByType(PlaylistTypes.TRASH);
+    pls = playlists.getPlaylistsByType(Types.TRASH);
     assertEquals(1, pls.size());
 
-    pls = playlists.getPlaylistsByType(PlaylistTypes.VIDEO);
+    pls = playlists.getPlaylistsByType(Types.VIDEO);
     assertEquals(1, pls.size());
 
-    pls = playlists.getPlaylistsByType(PlaylistTypes.CUSTOM);
+    pls = playlists.getPlaylistsByType(Types.CUSTOM);
     assertNotNull(pls);
   }
 

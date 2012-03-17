@@ -9,7 +9,7 @@ import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
-import fm.audiobox.core.models.Playlists.PlaylistTypes;
+import fm.audiobox.core.models.Playlists.Types;
 import fm.audiobox.core.models.Tracks;
 import fm.audiobox.interfaces.IConfiguration;
 
@@ -29,7 +29,7 @@ public class CacheTest extends AudioBoxTestCase {
     pls.load(false);
     
     
-    Playlist pl =  pls.getPlaylistByType( PlaylistTypes.OFFLINE );
+    Playlist pl =  pls.getPlaylistByType( Types.OFFLINE );
     assertNotNull(pl);
     
     

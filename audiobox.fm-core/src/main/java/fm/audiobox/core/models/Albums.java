@@ -112,5 +112,11 @@ public class Albums extends AbstractCollectionEntity<Album> implements Serializa
   protected void copy(IEntity entity) {
     // default: do nothing
   }
+
+
+  @Override
+  public String getSubTagName() {
+	return Album.TAGNAME;
+  }
   
 }

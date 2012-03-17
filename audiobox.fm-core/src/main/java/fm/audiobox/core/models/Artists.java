@@ -111,4 +111,11 @@ public class Artists extends AbstractCollectionEntity<Artist> implements Seriali
   }
 
 
+
+@Override
+public String getSubTagName() {
+	return Artist.TAGNAME;
+}
+
+
 }

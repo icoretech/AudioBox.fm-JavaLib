@@ -70,7 +70,7 @@ public class Album extends AbstractEntity implements Serializable {
   private String name; 
   private Covers covers;
   private Artist artist;
-  private Tracks tracks;
+  private Files files;
 
   /**
    * <p>Constructor for Album.</p>
@@ -156,16 +156,16 @@ public class Album extends AbstractEntity implements Serializable {
 
   
   /**
-   * Returns a {@link Tracks} instance ready to be populated through {@link Tracks#load()} method
+   * Returns a {@link Files} instance ready to be populated through {@link Files#load()} method
    * 
-   * @return a {@link Tracks} instance
+   * @return a {@link Files} instance
    */
-  public Tracks getTracks(){
-    if ( this.tracks == null ){
-      this.tracks = (Tracks) getConfiguration().getFactory().getEntity( Tracks.TAGNAME , getConfiguration() );
-      this.tracks.setParent( this );
+  public Files getFiles(){
+    if ( this.files == null ){
+      this.files = (Files) getConfiguration().getFactory().getEntity( Files.TAGNAME , getConfiguration() );
+      this.files.setParent( this );
     }
-    return this.tracks;
+    return this.files;
   }
   
   

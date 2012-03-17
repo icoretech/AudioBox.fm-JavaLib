@@ -28,9 +28,9 @@ import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Album;
 import fm.audiobox.core.models.Artist;
+import fm.audiobox.core.models.File;
 import fm.audiobox.core.models.Genre;
-import fm.audiobox.core.models.Playlist;
-import fm.audiobox.core.models.Track;
+import fm.audiobox.core.models.MediaFiles;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 
 /**
@@ -54,13 +54,13 @@ public interface IConfiguration {
 
   
   
-  public boolean hasPlaylist(String token);
-  public Playlist getPlaylist(String token);
-  public void addPlaylist(Playlist pl);
+  public boolean hasMediaFiles(String token);
+  public MediaFiles getMediaFiles(String token);
+  public void addMediaFiles(MediaFiles pl);
   
-  public boolean hasTrack(String token);
-  public Track getTrack(String token);
-  public void addTrack(Track tr);
+//  public boolean hasTrack(String token);
+//  public Track getTrack(String token);
+//  public void addTrack(Track tr);
   
   public boolean hasAlbum(String token);
   public Album getAlbum(String token);
@@ -74,7 +74,9 @@ public interface IConfiguration {
   public Artist getArtist(String token);
   public void addArtist(Artist ar);
   
-  
+  public boolean hasFile(String token);
+  public File getFile(String token);
+  public void addFile(File tr);
 
   /**
    * Sets the default extension for each request
@@ -147,7 +149,7 @@ public interface IConfiguration {
    * Returns path used for connetion
    * @return
    */
-  public String getPath();
+  public String getPath(String key);
 
 
   /**

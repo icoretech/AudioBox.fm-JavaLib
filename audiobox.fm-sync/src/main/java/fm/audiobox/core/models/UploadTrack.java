@@ -33,7 +33,7 @@ import org.apache.http.entity.mime.content.FileBody;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
+//import fm.audiobox.core.models.AudioBoxClient.AudioBoxConnector;
 
 
 /**

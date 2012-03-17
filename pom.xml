@@ -24,7 +24,7 @@
 		<project.host>${fm.audiobox.host}</project.host>
 		<project.protocol>${fm.audiobox.protocol}</project.protocol>
 		<project.port>${fm.audiobox.port}</project.port>
-		<project.apiPath>/api/</project.apiPath>
+		<project.apiPath>/api/v2/</project.apiPath>
 		<project.logLevel>${fm.audiobox.logLevel}</project.logLevel>
 	</properties>
 
@@ -324,12 +324,22 @@
 				<scope>test</scope>
 			</dependency>
 			<dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>4.8.1</version>
-        <type>jar</type>
-        <scope>test</scope>
-      </dependency>
+		        <groupId>junit</groupId>
+		        <artifactId>junit</artifactId>
+		        <version>4.8.1</version>
+		        <type>jar</type>
+		        <scope>test</scope>
+		      </dependency>
+		     <dependency>
+				<groupId>com.google.code.gson</groupId>
+				<artifactId>gson</artifactId>
+				<version>2.1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-client</artifactId>
+				<version>8.1.1.v20120215</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -448,7 +458,6 @@
 			</snapshots>
 		</repository>
 	</repositories>
-
 </project>
 
 

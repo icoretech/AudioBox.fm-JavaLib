@@ -110,6 +110,12 @@ public class Genres extends AbstractCollectionEntity<Genre> implements Serializa
     
     return null;
   }
+
+
+@Override
+public String getSubTagName() {
+	return Genre.TAGNAME;
+}
   
 
 }

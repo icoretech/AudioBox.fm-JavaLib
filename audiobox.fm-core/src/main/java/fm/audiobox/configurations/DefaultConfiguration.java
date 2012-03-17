@@ -13,9 +13,9 @@ import org.slf4j.LoggerFactory;
 
 import fm.audiobox.core.models.Album;
 import fm.audiobox.core.models.Artist;
+import fm.audiobox.core.models.File;
 import fm.audiobox.core.models.Genre;
-import fm.audiobox.core.models.Playlist;
-import fm.audiobox.core.models.Track;
+import fm.audiobox.core.models.MediaFiles;
 import fm.audiobox.interfaces.ICacheManager;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
@@ -62,13 +62,13 @@ public class DefaultConfiguration implements IConfiguration {
   private ExecutorService executor;
   private ICacheManager cacheManager;
   
-  private Map<String, Track> tracks = new HashMap<String, Track>();
-  private Map<String, Playlist> playlists = new HashMap<String, Playlist>();
+  private Map<String, File> files = new HashMap<String, File>();
+  private Map<String, MediaFiles> mediafiles = new HashMap<String, MediaFiles>();
   private Map<String, Album> albums = new HashMap<String, Album>();
   private Map<String, Genre> genres = new HashMap<String, Genre>();
   private Map<String, Artist> artists = new HashMap<String, Artist>();
   private String mUserAgent;
-
+  
   public DefaultConfiguration(String appName, int major, int minor, int revision, ContentFormat requestFormat){
     this.setApplicationName(appName);
     this.setVersion(major, minor, revision);
@@ -178,8 +178,8 @@ public class DefaultConfiguration implements IConfiguration {
 
 
   @Override
-  public String getPath() {
-    String prop = safelyGetProperty("path");
+  public String getPath(String key) {
+    String prop = safelyGetProperty(key);
     return prop != null ? prop : PATH;
   }
 
@@ -266,26 +266,26 @@ public class DefaultConfiguration implements IConfiguration {
   // ---------------------------------------------------
   
   @Override
-  public boolean hasPlaylist(String token) {
-    return this.playlists.containsKey(token);
+  public boolean hasMediaFiles(String token) {
+    return this.mediafiles.containsKey(token);
   }
 
 
   @Override
-  public Playlist getPlaylist(String token) {
-    return this.playlists.get(token);
+  public MediaFiles getMediaFiles(String token) {
+    return this.mediafiles.get(token);
   }
 
 
   @Override
-  public boolean hasTrack(String token) {
-    return this.tracks.containsKey(token);
+  public boolean hasFile(String token) {
+    return this.files.containsKey(token);
   }
 
 
   @Override
-  public Track getTrack(String token) {
-    return this.tracks.get(token);
+  public File getFile(String token) {
+    return this.files.get(token);
   }
 
 
@@ -326,17 +326,17 @@ public class DefaultConfiguration implements IConfiguration {
 
 
   @Override
-  public void addPlaylist(Playlist pl) {
-    if ( ! this.hasPlaylist(pl.getToken() ) ){
-      this.playlists.put( pl.getToken(), pl);
+  public void addMediaFiles(MediaFiles pl) {
+    if ( ! this.hasMediaFiles(pl.getToken() ) ){
+      this.mediafiles.put( pl.getToken(), pl);
     }
   }
 
 
   @Override
-  public void addTrack(Track tr) {
-    if ( ! this.hasTrack(tr.getToken() ) ){
-      this.tracks.put( tr.getToken(), tr);
+  public void addFile(File tr) {
+    if ( ! this.hasFile(tr.getToken() ) ){
+      this.files.put( tr.getToken(), tr);
     }
   }
 

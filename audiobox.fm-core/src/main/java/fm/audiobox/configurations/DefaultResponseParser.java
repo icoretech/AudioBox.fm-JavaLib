@@ -2,6 +2,7 @@ package fm.audiobox.configurations;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -14,6 +15,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import fm.audiobox.core.exceptions.ServiceException;
+import fm.audiobox.core.parsers.JParser;
 import fm.audiobox.core.parsers.XmlParser;
 import fm.audiobox.interfaces.IConfiguration.ContentFormat;
 import fm.audiobox.interfaces.IEntity;
@@ -75,7 +77,9 @@ public class DefaultResponseParser implements IResponseHandler  {
 
   @Override
   public void parseAsJson(InputStream inputStream, IEntity destEntity) throws ServiceException {
-    throw new ServiceException("Json parser is not implemented yet");
+	
+	  JParser parser = new JParser(destEntity);
+	  parser.parse(new InputStreamReader(inputStream));
   }
 
   @Override

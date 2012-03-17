@@ -34,13 +34,13 @@ import fm.audiobox.interfaces.IEntity;
 
 
 /**
- * <p>Playlists is a {@link ModelsCollection} specialization for {@link Playlist} collections.</p>
+ * <p>Playlists is a {@link ModelsCollection} specialization for {@link MediaFiles} collections.</p>
  *
  * @author Valerio Chiodino
  * @author Fabio Tunno
  * @version 0.0.1
  */
-public class Playlists extends AbstractCollectionEntity<Playlist> implements Serializable {
+public class Playlists extends AbstractCollectionEntity<MediaFiles> implements Serializable {
 
   private static final long serialVersionUID = 1L;
   
@@ -62,7 +62,7 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
    *   <li>{@link PlaylistTypes#CUSTOM custom}</li>
    * </ul> 
    */
-  public enum PlaylistTypes {
+  public enum Types {
     /** The so called "Music" playlist, master audio media container */
     AUDIO,
 
@@ -100,27 +100,27 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
 
 
   @Override
-  public boolean add(Playlist entity) {
+  public boolean add(MediaFiles entity) {
     String token = entity.getToken();
-    if ( getConfiguration().hasPlaylist( token ) ) {
-      Playlist pl = this.getConfiguration().getPlaylist( token );
+    if ( getConfiguration().hasMediaFiles( token ) ) {
+      MediaFiles pl = this.getConfiguration().getMediaFiles( token );
       pl.copy( entity );
       entity = pl;
     } else {
-      getConfiguration().addPlaylist( entity );
+      getConfiguration().addMediaFiles( entity );
     }
     return super.addEntity(entity);
   }
 
   
   /**
-   * Returns the {@link Playlist} associated with the given <code>name</code>
-   * @param name the Playlist name
-   * @return the {@link Playlist} associated with the given <code>name</code>
+   * Returns the {@link MediaFiles} associated with the given <code>name</code>
+   * @param name the MediaFiles name
+   * @return the {@link MediaFiles} associated with the given <code>name</code>
    */
-  public Playlist getPlaylistByName(String name){
-    for ( Iterator<Playlist> it = this.iterator(); it.hasNext();  ){
-      Playlist pl = it.next();
+  public MediaFiles getMediaFilesByName(String name){
+    for ( Iterator<MediaFiles> it = this.iterator(); it.hasNext();  ){
+    	MediaFiles pl = it.next();
       if (  pl.getName().equalsIgnoreCase( name )  ) {
         return pl;
       }
@@ -129,15 +129,15 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
   }
   
   /**
-   * Returns the <b>first</b> {@link Playlist} that matches with the given {@link PlaylistTypes}
+   * Returns the <b>first</b> {@link MediaFiles} that matches with the given {@link PlaylistTypes}
    * 
    * @param type the {@link PlaylistTypes}
-   * @return the first {@link Playlist} that matches with the given {@link PlaylistTypes}
+   * @return the first {@link MediaFiles} that matches with the given {@link PlaylistTypes}
    */
-  public Playlist getPlaylistByType(PlaylistTypes type){
-    for ( Iterator<Playlist> it = this.iterator(); it.hasNext();  ){
-      Playlist pl = it.next();
-      if (  pl.getPlaylistType() == type  ) {
+  public MediaFiles getMediaFilesByType( Types type ){
+    for ( Iterator<MediaFiles> it = this.iterator(); it.hasNext();  ){
+    	MediaFiles pl = it.next();
+      if (  pl.getType() == type  ) {
         return pl;
       }
     }
@@ -145,16 +145,16 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
   }
   
   /**
-   * Returns a list of {@link Playlist} that matches the given {@link PlaylistTypes}
+   * Returns a list of {@link MediaFiles} that matches the given {@link PlaylistTypes}
    * 
    * @param type the {@link PlaylistTypes}
-   * @return a list of {@link Playlist} that matches with the given {@link PlaylistTypes}
+   * @return a list of {@link MediaFiles} that matches with the given {@link PlaylistTypes}
    */
-  public List<Playlist> getPlaylistsByType(PlaylistTypes type){
-    List<Playlist> pls = new ArrayList<Playlist>();
-    for ( Iterator<Playlist> it = this.iterator(); it.hasNext();  ){
-      Playlist pl = it.next();
-      if (  pl.getPlaylistType() == type  ) {
+  public List<MediaFiles> getPlaylistsByType( Types type ){
+    List<MediaFiles> pls = new ArrayList<MediaFiles>();
+    for ( Iterator<MediaFiles> it = this.iterator(); it.hasNext();  ){
+    	MediaFiles pl = it.next();
+      if (  pl.getType() == type  ) {
         pls.add(pl);
       }
     }
@@ -170,12 +170,19 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
   @Override
   public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
 
-    if ( tagName.equals( Playlist.TAGNAME ) ) {
-      return this.getClass().getMethod("add", Playlist.class);
+    if ( tagName.equals( MediaFiles.TAGNAME ) ) {
+      return this.getClass().getMethod("add", MediaFiles.class);
     }
 
     return null;
   }
 
+
+  @Override
+  public String getSubTagName() {
+	return MediaFiles.TAGNAME;
+  }
+
+  
 
 }

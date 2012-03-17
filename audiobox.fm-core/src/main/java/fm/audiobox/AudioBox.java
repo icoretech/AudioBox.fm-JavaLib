@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 import java.util.Observer;
 import java.util.zip.GZIPInputStream;
 
@@ -68,11 +69,11 @@ import org.apache.http.protocol.HttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fm.audiobox.configurations.DefaultConfiguration;
 import fm.audiobox.configurations.DefaultFactory;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.AbstractCollectionEntity;
+import fm.audiobox.core.models.AbstractEntity;
 import fm.audiobox.core.models.User;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
@@ -162,7 +163,7 @@ import fm.audiobox.interfaces.IFactory;
  * @author Fabio Tunno
  * @version 1.0.0
  */
-public class AudioBox {
+public class AudioBox implements Observer{
 
   private static Logger log = LoggerFactory.getLogger(AudioBox.class);
 
@@ -176,7 +177,7 @@ public class AudioBox {
   private IConnector connector;
   private User user;
   
-  
+  private String auth_token;
   /**
    * <p>Constructor for AudioBox.</p>
    * 
@@ -233,7 +234,8 @@ public class AudioBox {
 
     User user = (User) this.configuration.getFactory().getEntity(User.TAGNAME, this.getConfiguration() );
     user.setUsername(username);
-
+    //add the object to be observed, the observer 
+    user.addObserver(this);
     mCredentials = new UsernamePasswordCredentials(username, password);
     
     this.getConnector().get(user, null, null).send(false);
@@ -246,6 +248,11 @@ public class AudioBox {
     return this.configuration;
   }
   
+  @Override
+  public void update(Observable arg0, Object arg1) {
+	  this.auth_token = arg1.toString();
+  	
+  }
   
   /**
    * Connector is the AudioBox http request wrapper.
@@ -266,7 +273,6 @@ public class AudioBox {
     private static final long serialVersionUID = -1947929692214926338L;
 
     private static final String URI_SEPARATOR = "/";
-    private static final String NAMESPACE_PARAMETER = URI_SEPARATOR + "${namespace}";
     private static final String TOKEN_PARAMETER = URI_SEPARATOR + "${token}";
     private static final String ACTION_PARAMETER = URI_SEPARATOR + "${action}";
     
@@ -275,9 +281,9 @@ public class AudioBox {
     private final String PROTOCOL = configuration.getProtocol();
     private final String HOST = configuration.getHost();
     private final String PORT = String.valueOf( configuration.getPort() ); 
-    private final String PATH = configuration.getPath();
+//    private final String PATH = configuration.getPath();
 
-    private final String API_PATH = PROTOCOL + "://" + HOST + ":" + PORT + "/" + PATH + NAMESPACE_PARAMETER + TOKEN_PARAMETER + ACTION_PARAMETER;
+    private final String API_PATH = PROTOCOL + "://" + HOST + ":" + PORT; //+ "/" + PATH + NAMESPACE_PARAMETER + TOKEN_PARAMETER + ACTION_PARAMETER;
     private HttpRoute mAudioBoxRoute;
     private ThreadSafeClientConnManager mCm;
     private DefaultHttpClient mClient;
@@ -330,7 +336,7 @@ public class AudioBox {
       if ( httpVerb == null ) {
         httpVerb = IConnectionMethod.METHOD_GET;
       }
-      
+
       String url = this.buildRequestUrl(destEntity.getNamespace(), destEntity.getToken(), action, httpVerb, params);
 
       HttpRequestBase method = null;
@@ -463,6 +469,7 @@ public class AudioBox {
           
           request.addHeader("User-Agent",  getConfiguration().getUserAgent() );
           
+          request.addHeader("X-AUTH-TOKEN",  auth_token );
           Header hostHeader = request.getFirstHeader("HOST");
           
           /*
@@ -553,13 +560,13 @@ public class AudioBox {
         httpVerb = IConnectionMethod.METHOD_GET;
       }
       
-      namespace = ( ( namespace == null ) ? "" : URI_SEPARATOR.concat(namespace) ).trim();
+//      namespace = ( ( namespace == null ) ? "" : URI_SEPARATOR.concat(namespace) ).trim();
       token = ( ( token == null ) ? "" : URI_SEPARATOR.concat(token) ).trim();
       action = ( ( action == null ) ? "" : URI_SEPARATOR.concat(action) ).trim();
 
       // Replace placeholders with right values
-      String url = API_PATH.replace( NAMESPACE_PARAMETER, namespace ).replace( TOKEN_PARAMETER , token ).replace( ACTION_PARAMETER , action ); 
-
+//      String url = API_PATH.replace( NAMESPACE_PARAMETER, namespace ).replace( TOKEN_PARAMETER , token ).replace( ACTION_PARAMETER , action ); 
+      String url = ( API_PATH + configuration.getPath( namespace ) ).replace( TOKEN_PARAMETER , token ).replace( ACTION_PARAMETER , action );
       // add extension to request path
       url += "." + getConfiguration().getRequestFormat().toString().toLowerCase();
 
@@ -567,6 +574,9 @@ public class AudioBox {
         params.add( new BasicNameValuePair("short", "true") );
       }
       
+      if ( auth_token != null ){
+        params.add( new BasicNameValuePair("auth_token", auth_token) );
+      }
       if ( httpVerb.equals( IConnectionMethod.METHOD_GET ) ){
         String query = URLEncodedUtils.format( params , HTTP.UTF_8 );
         if ( query.length() > 0 )

@@ -65,5 +65,4 @@ public interface IEntity {
    */
   public IConfiguration getConfiguration();
   
-  
 }

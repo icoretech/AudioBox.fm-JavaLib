@@ -121,6 +121,9 @@ public final class User extends AbstractEntity implements Serializable {
   private Artists artists;
   private Albums albums;
 
+  private String auth_token;
+  
+  private String name;
   /**
    * <p>Constructor for User.</p>
    */
@@ -386,14 +389,43 @@ public final class User extends AbstractEntity implements Serializable {
   public Plan getPlan() {
     return this.plan;
   }
+  
+  /**
+   * <p>Getter for the auth_token</p>
+   *
+   * @return String[] the auth_token
+   */
+  public String getAuth_token() {
+	return auth_token;
+  }
 
-
+  /**
+   * <p>Setter for the user auth_token</p>
+   *
+   * @param auth_token a String the contains the user authentication 
+   */
+  public void setAuth_token(String auth_token) {
+	//the object User is changed
+	setChanged();
+	//change is notified to the observers
+	notifyObservers(auth_token);
+	this.auth_token = auth_token;
+  }
+  
+  public String getName() {
+	return name;
+  }
+  
+  public void setName(String name) {
+	this.name = name;
+  }
+  
   /* ------------------- */
   /* Collection Browsing */
   /* ------------------- */
 
 
-  /**
+/**
    * Given a known track Token this method will requests AudioBox.fm and returns a valid {@link Track} object.
    *
    * @param token the token of the track you are asking for.
@@ -404,11 +436,11 @@ public final class User extends AbstractEntity implements Serializable {
    * @throws ServiceException if the requested resource doesn't exists or any other ServiceException occur.
    * @throws ModelException 
    */
-  public Track newTrackByToken(String token) throws ServiceException, LoginException {
-    Track t = (Track) getConfiguration().getFactory().getEntity( Track.TAGNAME, getConfiguration() );
-    t.setToken(token);
-    t.load();
-    return t;
+  public File newTrackByToken(String token) throws ServiceException, LoginException {
+	File file = (File) getConfiguration().getFactory().getEntity( File.TAGNAME, getConfiguration() );
+    file.setToken(token);
+    file.load();
+    return file;
   }
   
   
@@ -427,10 +459,10 @@ public final class User extends AbstractEntity implements Serializable {
    * @throws LoginException if any authentication problem occurs.
    */
   public String[] getUploadedTracks() throws ServiceException, LoginException {
-    Tracks tracks = (Tracks) getConfiguration().getFactory().getEntity( Tracks.TAGNAME, getConfiguration() );
+    Files files = (Files) getConfiguration().getFactory().getEntity( Files.TAGNAME, getConfiguration() );
     
-    tracks.load(false);
-    IConnectionMethod method = getConnector().get(tracks, null, null);
+    files.load(false);
+    IConnectionMethod method = getConnector().get(files, null, null);
     method.send( true );
     
     String result = method.getResponse().getBody();
@@ -472,8 +504,8 @@ public final class User extends AbstractEntity implements Serializable {
    * 
    * @return a new {@link Track} instance
    */
-  public Track newTrack() {
-    return (Track) getConfiguration().getFactory().getEntity( Track.TAGNAME, getConfiguration() );
+  public File newTrack() {
+    return (File) getConfiguration().getFactory().getEntity( File.TAGNAME, getConfiguration() );
   }
 
 
@@ -583,8 +615,12 @@ public final class User extends AbstractEntity implements Serializable {
     } else if ( tagName.equals("plan") || tagName.equals("pl") ){
       return this.getClass().getMethod("setPlan", Plan.class);
       
+    } else if ( tagName.equals("auth_token")){
+    	return this.getClass().getMethod("setAuth_token", String.class);
+    } else if ( tagName.equals("name")){
+    	return this.getClass().getMethod("setName", String.class);
     }
-    
+     
     
     return null;
   }
