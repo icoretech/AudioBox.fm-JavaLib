@@ -1,0 +1,123 @@
+======================================================
+USER:
+
+{
+  "user":{
+    "username":"fatshotty",
+    "real_name":null,
+    "email":"fat@fatshotty.net",
+    "auth_token":"",
+    "media_files_count":298,
+    "playlists_count":7,
+    "total_play_count":5549,
+    "country":null,
+    "time_zone":"Rome",
+    "can_upload":true,
+    "stats":{
+      "cloud":{
+        "monthly_data":{
+          "out":0,
+          "in":0
+         },
+        "storage":{
+          "limit":322122547200,
+          "used":1504433804
+        }
+      },
+      "pc":{
+        "served_this_month":0,
+        "served_overall":49270000689,
+        "stored_this_month":0,
+        "stored_overall":1504433804,
+        "maximum":322122547200
+      }
+    }
+  }
+}
+
+
+
+
+======================================================
+PLAYLISTS:
+
+{ 
+  playlists:[{
+    token: 'BZKsRc453WJz',
+    name: 'Music',
+    position: 1,
+    media_files_count: 298,
+    type: 'AudioPlaylist',
+    updated_at: '2012-02-26T13:01:25Z',
+    last_accessed: true
+  },{
+    token: 'ePVScgXDSDAs',
+    name: 'Video',
+    position: 2,
+    media_files_count: 0,
+    type: 'VideoPlaylist',
+    updated_at: '2012-02-26T13:01:25Z',
+    last_accessed: false
+  },{
+    token: 'uxhlQg7yIgj9',
+    name: 'test',
+    position: 10,
+    media_files_count: 5,
+    type: 'CustomPlaylist',
+    updated_at: '2012-02-26T13:01:25Z',
+    last_accessed: false
+  },{
+    token: '27Aa3DVhVsJm',
+    name: 'Smart 1',
+    position: 10,
+    media_files_count: 104,
+    type: 'SmartPlaylist',
+    updated_at: '2012-03-16T00:52:13Z',
+    last_accessed: true
+  }]
+}
+
+
+
+======================================================
+MEDIA_FILES:
+
+
+
+{ 
+  media_files:[{
+    token: '8698f6cc-6071-4699-b6c5-2512143bf74e',
+    artist: 'Fabrizio De André',
+    album: 'Non al denaro non all\'amore né al cielo',
+    genre: 'Leggera',
+    year: 1971,
+    title: 'Un Malato Di Cuore',
+    len_str: '3:52',
+    len_int: 232,
+    position: 5,
+    plays: 33,
+    disc: 1,
+    filename: '8698f6cc-6071-4699-b6c5-2512143bf74e.mp3',
+    type: 'AudioFile',
+    rating: 0,
+    mime: 'audio/mpeg'
+  },{
+    token: 'da030810-385c-4aa3-9ac6-7f80d0502469',
+    artist: 'Fabrizio De André',
+    album: 'Non al denaro non all\'amore né al cielo',
+    genre: 'Leggera',
+    year: 1971,
+    title: 'Un Medico',
+    len_str: '2:39',
+    len_int: 159,
+    position: 6,
+    plays: 26,
+    disc: 1,
+    filename: 'da030810-385c-4aa3-9ac6-7f80d0502469.mp3',
+    type: 'AudioFile',
+    rating: 0,
+    mime: 'audio/mpeg'
+  }]
+}
+
+
