@@ -114,8 +114,6 @@ public final class User extends AbstractEntity implements Serializable {
   private int total_play_count;
   private boolean can_upload;
 
-  private Profile profile;
-
   // User's collection relations
   private Playlists playlists;
 
@@ -329,25 +327,6 @@ public final class User extends AbstractEntity implements Serializable {
    */
   public String getTrialEndsAt() {
     return this.trialEndsAt;
-  }
-
-
-  /**
-   * <p>Setter for the user profile: used by the parser.</p>
-   *
-   * @param profile the user {@link Profile} object.
-   */
-  public void setProfile(Profile profile) {
-    this.profile = profile;
-  }
-
-  /**
-   * <p>Getter for the user {@link Profile}.</p>
-   *
-   * @return the user profile
-   */
-  public Profile getProfile() {
-    return this.profile;
   }
 
   /**
@@ -565,9 +544,6 @@ public final class User extends AbstractEntity implements Serializable {
     } else if ( tagName.equals("allowed_formats") ){
       return this.getClass().getMethod("setAllowedFormats", String.class);
 
-    } else if ( tagName.equals("profile") ){
-      return this.getClass().getMethod("setProfile", Profile.class);
-
     } else if ( tagName.equals("auth_token")){
       return this.getClass().getMethod("setAuth_token", String.class);
 
@@ -589,5 +565,10 @@ public final class User extends AbstractEntity implements Serializable {
   public String getApiPath() {
     return getConfiguration().getPath() + "/" + NAMESPACE;
   }
+
+
+
+  @Override
+  public void setParent(IEntity parent) {}
 
 }

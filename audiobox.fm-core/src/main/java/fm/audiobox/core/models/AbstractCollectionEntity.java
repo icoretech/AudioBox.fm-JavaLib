@@ -175,6 +175,7 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
    */
   protected boolean addEntity(IEntity entity) {
     boolean result = this.collection.add( entity );
+    entity.setParent( this );
     if ( result ){
       this.setChanged();
       Event event = new Event(entity, Event.States.ENTITY_ADDED);

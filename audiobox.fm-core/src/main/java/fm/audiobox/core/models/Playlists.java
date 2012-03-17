@@ -97,8 +97,7 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
 
 
   @Override
-  public boolean add(Playlist entity) {    
-    entity.setParent(this);
+  public boolean add(Playlist entity) {
     return super.addEntity(entity);
   }
 
@@ -178,5 +177,9 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
   public String getApiPath() {
     return getConfiguration().getPath() + "/" + NAMESPACE;
   }
+
+
+  @Override
+  public void setParent(IEntity parent) {}
 
 }

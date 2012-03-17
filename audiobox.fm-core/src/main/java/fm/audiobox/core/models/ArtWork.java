@@ -52,17 +52,17 @@ import fm.audiobox.interfaces.IEntity;
  * @author Fabio Tunno
  */
 public class ArtWork extends AbstractEntity implements Serializable {
-  
+
   private static final long serialVersionUID = 1L;
 
   /** The XML tag name for the Album element */
   public static final String NAMESPACE = null;
   public static final String TAGNAME = "artwork|ar";
-  
+
   private String large;
   private String medium;
   private String small;
-
+  private IEntity parent;
 
   /**
    * <p>Constructor for CoverUrls.</p>
@@ -71,7 +71,7 @@ public class ArtWork extends AbstractEntity implements Serializable {
     super(connector, config);
   }
 
-  
+
   @Override
   public String getTagName() {
     return TAGNAME;
@@ -154,18 +154,18 @@ public class ArtWork extends AbstractEntity implements Serializable {
 
   @Override
   public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
-    
+
     if ( tagName.equals("l") ){
       return this.getClass().getMethod("setLarge", String.class);
-      
+
     } else if ( tagName.equals("m") ){
       return this.getClass().getMethod("setMedium", String.class);
-      
+
     } else if ( tagName.equals("s") ){
       return this.getClass().getMethod("setSmall", String.class);
-      
+
     }
-      
+
     return null;
   }
 
@@ -173,15 +173,26 @@ public class ArtWork extends AbstractEntity implements Serializable {
   @Override
   protected void copy(IEntity entity) {
     ArtWork artwork = (ArtWork) entity;
-    
+
     this.large = artwork.getLarge();
     this.medium = artwork.getMedium();
     this.small = artwork.getSmall();
-    
+
     this.setChanged();
     Event event = new Event( this, Event.States.ENTITY_REFRESHED );
     this.notifyObservers(event);
-    
+
+  }
+
+
+  @Override
+  public String getApiPath() {
+    return null;
+  }
+
+  @Override
+  public void setParent(IEntity parent) {
+    this.parent = parent;
   }
 
 }

@@ -2,8 +2,6 @@ package fm.audiobox.configurations;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -11,8 +9,6 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fm.audiobox.core.models.MediaFile;
-import fm.audiobox.core.models.Playlist;
 import fm.audiobox.interfaces.ICacheManager;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
@@ -59,8 +55,6 @@ public class DefaultConfiguration implements IConfiguration {
   private ExecutorService executor;
   private ICacheManager cacheManager;
 
-  private Map<String, MediaFile> files = new HashMap<String, MediaFile>();
-  private Map<String, Playlist> playlist = new HashMap<String, Playlist>();
   private String mUserAgent;
 
   public DefaultConfiguration(String appName, int major, int minor, int revision, ContentFormat requestFormat){
@@ -258,46 +252,6 @@ public class DefaultConfiguration implements IConfiguration {
    */
 
   // ---------------------------------------------------
-
-  @Override
-  public boolean hasPlaylist(String token) {
-    return this.playlist.containsKey(token);
-  }
-
-
-  @Override
-  public Playlist getPlaylist(String token) {
-    return this.playlist.get(token);
-  }
-
-
-  @Override
-  public boolean hasMediaFile(String token) {
-    return this.files.containsKey(token);
-  }
-
-
-  @Override
-  public MediaFile getMediaFile(String token) {
-    return this.files.get(token);
-  }
-
-
-  @Override
-  public void addPlaylist(Playlist pl) {
-    if ( ! this.hasPlaylist(pl.getToken() ) ){
-      this.playlist.put( pl.getToken(), pl);
-    }
-  }
-
-
-  @Override
-  public void addMediaFile(MediaFile tr) {
-    if ( ! this.hasMediaFile(tr.getToken() ) ){
-      this.files.put( tr.getToken(), tr);
-    }
-  }
-
 
   /* --------------- */
   /* Private methods */

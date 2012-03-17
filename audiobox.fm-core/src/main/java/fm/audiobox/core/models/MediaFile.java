@@ -66,217 +66,228 @@ import fm.audiobox.interfaces.IResponseHandler;
  */
 public class MediaFile extends AbstractEntity implements Serializable{
 
-	private static final long serialVersionUID = 1L;
-	
-	public static final String TAGNAME = "file";
-	public static final String NAMESPACE = MediaFile. TAGNAME;
-    
-	private String artist;
-    private String album;
-    private String genre;
-    private int year;
-    private String title;
-    private String len_str;
-    private int len_int;
-    private int position;
-    private int plays;
-    private int disc;
-    private String filename;
-    private Types type;
-    private int rating;
-    private String mime;
-    	
-	public MediaFile(IConnector connector, IConfiguration config) {
-		super(connector, config);
-	}
+  private static final long serialVersionUID = 1L;
 
-	@Override
-	public String getNamespace() {
-		return NAMESPACE;
-	}
+  public static final String TAGNAME = "file";
+  public static final String NAMESPACE = MediaFile. TAGNAME;
 
-	@Override
-	public String getTagName() {
-		return TAGNAME;
-	}
-	
-	public String getArtist() {
-		return artist;
-	}
+  private String artist;
+  private String album;
+  private String genre;
+  private int year;
+  private String title;
+  private String len_str;
+  private int len_int;
+  private int position;
+  private int plays;
+  private int disc;
+  private String filename;
+  private Types type;
+  private int rating;
+  private String mime;
+  private IEntity parent;
 
-	public void setArtist(String artist) {
-		this.artist = artist;
-	}
+  public MediaFile(IConnector connector, IConfiguration config) {
+    super(connector, config);
+  }
 
-	public String getAlbum() {
-		return album;
-	}
+  @Override
+  public String getNamespace() {
+    return NAMESPACE;
+  }
 
-	public void setAlbum(String album) {
-		this.album = album;
-	}
+  @Override
+  public String getTagName() {
+    return TAGNAME;
+  }
 
-	public String getGenre() {
-		return genre;
-	}
+  public String getArtist() {
+    return artist;
+  }
 
-	public void setGenre(String genre) {
-		this.genre = genre;
-	}
+  public void setArtist(String artist) {
+    this.artist = artist;
+  }
 
-	public int getYear() {
-		return year;
-	}
+  public String getAlbum() {
+    return album;
+  }
 
-	public void setYear(int year) {
-		this.year = year;
-	}
+  public void setAlbum(String album) {
+    this.album = album;
+  }
 
-	public String getTitle() {
-		return title;
-	}
+  public String getGenre() {
+    return genre;
+  }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+  public void setGenre(String genre) {
+    this.genre = genre;
+  }
 
-	public String getLen_str() {
-		return len_str;
-	}
+  public int getYear() {
+    return year;
+  }
 
-	public void setLen_str(String len_str) {
-		this.len_str = len_str;
-	}
+  public void setYear(int year) {
+    this.year = year;
+  }
 
-	public int getLen_int() {
-		return len_int;
-	}
+  public String getTitle() {
+    return title;
+  }
 
-	public void setLen_int(int len_int) {
-		this.len_int = len_int;
-	}
+  public void setTitle(String title) {
+    this.title = title;
+  }
 
-	public int getPosition() {
-		return position;
-	}
+  public String getLen_str() {
+    return len_str;
+  }
 
-	public void setPosition(int position) {
-		this.position = position;
-	}
+  public void setLen_str(String len_str) {
+    this.len_str = len_str;
+  }
 
-	public int getPlays() {
-		return plays;
-	}
+  public int getLen_int() {
+    return len_int;
+  }
 
-	public void setPlays(int plays) {
-		this.plays = plays;
-	}
+  public void setLen_int(int len_int) {
+    this.len_int = len_int;
+  }
 
-	public int getDisc() {
-		return disc;
-	}
+  public int getPosition() {
+    return position;
+  }
 
-	public void setDisc(int disc) {
-		this.disc = disc;
-	}
+  public void setPosition(int position) {
+    this.position = position;
+  }
 
-	public String getFilename() {
-		return filename;
-	}
+  public int getPlays() {
+    return plays;
+  }
 
-	public void setFilename(String filename) {
-		this.filename = filename;
-	}
+  public void setPlays(int plays) {
+    this.plays = plays;
+  }
 
-	public Types getType() {
-		return type;
-	}
+  public int getDisc() {
+    return disc;
+  }
 
-	public void setType(String type) {
-		
-		if( Types.AudioFile.toString().equals( type ) ){
-			this.type = Types.AudioFile;	
-		} else if( Types.VideoFile.toString().equals( type ) ){
-			this.type = Types.VideoFile;
-		}
-	}
+  public void setDisc(int disc) {
+    this.disc = disc;
+  }
 
-	public int getRating() {
-		return rating;
-	}
+  public String getFilename() {
+    return filename;
+  }
 
-	public void setRating(int rating) {
-		this.rating = rating;
-	}
+  public void setFilename(String filename) {
+    this.filename = filename;
+  }
 
-	public String getMime() {
-		return mime;
-	}
+  public Types getType() {
+    return type;
+  }
 
-	public void setMime(String mime) {
-		this.mime = mime;
-	}
+  public void setType(String type) {
 
-	@Override
-	public Method getSetterMethod(String tagName) throws SecurityException,	NoSuchMethodException {
-		if ( tagName.equals("token") || tagName.equals("tk") ){
-			return this.getClass().getMethod("setToken", String.class);
-		} else if ( tagName.equals("artist") ){
-			return this.getClass().getMethod("setArtist", String.class);
-		} else if ( tagName.equals("album") ){
-			return this.getClass().getMethod("setAlbum", String.class);
-		} else if ( tagName.equals("genre") ){
-			return this.getClass().getMethod("setGenre", String.class);
-		} else if ( tagName.equals("year") ){
-			return this.getClass().getMethod("setYear", int.class);
-		} else if ( tagName.equals("title") ){
-			return this.getClass().getMethod("setTitle", String.class);
-		} else if ( tagName.equals("len_str") ){
-			return this.getClass().getMethod("setLen_str", String.class);
-		} else if ( tagName.equals("len_int") ){
-			return this.getClass().getMethod("setLen_int", int.class);
-		} else if ( tagName.equals("position") ){
-			return this.getClass().getMethod("setPosition", int.class);
-		} else if ( tagName.equals("plays") ){
-			return this.getClass().getMethod("setPlays", int.class);
-		} else if ( tagName.equals("disc") ){
-			return this.getClass().getMethod("setDisc", int.class);
-		} else if ( tagName.equals("filename") ){
-			return this.getClass().getMethod("setFilename", String.class);
-		} else if ( tagName.equals("rating") ){
-			return this.getClass().getMethod("setRating", int.class);
-		} else if ( tagName.equals("mime") ){
-			return this.getClass().getMethod("setMime", String.class);
-		} else if ( tagName.equals("type") ){
-			return this.getClass().getMethod("setType", String.class);
-		}
-		return null;
-	}
+    if( Types.AudioFile.toString().equals( type ) ){
+      this.type = Types.AudioFile;	
+    } else if( Types.VideoFile.toString().equals( type ) ){
+      this.type = Types.VideoFile;
+    }
+  }
 
-	@Override
-	protected void copy(IEntity entity) {
-		// TODO Auto-generated method stub
-		
-	}
+  public int getRating() {
+    return rating;
+  }
 
-	/**
-	 * Executes request populating this class
-	 * 
-	 * @throws ServiceException
-	 * @throws LoginException
-	 */
-	public void load() throws ServiceException, LoginException {
-		this.load(null);
-	}
+  public void setRating(int rating) {
+    this.rating = rating;
+  }
 
-	/**
-	 * Executes request populating this class and passing the {@link IResponseHandler} as response parser
-	 * 
-	 * @param responseHandler the {@link IResponseHandler} used as response content parser
-	 * @throws ServiceException
-	 * @throws LoginException
-	 */
-	public void load(IResponseHandler responseHandler) throws ServiceException, LoginException {
-		getConnector().get(this, null, null).send(false, null, responseHandler);
-	}
+  public String getMime() {
+    return mime;
+  }
+
+  public void setMime(String mime) {
+    this.mime = mime;
+  }
+
+  @Override
+  public Method getSetterMethod(String tagName) throws SecurityException,	NoSuchMethodException {
+    if ( tagName.equals("token") || tagName.equals("tk") ){
+      return this.getClass().getMethod("setToken", String.class);
+    } else if ( tagName.equals("artist") ){
+      return this.getClass().getMethod("setArtist", String.class);
+    } else if ( tagName.equals("album") ){
+      return this.getClass().getMethod("setAlbum", String.class);
+    } else if ( tagName.equals("genre") ){
+      return this.getClass().getMethod("setGenre", String.class);
+    } else if ( tagName.equals("year") ){
+      return this.getClass().getMethod("setYear", int.class);
+    } else if ( tagName.equals("title") ){
+      return this.getClass().getMethod("setTitle", String.class);
+    } else if ( tagName.equals("len_str") ){
+      return this.getClass().getMethod("setLen_str", String.class);
+    } else if ( tagName.equals("len_int") ){
+      return this.getClass().getMethod("setLen_int", int.class);
+    } else if ( tagName.equals("position") ){
+      return this.getClass().getMethod("setPosition", int.class);
+    } else if ( tagName.equals("plays") ){
+      return this.getClass().getMethod("setPlays", int.class);
+    } else if ( tagName.equals("disc") ){
+      return this.getClass().getMethod("setDisc", int.class);
+    } else if ( tagName.equals("filename") ){
+      return this.getClass().getMethod("setFilename", String.class);
+    } else if ( tagName.equals("rating") ){
+      return this.getClass().getMethod("setRating", int.class);
+    } else if ( tagName.equals("mime") ){
+      return this.getClass().getMethod("setMime", String.class);
+    } else if ( tagName.equals("type") ){
+      return this.getClass().getMethod("setType", String.class);
+    }
+    return null;
+  }
+
+  @Override
+  protected void copy(IEntity entity) {
+    // TODO Auto-generated method stub
+
+  }
+
+  /**
+   * Executes request populating this class
+   * 
+   * @throws ServiceException
+   * @throws LoginException
+   */
+  public void load() throws ServiceException, LoginException {
+    this.load(null);
+  }
+
+  /**
+   * Executes request populating this class and passing the {@link IResponseHandler} as response parser
+   * 
+   * @param responseHandler the {@link IResponseHandler} used as response content parser
+   * @throws ServiceException
+   * @throws LoginException
+   */
+  public void load(IResponseHandler responseHandler) throws ServiceException, LoginException {
+    getConnector().get(this, null, null).send(false, null, responseHandler);
+  }
+
+  @Override
+  public String getApiPath() {
+    return this.parent.getApiPath() + "/" + this.getToken();
+  }
+
+  @Override
+  public void setParent(IEntity parent) {
+    this.parent = parent;
+  }
 }

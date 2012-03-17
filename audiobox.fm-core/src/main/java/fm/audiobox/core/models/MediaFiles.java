@@ -86,15 +86,6 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
 
   @Override
   public boolean add(MediaFile entity) {
-
-    String token = entity.getToken();
-    if ( getConfiguration().hasMediaFile( token ) ) {
-      MediaFile pl = this.getConfiguration().getMediaFile( token );
-      pl.copy( entity );
-      entity = pl;
-    } else {
-      getConfiguration().addMediaFile( entity );
-    }
     return super.addEntity(entity);
   }
 
@@ -154,7 +145,7 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
    * </p>
    * @param parent the {@link IEntity} parent object
    */
-  protected void setParent(IEntity parent){
+  public void setParent(IEntity parent){
     this.parent = parent;
   }
 
@@ -168,6 +159,8 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
   protected void copy(IEntity entity) {
   }
 
-
-
+  @Override
+  public String getApiPath() {
+    return this.parent.getApiPath() + "/" + NAMESPACE;
+  }
 }

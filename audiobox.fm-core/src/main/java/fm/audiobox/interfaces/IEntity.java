@@ -71,4 +71,10 @@ public interface IEntity {
    */
   public String getApiPath();
   
+  /**
+   * Sets the parent {@link IEntity}
+   * @param parent the {@link IEntity} parent object
+   */
+  public void setParent(IEntity parent);
+  
 }

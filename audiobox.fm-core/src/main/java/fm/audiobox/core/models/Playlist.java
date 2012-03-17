@@ -433,7 +433,13 @@ public class Playlist extends AbstractEntity implements Serializable {
    * Sets the parent {@link IEntity}
    * @param parent the {@link IEntity} parent object
    */
-  protected void setParent(IEntity parent){
+  public void setParent(IEntity parent){
     this.parent = parent;
+  }
+
+
+  @Override
+  public String getApiPath() {
+    return this.parent.getApiPath() + "/" + this.getToken();
   }
 }
