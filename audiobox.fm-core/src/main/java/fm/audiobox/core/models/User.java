@@ -103,14 +103,16 @@ public final class User extends AbstractEntity implements Serializable {
 
   private long bytesServed;
   private String email;
-  private int playCount;
   private long quota;
-  private int tracksCount;
   private String username;
   private long availableStorage;
   private String timeZone;
   private String trialEndsAt;
   private String[] allowedFormats;
+  private int media_files_count;
+  private int playlists_count;
+  private int total_play_count;
+  private boolean can_upload;
 
   private Profile profile;
 
@@ -183,23 +185,14 @@ public final class User extends AbstractEntity implements Serializable {
   }
 
 
-
-  /**
-   * <p>Setter for the user played song count: used by the parser.<p>
-   *
-   * @param playCount the String value of the plays count.
-   */
-  public void setPlayCount(int playCount) {
-    this.playCount = playCount;
+  public int getTotal_play_count() {
+    return total_play_count;
   }
 
-  /**
-   * <p>Getter for the user played song count.</p>
-   *
-   * @return the user plays count
-   */
-  public int getPlayCount() {
-    return this.playCount;
+
+
+  public void setTotal_play_count(int total_play_count) {
+    this.total_play_count = total_play_count;
   }
 
 
@@ -252,25 +245,15 @@ public final class User extends AbstractEntity implements Serializable {
   }
 
 
-
-
-  /**
-   * <p>Setter for the user total tracks count: used by the parser.</p>
-   *
-   * @param tracksCount the user total tracks count.
-   */
-  public void setTracksCount(int tracksCount) {
-    this.tracksCount = tracksCount;
+  public int getPlaylists_count() {
+    return playlists_count;
   }
 
-  /**
-   * <p>Getter for the user total tracks count.</p>
-   *
-   * @return the user total tracks count
-   */
-  public int getTracksCount() {
-    return this.tracksCount;
+
+  public void setPlaylists_count(int playlists_count) {
+    this.playlists_count = playlists_count;
   }
+
 
 
   /**
@@ -367,25 +350,6 @@ public final class User extends AbstractEntity implements Serializable {
     return this.profile;
   }
 
-
-  /**
-   * <p>Setter for the user plan: used by the parser.</p>
-   *
-   * @param plan the user {@link Plan} object.
-   */
-  public void setPlan(Plan plan) {
-    this.plan = plan;
-  }
-
-  /**
-   * <p>Getter for the user {@link Plan}.</p>
-   *
-   * @return the user plan
-   */
-  public Plan getPlan() {
-    return this.plan;
-  }
-
   /**
    * <p>Getter for the auth_token</p>
    *
@@ -414,6 +378,28 @@ public final class User extends AbstractEntity implements Serializable {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public int getMedia_files_count() {
+    return media_files_count;
+  }
+
+
+
+  public void setMedia_files_count(int media_files_count) {
+    this.media_files_count = media_files_count;
+  }
+
+
+
+  public boolean isCan_upload() {
+    return can_upload;
+  }
+
+
+
+  public void setCan_upload(boolean can_upload) {
+    this.can_upload = can_upload;
   }
 
   /* ------------------- */
@@ -455,7 +441,7 @@ public final class User extends AbstractEntity implements Serializable {
    * @throws LoginException if any authentication problem occurs.
    */
   public String[] getUploadedTracks() throws ServiceException, LoginException {
-    Files files = (Files) getConfiguration().getFactory().getEntity( Files.TAGNAME, getConfiguration() );
+    MediaFiles files = (MediaFiles) getConfiguration().getFactory().getEntity( MediaFiles.TAGNAME, getConfiguration() );
 
     files.load(false);
     IConnectionMethod method = getConnector().get(files, null, null);
@@ -515,32 +501,6 @@ public final class User extends AbstractEntity implements Serializable {
   }
 
 
-  public Genres getGenres() {
-    if ( this.genres == null ){
-      this.genres = (Genres) getConfiguration().getFactory().getEntity(Genres.TAGNAME, getConfiguration());
-    }
-    return genres;
-  }
-
-
-  public Artists getArtists() {
-    if ( this.artists == null ){
-      this.artists = (Artists) getConfiguration().getFactory().getEntity(Artists.TAGNAME, getConfiguration());
-    }
-    return artists;
-  }
-
-
-  public Albums getAlbums() {
-    if ( this.albums == null ){
-      this.albums = (Albums) getConfiguration().getFactory().getEntity(Albums.TAGNAME, getConfiguration());
-    }
-    return albums;
-  }
-
-
-
-
   /**
    * Executes request populating this class
    * 
@@ -572,55 +532,57 @@ public final class User extends AbstractEntity implements Serializable {
 
   public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException{
 
-    if ( tagName.equals("token") || tagName.equals("tk") ){
+    if ( tagName.equals("token") ){
       return this.getClass().getMethod("setToken", long.class);
 
-    } else if ( tagName.equals("bytes_served") || tagName.equals("bs") ){
+    } else if ( tagName.equals("bytes_served") ){
       return this.getClass().getMethod("setBytesServed", long.class);
 
-    } else if ( tagName.equals("email") || tagName.equals("e") ){
+    } else if ( tagName.equals("email") ){
       return this.getClass().getMethod("setEmail", String.class);
 
-    } else if ( tagName.equals("play_count") || tagName.equals("pc") ){
-      return this.getClass().getMethod("setPlayCount", int.class);
+    } else if ( tagName.equals("total_play_count") ){
+      return this.getClass().getMethod("setTotal_play_count", int.class);
 
-    } else if ( tagName.equals("quota") || tagName.equals("q") ){
+    } else if ( tagName.equals("quota") ){
       return this.getClass().getMethod("setQuota", long.class);
 
-    } else if ( tagName.equals("tracks_count") || tagName.equals("tc") ){
-      return this.getClass().getMethod("setTracksCount", int.class);
+    } else if ( tagName.equals("playlists_count") ){
+      return this.getClass().getMethod("setPlaylists_count", int.class);
 
-    } else if ( tagName.equals("username") || tagName.equals("un") ){
+    } else if ( tagName.equals("username") ){
       return this.getClass().getMethod("setUsername", String.class);
 
-    } else if ( tagName.equals("available_storage") || tagName.equals("as") ){
+    } else if ( tagName.equals("available_storage") ){
       return this.getClass().getMethod("setAvailableStorage", long.class);
 
-    } else if ( tagName.equals("time_zone") || tagName.equals("tz") ){
+    } else if ( tagName.equals("time_zone") ){
       return this.getClass().getMethod("setTimeZone", String.class);
 
-    } else if ( tagName.equals("trial_ends_at") || tagName.equals("tea") ){
+    } else if ( tagName.equals("trial_ends_at") ){
       return this.getClass().getMethod("setTrialEndsAt", String.class);
 
-    } else if ( tagName.equals("allowed_formats") || tagName.equals("af") ){
+    } else if ( tagName.equals("allowed_formats") ){
       return this.getClass().getMethod("setAllowedFormats", String.class);
 
-    } else if ( tagName.equals("profile") || tagName.equals("p") ){
+    } else if ( tagName.equals("profile") ){
       return this.getClass().getMethod("setProfile", Profile.class);
-
-    } else if ( tagName.equals("plan") || tagName.equals("pl") ){
-      return this.getClass().getMethod("setPlan", Plan.class);
 
     } else if ( tagName.equals("auth_token")){
       return this.getClass().getMethod("setAuth_token", String.class);
+
     } else if ( tagName.equals("name")){
       return this.getClass().getMethod("setName", String.class);
+      
+    } else if ( tagName.equals("media_files_count")){
+      return this.getClass().getMethod("setMedia_files_count", int.class);
+      
+    } else if ( tagName.equals("can_upload")){
+      return this.getClass().getMethod("setCan_upload", boolean.class);
     }
-
-
+    
+    
     return null;
   }
-
-
 
 }

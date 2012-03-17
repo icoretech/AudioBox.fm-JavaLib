@@ -397,9 +397,9 @@ public class Playlist extends AbstractEntity implements Serializable {
       params.add(new BasicNameValuePair(HTTP_PARAM, track.getToken()));
     }
 
-    MediaFiles _tracks = (MediaFiles) this.getConfiguration().getFactory().getEntity(MediaFiles.TAGNAME, this.getConfiguration());
+    MediaFiles _mediafiles = (MediaFiles) this.getConfiguration().getFactory().getEntity(MediaFiles.TAGNAME, this.getConfiguration());
     IConnectionMethod method = this.getConnector().put(this, action);
-    IResponseHandler responseHandler = new PlaylistResponseHandler(_tracks);
+    IResponseHandler responseHandler = new PlaylistResponseHandler(_mediafiles);
 
     try {
 
@@ -410,7 +410,7 @@ public class Playlist extends AbstractEntity implements Serializable {
       log.error("An error occurred while instantiating UrlEncodedFormEntity", e);
     }
 
-    return _tracks;
+    return _mediafiles;
 
   }
 
