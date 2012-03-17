@@ -98,14 +98,6 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
 
   @Override
   public boolean add(Playlist entity) {
-    String token = entity.getToken();
-    if ( getConfiguration().hasPlaylist( token ) ) {
-      Playlist pl = this.getConfiguration().getPlaylist( token );
-      pl.copy( entity );
-      entity = pl;
-    } else {
-      getConfiguration().addPlaylist( entity );
-    }
     return super.addEntity(entity);
   }
 

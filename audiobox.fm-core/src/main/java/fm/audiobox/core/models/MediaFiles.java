@@ -92,15 +92,6 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
 
   @Override
   public boolean add(MediaFile entity) {
-
-    String token = entity.getToken();
-    if ( getConfiguration().hasMediaFile( token ) ) {
-      MediaFile pl = this.getConfiguration().getMediaFile( token );
-      pl.copy( entity );
-      entity = pl;
-    } else {
-      getConfiguration().addMediaFile( entity );
-    }
     return super.addEntity(entity);
   }
 

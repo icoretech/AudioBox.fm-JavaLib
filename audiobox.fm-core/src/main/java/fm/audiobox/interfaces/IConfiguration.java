@@ -26,8 +26,6 @@ import java.util.concurrent.ExecutorService;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.models.MediaFile;
-import fm.audiobox.core.models.Playlist;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 
 /**
@@ -48,14 +46,6 @@ public interface IConfiguration {
     TXT,
     BINARY
   }
-
-  public boolean hasPlaylist(String token);
-  public Playlist getPlaylist(String token);
-  public void addPlaylist(Playlist pl);
-
-  public boolean hasMediaFile(String token);
-  public MediaFile getMediaFile(String token);
-  public void addMediaFile(MediaFile tr);
 
   
   /**
