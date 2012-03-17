@@ -273,8 +273,6 @@ public class AudioBox implements Observer{
     private static final long serialVersionUID = -1947929692214926338L;
 
     private static final String URI_SEPARATOR = "/";
-    private static final String TOKEN_PARAMETER = URI_SEPARATOR + "${token}";
-    private static final String ACTION_PARAMETER = URI_SEPARATOR + "${action}";
 
 
     /** Get informations from configuration file */
@@ -337,7 +335,7 @@ public class AudioBox implements Observer{
         httpVerb = IConnectionMethod.METHOD_GET;
       }
 
-      String url = this.buildRequestUrl(destEntity.getNamespace(), destEntity.getToken(), action, httpVerb, params);
+      String url = this.buildRequestUrl(destEntity.getApiPath(), action, httpVerb, params);
 
       HttpRequestBase method = null;
 
@@ -555,7 +553,7 @@ public class AudioBox implements Observer{
      * 
      * @return the URL string 
      */
-    private String buildRequestUrl(String namespace, String token, String action, String httpVerb, List<NameValuePair> params) {
+    private String buildRequestUrl(String entityPath, String action, String httpVerb, List<NameValuePair> params) {
 
       if ( params == null ){
         params = new ArrayList<NameValuePair>();
@@ -564,13 +562,10 @@ public class AudioBox implements Observer{
         httpVerb = IConnectionMethod.METHOD_GET;
       }
 
-      //      namespace = ( ( namespace == null ) ? "" : URI_SEPARATOR.concat(namespace) ).trim();
-      token = ( ( token == null ) ? "" : URI_SEPARATOR.concat(token) ).trim();
       action = ( ( action == null ) ? "" : URI_SEPARATOR.concat(action) ).trim();
 
       // Replace placeholders with right values
-      //      String url = API_PATH.replace( NAMESPACE_PARAMETER, namespace ).replace( TOKEN_PARAMETER , token ).replace( ACTION_PARAMETER , action ); 
-      String url = ( API_PATH + configuration.getPath( namespace ) ).replace( TOKEN_PARAMETER , token ).replace( ACTION_PARAMETER , action );
+      String url = API_PATH + configuration.getPath() + entityPath + action;
       // add extension to request path
       url += "." + getConfiguration().getRequestFormat().toString().toLowerCase();
 
