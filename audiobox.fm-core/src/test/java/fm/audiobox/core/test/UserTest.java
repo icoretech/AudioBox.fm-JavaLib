@@ -28,9 +28,7 @@ public class UserTest extends AudioBoxTestCase {
     assertNotNull(user.getBytesServed());
     assertNotNull(user.getEmail());
     assertEquals(Fixtures.get(Fixtures.LOGIN), user.getEmail());
-    assertNotNull(user.getPlayCount());
     assertNotNull(user.getQuota());
-    assertNotNull(user.getTracksCount());
     assertNotNull(user.getAvailableStorage());
     //assertEquals(162135015424L, user.getAvailableStorage());
     assertNotNull(user.getUsername());
