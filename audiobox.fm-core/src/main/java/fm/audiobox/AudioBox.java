@@ -281,7 +281,7 @@ public class AudioBox implements Observer{
     private final String PORT = String.valueOf( configuration.getPort() ); 
     //    private final String PATH = configuration.getPath();
 
-    private final String API_PATH = PROTOCOL + "://" + HOST + ":" + PORT; //+ "/" + PATH + NAMESPACE_PARAMETER + TOKEN_PARAMETER + ACTION_PARAMETER;
+    private final String API_PATH = PROTOCOL + "://" + HOST + ":" + PORT;
     private HttpRoute mAudioBoxRoute;
     private ThreadSafeClientConnManager mCm;
     private DefaultHttpClient mClient;

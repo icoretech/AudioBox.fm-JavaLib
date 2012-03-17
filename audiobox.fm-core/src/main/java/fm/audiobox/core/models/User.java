@@ -563,7 +563,7 @@ public final class User extends AbstractEntity implements Serializable {
 
   @Override
   public String getApiPath() {
-    return getConfiguration().getPath() + "/" + NAMESPACE;
+    return "/" + NAMESPACE;
   }
 
 
