@@ -26,11 +26,8 @@ import java.util.concurrent.ExecutorService;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.models.Album;
-import fm.audiobox.core.models.Artist;
-import fm.audiobox.core.models.File;
-import fm.audiobox.core.models.Genre;
-import fm.audiobox.core.models.MediaFiles;
+import fm.audiobox.core.models.MediaFile;
+import fm.audiobox.core.models.Playlist;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 
 /**
@@ -52,32 +49,15 @@ public interface IConfiguration {
     BINARY
   }
 
-  
-  
-  public boolean hasMediaFiles(String token);
-  public MediaFiles getMediaFiles(String token);
-  public void addMediaFiles(MediaFiles pl);
-  
-//  public boolean hasTrack(String token);
-//  public Track getTrack(String token);
-//  public void addTrack(Track tr);
-  
-  public boolean hasAlbum(String token);
-  public Album getAlbum(String token);
-  public void addAlbum(Album al);
-  
-  public boolean hasGenre(String token);
-  public Genre getGenre(String token);
-  public void addGenre(Genre gr);
-  
-  public boolean hasArtist(String token);
-  public Artist getArtist(String token);
-  public void addArtist(Artist ar);
-  
-  public boolean hasFile(String token);
-  public File getFile(String token);
-  public void addFile(File tr);
+  public boolean hasPlaylist(String token);
+  public Playlist getPlaylist(String token);
+  public void addPlaylist(Playlist pl);
 
+  public boolean hasMediaFile(String token);
+  public MediaFile getMediaFile(String token);
+  public void addMediaFile(MediaFile tr);
+
+  
   /**
    * Sets the default extension for each request
    * @param requestFormat
@@ -191,8 +171,8 @@ public interface IConfiguration {
    * @return
    */
   public ILoginExceptionHandler getDefaultLoginExceptionHandler();
-  
-  
+
+
 
   /**
    * Sets the default handler for {@link ServiceException}
@@ -218,27 +198,27 @@ public interface IConfiguration {
    */
   public Class<? extends IConnectionMethod> getHttpMethodType();
 
-  
+
   /**
    * Use this method to get the configured {@link ExecutorService}
    * 
    * @return the configured {@link ExecutorService} used for requests
    */
   public ExecutorService getExecutor();
-  
+
 
   /**
    * Use this method to set the {@link ICacheManager}
    * @param manager the {@link ICacheManager} to set
    */
   public void setCacheManager(ICacheManager manager);
-  
-  
+
+
   /**
    * Use this method to get the configured cache manager
    * @return the {@link ICacheManager} 
    */
   public ICacheManager getCacheManager();
-  
-  
+
+
 }

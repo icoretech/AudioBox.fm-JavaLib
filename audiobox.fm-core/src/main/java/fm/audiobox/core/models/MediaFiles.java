@@ -21,170 +21,159 @@ package fm.audiobox.core.models;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import fm.audiobox.core.models.Playlists.Types;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IEntity;
 
 /**
- * MediaFilelist class is a {@link ModelItem} specialization for playlists elements.
+ * <p>MediaFiles is a {@link ModelsCollection} specialization for {@link MediaFile} collections.</p>
  * 
- * <p>
- * 
- * Profile Json looks like this: 
- * 
- *    { token: 'BZKsRc453WJz',
- *      name: 'Music',
- *      position: 1,
- *      media_files_count: 297,
- *      type: 'AudioPlaylist',
- *      updated_at: '2012-02-28T22:58:27Z',
- *      last_accessed: true }  
  *
  * @author Lucio Regina
  * @version 0.0.1
  */
-public class MediaFiles extends AbstractEntity implements Serializable {
+public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements Serializable {
+
+  private static final long serialVersionUID = 1L;
+
+  /** The XML tag name for the MediaFiles element */
+  public static final String NAMESPACE = MediaFiles.TAGNAME;
+  public static final String TAGNAME = "media_files";
+
+  private IEntity parent;
+  /**
+   *  MediaFiles are grouped by types that are:
+   * <ul> 
+   *   <li>{@link MediaFilesTypes#AudioFile AudioFile}</li>
+   *   <li>{@link MediaFilesTypes#VideoFile VideoFile}</li>
+   * </ul>
+   */
+  public enum Types {
+
+    AudioFile,
+
+    VideoFile
+
+  }
+
+  public MediaFiles(IConnector connector, IConfiguration config) {
+    super(connector, config);
+  }
+
+  @Override
+  public String getNamespace() {
+    if ( parent != null ){
+      return parent.getNamespace();
+    }
+    return NAMESPACE;
+  }
+
+  @Override
+  public String getTagName() {
+    if ( parent != null ){
+      return parent.getTagName();
+    }
+    return TAGNAME;
+  }
+
+  @Override
+  public Method getSetterMethod(String tagName) throws SecurityException,  NoSuchMethodException {
+
+    if ( tagName.equals( MediaFile.TAGNAME ) ) {
+      return this.getClass().getMethod("add", MediaFile.class);
+    }
+
+    return null;
+  }
+
+  @Override
+  public boolean add(MediaFile entity) {
+
+    String token = entity.getToken();
+    if ( getConfiguration().hasMediaFile( token ) ) {
+      MediaFile pl = this.getConfiguration().getMediaFile( token );
+      pl.copy( entity );
+      entity = pl;
+    } else {
+      getConfiguration().addMediaFile( entity );
+    }
+    return super.addEntity(entity);
+  }
+
+  /**
+   * Returns the {@link MediaFile} associated with the given <code>filename</code>
+   * @param filename the MediaFile filename
+   * @return the {@link MediaFile} associated with the given <code>filename</code>
+   */
+  public MediaFile getMediaFileByName(String filename){
+    for ( Iterator<MediaFile> it = this.iterator(); it.hasNext();  ){
+      MediaFile mdf = it.next();
+      if (  mdf.getFilename().equalsIgnoreCase( filename )  ) {
+        return mdf;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Returns the <b>first</b> {@link MediaFile} that matches with the given {@link MediaFilesTypes}
+   * 
+   * @param type the {@link MediaFilesTypes}
+   * @return the first {@link MediaFile} that matches with the given {@link MediaFilesTypes}
+   */
+  public MediaFile getMediaFileByType( Types type ){
+    for ( Iterator<MediaFile> it = this.iterator(); it.hasNext();  ){
+      MediaFile mdf = it.next();
+      if (  mdf.getType() == type  ) {
+        return mdf;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Returns a list of {@link MediaFile} that matches the given {@link MediaFilesTypes}
+   * 
+   * @param type the {@link MediaFilesTypes}
+   * @return a list of {@link MediaFile} that matches with the given {@link MediaFilesTypes}
+   */
+  public List<MediaFile> getMediaFilesByType( Types type ){
+    List<MediaFile> pls = new ArrayList<MediaFile>();
+    for ( Iterator<MediaFile> it = this.iterator(); it.hasNext();  ){
+      MediaFile mdf = it.next();
+      if (  mdf.getType() == type  ) {
+        pls.add(mdf);
+      }
+    }
+    return pls;
+  }
+
+  /**
+   * Sets the parent {@link IEntity}
+   * <p>
+   * <code>MediaFiles</code> can be a {@link Playlist}.
+   * So we have to manage each case setting this attribute
+   * </p>
+   * @param parent the {@link IEntity} parent object
+   */
+  protected void setParent(IEntity parent){
+    this.parent = parent;
+  }
+
+  @Override
+  public String getSubTagName() {
+    return MediaFile.TAGNAME;
+  }
 
 
-	private static final long serialVersionUID = 1L;
-	private static Logger log = LoggerFactory.getLogger(MediaFiles.class);
+  @Override
+  protected void copy(IEntity entity) {
+  }
 
-	/** The XML tag name for the MediaFiles element */
-	public static final String NAMESPACE = MediaFiles.TAGNAME;
-	public static final String TAGNAME = "media_files";
-
-	private String name;
-	private int position = 0;
-	private Types type;
-	private long media_files_count;
-	private Files files;
-	private String updated_at;
-	private boolean last_accessed;
-
-
-	/**
-	 * <p>Constructor for MediaFiles.</p>
-	 */	
-	public MediaFiles(IConnector connector, IConfiguration config) {
-		super(connector, config);
-	}
-
-	@Override
-	public String getNamespace() {
-		return NAMESPACE;
-	}
-	@Override
-	public String getTagName() {
-		return TAGNAME;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public int getPosition() {
-		return position;
-	}
-
-	public void setPosition(int position) {
-		this.position = position;
-	}
-
-	public Types getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		if ( type.equals( Types.AUDIO.toString().toLowerCase() ) ){
-			this.type = Types.AUDIO;
-
-		} else if ( type.equals( Types.TRASH.toString().toLowerCase()  ) ){
-			this.type = Types.TRASH;
-
-		} else if ( type.equals( Types.VIDEO.toString().toLowerCase()  ) ){
-			this.type = Types.VIDEO;
-
-		} else if ( type.equals( Types.CUSTOM.toString().toLowerCase()  ) ){
-			this.type = Types.CUSTOM;
-
-		} else if ( type.equals( Types.OFFLINE.toString().toLowerCase()  ) ){
-			this.type = Types.OFFLINE;
-
-		}
-	}
-
-	public long getMedia_files_count() {
-		return media_files_count;
-	}
-
-	public void setMedia_files_count(long media_files_count) {
-		this.media_files_count = media_files_count;
-	}
-
-	public Files getFiles() {
-		if( this.files == null){
-			this.files = (Files)getConfiguration().getFactory().getEntity( Files.TAGNAME , getConfiguration() );
-			this.files.setParent(this);
-		}
-		return files;
-	}
-
-	public String getUpdated_at() {
-		return updated_at;
-	}
-
-	public void setUpdated_at(String updated_at) {
-		this.updated_at = updated_at;
-	}
-
-	public boolean isLast_accessed() {
-		return last_accessed;
-	}
-
-	public void setLast_accessed(boolean last_accessed) {
-		this.last_accessed = last_accessed;
-	}
-
-	@Override
-	public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
-		if ( tagName.equals("token") ) {
-			return this.getClass().getMethod("setToken", String.class);
-
-		} else if ( tagName.equals("name") ) {
-			return this.getClass().getMethod("setName", String.class);
-
-		} else if ( tagName.equals("position") ) {
-			return this.getClass().getMethod("setPosition", int.class);
-
-		} else if ( tagName.equals("type")) {
-			return this.getClass().getMethod("setType", String.class);
-
-		} else if ( tagName.equals("media_files_count") ) {
-			return this.getClass().getMethod("setMedia_files_count", long.class);
-
-		} else if ( tagName.equals("updated_at") ) {
-			return this.getClass().getMethod("setUpdated_at", String.class);
-
-		} else if ( tagName.equals("last_accessed") ) {
-			return this.getClass().getMethod("setLast_accessed", boolean.class);
-		}
-		return null;
-	}
-	
-	@Override
-	protected void copy(IEntity entity) {
-		// TODO Auto-generated method stub
-
-	}
 
 
 }

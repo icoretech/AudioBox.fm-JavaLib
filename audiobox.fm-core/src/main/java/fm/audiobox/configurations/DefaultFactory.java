@@ -10,17 +10,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fm.audiobox.AudioBox;
-import fm.audiobox.core.models.Album;
-import fm.audiobox.core.models.Albums;
-import fm.audiobox.core.models.Artist;
-import fm.audiobox.core.models.Artists;
 import fm.audiobox.core.models.Covers;
-import fm.audiobox.core.models.File;
-import fm.audiobox.core.models.Files;
-import fm.audiobox.core.models.Genre;
-import fm.audiobox.core.models.Genres;
+import fm.audiobox.core.models.MediaFile;
 import fm.audiobox.core.models.MediaFiles;
-import fm.audiobox.core.models.Plan;
+import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
 import fm.audiobox.core.models.Profile;
 import fm.audiobox.core.models.User;
@@ -33,7 +26,7 @@ public class DefaultFactory implements IFactory {
 
   private static final Logger log = LoggerFactory.getLogger(DefaultFactory.class);
   
-  private static final String[] EXCLUDED_EXTENDABLE_CLASSES = new String[]{ User.TAGNAME, Plan.TAGNAME, Profile.TAGNAME };
+  private static final String[] EXCLUDED_EXTENDABLE_CLASSES = new String[]{ User.TAGNAME, Profile.TAGNAME };
   
   /**
    * Default Entities map.
@@ -54,28 +47,17 @@ public class DefaultFactory implements IFactory {
   static {
     gEntities = new HashMap<String, Class<? extends IEntity>>();
     gEntities.put( User.TAGNAME, User.class );
-    gEntities.put( Plan.TAGNAME, Plan.class );
     gEntities.put( Profile.TAGNAME, Profile.class );
     
     gEntities.put( Playlists.TAGNAME, Playlists.class );
-//    gEntities.put( Playlist.TAGNAME, Playlist.class );
+    gEntities.put( Playlist.TAGNAME, Playlist.class );
     gEntities.put( MediaFiles.TAGNAME, MediaFiles.class );
     
-    gEntities.put( Genres.TAGNAME, Genres.class );
-    gEntities.put( Genre.TAGNAME, Genre.class );
     
-    gEntities.put( Albums.TAGNAME, Albums.class );
-    gEntities.put( Album.TAGNAME, Album.class );
     gEntities.put( Covers.TAGNAME, Covers.class );
     
-    gEntities.put( Artists.TAGNAME, Artists.class );
-    gEntities.put( Artist.TAGNAME, Artist.class );
-    
-//    gEntities.put( Tracks.TAGNAME, Tracks.class );
-//    gEntities.put( Track.TAGNAME, Track.class );    
-    
-    gEntities.put( Files.TAGNAME, Files.class );
-    gEntities.put( File.TAGNAME, File.class );
+    gEntities.put( MediaFiles.TAGNAME, MediaFiles.class );
+    gEntities.put( MediaFile.TAGNAME, MediaFile.class );
     
     gEntities.put( fm.audiobox.core.models.Error.TAGNAME, fm.audiobox.core.models.Error.class );
     

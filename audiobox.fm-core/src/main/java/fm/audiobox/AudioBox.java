@@ -167,16 +167,16 @@ public class AudioBox implements Observer{
 
   private static Logger log = LoggerFactory.getLogger(AudioBox.class);
 
-  
+
   /** Prefix used to store each property into properties file */
   public static final String PREFIX = "fm.audiobox.";
-  
+
   private UsernamePasswordCredentials mCredentials;
 
   private IConfiguration configuration;
   private IConnector connector;
   private User user;
-  
+
   private String auth_token;
   /**
    * <p>Constructor for AudioBox.</p>
@@ -237,23 +237,23 @@ public class AudioBox implements Observer{
     //add the object to be observed, the observer 
     user.addObserver(this);
     mCredentials = new UsernamePasswordCredentials(username, password);
-    
+
     this.getConnector().get(user, null, null).send(false);
-    
+
     return this.user = user;
   }
 
-  
+
   public IConfiguration getConfiguration(){
     return this.configuration;
   }
-  
+
   @Override
   public void update(Observable arg0, Object arg1) {
-	  this.auth_token = arg1.toString();
-  	
+    this.auth_token = arg1.toString();
+
   }
-  
+
   /**
    * Connector is the AudioBox http request wrapper.
    * 
@@ -269,19 +269,19 @@ public class AudioBox implements Observer{
   public class Connector implements Serializable, IConnector {
 
     private final Logger log = LoggerFactory.getLogger(Connector.class);
-    
+
     private static final long serialVersionUID = -1947929692214926338L;
 
     private static final String URI_SEPARATOR = "/";
     private static final String TOKEN_PARAMETER = URI_SEPARATOR + "${token}";
     private static final String ACTION_PARAMETER = URI_SEPARATOR + "${action}";
-    
+
 
     /** Get informations from configuration file */
     private final String PROTOCOL = configuration.getProtocol();
     private final String HOST = configuration.getHost();
     private final String PORT = String.valueOf( configuration.getPort() ); 
-//    private final String PATH = configuration.getPath();
+    //    private final String PATH = configuration.getPath();
 
     private final String API_PATH = PROTOCOL + "://" + HOST + ":" + PORT; //+ "/" + PATH + NAMESPACE_PARAMETER + TOKEN_PARAMETER + ACTION_PARAMETER;
     private HttpRoute mAudioBoxRoute;
@@ -364,12 +364,12 @@ public class AudioBox implements Observer{
     @Override
     public IConnectionMethod get(IEntity destEntity, String action, List<NameValuePair> params) {
       IConnectionMethod method = getConnectionMethod();
-      
+
       if ( method != null ) {
         HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_GET, destEntity, action, params);
         method.init(destEntity, originalMethod, this.mClient, getConfiguration() );
       }
-      
+
       return method;
     }
 
@@ -377,12 +377,12 @@ public class AudioBox implements Observer{
     @Override
     public IConnectionMethod put(IEntity destEntity, String action) {
       IConnectionMethod method = getConnectionMethod();
-      
+
       if ( method != null ) {
         HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_PUT, destEntity, action, null);
         method.init(destEntity, originalMethod, this.mClient, getConfiguration() );
       }
-      
+
       return method;
     }
 
@@ -390,12 +390,12 @@ public class AudioBox implements Observer{
     @Override
     public IConnectionMethod post(IEntity destEntity, String action) {
       IConnectionMethod method = getConnectionMethod();
-      
+
       if ( method != null ) {
         HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_POST, destEntity, action, null);
         method.init(destEntity, originalMethod, this.mClient, getConfiguration() );
       }
-      
+
       return method;
     }
 
@@ -403,12 +403,12 @@ public class AudioBox implements Observer{
     @Override
     public IConnectionMethod delete(IEntity destEntity, String action) {
       IConnectionMethod method = getConnectionMethod();
-      
+
       if ( method != null ) {
         HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_DELETE, destEntity, action, null);
         method.init(destEntity, originalMethod, this.mClient, getConfiguration() );
       }
-      
+
       return method;
     }
 
@@ -416,14 +416,14 @@ public class AudioBox implements Observer{
     /* --------------- */
     /* Private methods */
     /* --------------- */
-    
+
     /** Default constructor builds http connector */
     private Connector() {
       log.trace("New Connector is going to be instantiated");
       log.debug("Remote host will be: " + API_PATH );
       buildClient();
     }
-    
+
     /**
      * This method is used to build the HttpClient to use for connections
      */
@@ -442,11 +442,11 @@ public class AudioBox implements Observer{
 
       this.mCm = new ThreadSafeClientConnManager(params, schemeRegistry);
       this.mClient = new DefaultHttpClient( this.mCm, params );
-      
+
 
       // Increase max total connection to 200
       ConnManagerParams.setMaxTotalConnections(params, 200);
-      
+
       // Increase default max connection per route to 20
       ConnPerRouteBean connPerRoute = new ConnPerRouteBean(20);
 
@@ -457,29 +457,33 @@ public class AudioBox implements Observer{
       this.mClient.addRequestInterceptor(new HttpRequestInterceptor() {
 
         public void process( final HttpRequest request,  final HttpContext context) throws HttpException, IOException {
-          
+
           log.trace("New request detected");
-          
+
           if (!request.containsHeader("Accept-Encoding")) {
             request.addHeader("Accept-Encoding", "gzip");
           }
-          
+
           if (log.isTraceEnabled())
             log.trace("User-Agent: " + getConfiguration().getUserAgent() );
-          
+
           request.addHeader("User-Agent",  getConfiguration().getUserAgent() );
-          
-          request.addHeader("X-AUTH-TOKEN",  auth_token );
+
           Header hostHeader = request.getFirstHeader("HOST");
-          
+
           /*
            * NOTE: we have to add PORT because HttpClient is instantiated specifing PORT into URL
            */
           if ( hostHeader.getValue().equals( HOST + ":" + PORT) ) {
-            log.trace("Request to AudioBox, add user credentials");
-            request.addHeader( mScheme.authenticate(mCredentials,  request) );
+            if( auth_token != null){
+              log.trace("Request to AudioBox, add auth_token");
+              request.addHeader("X-AUTH-TOKEN",  auth_token );              
+            }else{
+              log.trace("Request to AudioBox, add user credentials");
+              request.addHeader( mScheme.authenticate(mCredentials,  request) );  
+            }
           }
-          
+
         }
 
       });
@@ -517,19 +521,19 @@ public class AudioBox implements Observer{
       });
 
     }
-    
-    
+
+
     /**
      * 
      * @return
      */
     private IConnectionMethod getConnectionMethod(){
-      
+
       Class<? extends IConnectionMethod> klass = getConfiguration().getHttpMethodType();
-      
+
       if ( log.isDebugEnabled() )
         log.trace("Instantiating IConnectionMethod by class: " + klass.getName() );
-      
+
       try {
         return klass.newInstance();
       } catch (InstantiationException e) {
@@ -540,7 +544,7 @@ public class AudioBox implements Observer{
       return null;
     }
 
-    
+
     /**
      * Creates the correct url starting from parameters
      * 
@@ -552,20 +556,20 @@ public class AudioBox implements Observer{
      * @return the URL string 
      */
     private String buildRequestUrl(String namespace, String token, String action, String httpVerb, List<NameValuePair> params) {
-      
+
       if ( params == null ){
         params = new ArrayList<NameValuePair>();
       }
       if ( httpVerb == null ) {
         httpVerb = IConnectionMethod.METHOD_GET;
       }
-      
-//      namespace = ( ( namespace == null ) ? "" : URI_SEPARATOR.concat(namespace) ).trim();
+
+      //      namespace = ( ( namespace == null ) ? "" : URI_SEPARATOR.concat(namespace) ).trim();
       token = ( ( token == null ) ? "" : URI_SEPARATOR.concat(token) ).trim();
       action = ( ( action == null ) ? "" : URI_SEPARATOR.concat(action) ).trim();
 
       // Replace placeholders with right values
-//      String url = API_PATH.replace( NAMESPACE_PARAMETER, namespace ).replace( TOKEN_PARAMETER , token ).replace( ACTION_PARAMETER , action ); 
+      //      String url = API_PATH.replace( NAMESPACE_PARAMETER, namespace ).replace( TOKEN_PARAMETER , token ).replace( ACTION_PARAMETER , action ); 
       String url = ( API_PATH + configuration.getPath( namespace ) ).replace( TOKEN_PARAMETER , token ).replace( ACTION_PARAMETER , action );
       // add extension to request path
       url += "." + getConfiguration().getRequestFormat().toString().toLowerCase();
@@ -574,9 +578,6 @@ public class AudioBox implements Observer{
         params.add( new BasicNameValuePair("short", "true") );
       }
       
-      if ( auth_token != null ){
-        params.add( new BasicNameValuePair("auth_token", auth_token) );
-      }
       if ( httpVerb.equals( IConnectionMethod.METHOD_GET ) ){
         String query = URLEncodedUtils.format( params , HTTP.UTF_8 );
         if ( query.length() > 0 )
@@ -586,7 +587,7 @@ public class AudioBox implements Observer{
       return url;
     }
 
-    
+
   }
 
 }

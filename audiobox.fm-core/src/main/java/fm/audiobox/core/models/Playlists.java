@@ -40,7 +40,7 @@ import fm.audiobox.interfaces.IEntity;
  * @author Fabio Tunno
  * @version 0.0.1
  */
-public class Playlists extends AbstractCollectionEntity<MediaFiles> implements Serializable {
+public class Playlists extends AbstractCollectionEntity<Playlist> implements Serializable {
 
   private static final long serialVersionUID = 1L;
   
@@ -55,28 +55,25 @@ public class Playlists extends AbstractCollectionEntity<MediaFiles> implements S
   /** 
    * Playlists are grouped by types that are:
    * <ul> 
-   *   <li>{@link PlaylistTypes#AUDIO audio}</li>
-   *   <li>{@link PlaylistTypes#NATIVE native}</li>
-   *   <li>{@link PlaylistTypes#TRASH trash}</li>
-   *   <li>{@link PlaylistTypes#VIDEO video}</li>
-   *   <li>{@link PlaylistTypes#CUSTOM custom}</li>
+   *   <li>{@link PlaylistTypes#AudioPlaylist audio}</li>
+   *   <li>{@link PlaylistTypes#SmartPlaylist smart}</li>
+   *   <li>{@link PlaylistTypes#VideoPlaylist video}</li>
+   *   <li>{@link PlaylistTypes#CustomPlaylist custom}</li>
    * </ul> 
    */
   public enum Types {
     /** The so called "Music" playlist, master audio media container */
-    AUDIO,
+    AudioPlaylist,
 
-    /** Recycle bin meta playlist */
-    TRASH,
-
-    /** Mainly the YouTube&trade; Channel playlist */
-    VIDEO,
+    /** The so called "Video" playlist, master video media container */
+    VideoPlaylist,
 
     /** User defined playlists */
-    CUSTOM,
+    CustomPlaylist,
 
-    /** Offline playlist */
-    OFFLINE
+    /** User defined playlists */
+    SmartPlaylist,
+
   }
 
   /**
@@ -100,14 +97,14 @@ public class Playlists extends AbstractCollectionEntity<MediaFiles> implements S
 
 
   @Override
-  public boolean add(MediaFiles entity) {
+  public boolean add(Playlist entity) {
     String token = entity.getToken();
-    if ( getConfiguration().hasMediaFiles( token ) ) {
-      MediaFiles pl = this.getConfiguration().getMediaFiles( token );
+    if ( getConfiguration().hasPlaylist( token ) ) {
+      Playlist pl = this.getConfiguration().getPlaylist( token );
       pl.copy( entity );
       entity = pl;
     } else {
-      getConfiguration().addMediaFiles( entity );
+      getConfiguration().addPlaylist( entity );
     }
     return super.addEntity(entity);
   }
@@ -118,9 +115,9 @@ public class Playlists extends AbstractCollectionEntity<MediaFiles> implements S
    * @param name the MediaFiles name
    * @return the {@link MediaFiles} associated with the given <code>name</code>
    */
-  public MediaFiles getMediaFilesByName(String name){
-    for ( Iterator<MediaFiles> it = this.iterator(); it.hasNext();  ){
-    	MediaFiles pl = it.next();
+  public Playlist getPlaylistByName(String name){
+    for ( Iterator<Playlist> it = this.iterator(); it.hasNext();  ){
+      Playlist pl = it.next();
       if (  pl.getName().equalsIgnoreCase( name )  ) {
         return pl;
       }
@@ -134,9 +131,9 @@ public class Playlists extends AbstractCollectionEntity<MediaFiles> implements S
    * @param type the {@link PlaylistTypes}
    * @return the first {@link MediaFiles} that matches with the given {@link PlaylistTypes}
    */
-  public MediaFiles getMediaFilesByType( Types type ){
-    for ( Iterator<MediaFiles> it = this.iterator(); it.hasNext();  ){
-    	MediaFiles pl = it.next();
+  public Playlist getPlaylistByType( Types type ){
+    for ( Iterator<Playlist> it = this.iterator(); it.hasNext();  ){
+      Playlist pl = it.next();
       if (  pl.getType() == type  ) {
         return pl;
       }
@@ -150,10 +147,10 @@ public class Playlists extends AbstractCollectionEntity<MediaFiles> implements S
    * @param type the {@link PlaylistTypes}
    * @return a list of {@link MediaFiles} that matches with the given {@link PlaylistTypes}
    */
-  public List<MediaFiles> getPlaylistsByType( Types type ){
-    List<MediaFiles> pls = new ArrayList<MediaFiles>();
-    for ( Iterator<MediaFiles> it = this.iterator(); it.hasNext();  ){
-    	MediaFiles pl = it.next();
+  public List<Playlist> getPlaylistsByType( Types type ){
+    List<Playlist> pls = new ArrayList<Playlist>();
+    for ( Iterator<Playlist> it = this.iterator(); it.hasNext();  ){
+      Playlist pl = it.next();
       if (  pl.getType() == type  ) {
         pls.add(pl);
       }

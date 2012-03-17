@@ -111,10 +111,10 @@ public final class User extends AbstractEntity implements Serializable {
   private String timeZone;
   private String trialEndsAt;
   private String[] allowedFormats;
-  
+
   private Profile profile;
   private Plan plan;
-  
+
   // User's collection relations
   private Playlists playlists;
   private Genres genres;
@@ -122,7 +122,7 @@ public final class User extends AbstractEntity implements Serializable {
   private Albums albums;
 
   private String auth_token;
-  
+
   private String name;
   /**
    * <p>Constructor for User.</p>
@@ -131,18 +131,18 @@ public final class User extends AbstractEntity implements Serializable {
     super(connector, config);
   }
 
-  
-  
+
+
   public String getTagName(){
     return TAGNAME;
   }
-  
+
   @Override
   public String getNamespace(){
     return NAMESPACE;
   }
-  
-  
+
+
   /* ------------------- */
   /* Getters and setters */
   /* ------------------- */
@@ -334,7 +334,7 @@ public final class User extends AbstractEntity implements Serializable {
     return this.timeZone;
   }
 
-  
+
   /**
    * <p>Sets the expiration date of trial plan: used by the parser.</p>
    *
@@ -343,15 +343,15 @@ public final class User extends AbstractEntity implements Serializable {
   public void setTrialEndsAt(String trialEndsAt) {
     this.trialEndsAt = trialEndsAt;
   }
-  
-  
+
+
   /**
    * @return the expiration date of trial plan
    */
   public String getTrialEndsAt() {
     return this.trialEndsAt;
   }
-  
+
 
   /**
    * <p>Setter for the user profile: used by the parser.</p>
@@ -389,14 +389,14 @@ public final class User extends AbstractEntity implements Serializable {
   public Plan getPlan() {
     return this.plan;
   }
-  
+
   /**
    * <p>Getter for the auth_token</p>
    *
    * @return String[] the auth_token
    */
   public String getAuth_token() {
-	return auth_token;
+    return auth_token;
   }
 
   /**
@@ -405,27 +405,27 @@ public final class User extends AbstractEntity implements Serializable {
    * @param auth_token a String the contains the user authentication 
    */
   public void setAuth_token(String auth_token) {
-	//the object User is changed
-	setChanged();
-	//change is notified to the observers
-	notifyObservers(auth_token);
-	this.auth_token = auth_token;
+    //the object User is changed
+    setChanged();
+    //change is notified to the observers
+    notifyObservers(auth_token);
+    this.auth_token = auth_token;
   }
-  
+
   public String getName() {
-	return name;
+    return name;
   }
-  
+
   public void setName(String name) {
-	this.name = name;
+    this.name = name;
   }
-  
+
   /* ------------------- */
   /* Collection Browsing */
   /* ------------------- */
 
 
-/**
+  /**
    * Given a known track Token this method will requests AudioBox.fm and returns a valid {@link Track} object.
    *
    * @param token the token of the track you are asking for.
@@ -436,14 +436,14 @@ public final class User extends AbstractEntity implements Serializable {
    * @throws ServiceException if the requested resource doesn't exists or any other ServiceException occur.
    * @throws ModelException 
    */
-  public File newTrackByToken(String token) throws ServiceException, LoginException {
-	File file = (File) getConfiguration().getFactory().getEntity( File.TAGNAME, getConfiguration() );
+  public MediaFile newTrackByToken(String token) throws ServiceException, LoginException {
+    MediaFile file = (MediaFile) getConfiguration().getFactory().getEntity( MediaFile.TAGNAME, getConfiguration() );
     file.setToken(token);
     file.load();
     return file;
   }
-  
-  
+
+
 
 
   /**
@@ -460,11 +460,11 @@ public final class User extends AbstractEntity implements Serializable {
    */
   public String[] getUploadedTracks() throws ServiceException, LoginException {
     Files files = (Files) getConfiguration().getFactory().getEntity( Files.TAGNAME, getConfiguration() );
-    
+
     files.load(false);
     IConnectionMethod method = getConnector().get(files, null, null);
     method.send( true );
-    
+
     String result = method.getResponse().getBody();
     String[] resultSplitted = result.split( ";" , result.length() );
     String[] hashes = new String[ resultSplitted.length ];
@@ -476,20 +476,20 @@ public final class User extends AbstractEntity implements Serializable {
   }
 
 
-//  public boolean dropTracks(List<Track> tracks) throws LoginException, ServiceException {
-//    try {
-//      return this.getPlaylists().getPlaylistsByType( PlaylistTypes.TRASH ).get( AudioBox.FIRST ).addTracks(tracks);
-//    } catch (ModelException e) {
-//      e.printStackTrace();
-//    }
-//    return false;
-//  }
+  //  public boolean dropTracks(List<Track> tracks) throws LoginException, ServiceException {
+  //    try {
+  //      return this.getPlaylists().getPlaylistsByType( PlaylistTypes.TRASH ).get( AudioBox.FIRST ).addTracks(tracks);
+  //    } catch (ModelException e) {
+  //      e.printStackTrace();
+  //    }
+  //    return false;
+  //  }
 
-//  public boolean dropTrack(Track track) throws LoginException, ServiceException {
-//    List<Track> tracks = new ArrayList<Track>();
-//    tracks.add(track);
-//    return dropTracks( tracks );
-//  }
+  //  public boolean dropTrack(Track track) throws LoginException, ServiceException {
+  //    List<Track> tracks = new ArrayList<Track>();
+  //    tracks.add(track);
+  //    return dropTracks( tracks );
+  //  }
 
 
   public void emptyTrash() throws LoginException, ServiceException {
@@ -504,8 +504,8 @@ public final class User extends AbstractEntity implements Serializable {
    * 
    * @return a new {@link Track} instance
    */
-  public File newTrack() {
-    return (File) getConfiguration().getFactory().getEntity( File.TAGNAME, getConfiguration() );
+  public MediaFile newTrack() {
+    return (MediaFile) getConfiguration().getFactory().getEntity( MediaFile.TAGNAME, getConfiguration() );
   }
 
 
@@ -543,8 +543,8 @@ public final class User extends AbstractEntity implements Serializable {
   }
 
 
-  
-  
+
+
   /**
    * Executes request populating this class
    * 
@@ -554,7 +554,7 @@ public final class User extends AbstractEntity implements Serializable {
   public void load() throws ServiceException, LoginException {
     this.load(null);
   }
-  
+
   /**
    * Executes request populating this class and passing the {@link IResponseHandler} as response parser
    * 
@@ -565,66 +565,66 @@ public final class User extends AbstractEntity implements Serializable {
   public void load(IResponseHandler responseHandler) throws ServiceException, LoginException {
     getConnector().get(this, null, null).send(false, null, responseHandler);
   }
-  
-  
-  
+
+
+
   @Override
   protected void copy(IEntity entity) {
     // default: do nothing
   }
-  
-  
+
+
   public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException{
-    
+
     if ( tagName.equals("token") || tagName.equals("tk") ){
       return this.getClass().getMethod("setToken", long.class);
-      
+
     } else if ( tagName.equals("bytes_served") || tagName.equals("bs") ){
       return this.getClass().getMethod("setBytesServed", long.class);
-      
+
     } else if ( tagName.equals("email") || tagName.equals("e") ){
       return this.getClass().getMethod("setEmail", String.class);
-      
+
     } else if ( tagName.equals("play_count") || tagName.equals("pc") ){
       return this.getClass().getMethod("setPlayCount", int.class);
-      
+
     } else if ( tagName.equals("quota") || tagName.equals("q") ){
       return this.getClass().getMethod("setQuota", long.class);
-      
+
     } else if ( tagName.equals("tracks_count") || tagName.equals("tc") ){
       return this.getClass().getMethod("setTracksCount", int.class);
-      
+
     } else if ( tagName.equals("username") || tagName.equals("un") ){
       return this.getClass().getMethod("setUsername", String.class);
-      
+
     } else if ( tagName.equals("available_storage") || tagName.equals("as") ){
       return this.getClass().getMethod("setAvailableStorage", long.class);
-      
+
     } else if ( tagName.equals("time_zone") || tagName.equals("tz") ){
       return this.getClass().getMethod("setTimeZone", String.class);
-      
+
     } else if ( tagName.equals("trial_ends_at") || tagName.equals("tea") ){
       return this.getClass().getMethod("setTrialEndsAt", String.class);
-      
+
     } else if ( tagName.equals("allowed_formats") || tagName.equals("af") ){
       return this.getClass().getMethod("setAllowedFormats", String.class);
-      
+
     } else if ( tagName.equals("profile") || tagName.equals("p") ){
       return this.getClass().getMethod("setProfile", Profile.class);
-      
+
     } else if ( tagName.equals("plan") || tagName.equals("pl") ){
       return this.getClass().getMethod("setPlan", Plan.class);
-      
+
     } else if ( tagName.equals("auth_token")){
-    	return this.getClass().getMethod("setAuth_token", String.class);
+      return this.getClass().getMethod("setAuth_token", String.class);
     } else if ( tagName.equals("name")){
-    	return this.getClass().getMethod("setName", String.class);
+      return this.getClass().getMethod("setName", String.class);
     }
-     
-    
+
+
     return null;
   }
-  
-  
-  
+
+
+
 }
