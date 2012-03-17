@@ -51,13 +51,13 @@ import fm.audiobox.interfaces.IEntity;
  * @author Valerio Chiodino
  * @author Fabio Tunno
  */
-public class Covers extends AbstractEntity implements Serializable {
+public class ArtWork extends AbstractEntity implements Serializable {
   
   private static final long serialVersionUID = 1L;
 
   /** The XML tag name for the Album element */
   public static final String NAMESPACE = null;
-  public static final String TAGNAME = "covers|c";
+  public static final String TAGNAME = "artwork|ar";
   
   private String large;
   private String medium;
@@ -67,7 +67,7 @@ public class Covers extends AbstractEntity implements Serializable {
   /**
    * <p>Constructor for CoverUrls.</p>
    */
-  public Covers(IConnector connector, IConfiguration config){
+  public ArtWork(IConnector connector, IConfiguration config){
     super(connector, config);
   }
 
@@ -172,11 +172,11 @@ public class Covers extends AbstractEntity implements Serializable {
 
   @Override
   protected void copy(IEntity entity) {
-    Covers covers = (Covers) entity;
+    ArtWork artwork = (ArtWork) entity;
     
-    this.large = covers.getLarge();
-    this.medium = covers.getMedium();
-    this.small = covers.getSmall();
+    this.large = artwork.getLarge();
+    this.medium = artwork.getMedium();
+    this.small = artwork.getSmall();
     
     this.setChanged();
     Event event = new Event( this, Event.States.ENTITY_REFRESHED );

@@ -10,7 +10,7 @@ import org.junit.Test;
 import fm.audiobox.AudioBox;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.models.Track;
+import fm.audiobox.core.models.MediaFile;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.ILoginExceptionHandler;
 import fm.audiobox.interfaces.IServiceExceptionHandler;
@@ -36,7 +36,7 @@ public class DefaultExceptionHandlerTests extends AudioBoxTestCase {
       }
     });
     
-    Track t = null;
+    MediaFile t = null;
     try {
       t = user.newTrackByToken("token_fake");
     } catch (ServiceException e) {

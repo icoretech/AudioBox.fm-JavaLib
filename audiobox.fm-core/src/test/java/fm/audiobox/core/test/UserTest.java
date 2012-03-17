@@ -7,7 +7,6 @@ import org.junit.Test;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.models.User;
 import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 
 /**
@@ -16,7 +15,7 @@ import fm.audiobox.core.test.mocks.fixtures.Fixtures;
  */
 public class UserTest extends AudioBoxTestCase {
 
-  private static final String[] ADMIN_ALLOWED_FORMATS = "aac;mp3;mp2;m4a;m4b;m4r;mp4;3gp;ogg;oga;flac;spx;rm;ram;wav;mpc;mp+;mpp;aiff;aif;aifc;tta".split(";");
+//  private static final String[] ADMIN_ALLOWED_FORMATS = "aac;mp3;mp2;m4a;m4b;m4r;mp4;3gp;ogg;oga;flac;spx;rm;ram;wav;mpc;mp+;mpp;aiff;aif;aifc;tta".split(";");
 
   @Test
   public void testUser() {
@@ -244,8 +243,8 @@ public class UserTest extends AudioBoxTestCase {
 //
 //  }
 
-  private void loginInactiveUser() throws LoginException, ServiceException {
-    user = (User) abc.login(Fixtures.get(Fixtures.INACTIVE_LOGIN), Fixtures.get(Fixtures.INACTIVE_RIGHT_PASS));
-  }
+//  private void loginInactiveUser() throws LoginException, ServiceException {
+//    user = (User) abc.login(Fixtures.get(Fixtures.INACTIVE_LOGIN), Fixtures.get(Fixtures.INACTIVE_RIGHT_PASS));
+//  }
 
 }

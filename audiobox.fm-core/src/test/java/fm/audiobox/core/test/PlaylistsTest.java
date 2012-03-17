@@ -11,12 +11,11 @@ import org.junit.Test;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.models.Album;
+import fm.audiobox.core.models.MediaFile;
+import fm.audiobox.core.models.MediaFiles;
 import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
 import fm.audiobox.core.models.Playlists.Types;
-import fm.audiobox.core.models.Track;
-import fm.audiobox.core.models.Tracks;
 import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 
 /**
@@ -46,11 +45,11 @@ public class PlaylistsTest extends AudioBoxTestCase {
     Playlist pl = pls.getPlaylistByName(Fixtures.get( Fixtures.SMALL_PLAYLIST_NAME ));
     assertEquals( pl.getName(), Fixtures.get( Fixtures.SMALL_PLAYLIST_NAME ) );
     
-    pl = pls.getPlaylistByType( Types.AUDIO );
+    pl = pls.getPlaylistByType( Types.AudioPlaylist );
     assertEquals( pl.getName(), "Music" );
     
-    pl = pls.getPlaylistByType( Types.OFFLINE );
-    assertEquals( pl.getName(), "Offline" );
+    pl = pls.getPlaylistByType( Types.VideoPlaylist );
+    assertEquals( pl.getName(), "Video" );
     
   }
   
@@ -93,33 +92,24 @@ public class PlaylistsTest extends AudioBoxTestCase {
       assertNotNull(pl.getName());
       assertNotNull(pl.getToken());
       assertNotNull(pl.getType());
-      assertNotNull(pl.getTracksCount());
+      assertNotNull(pl.getMediaFilesCount());
       assertNotNull(pl.getPosition());
       testPl = pl;
     }
 
     assertNotNull(testPl);
 
-    Tracks trs = (Tracks) testPl.getTracks();
+    MediaFiles trs = (MediaFiles) testPl.getMediaFiles();
     assertNotNull(trs);
     assertEquals(0, trs.size());
 
     trs.load(false);
     assertTrue(0 < trs.size());
 
-    Track tr = (Track) trs.get(0);
+    MediaFile tr = (MediaFile) trs.get(0);
     assertNotNull(tr);
-    assertNotNull(tr.getName());
+    assertNotNull(tr.getTitle());
     assertNotNull(tr.getToken());
-
-    assertNotNull(tr.getArtist());
-    assertNotNull(tr.getArtist().getToken());
-
-    assertNotNull(tr.getAlbum());
-    assertNotNull(tr.getAlbum().getToken());
-
-    assertNotNull(((Album) tr.getAlbum()).getArtist());
-
   }
 
   @Test
@@ -146,16 +136,13 @@ public class PlaylistsTest extends AudioBoxTestCase {
     playlists.load(false);
     assertTrue(0 < playlists.size());
 
-    List<Playlist> pls = playlists.getPlaylistsByType(Types.AUDIO);
+    List<Playlist> pls = playlists.getPlaylistsByType(Types.AudioPlaylist);
     assertEquals(1, pls.size());
 
-    pls = playlists.getPlaylistsByType(Types.TRASH);
+    pls = playlists.getPlaylistsByType(Types.VideoPlaylist);
     assertEquals(1, pls.size());
 
-    pls = playlists.getPlaylistsByType(Types.VIDEO);
-    assertEquals(1, pls.size());
-
-    pls = playlists.getPlaylistsByType(Types.CUSTOM);
+    pls = playlists.getPlaylistsByType(Types.CustomPlaylist);
     assertNotNull(pls);
   }
 
@@ -169,26 +156,26 @@ public class PlaylistsTest extends AudioBoxTestCase {
     Playlist smallPlaylist = playlists.getPlaylistByName(Fixtures.get(Fixtures.SMALL_PLAYLIST_NAME));
     Playlist dev = playlists.getPlaylistByName(Fixtures.get(Fixtures.DEV_PLAYLIST_NAME));
     
-    smallPlaylist.getTracks().load(false);
-    dev.getTracks().load(false);
+    smallPlaylist.getMediaFiles().load(false);
+    dev.getMediaFiles().load(false);
     
-    Track trk = smallPlaylist.getTracks().get(0);
+    MediaFile trk = smallPlaylist.getMediaFiles().get(0);
 
-    long previousTracksCount = dev.getTracksCount();
+    long previousTracksCount = dev.getMediaFilesCount();
 
-    boolean result = dev.addTrack(trk);
+    boolean result = dev.addMediaFile(trk);
     if (result) {
-      assertEquals(previousTracksCount + 1, dev.getTracksCount());
-      assertNotNull(dev.getTracks().get(trk.getToken()));
+      assertEquals(previousTracksCount + 1, dev.getMediaFilesCount());
+      assertNotNull(dev.getMediaFiles().get(trk.getToken()));
     } else {
       // Fail and exit
       fail("Unable to move track to the selected playlist");
     }
 
-    result = dev.removeTrack(trk);
+    result = dev.removeMediaFile(trk);
     if (result) {
-      assertEquals(previousTracksCount, dev.getTracksCount());
-      assertNull(dev.getTracks().get(trk.getToken()));
+      assertEquals(previousTracksCount, dev.getMediaFilesCount());
+      assertNull(dev.getMediaFiles().get(trk.getToken()));
     } else {
       // Fail and exit
       fail("Unable to move track to the selected playlist");
@@ -206,35 +193,35 @@ public class PlaylistsTest extends AudioBoxTestCase {
     Playlist smallPlaylist = playlists.getPlaylistByName(Fixtures.get(Fixtures.SMALL_PLAYLIST_NAME));
     Playlist dev = playlists.getPlaylistByName(Fixtures.get(Fixtures.DEV_PLAYLIST_NAME));
     
-    smallPlaylist.getTracks().load(false);
-    dev.getTracks().load(false);
+    smallPlaylist.getMediaFiles().load(false);
+    dev.getMediaFiles().load(false);
     
-    Tracks musicTracks = smallPlaylist.getTracks();
+    MediaFiles musicTracks = smallPlaylist.getMediaFiles();
 
-    List<Track> tracks = new ArrayList<Track>();
+    List<MediaFile> tracks = new ArrayList<MediaFile>();
     int numberOfTracksToAdd = 10;
     for (int i = 0; i < numberOfTracksToAdd; i++) {
       tracks.add(musicTracks.get(i));
     }
 
-    long previousTracksCount = dev.getTracksCount();
+    long previousTracksCount = dev.getMediaFilesCount();
 
-    boolean result = dev.addTracks(tracks);
+    boolean result = dev.addMediaFiles(tracks);
     if (result) {
-      assertEquals(previousTracksCount + numberOfTracksToAdd, dev.getTracksCount());
-      for (Track trk : tracks) {
-        assertNotNull(dev.getTracks().get(trk.getToken()));
+      assertEquals(previousTracksCount + numberOfTracksToAdd, dev.getMediaFilesCount());
+      for (MediaFile trk : tracks) {
+        assertNotNull(dev.getMediaFiles().get(trk.getToken()));
       }
     } else {
       // Fail and exit
       fail("Unable to move track to the selected playlist");
     }
 
-    result = dev.removeTracks(tracks);
+    result = dev.removeMediaFiles(tracks);
     if (result) {
-      assertEquals(previousTracksCount , dev.getTracksCount());
-      for (Track trk : tracks) {
-        assertNull(dev.getTracks().get(trk.getToken()));
+      assertEquals(previousTracksCount , dev.getMediaFilesCount());
+      for (MediaFile trk : tracks) {
+        assertNull(dev.getMediaFiles().get(trk.getToken()));
       }
     } else {
       // Fail and exit
@@ -251,14 +238,14 @@ public class PlaylistsTest extends AudioBoxTestCase {
     playlists.load(false);
 
     Playlist dev = playlists.getPlaylistByName(Fixtures.get(Fixtures.DEV_PLAYLIST_NAME));
-    Track trk = user.newTrack();
+    MediaFile trk = user.newTrack();
 
     assertNotNull(trk);
 
     trk.setToken("foo-bar");
 
-    assertFalse(dev.addTrack(trk));
-    assertFalse(dev.removeTrack(trk));
+    assertFalse(dev.addMediaFile(trk));
+    assertFalse(dev.removeMediaFile(trk));
 
   }
 

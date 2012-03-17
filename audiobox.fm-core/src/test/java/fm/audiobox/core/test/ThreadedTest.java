@@ -7,11 +7,10 @@ import org.junit.Test;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.models.Album;
+import fm.audiobox.core.models.MediaFile;
+import fm.audiobox.core.models.MediaFiles;
 import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
-import fm.audiobox.core.models.Track;
-import fm.audiobox.core.models.Tracks;
 import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 
 public class ThreadedTest extends AudioBoxTestCase {
@@ -74,23 +73,15 @@ public class ThreadedTest extends AudioBoxTestCase {
           Playlist pl = pls.getPlaylistByName(Fixtures.get(Fixtures.SMALL_PLAYLIST_NAME));
           assertNotNull(pl);
 
-          Tracks tracks = (Tracks) pl.getTracks();
+          MediaFiles tracks = (MediaFiles) pl.getMediaFiles();
           assertNotNull(tracks);
           tracks.load(false);
 
-          Track tr = tracks.get(0);
+          MediaFile tr = tracks.get(0);
 
           assertNotNull(tr);
-          assertNotNull(tr.getName());
+          assertNotNull(tr.getTitle());
           assertNotNull(tr.getToken());
-
-          assertNotNull(tr.getArtist());
-          assertNotNull(tr.getArtist().getToken());
-
-          assertNotNull(tr.getAlbum());
-          assertNotNull(tr.getAlbum().getToken());
-
-          assertNotNull(((Album) tr.getAlbum()).getArtist());
 
           h2.setDone(true);
 

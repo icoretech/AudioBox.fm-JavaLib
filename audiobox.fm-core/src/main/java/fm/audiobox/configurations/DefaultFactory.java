@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fm.audiobox.AudioBox;
-import fm.audiobox.core.models.Covers;
+import fm.audiobox.core.models.ArtWork;
 import fm.audiobox.core.models.MediaFile;
 import fm.audiobox.core.models.MediaFiles;
 import fm.audiobox.core.models.Playlist;
@@ -54,7 +54,7 @@ public class DefaultFactory implements IFactory {
     gEntities.put( MediaFiles.TAGNAME, MediaFiles.class );
     
     
-    gEntities.put( Covers.TAGNAME, Covers.class );
+    gEntities.put( ArtWork.TAGNAME, ArtWork.class );
     
     gEntities.put( MediaFiles.TAGNAME, MediaFiles.class );
     gEntities.put( MediaFile.TAGNAME, MediaFile.class );
