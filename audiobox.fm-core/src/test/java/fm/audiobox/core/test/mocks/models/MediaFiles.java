@@ -4,12 +4,11 @@ import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
 
 
-
-public class Tracks extends fm.audiobox.core.models.Tracks {
+public class MediaFiles extends fm.audiobox.core.models.MediaFiles {
 
   private static final long serialVersionUID = 1L;
 
-  public Tracks(IConnector connector, IConfiguration config) {
+  public MediaFiles(IConnector connector, IConfiguration config) {
     super(connector, config);
     // TODO Auto-generated constructor stub
   }

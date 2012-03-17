@@ -8,10 +8,10 @@ import org.junit.Test;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
+import fm.audiobox.core.models.MediaFile;
+import fm.audiobox.core.models.MediaFiles;
 import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
-import fm.audiobox.core.models.Track;
-import fm.audiobox.core.models.Tracks;
 import fm.audiobox.core.observables.Event;
 import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 
@@ -64,22 +64,22 @@ public class CollectionListenerTest extends AudioBoxTestCase {
     assertNotNull(dev);
     assertSame(dev, dev2);
 
-    dev.getTracks().addObserver(new Observer() {
+    dev.getMediaFiles().addObserver(new Observer() {
 
       @Override
       public void update(Observable o, Object arg) {
         Event ev = (Event) arg;
         if (ev.state == Event.States.ENTITY_ADDED) {
-          assertTrue(ev.getSource() instanceof Track);
-          Track trk = (Track) ev.getSource();
-          log.info("Tracks count is: " + ((Tracks) o).size() + " | " + trk.getTitle());
+          assertTrue(ev.getSource() instanceof MediaFile);
+          MediaFile trk = (MediaFile) ev.getSource();
+          log.info("Tracks count is: " + ((MediaFiles) o).size() + " | " + trk.getTitle());
         }
 
       }
 
     });
 
-    dev.getTracks().load(false);
+    dev.getMediaFiles().load(false);
 
   }
 

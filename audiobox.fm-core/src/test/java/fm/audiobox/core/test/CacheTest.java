@@ -7,10 +7,10 @@ import org.junit.Test;
 import fm.audiobox.configurations.Response;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
+import fm.audiobox.core.models.MediaFiles;
 import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
 import fm.audiobox.core.models.Playlists.Types;
-import fm.audiobox.core.models.Tracks;
 import fm.audiobox.interfaces.IConfiguration;
 
 
@@ -29,11 +29,11 @@ public class CacheTest extends AudioBoxTestCase {
     pls.load(false);
     
     
-    Playlist pl =  pls.getPlaylistByType( Types.OFFLINE );
+    Playlist pl =  pls.getPlaylistByType( Types.CustomPlaylist );
     assertNotNull(pl);
     
     
-    Tracks trs = pl.getTracks();
+    MediaFiles ms = pl.getMediaFiles();
 
     long average = 0;
     int i = 0;
@@ -43,7 +43,7 @@ public class CacheTest extends AudioBoxTestCase {
       long end = 0;
       log.debug( "**** Start request at: " + start );
       
-      Response rsp = trs.load(false);
+      Response rsp = ms.load(false);
       if (i == 0) {
         assertEquals(HttpStatus.SC_OK, rsp.getStatus());
       } else {

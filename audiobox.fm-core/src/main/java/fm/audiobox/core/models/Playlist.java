@@ -219,11 +219,11 @@ public class Playlist extends AbstractEntity implements Serializable {
 
 
   /**
-   * Returns a {@link Tracks} instance ready to be populated through {@link Tracks#load()} method
+   * Returns a {@link MediaFiles} instance ready to be populated through {@link MediaFiles#load()} method
    * 
-   * @return a {@link Tracks} instance
+   * @return a {@link MediaFiles} instance
    */
-  public MediaFiles getTracks(){
+  public MediaFiles getMediaFiles(){
     if ( this.mediafiles == null ){
       this.mediafiles = (MediaFiles) getConfiguration().getFactory().getEntity( MediaFiles.TAGNAME , getConfiguration() );
       this.mediafiles.setParent( this );
@@ -345,10 +345,10 @@ public class Playlist extends AbstractEntity implements Serializable {
   }
 
   /**
-   * Use this method to remove multiple {@link Track tracks} from this playlist
+   * Use this method to remove multiple {@link MediaFile tracks} from this playlist
    * 
    * @param tracks
-   *          the {@link List} of {@link Track Tracks} to remove from playlist
+   *          the {@link List} of {@link MediaFile Tracks} to remove from playlist
    * @return true if the action succeed false if something goes wrong.
    * 
    * @throws LoginException if any authentication problem during the request occurs.

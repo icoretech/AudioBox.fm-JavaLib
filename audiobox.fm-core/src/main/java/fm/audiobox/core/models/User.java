@@ -408,7 +408,7 @@ public final class User extends AbstractEntity implements Serializable {
 
 
   /**
-   * Given a known track Token this method will requests AudioBox.fm and returns a valid {@link Track} object.
+   * Given a known track Token this method will requests AudioBox.fm and returns a valid {@link MediaFile} object.
    *
    * @param token the token of the track you are asking for.
    * 
@@ -484,7 +484,7 @@ public final class User extends AbstractEntity implements Serializable {
   /**
    * Instantiates a new Track. This method is used to upload a track
    * 
-   * @return a new {@link Track} instance
+   * @return a new {@link MediaFile} instance
    */
   public MediaFile newTrack() {
     return (MediaFile) getConfiguration().getFactory().getEntity( MediaFile.TAGNAME, getConfiguration() );
