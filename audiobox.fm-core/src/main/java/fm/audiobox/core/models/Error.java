@@ -63,7 +63,7 @@ public class Error implements IEntity, Serializable {
   private IConfiguration configuration;
   private int status;
   private String message;
-  private IEntity parent;
+
   /**
    * <p>Constructor for Error.</p>
    */
@@ -175,7 +175,8 @@ public class Error implements IEntity, Serializable {
 
   @Override
   public void setParent(IEntity parent) {
-    this.parent = parent;
+    // TODO: check
+    // it doesn't need to be set as child
   }
 
 }
