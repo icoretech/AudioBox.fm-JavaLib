@@ -167,8 +167,8 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
   @Override
   public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
 
-    if ( tagName.equals( MediaFiles.TAGNAME ) ) {
-      return this.getClass().getMethod("add", MediaFiles.class);
+    if ( tagName.equals( Playlist.TAGNAME ) ) {
+      return this.getClass().getMethod("add", Playlist.class);
     }
 
     return null;
@@ -177,7 +177,7 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
 
   @Override
   public String getSubTagName() {
-	return MediaFiles.TAGNAME;
+	return Playlist.TAGNAME;
   }
 
   

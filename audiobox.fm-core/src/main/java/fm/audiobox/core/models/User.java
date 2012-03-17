@@ -113,13 +113,9 @@ public final class User extends AbstractEntity implements Serializable {
   private String[] allowedFormats;
 
   private Profile profile;
-  private Plan plan;
 
   // User's collection relations
   private Playlists playlists;
-  private Genres genres;
-  private Artists artists;
-  private Albums albums;
 
   private String auth_token;
 
