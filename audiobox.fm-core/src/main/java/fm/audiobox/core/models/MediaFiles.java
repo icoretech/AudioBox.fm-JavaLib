@@ -65,18 +65,12 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
   }
 
   @Override
-  public String getNamespace() {
-    if ( parent != null ){
-      return parent.getNamespace();
-    }
+  public String getNamespace() {    
     return NAMESPACE;
   }
 
   @Override
   public String getTagName() {
-    if ( parent != null ){
-      return parent.getTagName();
-    }
     return TAGNAME;
   }
 

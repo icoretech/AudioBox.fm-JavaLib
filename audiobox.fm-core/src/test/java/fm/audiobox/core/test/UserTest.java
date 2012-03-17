@@ -7,6 +7,8 @@ import org.junit.Test;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
+import fm.audiobox.core.models.Playlist;
+import fm.audiobox.core.models.Playlists;
 import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 
 /**
@@ -41,8 +43,11 @@ public class UserTest extends AudioBoxTestCase {
 
     
     try {
-    	user.getPlaylists().load(false);
-    	user.getUploadedTracks();
+      Playlists pls = user.getPlaylists();
+      pls.load(false);
+      pls.get(0).getMediaFiles().load(false);
+      
+//    	user.getUploadedTracks();
 	} catch (ServiceException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();

@@ -129,7 +129,7 @@ public interface IConfiguration {
    * Returns path used for connetion
    * @return
    */
-  public String getPath(String key);
+  public String getPath();
 
 
   /**

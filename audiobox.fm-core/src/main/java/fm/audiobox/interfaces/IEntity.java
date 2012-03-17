@@ -65,4 +65,10 @@ public interface IEntity {
    */
   public IConfiguration getConfiguration();
   
+  /**
+   * Returns the path to identify this {@link IEntity}
+   * @return path {@link IEntity}
+   */
+  public String getApiPath();
+  
 }

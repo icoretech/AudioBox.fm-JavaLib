@@ -95,6 +95,7 @@ public class Playlist extends AbstractEntity implements Serializable {
   private MediaFiles mediafiles;
   private String updated_at;
   private boolean last_accessed;
+  private IEntity parent;
   
   /**
    * <p>Constructor for Playlist.</p>
@@ -426,5 +427,13 @@ public class Playlist extends AbstractEntity implements Serializable {
     public String parse(InputStream in, IEntity destEntity, ContentFormat format) throws ServiceException {
       return super.parse(in, this.mediafiles, format);
     }
+  }
+  
+  /**
+   * Sets the parent {@link IEntity}
+   * @param parent the {@link IEntity} parent object
+   */
+  protected void setParent(IEntity parent){
+    this.parent = parent;
   }
 }

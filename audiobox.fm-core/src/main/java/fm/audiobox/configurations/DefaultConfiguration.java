@@ -172,8 +172,8 @@ public class DefaultConfiguration implements IConfiguration {
 
 
   @Override
-  public String getPath(String key) {
-    String prop = safelyGetProperty(key);
+  public String getPath() {
+    String prop = safelyGetProperty("apiPath");
     return prop != null ? prop : PATH;
   }
 
