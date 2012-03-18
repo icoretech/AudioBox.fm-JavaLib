@@ -86,13 +86,7 @@ public class MediaFile extends AbstractEntity implements Serializable{
   private int rating;
   private String mime;
   private IEntity parent;
-
-  public enum Actions {
-    download,
-    
-    upload
-  }
-
+  
   public MediaFile(IConnector connector, IConfiguration config) {
     super(connector, config);
   }
@@ -266,26 +260,26 @@ public class MediaFile extends AbstractEntity implements Serializable{
 
   }
 
-  /**
-   * Executes request populating this class
-   * 
-   * @throws ServiceException
-   * @throws LoginException
-   */
-  public void load() throws ServiceException, LoginException {
-    this.load(null);
-  }
-
-  /**
-   * Executes request populating this class and passing the {@link IResponseHandler} as response parser
-   * 
-   * @param responseHandler the {@link IResponseHandler} used as response content parser
-   * @throws ServiceException
-   * @throws LoginException
-   */
-  public void load(IResponseHandler responseHandler) throws ServiceException, LoginException {
-    getConnector().get(this, null, null).send(false, null, responseHandler);
-  }
+//  /**
+//   * Executes request populating this class
+//   * 
+//   * @throws ServiceException
+//   * @throws LoginException
+//   */
+//  public void load() throws ServiceException, LoginException {
+//    this.load(null);
+//  }
+//
+//  /**
+//   * Executes request populating this class and passing the {@link IResponseHandler} as response parser
+//   * 
+//   * @param responseHandler the {@link IResponseHandler} used as response content parser
+//   * @throws ServiceException
+//   * @throws LoginException
+//   */
+//  public void load(IResponseHandler responseHandler) throws ServiceException, LoginException {
+//    getConnector().get(this, null, null).send(false, null, responseHandler);
+//  }
 
   @Override
   public String getApiPath() {
@@ -297,11 +291,4 @@ public class MediaFile extends AbstractEntity implements Serializable{
     this.parent = parent;
   }
 
-  public void upload(){
-
-  }
-
-  public void download(){
-    this.getConnector().get(this, Actions.download.toString(), null).send(false, null,null);
-  }
 }
