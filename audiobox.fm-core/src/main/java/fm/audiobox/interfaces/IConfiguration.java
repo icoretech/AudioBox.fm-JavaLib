@@ -136,19 +136,6 @@ public interface IConfiguration {
   public boolean isCacheEnabled();
 
 
-  /**
-   * Enables or disables {@code short} request parameter
-   * @param shortResponse
-   */
-  public void setShortResponse(boolean shortResponse);
-
-
-  /**
-   * Returns {@code true} if AudioBox is using the {@code short} request parameter. {@code False} if not
-   * @return
-   */
-  public boolean isShortResponseEnabled();
-
 
   /**
    * Sets the default handler for {@link LoginException}

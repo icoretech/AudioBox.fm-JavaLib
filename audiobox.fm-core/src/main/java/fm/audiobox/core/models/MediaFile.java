@@ -297,10 +297,14 @@ public class MediaFile extends AbstractEntity implements Serializable{
     this.parent = parent;
   }
 
+  
+  //POST http://staging.audiobox.fm:3000/upload     in Multipart-Data
   public void upload(){
 
   }
 
+  
+  // download   GET   http://staging.audiobox.fm:3000/stream/(file_name.ext)
   public void download(){
     this.getConnector().get(this, Actions.download.toString(), null).send(false, null,null);
   }
