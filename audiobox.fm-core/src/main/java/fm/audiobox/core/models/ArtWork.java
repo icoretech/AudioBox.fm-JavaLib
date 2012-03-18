@@ -62,6 +62,7 @@ public class ArtWork extends AbstractEntity implements Serializable {
   private String large;
   private String medium;
   private String small;
+
   @SuppressWarnings("unused")
   private IEntity parent;
 
