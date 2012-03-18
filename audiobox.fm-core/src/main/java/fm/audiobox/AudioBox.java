@@ -490,9 +490,9 @@ public class AudioBox {
            * NOTE: we have to add PORT because HttpClient is instantiated specifing PORT into URL
            */
           if ( hostHeader.getValue().equals( HOST + ":" + PORT ) ) {
-            if ( user != null && user.getAuth_token() != null ){
+            if ( user != null && user.getAuthToken() != null ){
               log.trace("Request to AudioBox, add auth_token");
-              request.addHeader("X-AUTH-TOKEN", user.getAuth_token() );              
+              request.addHeader("X-AUTH-TOKEN", user.getAuthToken() );              
             } else { 
               log.trace("Request to AudioBox, add user credentials");
               request.addHeader( mScheme.authenticate(mCredentials,  request) );  

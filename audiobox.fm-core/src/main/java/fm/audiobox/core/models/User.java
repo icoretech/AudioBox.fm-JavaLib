@@ -333,7 +333,7 @@ public final class User extends AbstractEntity implements Serializable {
    *
    * @return String[] the auth_token
    */
-  public String getAuth_token() {
+  public String getAuthToken() {
     return auth_token;
   }
 
@@ -342,12 +342,10 @@ public final class User extends AbstractEntity implements Serializable {
    *
    * @param auth_token a String the contains the user authentication 
    */
-  public void setAuth_token(String auth_token) {
-    //the object User is changed
-    setChanged();
-    //change is notified to the observers
-    notifyObservers(auth_token);
+  public void setAuthToken(String auth_token) {
     this.auth_token = auth_token;
+    setChanged();
+    notifyObservers();
   }
 
   public String getName() {
@@ -361,7 +359,6 @@ public final class User extends AbstractEntity implements Serializable {
   public int getMedia_files_count() {
     return media_files_count;
   }
-
 
 
   public void setMedia_files_count(int media_files_count) {
@@ -544,7 +541,7 @@ public final class User extends AbstractEntity implements Serializable {
       return this.getClass().getMethod("setAllowedFormats", String.class);
 
     } else if ( tagName.equals("auth_token")){
-      return this.getClass().getMethod("setAuth_token", String.class);
+      return this.getClass().getMethod("setAuthToken", String.class);
 
     } else if ( tagName.equals("name")){
       return this.getClass().getMethod("setName", String.class);

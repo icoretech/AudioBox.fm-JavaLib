@@ -24,6 +24,8 @@ public class UserTest extends AudioBoxTestCase {
     loginCatched();
     
     assertSame(user, abc.getUser());
+    
+    assertNotSame(user.getAuthToken(), "");
 
     assertNotNull(user.getBytesServed());
     assertNotNull(user.getEmail());
