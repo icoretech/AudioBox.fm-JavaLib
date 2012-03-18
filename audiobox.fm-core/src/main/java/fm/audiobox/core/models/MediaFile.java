@@ -87,6 +87,12 @@ public class MediaFile extends AbstractEntity implements Serializable{
   private String mime;
   private IEntity parent;
 
+  public enum Actions {
+    download,
+    
+    upload
+  }
+
   public MediaFile(IConnector connector, IConfiguration config) {
     super(connector, config);
   }
@@ -290,6 +296,12 @@ public class MediaFile extends AbstractEntity implements Serializable{
   public void setParent(IEntity parent) {
     this.parent = parent;
   }
-  
-  
+
+  public void upload(){
+
+  }
+
+  public void download(){
+    this.getConnector().get(this, Actions.download.toString(), null).send(false, null,null);
+  }
 }
