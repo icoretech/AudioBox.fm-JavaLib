@@ -88,6 +88,22 @@ public interface IConnector {
    */
   public IConnectionMethod delete(IEntity destEntity, String action);
   
+  
+  
+  
+  /**
+   * Aborts all pending requests
+   */
+  public void abort();
+  
+  /**
+   * Destroys the client.
+   * The same of abort but it prevents to create a new Client
+   */
+  public void destroy();
+  
+  
+  
   /**
    * The {@link IConnectionMethod} interface is used to build a specific request using
    * one of four Http verbs in POST, PUT, GET or DELETE.

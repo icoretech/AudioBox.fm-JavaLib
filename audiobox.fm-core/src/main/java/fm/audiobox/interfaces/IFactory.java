@@ -32,11 +32,26 @@ public interface IFactory {
   public boolean containsEntity(String tagName);
   
   /**
-   * Sets the global {@link IConnector} associated with this {@link AudioBox} instance
+   * Adds a global {@link IConnector} associated with the {@link AudioBox} instance
    * <b>NOTE: do not use this method for general purpose</b>
    * 
+   * @param server the name of the server. See the configuration file
    * @param connector the global {@link IConnector} associated with this {@link AubioBox} instance
    */
-  public void setConnector(IConnector connector);
+  public void addConnector(IConfiguration.Connectors server, IConnector connector);
+ 
+  
+  /**
+   * Returns the general global {@link IConnector connector} associated with the {@link AudioBox} instance
+   * @return the general {@link IConnector connector} 
+   */
+  public IConnector getConnector();
+  
+  
+  /**
+   * Returns the global {@link IConnector connector} associated with given {@link IConfiguration.Connectors}
+   * @return the general {@link IConnector connector} 
+   */
+  public IConnector getConnector(IConfiguration.Connectors server);
   
 }

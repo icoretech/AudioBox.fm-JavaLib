@@ -26,7 +26,6 @@ import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.MediaFiles.Types;
 import fm.audiobox.interfaces.IConfiguration;
-import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
 
@@ -93,8 +92,8 @@ public class MediaFile extends AbstractEntity implements Serializable{
     upload
   }
 
-  public MediaFile(IConnector connector, IConfiguration config) {
-    super(connector, config);
+  public MediaFile(IConfiguration config) {
+    super(config);
   }
 
   @Override
@@ -299,13 +298,11 @@ public class MediaFile extends AbstractEntity implements Serializable{
 
   
   //POST http://staging.audiobox.fm:3000/upload     in Multipart-Data
-  public void upload(){
-
+  public void upload() throws ServiceException, LoginException {
   }
 
   
   // download   GET   http://staging.audiobox.fm:3000/stream/(file_name.ext)
-  public void download(){
-    this.getConnector().get(this, Actions.download.toString(), null).send(false, null,null);
+  public void download() throws ServiceException, LoginException {
   }
 }

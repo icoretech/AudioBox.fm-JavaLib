@@ -29,7 +29,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import fm.audiobox.interfaces.IConfiguration;
-import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IEntity;
 
 
@@ -79,8 +78,8 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
   /**
    * <p>Constructor for Playlists.</p>
    */
-  public Playlists(IConnector connector, IConfiguration config){
-    super(connector, config);
+  public Playlists(IConfiguration config){
+    super(config);
   }
 
 

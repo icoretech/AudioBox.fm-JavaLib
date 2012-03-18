@@ -46,6 +46,16 @@ public interface IConfiguration {
     TXT,
     BINARY
   }
+  
+  
+  /**
+   * Identifies all connector types.
+   * Each connector can connect to its own host 
+   */
+  public static enum Connectors {
+    RAILS,
+    NODE
+  }
 
   
   /**
@@ -101,25 +111,25 @@ public interface IConfiguration {
   /**
    * @return protocol used for connection
    */
-  public String getProtocol();
+  public String getProtocol(IConfiguration.Connectors server);
 
   /**
    * @return host used for connection
    */
-  public String getHost();
+  public String getHost(IConfiguration.Connectors server);
 
   /**
    * Returns server port used for connection
    * @return
    */
-  public int getPort();
+  public int getPort(IConfiguration.Connectors server);
 
 
   /**
    * Returns path used for connetion
    * @return
    */
-  public String getPath();
+  public String getPath(IConfiguration.Connectors server);
 
 
   /**

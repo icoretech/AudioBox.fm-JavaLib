@@ -42,18 +42,19 @@ public class UserTest extends AudioBoxTestCase {
 
     
     try {
+      
       Playlists pls = user.getPlaylists();
       pls.load(false);
       pls.get(0).getMediaFiles().load(false);
       
 //    	user.getUploadedTracks();
-	} catch (ServiceException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (LoginException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
+  	} catch (ServiceException e) {
+  		// TODO Auto-generated catch block
+  		e.printStackTrace();
+  	} catch (LoginException e) {
+  		// TODO Auto-generated catch block
+  		e.printStackTrace();
+  	}
     // Profile
 //    Profile p = user.getProfile();
 //    assertNotNull(p.hasAutoplay());
