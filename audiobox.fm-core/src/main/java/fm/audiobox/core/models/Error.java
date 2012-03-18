@@ -63,6 +63,7 @@ public class Error implements IEntity, Serializable {
   private IConfiguration configuration;
   private int status;
   private String message;
+  @SuppressWarnings("unused")
   private IEntity parent;
   /**
    * <p>Constructor for Error.</p>

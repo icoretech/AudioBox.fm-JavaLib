@@ -290,4 +290,6 @@ public class MediaFile extends AbstractEntity implements Serializable{
   public void setParent(IEntity parent) {
     this.parent = parent;
   }
+  
+  
 }
