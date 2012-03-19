@@ -32,3 +32,6 @@ manifest.mf
 
 # Project spcifics
 audiobox.fm-core/src/docbkx
+
+# Credentials
+audiobox.fm-core/src/test/java/fm/audiobox/core/test/mocks/fixtures/fixtures.properties

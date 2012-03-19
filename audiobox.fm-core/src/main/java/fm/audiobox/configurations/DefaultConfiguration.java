@@ -45,7 +45,6 @@ public class DefaultConfiguration implements IConfiguration {
 
   private ContentFormat requestFormat = ContentFormat.XML;
   private boolean useCache = false;
-  private boolean shortResponse = false;
   private IFactory factory = new DefaultFactory();
   private ILoginExceptionHandler loginHandler;
   private IServiceExceptionHandler serviceHandler;
@@ -181,15 +180,6 @@ public class DefaultConfiguration implements IConfiguration {
     return this.useCache;
   }
 
-  @Override
-  public void setShortResponse(boolean shortResponse) {
-    this.shortResponse = shortResponse;
-  }
-
-  @Override
-  public boolean isShortResponseEnabled() {
-    return this.shortResponse;
-  }
 
   @Override
   public void setDefaultLoginExceptionHandler(ILoginExceptionHandler handler) {

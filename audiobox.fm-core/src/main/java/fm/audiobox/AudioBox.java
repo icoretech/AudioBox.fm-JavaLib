@@ -60,7 +60,6 @@ import org.apache.http.entity.HttpEntityWrapper;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
@@ -546,7 +545,7 @@ public class AudioBox implements Observer{
     /**
      * Creates the correct url starting from parameters
      * 
-     * @param path the partial url to call. Tipically this is a Model end point ({@link Model#getEndPoint()})
+     * @param path the partial url to call. Typically this is a Model end point ({@link Model#getEndPoint()})
      * @param token the token of the Model if any, may be null or empty ({@link Model#getToken()})
      * @param action the remote action to execute on the model that executes the action (ex. "scrobble")
      * @param httpVerb the HTTP method to use for the request (ie: GET, PUT, POST and DELETE)
@@ -564,15 +563,11 @@ public class AudioBox implements Observer{
 
       action = ( ( action == null ) ? "" : URI_SEPARATOR.concat(action) ).trim();
 
-      // Replace placeholders with right values
+      // Replace place holders with right values
       String url = API_PATH + configuration.getPath() + entityPath + action;
       // add extension to request path
       url += "." + getConfiguration().getRequestFormat().toString().toLowerCase();
 
-      if ( getConfiguration().isShortResponseEnabled() ){
-        params.add( new BasicNameValuePair("short", "true") );
-      }
-      
       if ( httpVerb.equals( IConnectionMethod.METHOD_GET ) ){
         String query = URLEncodedUtils.format( params , HTTP.UTF_8 );
         if ( query.length() > 0 )
