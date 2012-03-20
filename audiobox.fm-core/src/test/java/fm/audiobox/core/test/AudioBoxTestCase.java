@@ -55,7 +55,6 @@ public abstract class AudioBoxTestCase extends junit.framework.Assert {
 
     configuration.setVersion(1, 0, 0);
     configuration.setRequestFormat(ContentFormat.JSON);
-    configuration.setShortResponse(false);
     configuration.setUseCache(false);
     
     return configuration;

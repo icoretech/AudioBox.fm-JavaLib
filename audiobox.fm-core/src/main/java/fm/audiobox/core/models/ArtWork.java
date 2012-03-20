@@ -27,7 +27,6 @@ import java.lang.reflect.Method;
 
 import fm.audiobox.core.observables.Event;
 import fm.audiobox.interfaces.IConfiguration;
-import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IEntity;
 
 
@@ -69,8 +68,8 @@ public class ArtWork extends AbstractEntity implements Serializable {
   /**
    * <p>Constructor for CoverUrls.</p>
    */
-  public ArtWork(IConnector connector, IConfiguration config){
-    super(connector, config);
+  public ArtWork(IConfiguration config){
+    super(config);
   }
 
 

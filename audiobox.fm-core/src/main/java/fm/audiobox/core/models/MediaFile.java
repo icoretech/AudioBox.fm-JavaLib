@@ -22,11 +22,13 @@ package fm.audiobox.core.models;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.mime.MultipartEntity;
+
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.MediaFiles.Types;
 import fm.audiobox.interfaces.IConfiguration;
-import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
 
@@ -86,9 +88,14 @@ public class MediaFile extends AbstractEntity implements Serializable{
   private int rating;
   private String mime;
   private IEntity parent;
-  
-  public MediaFile(IConnector connector, IConfiguration config) {
-    super(connector, config);
+
+  private enum Actions{
+    stream,
+    upload
+  }
+
+  public MediaFile(IConfiguration config) {
+    super(config);
   }
 
   @Override
@@ -292,14 +299,20 @@ public class MediaFile extends AbstractEntity implements Serializable{
   }
 
   //POST http://staging.audiobox.fm:3000/upload     in Multipart-Data
-  public void upload(){
-
+  public void upload() throws ServiceException, LoginException {
+    String path = "/".concat( Actions.upload.toString() );
+    HttpEntity entity = new MultipartEntity();
+    ((MultipartEntity)entity).addPart("",null);
+    
+    this.getConnector(IConfiguration.Connectors.NODE).post(this, path, "").send(false, entity);
+    
   }
 
   
   // download   GET   http://staging.audiobox.fm:3000/stream/(file_name.ext)
-  public void download(){
-    this.getConnector().get(this, "", null).send(false, null,null);
+  public void download() throws ServiceException, LoginException {
+    String path = ("/".concat( Actions.stream.toString() )).concat("/".concat(this.filename));
+    this.getConnector(IConfiguration.Connectors.NODE).get(this,  path , "", null).send(false);
   }
 
 }

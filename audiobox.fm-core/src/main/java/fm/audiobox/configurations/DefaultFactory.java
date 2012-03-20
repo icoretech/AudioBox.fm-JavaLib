@@ -17,6 +17,7 @@ import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
 import fm.audiobox.core.models.User;
 import fm.audiobox.interfaces.IConfiguration;
+import fm.audiobox.interfaces.IConfiguration.Connectors;
 import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IFactory;
@@ -38,10 +39,12 @@ public class DefaultFactory implements IFactory {
    */
   private Map<String, Class<? extends IEntity>> entities;
   
+  
   /**
-   * {@link IConnector} associated with this {@link AudioBox} instance
+   * {@link IConnector connectors} associated with the {@link AudioBox} instance
    */
-  private IConnector connector;
+  private Map<IConfiguration.Connectors, IConnector> connectors = new HashMap<IConfiguration.Connectors, IConnector>();
+  
   
   static {
     gEntities = new HashMap<String, Class<? extends IEntity>>();
@@ -100,8 +103,9 @@ public class DefaultFactory implements IFactory {
     Class<? extends IEntity> klass = getEntityByTag(tagName);
     
     try {
-      Constructor<? extends IEntity> constructor = klass.getConstructor(IConnector.class, IConfiguration.class);
-      entity = constructor.newInstance(this.connector, configuration);
+      Constructor<? extends IEntity> constructor = klass.getConstructor(IConfiguration.class);
+      entity = constructor.newInstance(configuration);
+      
     } catch (SecurityException e) {
       log.error("SecurityException while instantiating IEntity under key: " + tagName, e);
     } catch (NoSuchMethodException e) {
@@ -129,8 +133,27 @@ public class DefaultFactory implements IFactory {
   }
 
   @Override
-  public void setConnector(IConnector connector) {
-    this.connector = connector;
+  public void addConnector(IConfiguration.Connectors server, IConnector connector) {
+    IConnector conn = this.getConnector(server);
+    if ( conn != null ){
+      conn.destroy();
+    }
+    
+    this.connectors.put( server, connector );
+  }
+
+
+  @Override
+  public IConnector getConnector() {
+    return this.getConnector( IConfiguration.Connectors.RAILS );
+  }
+
+
+  @Override
+  public IConnector getConnector(Connectors server) {
+    if ( this.connectors.containsKey(server) )
+      return this.connectors.get( server );
+    return null;
   }
 
 }

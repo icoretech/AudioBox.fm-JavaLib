@@ -147,29 +147,31 @@ public class DefaultConfiguration implements IConfiguration {
 
 
   @Override
-  public String getProtocol() {
-    String prop = safelyGetProperty("protocol");
+  public String getProtocol(IConfiguration.Connectors server) {
+    String prop = safelyGetProperty(server, "protocol");
     return prop != null ? prop : PROTOCOL;
   }
 
   @Override
-  public String getHost() {
-    String prop = safelyGetProperty("host");
+  public String getHost(IConfiguration.Connectors server) {
+    String prop = safelyGetProperty(server, "host");
     return prop != null ? prop : HOST;
   }
 
-  public int getPort(){
-    String prop = safelyGetProperty("port");
+  
+  @Override
+  public int getPort(IConfiguration.Connectors server){
+    String prop = safelyGetProperty(server, "port");
     return prop != null ? Integer.parseInt(prop, 10) : PORT;
   }
 
-
   @Override
-  public String getPath() {
-    String prop = safelyGetProperty("apiPath");
+  public String getPath(IConfiguration.Connectors server) {
+    String prop = safelyGetProperty(server, "apiPath");
     return prop != null ? prop : PATH;
   }
 
+  
   @Override
   public void setUseCache(boolean useCache) {
     this.useCache = useCache;
@@ -251,14 +253,9 @@ public class DefaultConfiguration implements IConfiguration {
   /**
    * This method returns the AudioBox.fm properties file reader.
    * 
-   * <p>
-   * 
-   * It has to be used for internal logics only.
-   * 
    * @param key the property you are looking for
    * 
    * @return the value of the property
-   * 
    * @throws IOException if property files is not accessible or does not exists
    */
   private static String getProperty(String key) throws IOException {
@@ -267,6 +264,24 @@ public class DefaultConfiguration implements IConfiguration {
     }
 
     return sProperties.getProperty(PROP_PREFIX + key);
+  }
+  
+  
+  /**
+   * This method returns the AudioBox.fm properties file reader.
+   * 
+   * @param server the server scope of the property
+   * @param key the property you are looking for
+   * 
+   * @return the value of the property
+   * @throws IOException if property files is not accessible or does not exists
+   */
+  private static String getProperty(IConfiguration.Connectors server, String key) throws IOException {
+    if (sProperties == null || sProperties.isEmpty()) {
+      sProperties.load(DefaultConfiguration.class.getResourceAsStream("/fm/audiobox/core/config/env.properties"));
+    }
+
+    return sProperties.getProperty(PROP_PREFIX + server.toString().toLowerCase() + "." + key);
   }
 
 
@@ -278,9 +293,9 @@ public class DefaultConfiguration implements IConfiguration {
    * 
    * @return the value of the property
    */
-  private static String safelyGetProperty(String key) {
+  private static String safelyGetProperty(IConfiguration.Connectors server, String key) {
     try {
-      return getProperty(key);
+      return getProperty(server, key);
     } catch (IOException e) {
       log.warn("Error accessing environment properties file. Default values will be used");
     }

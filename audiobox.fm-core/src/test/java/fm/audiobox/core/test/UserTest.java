@@ -25,6 +25,8 @@ public class UserTest extends AudioBoxTestCase {
     loginCatched();
     
     assertSame(user, abc.getUser());
+    
+    assertNotSame(user.getAuthToken(), "");
 
     assertNotNull(user.getBytesServed());
     assertNotNull(user.getEmail());
@@ -43,6 +45,7 @@ public class UserTest extends AudioBoxTestCase {
 
     
     try {
+      
       Playlists pls = user.getPlaylists();
       pls.load(false);
       MediaFiles mdfs =  pls.get(0).getMediaFiles();
@@ -50,13 +53,13 @@ public class UserTest extends AudioBoxTestCase {
 //      mdfs.get(0).load();
       
 //    	user.getUploadedTracks();
-	} catch (ServiceException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (LoginException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
+  	} catch (ServiceException e) {
+  		// TODO Auto-generated catch block
+  		e.printStackTrace();
+  	} catch (LoginException e) {
+  		// TODO Auto-generated catch block
+  		e.printStackTrace();
+  	}
     // Profile
 //    Profile p = user.getProfile();
 //    assertNotNull(p.hasAutoplay());

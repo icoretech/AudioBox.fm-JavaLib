@@ -1,11 +1,11 @@
 package fm.audiobox.core.test.mocks.models;
 
 import fm.audiobox.interfaces.IConfiguration;
-import fm.audiobox.interfaces.IConnector;
 
 public class MediaFile extends fm.audiobox.core.models.MediaFile {
-  public MediaFile(IConnector connector, IConfiguration config) {
-    super(connector, config);
+  
+  public MediaFile(IConfiguration config) {
+    super(config);
     this.test = "TEST";
   }
 

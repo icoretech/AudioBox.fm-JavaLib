@@ -55,6 +55,7 @@ public interface IConnector {
    */
   public IConnectionMethod get(IEntity destEntity, String action, List<NameValuePair> params);
   
+  public IConnectionMethod get(IEntity destEntity,String path, String action, List<NameValuePair> params);
   
   /**
    * Builds {@link HttpMethodBase} using PUT method
@@ -66,6 +67,7 @@ public interface IConnector {
    */
   public IConnectionMethod put(IEntity destEntity, String action);
   
+  public IConnectionMethod put(IEntity destEntity, String path, String action)
   
   /**
    * Builds {@link HttpMethodBase} using POST method
@@ -77,7 +79,7 @@ public interface IConnector {
    */
   public IConnectionMethod post(IEntity destEntity, String action);
   
-  
+  public IConnectionMethod post(IEntity destEntity, String path, String action);
   /**
    * Builds {@link HttpMethodBase} using DELETE method
    * 
@@ -87,6 +89,22 @@ public interface IConnector {
    * @return the {@link IConnectionMethod} used for a DELETE request
    */
   public IConnectionMethod delete(IEntity destEntity, String action);
+  
+  public IConnectionMethod delete(IEntity destEntity, String path, String action);
+  
+  
+  /**
+   * Aborts all pending requests
+   */
+  public void abort();
+  
+  /**
+   * Destroys the client.
+   * The same of abort but it prevents to create a new Client
+   */
+  public void destroy();
+  
+  
   
   /**
    * The {@link IConnectionMethod} interface is used to build a specific request using

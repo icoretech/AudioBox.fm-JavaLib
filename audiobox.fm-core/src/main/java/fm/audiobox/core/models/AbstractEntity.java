@@ -15,15 +15,13 @@ public abstract class AbstractEntity extends Observable implements IEntity {
 
   private static Logger log = LoggerFactory.getLogger(AbstractEntity.class);
   
-  private IConnector connector;
   private IConfiguration configuration; 
   protected Map<String, Object> properties;
   
   protected String token;
   
   
-  public AbstractEntity(IConnector connector, IConfiguration config){
-    this.connector = connector;
+  public AbstractEntity(IConfiguration config){
     this.configuration = config;
     this.properties = new ConcurrentHashMap<String, Object>();
     if ( log.isTraceEnabled() ){
@@ -57,12 +55,23 @@ public abstract class AbstractEntity extends Observable implements IEntity {
     this.token = tk;
   }
   
+  
+  
+  /**
+   * Returns the default {@link IConnector} associated with this {@link IEntity}
+   * @return the {@link IConnector}
+   */
+  protected IConnector getConnector(){
+    return this.configuration.getFactory().getConnector();
+  }
+  
+  
   /**
    * Returns the {@link IConnector} associated with this {@link IEntity}
    * @return the {@link IConnector}
    */
-  protected IConnector getConnector(){
-    return this.connector;
+  protected IConnector getConnector(IConfiguration.Connectors server){
+    return this.configuration.getFactory().getConnector(server);
   }
 
   /**

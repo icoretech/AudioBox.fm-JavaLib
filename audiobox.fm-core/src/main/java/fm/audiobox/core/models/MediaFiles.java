@@ -26,7 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import fm.audiobox.interfaces.IConfiguration;
-import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IEntity;
 
 /**
@@ -60,8 +59,8 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
 
   }
 
-  public MediaFiles(IConnector connector, IConfiguration config) {
-    super(connector, config);
+  public MediaFiles(IConfiguration config) {
+    super(config);
   }
 
   @Override

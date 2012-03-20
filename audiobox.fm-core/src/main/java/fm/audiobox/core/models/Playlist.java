@@ -45,7 +45,6 @@ import fm.audiobox.core.models.Playlists.Types;
 import fm.audiobox.core.observables.Event;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConfiguration.ContentFormat;
-import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
@@ -100,8 +99,8 @@ public class Playlist extends AbstractEntity implements Serializable {
   /**
    * <p>Constructor for Playlist.</p>
    */
-  public Playlist(IConnector connector, IConfiguration config){
-    super(connector, config);
+  public Playlist(IConfiguration config){
+    super(config);
   }
 
 

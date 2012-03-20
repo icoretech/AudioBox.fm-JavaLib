@@ -33,7 +33,6 @@ import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.observables.Event;
 import fm.audiobox.interfaces.IConfiguration;
-import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
 
@@ -46,8 +45,8 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
   private List<IEntity> collection = new ArrayList<IEntity>();
 
 
-  public AbstractCollectionEntity(IConnector connector, IConfiguration config) {
-    super(connector, config);
+  public AbstractCollectionEntity(IConfiguration config) {
+    super(config);
   }
 
 
@@ -211,7 +210,7 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
    */
   public Response load(boolean async, IResponseHandler responseHandler) throws ServiceException, LoginException {
     this.clear();
-    return getConnector().get(this, null, null).send(async, null, responseHandler);
+    return getConnector(IConfiguration.Connectors.RAILS).get(this, null, null).send(async, null, responseHandler);
   }
   
   
