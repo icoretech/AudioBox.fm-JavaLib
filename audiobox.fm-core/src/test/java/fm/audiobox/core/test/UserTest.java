@@ -50,7 +50,7 @@ public class UserTest extends AudioBoxTestCase {
       pls.load(false);
       MediaFiles mdfs =  pls.get(0).getMediaFiles();
        mdfs.load(false);
-//      mdfs.get(0).load();
+      mdfs.get(0).download();
       
 //    	user.getUploadedTracks();
   	} catch (ServiceException e) {

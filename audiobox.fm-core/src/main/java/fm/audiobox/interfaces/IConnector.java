@@ -67,7 +67,7 @@ public interface IConnector {
    */
   public IConnectionMethod put(IEntity destEntity, String action);
   
-  public IConnectionMethod put(IEntity destEntity, String path, String action)
+  public IConnectionMethod put(IEntity destEntity, String path, String action);
   
   /**
    * Builds {@link HttpMethodBase} using POST method
