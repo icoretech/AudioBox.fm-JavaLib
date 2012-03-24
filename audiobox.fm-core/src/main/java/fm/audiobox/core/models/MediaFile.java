@@ -25,10 +25,10 @@ import java.lang.reflect.Method;
 
 import javax.activation.MimetypesFileTypeMap;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
 
+import fm.audiobox.AudioBox;
 import fm.audiobox.configurations.Response;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
@@ -93,8 +93,6 @@ public class MediaFile extends AbstractEntity implements Serializable{
   private String mime;
   private IEntity parent;
 
-  private FileBody filebody;
-  
   private enum Actions{
     stream,
     upload
@@ -102,6 +100,16 @@ public class MediaFile extends AbstractEntity implements Serializable{
 
   public MediaFile(IConfiguration config) {
     super(config);
+  }
+  
+  /**
+   * Contructor method
+   * This class can be instantiated always.
+   * We should link the new class to the current {@link AudioBox} instance
+   * @param config
+   */
+  public MediaFile(AudioBox abxClient) {
+    super( abxClient.getConfiguration() );
   }
 
   @Override
@@ -272,9 +280,6 @@ public class MediaFile extends AbstractEntity implements Serializable{
     // TODO Auto-generated method stub
   }
 
-  public void setFileBody(File file){
-    this.filebody = new FileBody(file, new MimetypesFileTypeMap().getContentType(file));
-  }
 //  /**
 //   * Executes request populating this class
 //   * 
@@ -307,22 +312,39 @@ public class MediaFile extends AbstractEntity implements Serializable{
   }
 
   //POST http://staging.audiobox.fm:3000/upload     in Multipart-Data
-  public void upload() throws ServiceException, LoginException {
+  public void upload(File file) throws ServiceException, LoginException {
     String path = "/".concat( Actions.upload.toString() );
     
-    HttpEntity entity = new MultipartEntity();
+    MultipartEntity entity = new MultipartEntity();
     
-    ((MultipartEntity)entity).addPart("file",this.filebody);
+    entity.addPart("media", new FileBody(file, new MimetypesFileTypeMap().getContentType(file)));
     
-    this.getConnector(IConfiguration.Connectors.NODE).post(this, path, null).send(false, entity);
+    this.getConnector(IConfiguration.Connectors.NODE).post(this, path, null, null).send(false, entity);
     
   }
 
   
   // download   GET   http://staging.audiobox.fm:3000/stream/(file_name.ext)
-  public void download() throws ServiceException, LoginException {
-    String path = ("/".concat( Actions.stream.toString() )).concat("/".concat(this.filename));
-    Response response = this.getConnector(IConfiguration.Connectors.NODE).get(this,  path , null, null).send(false);
+  /**
+   * Downloads this current {@link MediaFile} file and store it into given {@link File} file 
+   * 
+   * @param file which store media file into
+   * 
+   * @throws ServiceException generic error 
+   * @throws LoginException generic LoginException
+   */
+  public void download(File file) throws ServiceException, LoginException {
+    
+    // In this case we are using 'path' for the action
+    // and 'action' for the filename
+    String path = "/".concat( Actions.stream.toString() );
+    String action = "/".concat(this.filename);
+    
+    // TODO: perform this action only when filename property has been correctly populated
+    
+    Response response = this.getConnector(IConfiguration.Connectors.NODE).get(this,  path , action, null).send(false);
+    
+    // Responde the filename
     response.getStream();
   }
 
