@@ -419,7 +419,9 @@ public final class User extends AbstractEntity implements Serializable {
     MediaFiles files = (MediaFiles) getConfiguration().getFactory().getEntity( MediaFiles.TAGNAME, getConfiguration() );
 
     files.load(false);
-    IConnectionMethod method = getConnector().get(files, null, null);
+    String requestFormat = this.getConfiguration().getRequestFormat().toString().toLowerCase();
+    
+    IConnectionMethod method = getConnector().get(files, null, requestFormat, null);
     method.send( true );
 
     String result = method.getResponse().getBody();
@@ -451,7 +453,8 @@ public final class User extends AbstractEntity implements Serializable {
 
   public void emptyTrash() throws LoginException, ServiceException {
     Playlists pls = (Playlists)getConfiguration().getFactory().getEntity( Playlists.NAMESPACE, getConfiguration() );
-    getConnector().put( pls, Playlists.EMPTY_TRASH_ACTION ).send(false);
+    String requestFormat = this.getConfiguration().getRequestFormat().toString().toLowerCase();
+    getConnector().put( pls, Playlists.EMPTY_TRASH_ACTION , requestFormat).send(false);
   }
 
 
@@ -494,7 +497,8 @@ public final class User extends AbstractEntity implements Serializable {
    * @throws LoginException
    */
   public void load(IResponseHandler responseHandler) throws ServiceException, LoginException {
-    getConnector().get(this, null, null).send(false, null, responseHandler);
+    String requestFormat = this.getConfiguration().getRequestFormat().toString().toLowerCase();
+    getConnector().get(this, null, requestFormat, null).send(false, null, responseHandler);
   }
 
 

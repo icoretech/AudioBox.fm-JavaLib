@@ -398,7 +398,9 @@ public class Playlist extends AbstractEntity implements Serializable {
     }
 
     MediaFiles _mediafiles = (MediaFiles) this.getConfiguration().getFactory().getEntity(MediaFiles.TAGNAME, this.getConfiguration());
-    IConnectionMethod method = this.getConnector().put(this, action);
+    String requestFormat = this.getConfiguration().getRequestFormat().toString().toLowerCase();
+    
+    IConnectionMethod method = this.getConnector().put(this, action, requestFormat);
     IResponseHandler responseHandler = new PlaylistResponseHandler(_mediafiles);
 
     try {

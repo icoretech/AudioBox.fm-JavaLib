@@ -53,9 +53,9 @@ public interface IConnector {
    * 
    * @return the {@link IConnectionMethod} used for a GET request
    */
-  public IConnectionMethod get(IEntity destEntity, String action, List<NameValuePair> params);
+  public IConnectionMethod get(IEntity destEntity, String action, String requestFormat, List<NameValuePair> params);
   
-  public IConnectionMethod get(IEntity destEntity,String path, String action, List<NameValuePair> params);
+  public IConnectionMethod get(IEntity destEntity,String path, String action, String requestFormat, List<NameValuePair> params);
   
   /**
    * Builds {@link HttpMethodBase} using PUT method
@@ -65,9 +65,9 @@ public interface IConnector {
    * 
    * @return the {@link IConnectionMethod} used for a PUT request
    */
-  public IConnectionMethod put(IEntity destEntity, String action);
+  public IConnectionMethod put(IEntity destEntity, String action, String requestFormat);
   
-  public IConnectionMethod put(IEntity destEntity, String path, String action);
+  public IConnectionMethod put(IEntity destEntity, String path, String action, String requestFormat);
   
   /**
    * Builds {@link HttpMethodBase} using POST method
@@ -77,9 +77,9 @@ public interface IConnector {
    * 
    * @return the {@link IConnectionMethod} used for a POST request
    */
-  public IConnectionMethod post(IEntity destEntity, String action);
+  public IConnectionMethod post(IEntity destEntity, String action, String requestFormat);
   
-  public IConnectionMethod post(IEntity destEntity, String path, String action);
+  public IConnectionMethod post(IEntity destEntity, String path, String action, String requestFormat);
   /**
    * Builds {@link HttpMethodBase} using DELETE method
    * 
@@ -88,9 +88,9 @@ public interface IConnector {
    * 
    * @return the {@link IConnectionMethod} used for a DELETE request
    */
-  public IConnectionMethod delete(IEntity destEntity, String action);
+  public IConnectionMethod delete(IEntity destEntity, String action, String requestFormat);
   
-  public IConnectionMethod delete(IEntity destEntity, String path, String action);
+  public IConnectionMethod delete(IEntity destEntity, String path, String action, String requestFormat);
   
   
   /**
