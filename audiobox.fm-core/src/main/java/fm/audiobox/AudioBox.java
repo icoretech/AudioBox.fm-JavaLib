@@ -174,7 +174,7 @@ public class AudioBox {
 
   private IConfiguration configuration;
   private User user;
-  
+
 
   /**
    * <p>Constructor for AudioBox.</p>
@@ -185,20 +185,20 @@ public class AudioBox {
   public AudioBox(IConfiguration config) {
     log.trace("New AudioBox is going to be instantiated");
     this.configuration = config;
-    
+
     IConnector standardConnector = new Connector(IConfiguration.Connectors.RAILS);
     IConnector uploaderConnector = new Connector(IConfiguration.Connectors.NODE);
-    
+
     config.getFactory().addConnector(IConfiguration.Connectors.RAILS, standardConnector );
     config.getFactory().addConnector(IConfiguration.Connectors.NODE, uploaderConnector );
-    
+
     log.trace("New AudioBox correctly instantiated");
   }
 
 
 
-  
-  
+
+
   /**
    * <p>Getter method for the {@link User user} Object<p>
    * 
@@ -233,8 +233,9 @@ public class AudioBox {
     user.setUsername(username);
     //add the object to be observed, the observer 
     mCredentials = new UsernamePasswordCredentials(username, password);
-
-    this.configuration.getFactory().getConnector().get(user, null, null).send(false);
+    
+    String requestFormat = this.configuration.getRequestFormat().toString().toLowerCase();
+    this.configuration.getFactory().getConnector().get(user, null, requestFormat, null).send(false);
 
     return this.user = user;
   }
@@ -262,9 +263,6 @@ public class AudioBox {
 
     private static final long serialVersionUID = -1947929692214926338L;
 
-    private static final String URI_SEPARATOR = "/";
-    
-    
     // Default value of the server
     private IConfiguration.Connectors SERVER = IConfiguration.Connectors.RAILS;
 
@@ -273,34 +271,34 @@ public class AudioBox {
     private String PROTOCOL = ""; 
     private String HOST = "";
     private String PORT = "";
-    
+
     private String API_PATH = ""; 
-    
+
     private HttpRoute mAudioBoxRoute;
     private ThreadSafeClientConnManager mCm;
     private DefaultHttpClient mClient;
     private BasicScheme mScheme = new BasicScheme();
 
-    
-    
+
+
     /** Default constructor builds http connector */
     private Connector(IConfiguration.Connectors server) {
-      
+
       log.debug("New Connector is going to be instantiated, server: " + server.toString() );
-      
+
       SERVER = server;
       PROTOCOL = configuration.getProtocol( SERVER );
       HOST = configuration.getHost( SERVER );
       PORT = String.valueOf( configuration.getPort( SERVER ) );
-      
+
       API_PATH = PROTOCOL + "://" + HOST + ":" + PORT;
-      
+
       log.debug("Remote host will be: " + API_PATH );
-      
+
       buildClient();
     }
-    
-    
+
+
     /**
      * This method is used to close all connections and reinstantiate the HttpClient.
      */
@@ -309,7 +307,7 @@ public class AudioBox {
       this.destroy();
       buildClient();
     }
-    
+
     /**
      * This method is used to destroy all connections
      */
@@ -382,10 +380,13 @@ public class AudioBox {
       return method;
     }
 
+
+    
     @Override
     public IConnectionMethod get(IEntity destEntity, String action, List<NameValuePair> params) {
      return get(destEntity, destEntity.getApiPath(), action, params);
     }
+    
     
     @Override
     public IConnectionMethod get(IEntity destEntity, String path, String action, List<NameValuePair> params) {
@@ -404,9 +405,11 @@ public class AudioBox {
       return method;
     }
 
+    
+    
     @Override
     public IConnectionMethod put(IEntity destEntity, String action) {
-      return put(destEntity, destEntity.getApiPath() , action);
+      return put(destEntity, destEntity.getApiPath(), action, getConfiguration().getRequestFormat() );
     }
     
     @Override
@@ -425,6 +428,8 @@ public class AudioBox {
 
       return method;
     }
+    
+    
 
     @Override
     public IConnectionMethod post(IEntity destEntity, String action) {
@@ -448,9 +453,10 @@ public class AudioBox {
       return method;
     }
 
+    
     @Override
     public IConnectionMethod delete(IEntity destEntity, String action) {
-     return delete(destEntity, destEntity.getApiPath(), action);
+     return delete(destEntity, destEntity.getApiPath(), action, getConfiguration().getRequestFormat());
     }
     
     @Override
@@ -615,13 +621,13 @@ public class AudioBox {
         httpVerb = IConnectionMethod.METHOD_GET;
       }
 
-      action = ( ( action == null ) ? "" : URI_SEPARATOR.concat(action) ).trim();
+      action = ( ( action == null ) ? "" : IConnector.URI_SEPARATOR.concat(action) ).trim();
 
-      // Replace place holders with right values
       String url = API_PATH + configuration.getPath( SERVER ) + entityPath + action;
+      
       // add extension to request path
       if ( format != null ){
-        url += "." + format.toString().toLowerCase();
+        url += IConnector.DOT + format.toString().toLowerCase();
       }
 
       if ( httpVerb.equals( IConnectionMethod.METHOD_GET ) ){

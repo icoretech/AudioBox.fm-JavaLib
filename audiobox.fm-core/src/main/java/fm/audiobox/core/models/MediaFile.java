@@ -34,6 +34,7 @@ import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.MediaFiles.Types;
 import fm.audiobox.interfaces.IConfiguration;
+import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IEntity;
 
 /**
@@ -74,7 +75,7 @@ public class MediaFile extends AbstractEntity implements Serializable{
 
   private static final long serialVersionUID = 1L;
 
-  public static final String TAGNAME = "file";
+  public static final String TAGNAME = "media_file";
   public static final String NAMESPACE = MediaFile. TAGNAME;
 
   private String artist;
@@ -313,7 +314,7 @@ public class MediaFile extends AbstractEntity implements Serializable{
 
   //POST http://staging.audiobox.fm:3000/upload     in Multipart-Data
   public void upload(File file) throws ServiceException, LoginException {
-    String path = "/".concat( Actions.upload.toString() );
+    String path = IConnector.URI_SEPARATOR.concat( Actions.upload.toString() );
     
     MultipartEntity entity = new MultipartEntity();
     
@@ -337,8 +338,8 @@ public class MediaFile extends AbstractEntity implements Serializable{
     
     // In this case we are using 'path' for the action
     // and 'action' for the filename
-    String path = "/".concat( Actions.stream.toString() );
-    String action = "/".concat(this.filename);
+    String path = IConnector.URI_SEPARATOR.concat( Actions.stream.toString() );
+    String action = IConnector.URI_SEPARATOR.concat(this.filename);
     
     // TODO: perform this action only when filename property has been correctly populated
     

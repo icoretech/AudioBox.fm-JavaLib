@@ -32,11 +32,22 @@ public class JParser{
     this.config = entity.getConfiguration();
   }
 
-  @SuppressWarnings("unchecked")
   public IEntity parse ( InputStreamReader isr ){
     startParse = System.currentTimeMillis();
 
     JsonObject jobj = new JsonParser().parse(isr).getAsJsonObject();
+
+    parse(jobj);
+    
+    if (log.isDebugEnabled()) {
+      log.debug("Json parsed in " + (System.currentTimeMillis() - startParse) + "ms (" + this.entity.getNamespace() + ")");
+    }
+    return entity;
+  }
+  
+  @SuppressWarnings("unchecked")
+  public IEntity parse ( JsonObject jobj ){
+
     if( !jobj.get(entity.getTagName()).isJsonNull() ){
       if( jobj.get(entity.getTagName()).isJsonObject() ){
         fillJsonObject(jobj.get(entity.getTagName()).getAsJsonObject(), this.entity);
@@ -44,13 +55,8 @@ public class JParser{
         fillJsonArray(jobj.get(entity.getTagName()).getAsJsonArray(), (AbstractCollectionEntity<IEntity>)this.entity);
       }  
     }
-
-    if (log.isDebugEnabled()) {
-      log.debug("Json parsed in " + (System.currentTimeMillis() - startParse) + "ms (" + this.entity.getNamespace() + ")");
-    }
     return entity;
   }
-
   @SuppressWarnings("unchecked")
   private IEntity fillJsonArray (JsonArray jarr,AbstractCollectionEntity<IEntity> entity){
 

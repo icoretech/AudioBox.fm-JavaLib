@@ -45,6 +45,10 @@ import fm.audiobox.interfaces.IConfiguration.ContentFormat;
  */
 public interface IConnector {
   
+  
+  public static final String URI_SEPARATOR = "/";
+  public static final String DOT = ".";
+  
   /**
    * Builds {@link HttpMethodBase} using GET method and passing parameters
    * 
@@ -87,7 +91,7 @@ public interface IConnector {
   public IConnectionMethod post(IEntity destEntity, String path, String action);
   
   public IConnectionMethod post(IEntity destEntity, String path, String action, ContentFormat format);
-  
+
   
   /**
    * Builds {@link HttpMethodBase} using DELETE method
