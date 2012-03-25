@@ -80,6 +80,17 @@ public class Response implements Serializable {
     return status;
   }
   
+  
+  /**
+   * Tests the response status code and returns {@code true} if it is 
+   * 2xx and 3xx 
+   * 
+   * @return boolean
+   */
+  public boolean isOK() {
+    return this.getStatus() >= 200 && this.getStatus() < 400;
+  }
+  
   /**
    * Returns the {@link InputStream} containing the body of the response 
    * @return the {@code InputStream} containing the body of the response

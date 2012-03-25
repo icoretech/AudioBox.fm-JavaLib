@@ -74,9 +74,17 @@ public class ResponseParser implements ResponseHandler<Response> {
         throw new IOException("No content found");
       }
       Header contentType = httpResponse.getEntity().getContentType();
-      boolean isXml = contentType.getValue().contains(ContentFormat.XML.toString().toLowerCase());
-      boolean isJson = contentType.getValue().contains(ContentFormat.JSON.toString().toLowerCase());
-      boolean isText = contentType.getValue().contains("text");
+      boolean
+        isXml = false, 
+        isJson = false,
+        // Default value is TEXT
+        isText = true;
+      
+      if (contentType != null){
+        isXml = contentType.getValue().contains(ContentFormat.XML.toString().toLowerCase());
+        isJson = contentType.getValue().contains(ContentFormat.JSON.toString().toLowerCase());
+        isText = contentType.getValue().contains("text");
+      }
 
       ContentFormat format = isXml ? ContentFormat.XML : isJson ? ContentFormat.JSON : isText ? ContentFormat.TXT : ContentFormat.BINARY;
 
@@ -108,6 +116,7 @@ public class ResponseParser implements ResponseHandler<Response> {
 
     case HttpStatus.SC_OK:
     case HttpStatus.SC_NOT_MODIFIED:
+    case HttpStatus.SC_ACCEPTED:
       // Try to parse response body
       String content = this.responseHandler.parse(response.getStream(), destEntity, response.getFormat());
       response = new Response(response.getFormat(), responseCode, content);
