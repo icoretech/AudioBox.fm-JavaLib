@@ -364,7 +364,7 @@ public class MediaFile extends AbstractEntity implements Serializable{
     }    
   }
 
-  public void download(final File file ,IResponseHandler responseHandler) throws ServiceException, LoginException {
+  public void download(final File file, IResponseHandler responseHandler) throws ServiceException, LoginException {
 
     if( file != null ){
       // In this case we are using 'path' for the action
