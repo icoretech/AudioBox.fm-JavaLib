@@ -32,6 +32,8 @@ import javax.activation.MimetypesFileTypeMap;
 
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fm.audiobox.AudioBox;
 import fm.audiobox.configurations.DefaultResponseParser;
@@ -82,6 +84,8 @@ public class MediaFile extends AbstractEntity implements Serializable{
 
   private static final long serialVersionUID = 1L;
 
+  private static Logger log = LoggerFactory.getLogger(MediaFile.class);
+  
   public static final String TAGNAME = "media_file";
   public static final String NAMESPACE = MediaFile. TAGNAME;
 
@@ -355,13 +359,14 @@ public class MediaFile extends AbstractEntity implements Serializable{
             inputStream.close();
 
           } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            log.error("File not found: " + file.getName());
           } catch (IOException e) {
-            e.printStackTrace();
+            log.error("IOException : " + e.getMessage());
           }
         }};
         download(file, responseparser);
-    }    
+    }else
+      log.warn("Input file is null");
   }
 
   public void download(final File file,IResponseHandler responseHandler) throws ServiceException, LoginException {
@@ -375,7 +380,8 @@ public class MediaFile extends AbstractEntity implements Serializable{
       // TODO: perform this action only when filename property has been correctly populated
       this.getConnector(IConfiguration.Connectors.NODE).get(this,  path , action, null , null).send(false,null,responseHandler);
 
-    }
+    }else
+      log.warn("Input file is null");
 
   }
 
