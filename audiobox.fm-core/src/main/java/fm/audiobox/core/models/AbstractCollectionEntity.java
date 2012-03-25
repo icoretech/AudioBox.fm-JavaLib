@@ -211,8 +211,7 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
   public Response load(boolean async, IResponseHandler responseHandler) throws ServiceException, LoginException {
     this.clear();
     
-    String requestFormat = getConfiguration().getRequestFormat().toString().toLowerCase();
-    return getConnector(IConfiguration.Connectors.RAILS).get(this, null, requestFormat, null).send(async, null, responseHandler);
+    return getConnector(IConfiguration.Connectors.RAILS).get(this, null, null).send(async, null, responseHandler);
   }
   
   

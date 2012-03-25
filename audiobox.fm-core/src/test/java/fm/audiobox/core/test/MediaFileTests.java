@@ -4,10 +4,10 @@ import java.io.File;
 
 import org.junit.Before;
 
-import fm.audiobox.configurations.DefaultConfiguration;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.MediaFile;
+import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 
 public class MediaFileTests extends AudioBoxTestCase {
 
@@ -21,11 +21,12 @@ public class MediaFileTests extends AudioBoxTestCase {
     
     
     try {
-      MediaFile media = new MediaFile(new DefaultConfiguration("TEST UP LOAD MEDIA FILE"));
-      media.setFileBody(new File("/home/achille/Musica/12 - Hell Broke Luce.mp3"));
-      media.upload();
+      MediaFile media = new MediaFile(this.abc);
       
-    } catch (ServiceException e) {      
+      File fileToUpload = new File( Fixtures.get("file_to_upload") ); 
+      media.upload( fileToUpload );
+      
+    } catch (ServiceException e) {
       e.printStackTrace();
     } catch (LoginException e) {
       e.printStackTrace();

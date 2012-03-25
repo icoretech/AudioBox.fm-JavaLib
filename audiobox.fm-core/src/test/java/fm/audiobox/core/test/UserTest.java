@@ -3,6 +3,8 @@
  */
 package fm.audiobox.core.test;
 
+import java.io.File;
+
 import org.junit.Test;
 
 import fm.audiobox.core.exceptions.LoginException;
@@ -49,8 +51,10 @@ public class UserTest extends AudioBoxTestCase {
       Playlists pls = user.getPlaylists();
       pls.load(false);
       MediaFiles mdfs =  pls.get(0).getMediaFiles();
-       mdfs.load(false);
-      mdfs.get(0).download();
+      mdfs.load(false);
+      
+      File fileForDownload = new File( Fixtures.get("file_for_download") );
+      mdfs.get(0).download( fileForDownload );
       
 //    	user.getUploadedTracks();
   	} catch (ServiceException e) {

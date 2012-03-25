@@ -36,6 +36,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import fm.audiobox.configurations.Response;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
+import fm.audiobox.interfaces.IConfiguration.ContentFormat;
 
 /**
  * This interface specifies how a connector should behave.
@@ -43,6 +44,10 @@ import fm.audiobox.core.exceptions.ServiceException;
  * @author Fabio Tunno
  */
 public interface IConnector {
+  
+  
+  public static final String URI_SEPARATOR = "/";
+  public static final String DOT = ".";
   
   /**
    * Builds {@link HttpMethodBase} using GET method and passing parameters
@@ -53,9 +58,11 @@ public interface IConnector {
    * 
    * @return the {@link IConnectionMethod} used for a GET request
    */
-  public IConnectionMethod get(IEntity destEntity, String action, String requestFormat, List<NameValuePair> params);
+  public IConnectionMethod get(IEntity destEntity, String action, List<NameValuePair> params);
   
-  public IConnectionMethod get(IEntity destEntity,String path, String action, String requestFormat, List<NameValuePair> params);
+  public IConnectionMethod get(IEntity destEntity, String path, String action, List<NameValuePair> params);
+  
+  public IConnectionMethod get(IEntity destEntity, String path, String action, ContentFormat format, List<NameValuePair> params);
   
   /**
    * Builds {@link HttpMethodBase} using PUT method
@@ -65,9 +72,11 @@ public interface IConnector {
    * 
    * @return the {@link IConnectionMethod} used for a PUT request
    */
-  public IConnectionMethod put(IEntity destEntity, String action, String requestFormat);
+  public IConnectionMethod put(IEntity destEntity, String action);
   
-  public IConnectionMethod put(IEntity destEntity, String path, String action, String requestFormat);
+  public IConnectionMethod put(IEntity destEntity, String path, String action);
+  
+  public IConnectionMethod put(IEntity destEntity, String path, String action, ContentFormat format);
   
   /**
    * Builds {@link HttpMethodBase} using POST method
@@ -77,9 +86,13 @@ public interface IConnector {
    * 
    * @return the {@link IConnectionMethod} used for a POST request
    */
-  public IConnectionMethod post(IEntity destEntity, String action, String requestFormat);
+  public IConnectionMethod post(IEntity destEntity, String action);
   
-  public IConnectionMethod post(IEntity destEntity, String path, String action, String requestFormat);
+  public IConnectionMethod post(IEntity destEntity, String path, String action);
+  
+  public IConnectionMethod post(IEntity destEntity, String path, String action, ContentFormat format);
+
+  
   /**
    * Builds {@link HttpMethodBase} using DELETE method
    * 
@@ -88,9 +101,11 @@ public interface IConnector {
    * 
    * @return the {@link IConnectionMethod} used for a DELETE request
    */
-  public IConnectionMethod delete(IEntity destEntity, String action, String requestFormat);
+  public IConnectionMethod delete(IEntity destEntity, String action);
   
-  public IConnectionMethod delete(IEntity destEntity, String path, String action, String requestFormat);
+  public IConnectionMethod delete(IEntity destEntity, String path, String action);
+  
+  public IConnectionMethod delete(IEntity destEntity, String path, String action, ContentFormat format);
   
   
   /**

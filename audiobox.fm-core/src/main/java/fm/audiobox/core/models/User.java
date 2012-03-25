@@ -497,8 +497,7 @@ public final class User extends AbstractEntity implements Serializable {
    * @throws LoginException
    */
   public void load(IResponseHandler responseHandler) throws ServiceException, LoginException {
-    String requestFormat = this.getConfiguration().getRequestFormat().toString().toLowerCase();
-    getConnector().get(this, null, requestFormat, null).send(false, null, responseHandler);
+    getConnector().get(this, null, null).send(false, null, responseHandler);
   }
 
 
