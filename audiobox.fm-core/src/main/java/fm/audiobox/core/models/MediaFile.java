@@ -314,7 +314,7 @@ public class MediaFile extends AbstractEntity implements Serializable{
     
     ((MultipartEntity)entity).addPart("file",this.filebody);
     
-    this.getConnector(IConfiguration.Connectors.NODE).post(this, path, null).send(false, entity);
+    this.getConnector(IConfiguration.Connectors.NODE).post(this, path, null,null).send(false, entity);
     
   }
 
@@ -322,7 +322,7 @@ public class MediaFile extends AbstractEntity implements Serializable{
   // download   GET   http://staging.audiobox.fm:3000/stream/(file_name.ext)
   public void download() throws ServiceException, LoginException {
     String path = ("/".concat( Actions.stream.toString() )).concat("/".concat(this.filename));
-    Response response = this.getConnector(IConfiguration.Connectors.NODE).get(this,  path , null, null).send(false);
+    Response response = this.getConnector(IConfiguration.Connectors.NODE).get(this,  path , null, null, null).send(false);
     response.getStream();
   }
 

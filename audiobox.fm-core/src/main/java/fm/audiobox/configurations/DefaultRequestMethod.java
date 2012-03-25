@@ -3,8 +3,6 @@ package fm.audiobox.configurations;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -37,7 +35,7 @@ import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
 
-public class DefaultRequestMethod implements IConnectionMethod,Observer {
+public class DefaultRequestMethod implements IConnectionMethod {
 
   private static Logger log = LoggerFactory.getLogger(DefaultRequestMethod.class);
 
@@ -215,12 +213,5 @@ public class DefaultRequestMethod implements IConnectionMethod,Observer {
   public void setFollowRedirect(boolean followRedirect) {
     getHttpMethod().getParams().setBooleanParameter( ClientPNames.HANDLE_REDIRECTS, true );
   }
-
-
-	@Override
-	public void update(Observable o, Object arg) {
-		// TODO Auto-generated method stub
-		
-	}
 
 }
