@@ -20,6 +20,11 @@
 package fm.audiobox.core.models;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
@@ -29,6 +34,7 @@ import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
 
 import fm.audiobox.AudioBox;
+import fm.audiobox.configurations.DefaultResponseParser;
 import fm.audiobox.configurations.Response;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
@@ -333,19 +339,40 @@ public class MediaFile extends AbstractEntity implements Serializable{
    * @throws ServiceException generic error 
    * @throws LoginException generic LoginException
    */
-  public void download(File file) throws ServiceException, LoginException {
+  public void download(final File file) throws ServiceException, LoginException {
     
-    // In this case we are using 'path' for the action
-    // and 'action' for the filename
-    String path = IConnector.URI_SEPARATOR.concat( Actions.stream.toString() );
-    String action = IConnector.URI_SEPARATOR.concat(this.filename);
+    if( file != null ){
+   // In this case we are using 'path' for the action
+      // and 'action' for the filename
+      String path = IConnector.URI_SEPARATOR.concat( Actions.stream.toString() );
+      String action = this.filename;
+      
+      // TODO: perform this action only when filename property has been correctly populated
+      
+      this.getConnector(IConfiguration.Connectors.NODE).get(this,  path , action, null , null).send(false,null,new DefaultResponseParser(){
+
+        @Override
+        public void parseAsBinary(InputStream inputStream, IEntity destEntity) throws ServiceException {
+          try {
+            OutputStream out = new FileOutputStream(file);
+            byte buf[] = new byte[1024];
+            int len;
+            while((len=inputStream.read(buf))>0){
+              out.write(buf,0,len);
+            }          
+            out.close();
+            inputStream.close();
+            
+          } catch (FileNotFoundException e) {
+            e.printStackTrace();
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+        }
+      });
+      
+    }
     
-    // TODO: perform this action only when filename property has been correctly populated
-    
-    Response response = this.getConnector(IConfiguration.Connectors.NODE).get(this,  path , action, null).send(false);
-    
-    // Responde the filename
-    response.getStream();
   }
 
 }

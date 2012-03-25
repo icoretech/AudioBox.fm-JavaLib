@@ -54,7 +54,7 @@ public class UserTest extends AudioBoxTestCase {
       mdfs.load(false);
       
       File fileForDownload = new File( Fixtures.get("file_for_download") );
-      mdfs.get(0).download( fileForDownload );
+      mdfs.get(1).download( fileForDownload );
       
 //    	user.getUploadedTracks();
   	} catch (ServiceException e) {
