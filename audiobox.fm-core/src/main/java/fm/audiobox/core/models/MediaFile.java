@@ -318,16 +318,15 @@ public class MediaFile extends AbstractEntity implements Serializable{
     this.parent = parent;
   }
 
-  //POST http://staging.audiobox.fm:3000/upload     in Multipart-Data
-  public void upload(File file) throws ServiceException, LoginException {
+  public boolean upload(File file) throws ServiceException, LoginException {
     String path = IConnector.URI_SEPARATOR.concat( Actions.upload.toString() );
     
     MultipartEntity entity = new MultipartEntity();
     
     entity.addPart("media", new FileBody(file, new MimetypesFileTypeMap().getContentType(file)));
     
-    this.getConnector(IConfiguration.Connectors.NODE).post(this, path, null, null).send(false, entity);
-    
+    Response response = this.getConnector(IConfiguration.Connectors.NODE).post(this, path, null, null).send(false, entity);
+    return response.isOK();
   }
 
   
