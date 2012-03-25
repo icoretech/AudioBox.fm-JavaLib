@@ -25,7 +25,7 @@ public class MediaFileTest extends AudioBoxTestCase {
       MediaFile media = new MediaFile(this.abc);
       
       File fileToUpload = new File( Fixtures.get("file_to_upload") ); 
-      media.upload( fileToUpload );
+      assertTrue( media.upload( fileToUpload ) );
       
     } catch (ServiceException e) {
       e.printStackTrace();
