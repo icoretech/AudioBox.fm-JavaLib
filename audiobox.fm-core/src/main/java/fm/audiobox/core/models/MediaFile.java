@@ -304,7 +304,7 @@ public class MediaFile extends AbstractEntity implements Serializable{
 
   @Override
   public String getApiPath() {
-    return this.parent.getApiPath() + "/" + this.getToken();
+    return this.parent.getApiPath() + IConnector.URI_SEPARATOR + this.getToken();
   }
 
   @Override
