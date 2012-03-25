@@ -42,6 +42,7 @@ import fm.audiobox.core.models.MediaFiles.Types;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IEntity;
+import fm.audiobox.interfaces.IResponseHandler;
 
 /**
  * File is the main subject of the scope of these libraries.
@@ -108,7 +109,7 @@ public class MediaFile extends AbstractEntity implements Serializable{
   public MediaFile(IConfiguration config) {
     super(config);
   }
-  
+
   /**
    * Contructor method
    * This class can be instantiated always.
@@ -287,26 +288,26 @@ public class MediaFile extends AbstractEntity implements Serializable{
     // TODO Auto-generated method stub
   }
 
-//  /**
-//   * Executes request populating this class
-//   * 
-//   * @throws ServiceException
-//   * @throws LoginException
-//   */
-//  public void load() throws ServiceException, LoginException {
-//    this.load(null);
-//  }
-//
-//  /**
-//   * Executes request populating this class and passing the {@link IResponseHandler} as response parser
-//   * 
-//   * @param responseHandler the {@link IResponseHandler} used as response content parser
-//   * @throws ServiceException
-//   * @throws LoginException
-//   */
-//  public void load(IResponseHandler responseHandler) throws ServiceException, LoginException {
-//    getConnector().get(this, null, null).send(false, null, responseHandler);
-//  }
+  //  /**
+  //   * Executes request populating this class
+  //   * 
+  //   * @throws ServiceException
+  //   * @throws LoginException
+  //   */
+  //  public void load() throws ServiceException, LoginException {
+  //    this.load(null);
+  //  }
+  //
+  //  /**
+  //   * Executes request populating this class and passing the {@link IResponseHandler} as response parser
+  //   * 
+  //   * @param responseHandler the {@link IResponseHandler} used as response content parser
+  //   * @throws ServiceException
+  //   * @throws LoginException
+  //   */
+  //  public void load(IResponseHandler responseHandler) throws ServiceException, LoginException {
+  //    getConnector().get(this, null, null).send(false, null, responseHandler);
+  //  }
 
   @Override
   public String getApiPath() {
@@ -320,16 +321,16 @@ public class MediaFile extends AbstractEntity implements Serializable{
 
   public boolean upload(File file) throws ServiceException, LoginException {
     String path = IConnector.URI_SEPARATOR.concat( Actions.upload.toString() );
-    
+
     MultipartEntity entity = new MultipartEntity();
-    
+
     entity.addPart("media", new FileBody(file, new MimetypesFileTypeMap().getContentType(file)));
-    
+
     Response response = this.getConnector(IConfiguration.Connectors.NODE).post(this, path, null, null).send(false, entity);
     return response.isOK();
   }
 
-  
+
   /**
    * Downloads this current {@link MediaFile} file and store it into given {@link File} file 
    * 
@@ -339,39 +340,43 @@ public class MediaFile extends AbstractEntity implements Serializable{
    * @throws LoginException generic LoginException
    */
   public void download(final File file) throws ServiceException, LoginException {
-    
     if( file != null ){
-   // In this case we are using 'path' for the action
-      // and 'action' for the filename
-      String path = IConnector.URI_SEPARATOR.concat( Actions.stream.toString() );
-      String action = this.filename;
-      
-      // TODO: perform this action only when filename property has been correctly populated
-      
-      this.getConnector(IConfiguration.Connectors.NODE).get(this,  path , action, null , null).send(false,null,new DefaultResponseParser(){
-
+      IResponseHandler responseparser = new DefaultResponseParser(){
         @Override
         public void parseAsBinary(InputStream inputStream, IEntity destEntity) throws ServiceException {
           try {
             OutputStream out = new FileOutputStream(file);
-            byte buf[] = new byte[1024];
+            byte buf[] = new byte[1024 * 64];
             int len;
             while((len=inputStream.read(buf))>0){
               out.write(buf,0,len);
             }          
             out.close();
             inputStream.close();
-            
+
           } catch (FileNotFoundException e) {
             e.printStackTrace();
           } catch (IOException e) {
             e.printStackTrace();
           }
-        }
-      });
-      
+        }};
+        download(file, responseparser);
+    }    
+  }
+
+  public void download(final File file,IResponseHandler responseHandler) throws ServiceException, LoginException {
+
+    if( file != null ){
+      // In this case we are using 'path' for the action
+      // and 'action' for the filename
+      String path = IConnector.URI_SEPARATOR.concat( Actions.stream.toString() );
+      String action = this.filename;
+
+      // TODO: perform this action only when filename property has been correctly populated
+      this.getConnector(IConfiguration.Connectors.NODE).get(this,  path , action, null , null).send(false,null,responseHandler);
+
     }
-    
+
   }
 
 }
