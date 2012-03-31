@@ -17,29 +17,29 @@ public class MediaFileTest extends AudioBoxTestCase {
     loginCatched();
   }
 
-//  @Test
-//  public void testMediaFileUpload() {
-//    
-//    try {
-//      MediaFile media = new MediaFile(this.abc);
-//      
-//      assertNull(media.getToken());
-//      assertNull(media.getMediaFileName());
-//      
-//      File fileToUpload = new File( Fixtures.get("file_to_upload") );
-//      
-//      assertTrue( media.upload( fileToUpload ) );
-//      
-//      assertNotNull(media.getToken());
-//      assertNotNull(media.getMediaFileName());
-//      
-//    } catch (ServiceException e) {
-//      e.printStackTrace();
-//    } catch (LoginException e) {
-//      e.printStackTrace();
-//    }
-//
-//  }
+  @Test
+  public void testMediaFileUpload() {
+    
+    try {
+      MediaFile media = new MediaFile(this.abc);
+      
+      assertNull(media.getToken());
+      assertNull(media.getMediaFileName());
+      
+      File fileToUpload = new File( Fixtures.get("file_to_upload") );
+      
+      assertTrue( media.upload( fileToUpload ) );
+      
+      assertNotNull(media.getToken());
+      assertNotNull(media.getMediaFileName());
+      
+    } catch (ServiceException e) {
+      e.printStackTrace();
+    } catch (LoginException e) {
+      e.printStackTrace();
+    }
+
+  }
   
   @Test
   public void testMediaFileUploadFailed() {
