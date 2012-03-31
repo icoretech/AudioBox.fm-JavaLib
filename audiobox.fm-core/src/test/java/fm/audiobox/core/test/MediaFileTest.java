@@ -17,21 +17,64 @@ public class MediaFileTest extends AudioBoxTestCase {
     loginCatched();
   }
 
+//  @Test
+//  public void testMediaFileUpload() {
+//    
+//    try {
+//      MediaFile media = new MediaFile(this.abc);
+//      
+//      assertNull(media.getToken());
+//      assertNull(media.getMediaFileName());
+//      
+//      File fileToUpload = new File( Fixtures.get("file_to_upload") );
+//      
+//      assertTrue( media.upload( fileToUpload ) );
+//      
+//      assertNotNull(media.getToken());
+//      assertNotNull(media.getMediaFileName());
+//      
+//    } catch (ServiceException e) {
+//      e.printStackTrace();
+//    } catch (LoginException e) {
+//      e.printStackTrace();
+//    }
+//
+//  }
+  
   @Test
-  public void testTrackActions() {
+  public void testMediaFileUploadFailed() {
     
+    MediaFile media = new MediaFile(this.abc);
+    Exception ex = null;
     try {
-      MediaFile media = new MediaFile(this.abc);
       
-      File fileToUpload = new File( Fixtures.get("file_to_upload") ); 
-      assertTrue( media.upload( fileToUpload ) );
+      assertNull(media.getToken());
+      assertNull(media.getMediaFileName());
+      
+      File fileToUpload = new File( Fixtures.get("file_to_upload") );
+      
+      assertFalse( media.upload( fileToUpload ) );
       
     } catch (ServiceException e) {
-      e.printStackTrace();
+      ex = e;
     } catch (LoginException e) {
-      e.printStackTrace();
+      ex = e;
     }
+    
+    assertNotNull(ex);
+    assertTrue( ex instanceof ServiceException );
+    
+    ServiceException se = (ServiceException)ex;
+    
+    assertEquals( se.getErrorCode(), 422 );
+    assertNotNull( se.getMessage() );
+    
+    assertNull(media.getToken());
+    assertNull(media.getMediaFileName());
 
   }
+  
+  
+  
 
 }

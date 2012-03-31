@@ -88,36 +88,7 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
     return super.addEntity(entity);
   }
 
-  /**
-   * Returns the {@link MediaFile} associated with the given <code>filename</code>
-   * @param filename the MediaFile filename
-   * @return the {@link MediaFile} associated with the given <code>filename</code>
-   */
-  public MediaFile getMediaFileByName(String filename){
-    for ( Iterator<MediaFile> it = this.iterator(); it.hasNext();  ){
-      MediaFile mdf = it.next();
-      if (  mdf.getFilename().equalsIgnoreCase( filename )  ) {
-        return mdf;
-      }
-    }
-    return null;
-  }
 
-  /**
-   * Returns the <b>first</b> {@link MediaFile} that matches with the given {@link MediaFilesTypes}
-   * 
-   * @param type the {@link MediaFilesTypes}
-   * @return the first {@link MediaFile} that matches with the given {@link MediaFilesTypes}
-   */
-  public MediaFile getMediaFileByType( Types type ){
-    for ( Iterator<MediaFile> it = this.iterator(); it.hasNext();  ){
-      MediaFile mdf = it.next();
-      if (  mdf.getType() == type  ) {
-        return mdf;
-      }
-    }
-    return null;
-  }
 
   /**
    * Returns a list of {@link MediaFile} that matches the given {@link MediaFilesTypes}

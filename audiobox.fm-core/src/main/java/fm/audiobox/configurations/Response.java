@@ -25,7 +25,7 @@ public class Response implements Serializable {
   /**
    * The default byte array length used while parsing a stream
    */
-  public static final int CHUNK = 1024;
+  public static final int CHUNK = 1024 * 64;
   
   /**
    * Indentifies the type of the response

@@ -59,21 +59,37 @@ import fm.audiobox.interfaces.IResponseHandler;
  *
  * <pre>
  * @code
- * { token: '5916d6ca-0aa0-450a-ae5d-56e8fab0ffc9',
- *     artist: 'Alborosie',
- *     album: 'Escape From Babylon',
- *     genre: 'Reggae',
- *     year: 2009,
- *     title: 'One Sound',
- *     len_str: '4:00',
- *     len_int: 240,
- *     position: 11,
- *     plays: 114,
- *     disc: 1,
- *     filename: '5916d6ca-0aa0-450a-ae5d-56e8fab0ffc9.mp3',
- *     type: 'AudioFile',
- *     rating: 5,
- *     mime: 'audio/mpeg' }
+ *  { type: 'AudioFile',
+ *    token: 'ce4c51285e3e6a087434a0',
+ *    artist: 'Artist',
+ *    album: 'Album',
+ *    genre: 'Genre',
+ *    year: 2012,
+ *    title: 'Title',
+ *    len_str: '5:05',
+ *    len_int: 305,
+ *    position: 6,
+ *    plays: 0,
+ *    filename: '{token}.mp3',
+ *    loved: false,
+ *    disc: 1,
+ *    mime: 'audio/mpeg',
+ *    size: 7309853,
+ *    md5: 'a6e89bd8a081f0736cf89961d66884d4',
+ *    video_bitrate: null,
+ *    video_codec: null,
+ *    video_resolution: null,
+ *    video_fps: null,
+ *    video_aspect: null,
+ *    video_container: null,
+ *    audio_bitrate: '192',
+ *    audio_codec: null,
+ *    audio_sample_rate: '44100',
+ *    artworks: {
+ *      l: 'http://assets.development.audiobox.fm/a//l.jpg',
+ *      s: 'http://assets.development.audiobox.fm/a//s.jpg'
+ *    }
+ *  }
  * @endcode
  * </pre>
  *
@@ -87,7 +103,7 @@ public class MediaFile extends AbstractEntity implements Serializable{
   private static Logger log = LoggerFactory.getLogger(MediaFile.class);
   
   public static final String TAGNAME = "media_file";
-  public static final String NAMESPACE = MediaFile. TAGNAME;
+  public static final String NAMESPACE = MediaFile.TAGNAME;
 
   private String artist;
   private String album;
@@ -99,7 +115,7 @@ public class MediaFile extends AbstractEntity implements Serializable{
   private int position;
   private int plays;
   private int disc;
-  private String filename;
+  private String mediaFileName;
   private Types type;
   private int rating;
   private String mime;
@@ -214,12 +230,12 @@ public class MediaFile extends AbstractEntity implements Serializable{
     this.disc = disc;
   }
 
-  public String getFilename() {
-    return filename;
+  public String getMediaFileName() {
+    return this.mediaFileName;
   }
 
-  public void setFilename(String filename) {
-    this.filename = filename;
+  public void setMediaFileName(String filename) {
+    this.mediaFileName = filename;
   }
 
   public Types getType() {
@@ -275,8 +291,8 @@ public class MediaFile extends AbstractEntity implements Serializable{
       return this.getClass().getMethod("setPlays", int.class);
     } else if ( tagName.equals("disc") ){
       return this.getClass().getMethod("setDisc", int.class);
-    } else if ( tagName.equals("filename") ){
-      return this.getClass().getMethod("setFilename", String.class);
+    } else if ( tagName.equals("media_file_name") ){
+      return this.getClass().getMethod("setMediaFileName", String.class);
     } else if ( tagName.equals("rating") ){
       return this.getClass().getMethod("setRating", int.class);
     } else if ( tagName.equals("mime") ){
@@ -363,8 +379,9 @@ public class MediaFile extends AbstractEntity implements Serializable{
           } catch (IOException e) {
             log.error("IOException : " + e.getMessage());
           }
-        }};
-        download(file, responseparser);
+        }
+      };
+      download(file, responseparser);
     }else
       log.warn("Input file is null");
   }
@@ -375,7 +392,7 @@ public class MediaFile extends AbstractEntity implements Serializable{
       // In this case we are using 'path' for the action
       // and 'action' for the filename
       String path = IConnector.URI_SEPARATOR.concat( Actions.stream.toString() );
-      String action = this.filename;
+      String action = this.getMediaFileName();
 
       // TODO: perform this action only when filename property has been correctly populated
       this.getConnector(IConfiguration.Connectors.NODE).get(this,  path , action, null , null).send(false,null,responseHandler);
