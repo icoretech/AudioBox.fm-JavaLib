@@ -24,7 +24,7 @@ public class Fixtures {
     static {
     	try {
             
-            ps.load( Fixtures.class.getResourceAsStream("/fixtures.properties") );
+            ps.load( Fixtures.class.getResourceAsStream("fixtures.properties") );
             
         } catch (FileNotFoundException e) {
             log.error("Environment properties file not found: " + e.getMessage());

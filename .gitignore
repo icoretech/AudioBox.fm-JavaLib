@@ -36,3 +36,4 @@ audiobox.fm-core/src/docbkx
 # Credentials
 audiobox.fm-core/src/test/java/fm/audiobox/core/test/mocks/fixtures/fixtures.properties
 audiobox.fm-core/src/main/resources/fm/audiobox/core/config/env.properties
+audiobox.fm-sync/src/test/java/fm/audiobox/sync/test/mocks/fixtures/fixtures.properties
