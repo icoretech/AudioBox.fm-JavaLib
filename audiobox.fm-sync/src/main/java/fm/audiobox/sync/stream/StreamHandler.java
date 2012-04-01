@@ -35,37 +35,45 @@ import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Action;
 import fm.audiobox.core.models.Args;
+import fm.audiobox.core.models.User;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConfiguration.ContentFormat;
 
-public class StreamHandler implements Observer{
+public class StreamHandler implements Observer {
 
   private static Logger log = LoggerFactory.getLogger(StreamHandler.class);
 
-  private AudioBox ab;
-  private static final String NAME_APP = "StreamHandler";  
-  private transient String auth_token;
+  private AudioBox audiobox;
 
-  private static final String AUTHTOKENPARAM = "x-auth-token";
+  private static final String X_AUTH_TOKEN_HEADER = "x-auth-token";
 
-  private IConfiguration config;
+  private IConfiguration configuration;
   private SocketIO soket;
 
-  public StreamHandler() {
-    this(getDefaultConfiguration());
-  }
-
-  public StreamHandler(IConfiguration config) {		
-    this.config = config;
-    this.config.getFactory().setEntity( Action.TAGNAME, Action.class);
-    this.config.getFactory().setEntity( Args.TAGNAME, Args.class);
-    ab = new AudioBox(config);
+  
+  public StreamHandler(AudioBox abx) {
+    this.audiobox = abx;
+    this.configuration = this.audiobox.getConfiguration();
+    this.configuration.getFactory().setEntity( Action.TAGNAME, Action.class);
+    this.configuration.getFactory().setEntity( Args.TAGNAME, Args.class);
+    
+    
+    this.audiobox.addObserver(new Observer() {
+      @Override
+      public void update(Observable abx, Object usr) {
+        // new User has changed its status
+        
+        log.info("User has changed its status");
+        
+        
+      }
+    });
+    
   }
 
   public void login(String user, String pwd) throws LoginException, ServiceException {
     ab.login(user, pwd);
     this.auth_token = ab.getUser().getAuthToken();
-    
   }
 
   private static IConfiguration getDefaultConfiguration(){

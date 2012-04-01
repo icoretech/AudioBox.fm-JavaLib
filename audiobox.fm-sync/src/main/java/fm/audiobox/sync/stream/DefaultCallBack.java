@@ -1,8 +1,5 @@
 package fm.audiobox.sync.stream;
 
-import fm.audiobox.core.parsers.JParser;
-import fm.audiobox.interfaces.IConfiguration;
-import fm.audiobox.interfaces.IEntity;
 import io.socket.IOAcknowledge;
 import io.socket.IOCallback;
 import io.socket.SocketIOException;
@@ -14,7 +11,11 @@ import org.slf4j.LoggerFactory;
 
 import com.google.gson.JsonElement;
 
-public class DefaultCallBack extends Observable implements IOCallback{
+import fm.audiobox.core.parsers.JParser;
+import fm.audiobox.interfaces.IConfiguration;
+import fm.audiobox.interfaces.IEntity;
+
+public class DefaultCallBack extends Observable implements IOCallback {
 
   private static Logger log = LoggerFactory.getLogger( DefaultCallBack.class );
   private IConfiguration config;
