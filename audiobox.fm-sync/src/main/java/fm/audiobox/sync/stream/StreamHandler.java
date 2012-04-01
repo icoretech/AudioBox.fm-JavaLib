@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2010 iCoreTech research labs                            *
  *   Contributed code from:                                                *
- *   - Lucio Regina		 						                           *
+ *   - Lucio Regina		 						                                         *
  *                                                                         *
  *   This program is free software: you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -37,6 +37,7 @@ import fm.audiobox.core.models.Action;
 import fm.audiobox.core.models.Args;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConfiguration.ContentFormat;
+import fm.audiobox.interfaces.IEntity;
 
 public class StreamHandler implements Observer{
 
@@ -86,14 +87,14 @@ public class StreamHandler implements Observer{
     this.soket = new SocketIO();
     this.soket.addHeader(AUTHTOKENPARAM, this.auth_token);
     String url = this.config.getProtocol(IConfiguration.Connectors.NODE) + "://" + this.config.getHost(IConfiguration.Connectors.NODE) + ":" + this.config.getPort(IConfiguration.Connectors.NODE) + "/";
-    
+    log.info("");
     this.soket.connect( url , callback);
     return this.soket;
   }
 
   @Override
   public void update(Observable arg0, Object arg1) {
-    if( arg1 instanceof Runnable){
+    if( arg1 instanceof IEntity){
       
     }
   }

@@ -1,88 +1,79 @@
-//
-///***************************************************************************
-// *   Copyright (C) 2010 iCoreTech research labs                            *
-// *   Contributed code from:                                                *
-// *   - Valerio Chiodino - keytwo at keytwo dot net                         *
-// *   - Fabio Tunno      - fat at fatshotty dot net                         *
-// *                                                                         *
-// *   This program is free software: you can redistribute it and/or modify  *
-// *   it under the terms of the GNU General Public License as published by  *
-// *   the Free Software Foundation, either version 3 of the License, or     *
-// *   (at your option) any later version.                                   *
-// *                                                                         *
-// *   This program is distributed in the hope that it will be useful,       *
-// *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
-// *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
-// *   GNU General Public License for more details.                          *
-// *                                                                         *
-// *   You should have received a copy of the GNU General Public License     *
-// *   along with this program. If not, see http://www.gnu.org/licenses/     *
-// *                                                                         *
-// ***************************************************************************/
-//
-//package fm.audiobox.sync.task;
-//
-//import java.io.File;
-//import java.io.FileInputStream;
-//import java.io.IOException;
-//import java.io.InputStream;
-//import java.io.OutputStream;
-//
-//import javax.activation.MimetypesFileTypeMap;
-//
-//import org.apache.http.entity.mime.content.FileBody;
-//
-//import fm.audiobox.core.exceptions.LoginException;
-//import fm.audiobox.core.exceptions.ServiceException;
-//import fm.audiobox.core.models.UploadTrack;
-//import fm.audiobox.sync.interfaces.ThreadListener;
-//import fm.audiobox.sync.util.AsyncTask;
-//
-///**
-// * 
-// * 
-// * @author Fabio Tunno
-// * @version 0.0.1
-// */
-//public class Upload extends AsyncTask {
-//
-//    private UploadTrack mTrack;
-//    private File mFile;
-//
-//    public Upload(UploadTrack track, File file){
-//        this.mTrack = track;
-//        this.mFile = file;
-//    }
-//
-//
-//    @Override
-//    protected synchronized void doTask() {
-//
-//        try {
-//			this.mTrack.upload();
-//        } catch (LoginException e) {
-//            e.printStackTrace();
-//        } catch (ServiceException e) {
-//            e.printStackTrace();
-//        }
-//
-//    }
-//
-//    public String upload(){
-//        this.start();
-//        this.doTask();
-//        return this.end();
-//    }
-//
-//
-//    @Override
-//    protected synchronized String end() {
-//        return this.mTrack.getToken();
-//    }
-//
-//    @Override
-//    protected synchronized void start() {
-//
+
+/***************************************************************************
+ *   Copyright (C) 2010 iCoreTech research labs                            *
+ *   Contributed code from:                                                *
+ *   - Valerio Chiodino - keytwo at keytwo dot net                         *
+ *   - Fabio Tunno      - fat at fatshotty dot net                         *
+ *                                                                         *
+ *   This program is free software: you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation, either version 3 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program. If not, see http://www.gnu.org/licenses/     *
+ *                                                                         *
+ ***************************************************************************/
+
+package fm.audiobox.sync.task;
+
+import java.io.File;
+
+import fm.audiobox.core.exceptions.LoginException;
+import fm.audiobox.core.exceptions.ServiceException;
+import fm.audiobox.core.models.MediaFile;
+import fm.audiobox.sync.util.AsyncTask;
+
+/**
+ * 
+ * 
+ * @author Fabio Tunno
+ * @version 0.0.1
+ */
+public class Upload extends AsyncTask {
+
+    private MediaFile media;
+    private File mFile;
+
+    public Upload(MediaFile media, File file){
+        this.media = media;
+        this.mFile = file;
+    }
+
+
+    @Override
+    protected synchronized void doTask() {
+
+        try {
+			this.media.upload(this.mFile);
+        } catch (LoginException e) {
+            e.printStackTrace();
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public String upload(){
+        this.start();
+        this.doTask();
+        return this.end();
+    }
+
+
+    @Override
+    protected synchronized String end() {
+        return this.media.getToken();
+    }
+
+    @Override
+    protected synchronized void start() {
+
 //        final Upload me = this;
 //        final ThreadListener tl = this.getThreadListener();
 //        final long total = this.mFile.length();
@@ -121,11 +112,11 @@
 //        }; 
 //
 //        this.mTrack.setFileBody( mFileBody );
-//
-//    }
-//
-//
-//}
-//
-//
-//
+
+    }
+
+
+}
+
+
+

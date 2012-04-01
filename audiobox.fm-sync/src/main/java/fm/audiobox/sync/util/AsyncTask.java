@@ -24,6 +24,7 @@ package fm.audiobox.sync.util;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Observable;
 
 import fm.audiobox.sync.interfaces.ThreadListener;
 
@@ -31,82 +32,82 @@ import fm.audiobox.sync.interfaces.ThreadListener;
  * This abstract class is used to prototype AudioBox asynchronous tasks.
  * 
  * @author Fabio Tunno
- * @version 0.0.1
+ * @version 1.0.0
  */
-public abstract class AsyncTask implements Runnable {
+public abstract class AsyncTask extends Observable implements Runnable {
 
-    protected Map<String, Object> properties = new HashMap<String,Object>();
-    private AsyncTaskManager threadManager = null;
-    private boolean stopped = false;
+  protected Map<String, Object> properties = new HashMap<String,Object>();
+  //    private AsyncTaskManager threadManager = null;
+  private boolean stopped = false;
 
-    private ThreadListener threadListener = new ThreadListener() {
-        @Override
-        public boolean onStart(AsyncTask result) {return true;}
-
-        @Override
-        public void onProgress(AsyncTask result, long total, long completed, long remaining, Object item) {}
-
-        @Override
-        public void onComplete(AsyncTask result , Object item) {}
-        
-        @Override
-        public void onStop(AsyncTask task) {}
-    };
-
-
-    protected final void setManager( AsyncTaskManager tm ){
-        this.threadManager = tm;
-    }
-
-    public void setThreadListener(ThreadListener tl){
-        this.threadListener = tl;
-    }
-
-    public ThreadListener getThreadListener(){
-        return this.threadListener;
-    }
-
-    public void setProperty(String key, Object value){
-        properties.put( key, value );
-    }
-    public Object getProperty(String key){
-        return properties.get( key );
-    }
-
-    protected abstract void start();
-    protected abstract void doTask();
-    protected abstract Object end();
-
+  private ThreadListener threadListener = new ThreadListener() {
+    @Override
+    public boolean onStart(AsyncTask result) {return true;}
 
     @Override
-    public final void run() {
-    	this.stopped = false;
-        this.threadManager.onStart( this );
-        if ( this.threadListener.onStart( this ) ){
-            this.start();
+    public void onProgress(AsyncTask result, long total, long completed, long remaining, Object item) {}
 
-            this.doTask();
+    @Override
+    public void onComplete(AsyncTask result , Object item) {}
 
-            
-            if ( this.stopped )
-            	this.threadListener.onStop(this);
-            else {
-	            Object result = this.end();
-	            this.threadListener.onComplete(this, result);
-            }
-        } else
-            this.threadListener.onComplete(this, null);
+    @Override
+    public void onStop(AsyncTask task) {}
+  };
 
-        this.threadManager.onComplete( this );
 
-    }
+  //    protected final void setManager( AsyncTaskManager tm ){
+  //        this.threadManager = tm;
+  //    }
+
+  public void setThreadListener(ThreadListener tl){
+    this.threadListener = tl;
+  }
+
+  public ThreadListener getThreadListener(){
+    return this.threadListener;
+  }
+
+  public void setProperty(String key, Object value){
+    properties.put( key, value );
+  }
+  public Object getProperty(String key){
+    return properties.get( key );
+  }
+
+  protected abstract void start();
+  protected abstract void doTask();
+  protected abstract Object end();
+
+
+  @Override
+  public final void run() {
+    this.stopped = false;
+    if ( this.threadListener.onStart( this ) ){
+      this.start();
+
+      this.doTask();
+
+
+      if ( this.stopped )
+        this.threadListener.onStop(this);
+      else {
+        Object result = this.end();
+        this.threadListener.onComplete(this, result);
+      }
+    } else
+      this.threadListener.onComplete(this, null);
     
-    public final void stop(){
-    	this.stopped = true;
-    }
-    
-    public final boolean isStopped(){
-    	return this.stopped;
-    }
+    setChanged();
+    notifyObservers();
+
+  }
+
+  public final void stop(){
+    this.stopped = true;
+  }
+
+  public final boolean isStopped(){
+    return this.stopped;
+  }
 
 }

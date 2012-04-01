@@ -324,13 +324,13 @@
 				<scope>test</scope>
 			</dependency>
 			<dependency>
-		        <groupId>junit</groupId>
-		        <artifactId>junit</artifactId>
-		        <version>4.8.1</version>
-		        <type>jar</type>
-		        <scope>test</scope>
-		      </dependency>
-		     <dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.8.1</version>
+				<type>jar</type>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
 				<groupId>com.google.code.gson</groupId>
 				<artifactId>gson</artifactId>
 				<version>2.1</version>
@@ -389,7 +389,7 @@
 				<maven.javadoc.skip>true</maven.javadoc.skip>
 			</properties>
 		</profile>
-		
+
 		<profile>
 			<id>android-dev-profile</id>
 			<activation>
