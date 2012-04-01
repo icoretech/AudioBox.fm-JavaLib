@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IEntity;
 
-public class Action extends AbstractEntity implements Serializable,Runnable{
+public class Action extends AbstractEntity implements Serializable{
 
   private static final long serialVersionUID = 1L;
   private static Logger log = LoggerFactory.getLogger( Action.class );
@@ -22,19 +22,19 @@ public class Action extends AbstractEntity implements Serializable,Runnable{
   private int id;
   private Args args;
 
-//  private ThreadListener threadListener = new ThreadListener() {
-//    @Override
-//    public boolean onStart(Runnable result) {return true;}
-//
-//    @Override
-//    public void onProgress(Runnable result, long total, long completed, long remaining, Object item) {}
-//
-//    @Override
-//    public void onComplete(Runnable result , Object item) {}
-//
-//    @Override
-//    public void onStop(Runnable task) {}
-//  };
+  //  private ThreadListener threadListener = new ThreadListener() {
+  //    @Override
+  //    public boolean onStart(Runnable result) {return true;}
+  //
+  //    @Override
+  //    public void onProgress(Runnable result, long total, long completed, long remaining, Object item) {}
+  //
+  //    @Override
+  //    public void onComplete(Runnable result , Object item) {}
+  //
+  //    @Override
+  //    public void onStop(Runnable task) {}
+  //  };
 
   public Action(IConfiguration config) {
     super(config);
@@ -109,26 +109,5 @@ public class Action extends AbstractEntity implements Serializable,Runnable{
 
   @Override
   protected void copy(IEntity entity) {
-  }
-
-  @Override
-  public void run() {
-    try {
-      Method method = getSetterMethod(this.name);
-      method.invoke( this, this.args);
-
-      setChanged();
-      notifyObservers();
-    } catch (SecurityException e) {
-      e.printStackTrace();
-    } catch (NoSuchMethodException e) {
-      e.printStackTrace();
-    } catch (IllegalArgumentException e) {
-      e.printStackTrace();
-    } catch (IllegalAccessException e) {
-      e.printStackTrace();
-    } catch (InvocationTargetException e) {
-      e.printStackTrace();
-    }
   }
 }
