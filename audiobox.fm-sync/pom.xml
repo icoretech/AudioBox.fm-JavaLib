@@ -8,7 +8,6 @@
 		<version>2.0-SNAPSHOT</version>
 	</parent>
 
-	<groupId>fm.audiobox</groupId>
 	<artifactId>audiobox.fm-sync</artifactId>
 	<name>sync</name>
 	<packaging>jar</packaging>

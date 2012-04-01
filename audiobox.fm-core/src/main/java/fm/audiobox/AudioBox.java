@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 import java.util.Observer;
 import java.util.zip.GZIPInputStream;
 
@@ -162,13 +163,13 @@ import fm.audiobox.interfaces.IFactory;
  * @author Fabio Tunno
  * @version 1.0.0
  */
-public class AudioBox {
+public class AudioBox extends Observable {
 
   private static Logger log = LoggerFactory.getLogger(AudioBox.class);
 
 
   /** Prefix used to store each property into properties file */
-  public static final String PREFIX = "fm.audiobox.";
+  public static final String PREFIX = AudioBox.class.getPackage().getName() + ".";
 
   private UsernamePasswordCredentials mCredentials;
 
@@ -228,13 +229,25 @@ public class AudioBox {
    */
   public User login(String username, String password) throws LoginException, ServiceException {
     log.info("Executing login for user: " + username);
+    
+    // Destroy old user's pointer
+    this.user = null;
+    
+    // notify all observer User has been destroyed
+    this.setChanged();
+    this.notifyObservers(null);
 
+    
     User user = (User) this.configuration.getFactory().getEntity(User.TAGNAME, this.getConfiguration() );
     user.setUsername(username);
     //add the object to be observed, the observer 
     mCredentials = new UsernamePasswordCredentials(username, password);
     
     this.configuration.getFactory().getConnector().get(user, null, null).send(false);
+    
+    // User has been authenticated, notify observers
+    this.setChanged();
+    this.notifyObservers(user);
 
     return this.user = user;
   }
