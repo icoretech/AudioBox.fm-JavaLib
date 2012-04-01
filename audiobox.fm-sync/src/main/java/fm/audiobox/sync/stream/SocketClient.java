@@ -25,6 +25,7 @@ import fm.audiobox.core.models.Action;
 import fm.audiobox.core.models.Args;
 import fm.audiobox.core.parsers.JParser;
 import fm.audiobox.interfaces.IConfiguration;
+import fm.audiobox.interfaces.IConnector;
 import io.socket.IOAcknowledge;
 import io.socket.IOCallback;
 import io.socket.SocketIO;
@@ -114,7 +115,10 @@ public class SocketClient extends Observable implements IOCallback {
       this.wasConnected = false;
     }
     
-    this.socket.connect(this);
+    if ( this.audiobox.getUser() != null ){
+      this.socket.addHeader(IConnector.X_AUTH_TOKEN_HEADER, this.audiobox.getUser().getAuthToken() );
+      this.socket.connect(this);
+    }
   }
   
   
