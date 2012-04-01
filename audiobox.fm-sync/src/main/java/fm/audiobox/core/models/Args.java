@@ -15,6 +15,7 @@ public class Args extends AbstractEntity implements Serializable{
   public static final String NAMESPACE = Args.TAGNAME;
   
   private String filename;
+  private String etag;
   private int rangeMin;
   private int rangeMax;
   
@@ -66,7 +67,10 @@ public class Args extends AbstractEntity implements Serializable{
       return this.getClass().getMethod("setRangeMin", int.class);
     } else if ( tagName.equals("rangemax") ){
       return this.getClass().getMethod("setRangeMax", int.class);
+    } else if ( tagName.equals("etag") ){
+      return this.getClass().getMethod("setEtag", int.class);
     }
+  
     return null;
     
   }
@@ -82,6 +86,15 @@ public class Args extends AbstractEntity implements Serializable{
 
   @Override
   protected void copy(IEntity entity) {
+  }
+
+  
+  public String getEtag() {
+    return etag;
+  }
+
+  public void setEtag(String etag) {
+    this.etag = etag;
   }
 
 }

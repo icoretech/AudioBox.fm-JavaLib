@@ -1,7 +1,6 @@
 package fm.audiobox.core.models;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.slf4j.Logger;
@@ -10,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IEntity;
 
-public class Action extends AbstractEntity implements Serializable{
+public class Action extends AbstractEntity implements Serializable {
 
   private static final long serialVersionUID = 1L;
   private static Logger log = LoggerFactory.getLogger( Action.class );
@@ -22,22 +21,10 @@ public class Action extends AbstractEntity implements Serializable{
   private int id;
   private Args args;
 
-  //  private ThreadListener threadListener = new ThreadListener() {
-  //    @Override
-  //    public boolean onStart(Runnable result) {return true;}
-  //
-  //    @Override
-  //    public void onProgress(Runnable result, long total, long completed, long remaining, Object item) {}
-  //
-  //    @Override
-  //    public void onComplete(Runnable result , Object item) {}
-  //
-  //    @Override
-  //    public void onStop(Runnable task) {}
-  //  };
 
   public Action(IConfiguration config) {
     super(config);
+    log.info("new Action instantiated");
   }
 
   @Override
@@ -83,19 +70,9 @@ public class Action extends AbstractEntity implements Serializable{
       return this.getClass().getMethod("setId", int.class);
     } else if ( tagName.equals("args") ){
       return this.getClass().getMethod("setArgs", Args.class);
-    } else if ( tagName.equals("stream") ){
-      return this.getClass().getMethod("stream",Args.class);
     }
 
     return null;
-  }
-
-  public void stream(Args args){
-    long i_str = System.currentTimeMillis();
-    log.debug("Start strem file " + args.getFileName() );
-    MediaFile md = new MediaFile(getConfiguration());
-
-    log.debug("End strem file " + args.getFileName() + " in " + ( System.currentTimeMillis() - i_str) + "ms");
   }
 
   @Override
@@ -105,9 +82,13 @@ public class Action extends AbstractEntity implements Serializable{
 
   @Override
   public void setParent(IEntity parent) {
+    // not needed
+    
   }
 
   @Override
   protected void copy(IEntity entity) {
+    // temporary not supported
   }
+
 }

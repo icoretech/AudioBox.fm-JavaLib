@@ -48,6 +48,7 @@ public interface IConnector {
   
   public static final String URI_SEPARATOR = "/";
   public static final String DOT = ".";
+  public static final String X_AUTH_TOKEN_HEADER = "X-AUTH-TOKEN";
   
   /**
    * Builds {@link HttpMethodBase} using GET method and passing parameters

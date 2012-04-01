@@ -546,7 +546,7 @@ public class AudioBox extends Observable {
           if ( hostHeader.getValue().equals( HOST + ":" + PORT ) ) {
             if ( user != null && user.getAuthToken() != null ){
               log.trace("Request to AudioBox, add auth_token");
-              request.addHeader("X-AUTH-TOKEN", user.getAuthToken() );              
+              request.addHeader(IConnector.X_AUTH_TOKEN_HEADER, user.getAuthToken() );              
             } else { 
               log.trace("Request to AudioBox, add user credentials");
               request.addHeader( mScheme.authenticate(mCredentials,  request) );  

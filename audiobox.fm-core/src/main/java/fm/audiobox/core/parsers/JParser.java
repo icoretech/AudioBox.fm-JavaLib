@@ -32,16 +32,10 @@ public class JParser{
     this.config = entity.getConfiguration();
   }
 
-  public JParser( IConfiguration config ){
-    this.config = config;
-  }
-  
   public IEntity parse ( String jstr ){
     startParse = System.currentTimeMillis();
     JsonObject jobj = new JsonParser().parse( jstr ).getAsJsonObject();
     
-    Entry<String, JsonElement> entry = jobj.entrySet().iterator().next();    
-    this.entity = this.config.getFactory().getEntity( entry.getKey() , this.config);
     parse( jobj );
     
     if (log.isDebugEnabled()) {
