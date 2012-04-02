@@ -182,7 +182,6 @@ public class SocketClient extends Observable implements IOCallback {
   public void onConnect() {
     log.info("Connected!");
     SocketClient.this.connected = true;
-    SocketClient.this.socket.send("{\"ciao\":\"ciaociao\"}");
   }
 
 
