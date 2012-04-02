@@ -245,11 +245,14 @@ public class AudioBox extends Observable {
     
     this.configuration.getFactory().getConnector().get(user, null, null).send(false);
     
+    // User can now be set. Note: set user before notifing observers
+    this.user = user;
+    
     // User has been authenticated, notify observers
     this.setChanged();
     this.notifyObservers(user);
 
-    return this.user = user;
+    return this.user;
   }
 
 

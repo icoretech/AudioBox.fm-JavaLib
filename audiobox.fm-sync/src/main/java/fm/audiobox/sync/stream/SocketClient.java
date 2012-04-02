@@ -19,13 +19,6 @@
  ***************************************************************************/
 package fm.audiobox.sync.stream;
 
-import fm.audiobox.AudioBox;
-import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.models.Action;
-import fm.audiobox.core.models.Args;
-import fm.audiobox.core.parsers.JParser;
-import fm.audiobox.interfaces.IConfiguration;
-import fm.audiobox.interfaces.IConnector;
 import io.socket.IOAcknowledge;
 import io.socket.IOCallback;
 import io.socket.SocketIO;
@@ -42,6 +35,14 @@ import org.slf4j.LoggerFactory;
 
 import com.google.gson.JsonElement;
 
+import fm.audiobox.AudioBox;
+import fm.audiobox.core.exceptions.ServiceException;
+import fm.audiobox.core.models.Action;
+import fm.audiobox.core.models.Args;
+import fm.audiobox.core.parsers.JParser;
+import fm.audiobox.interfaces.IConfiguration;
+import fm.audiobox.interfaces.IConnector;
+
 public class SocketClient extends Observable implements IOCallback {
 
   private static Logger log = LoggerFactory.getLogger(SocketClient.class);
@@ -54,6 +55,8 @@ public class SocketClient extends Observable implements IOCallback {
 
   /** for knowing if we were connected, in case of logout and re-login */
   private boolean wasConnected = false;
+  
+  private boolean connected = false;
   
   public SocketClient(AudioBox abx) throws ServiceException {
     this.audiobox = abx;
@@ -88,8 +91,19 @@ public class SocketClient extends Observable implements IOCallback {
         log.info("User has changed its status");
         if ( usr == null ){
           // User is no longer logged in
-          wasConnected = SocketClient.this.isConnected();
+          
+          /**
+           *  We want to store the oringal state of the socket
+           *  because the {@link disconnect} method reset the flag
+           */
+          boolean originaWasConnected = SocketClient.this.isConnected(); 
+          
           SocketClient.this.disconnect();
+
+          if ( originaWasConnected )
+            // We were connected, we're storing this flag
+            // in order to perform a new connection once User is logged in
+            wasConnected = true;
         
         } else if ( wasConnected ){
           // User is logged in, and we were connected.
@@ -110,7 +124,7 @@ public class SocketClient extends Observable implements IOCallback {
     log.info("Trying to connect to server");
     if ( this.isConnected() ){
       this.disconnect();
-
+      
       // restoring interval flag
       this.wasConnected = false;
     }
@@ -118,18 +132,23 @@ public class SocketClient extends Observable implements IOCallback {
     if ( this.audiobox.getUser() != null ){
       this.socket.addHeader(IConnector.X_AUTH_TOKEN_HEADER, this.audiobox.getUser().getAuthToken() );
       this.socket.connect(this);
+    } else {
+      // User is not logged in.
+      // We are preparing for connecting as soon as user will be logged in
+      this.wasConnected = true;
     }
   }
   
   
   public boolean isConnected(){
-    return this.socket.isConnected();
+    return this.connected;
   }
   
   
   public void disconnect() {
     if ( this.isConnected() ){
       this.socket.disconnect();
+      this.wasConnected = false;
     }
   }
   
@@ -155,12 +174,15 @@ public class SocketClient extends Observable implements IOCallback {
   @Override
   public void onDisconnect() {
     log.info("Disconnected!");
+    SocketClient.this.connected = false;
   }
 
 
   @Override
   public void onConnect() {
     log.info("Connected!");
+    SocketClient.this.connected = true;
+    SocketClient.this.socket.send("{\"ciao\":\"ciaociao\"}");
   }
 
 
