@@ -58,6 +58,16 @@ public class DefaultRequestMethod implements IConnectionMethod {
     this.configuration = config;
   }
 
+  
+  
+  
+  public void addHeader(String header, String value) {
+    if ( value != null )
+      this.method.addHeader(header, value);
+    else
+      this.method.removeHeaders(header);
+  }
+  
 
   @Override
   public Response send(boolean async) throws ServiceException, LoginException {

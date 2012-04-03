@@ -174,6 +174,16 @@ public interface IConnector {
     
     
     /**
+     * Adds a custom header
+     * 
+     * @param header the Hedaer name
+     * @param value the Hedaer value. If {@code null} it removes the header
+     */
+    public void addHeader(String header, String value);
+    
+    
+    
+    /**
      * Start the request.
      * 
      * @param async whether to make the request asynchronous or not.
