@@ -16,8 +16,8 @@
   <version>3.0-SNAPSHOT</version>
   <description>AudioBox.fm JavaLib offers full access to the RESTful
     AudioBox.fm API, giving the developer the ability to make use of the
-    native API XML through comfortable Java objects.</description>
-  <url>http://maven.keytwo.net/</url>
+    native API through comfortable Java objects.</description>
+  <url>http://audiobox.keytwo.net/</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -36,8 +36,8 @@
   </properties>
 
   <organization>
-    <name>iCoreTech Research Labs</name>
-    <url>http://www.icoretech.org/</url>
+    <name>iCoreTech Inc.</name>
+    <url>http://icorete.ch/</url>
   </organization>
 
   <licenses>
