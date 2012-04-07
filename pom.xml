@@ -1,463 +1,506 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-	<groupId>fm.audiobox</groupId>
-	<artifactId>components</artifactId>
-	<packaging>pom</packaging>
+  <groupId>fm.audiobox</groupId>
+  <artifactId>components</artifactId>
+  <packaging>pom</packaging>
 
-	<name>components</name>
+  <name>components</name>
 
-	<modules>
-		<module>audiobox.fm-core</module>
-		<module>audiobox.fm-sync</module>
-	</modules>
+  <modules>
+    <module>audiobox.fm-core</module>
+    <module>audiobox.fm-sync</module>
+  </modules>
 
-	<version>3.0-SNAPSHOT</version>
-	<description>AudioBox.fm JavaLib offers full access to the RESTful
-		AudioBox.fm API, giving the developer the ability to make use of the
-		native API XML through comfortable Java objects.</description>
-	<url>http://maven.keytwo.net/</url>
+  <version>3.0-SNAPSHOT</version>
+  <description>AudioBox.fm JavaLib offers full access to the RESTful
+    AudioBox.fm API, giving the developer the ability to make use of the
+    native API XML through comfortable Java objects.</description>
+  <url>http://maven.keytwo.net/</url>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.host>${fm.audiobox.host}</project.host>
-		<project.protocol>${fm.audiobox.protocol}</project.protocol>
-		<project.port>${fm.audiobox.port}</project.port>
-		<project.apiPath>/api/v2/</project.apiPath>
-		<project.logLevel>${fm.audiobox.logLevel}</project.logLevel>
-	</properties>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    
+    <project.rails.protocol>${fm.audiobox.rails.protocol}</project.rails.protocol>
+    <project.rails.host>${fm.audiobox.rails.host}</project.rails.host>
+    <project.rails.port>${fm.audiobox.rails.port}</project.rails.port>
+    <project.rails.apiPath>/api/v1/</project.rails.apiPath>
+    
+    <project.node.protocol>${fm.audiobox.node.protocol}</project.node.protocol>
+    <project.node.host>${fm.audiobox.node.host}</project.node.host>
+    <project.node.port>${fm.audiobox.node.port}</project.node.port>
+    <project.node.apiPath></project.node.apiPath>
+    
+    <project.logLevel>${fm.audiobox.logLevel}</project.logLevel>
+  </properties>
 
-	<organization>
-		<name>iCoreTech Research Labs</name>
-		<url>http://www.icoretech.org/</url>
-	</organization>
+  <organization>
+    <name>iCoreTech Research Labs</name>
+    <url>http://www.icoretech.org/</url>
+  </organization>
 
-	<licenses>
-		<license>
-			<name>GNU GPL 3</name>
-			<url>http://www.gnu.org/licenses/gpl.html</url>
-			<distribution>repo</distribution>
-			<comments>The GNU General Public License (GNU GPL or simply GPL) is
-				the most widely used free software license, originally written by
-				Richard Stallman for the GNU project.</comments>
-		</license>
-	</licenses>
+  <licenses>
+    <license>
+      <name>GNU GPL 3</name>
+      <url>http://www.gnu.org/licenses/gpl.html</url>
+      <distribution>repo</distribution>
+      <comments>The GNU General Public License (GNU GPL or simply GPL) is
+        the most widely used free software license, originally written by
+        Richard Stallman for the GNU project.</comments>
+    </license>
+  </licenses>
 
-	<scm>
-		<connection>scm:git:git@github.com:audiobox/AudioBox.fm-JavaLib.git</connection>
-		<developerConnection>scm:git:git@github.com:audiobox/AudioBox.fm-JavaLib.git</developerConnection>
-		<url>http://github.com/audiobox/AudioBox.fm-JavaLib/tree/master</url>
-	</scm>
-
-
-	<issueManagement>
-		<system>GitHub Issues</system>
-		<url>http://github.com/audiobox/AudioBox.fm-JavaLib/issues</url>
-	</issueManagement>
-
-	<inceptionYear>2010</inceptionYear>
-
-	<developers>
-		<developer>
-			<id>Keytwo</id>
-			<name>Valerio Chiodino</name>
-			<email>keytwo.why@gmail.com</email>
-			<url>http://www.keytwo.net</url>
-			<timezone>Rome</timezone>
-		</developer>
-		<developer>
-			<id>fat</id>
-			<name>Fabio Tunno</name>
-			<email>fat@fatshotty.net</email>
-			<url>http//fatshotty.net</url>
-			<timezone>Rome</timezone>
-			<roles>
-			</roles>
-		</developer>
-	</developers>
+  <scm>
+    <connection>scm:git:git@github.com:audiobox/AudioBox.fm-JavaLib.git</connection>
+    <developerConnection>scm:git:git@github.com:audiobox/AudioBox.fm-JavaLib.git</developerConnection>
+    <url>http://github.com/audiobox/AudioBox.fm-JavaLib/tree/master</url>
+  </scm>
 
 
-	<build>
+  <issueManagement>
+    <system>GitHub Issues</system>
+    <url>http://github.com/audiobox/AudioBox.fm-JavaLib/issues</url>
+  </issueManagement>
 
-		<resources>
-			<resource>
-				<directory>${basedir}/src/main/resources</directory>
-				<filtering>true</filtering>
-				<includes>
-					<include>**/*.*</include>
-				</includes>
-			</resource>
-		</resources>
+  <inceptionYear>2010</inceptionYear>
 
-		<plugins>
+  <developers>
+    <developer>
+      <id>Keytwo</id>
+      <name>Valerio Chiodino</name>
+      <email>keytwo.why@gmail.com</email>
+      <url>http://www.keytwo.net</url>
+      <timezone>Rome</timezone>
+    </developer>
+    <developer>
+      <id>FatShotty</id>
+      <name>Fabio Tunno</name>
+      <email>fat@fatshotty.net</email>
+      <url>http//fatshotty.net</url>
+      <timezone>Rome</timezone>
+      <roles>
+      </roles>
+    </developer>
+    <developer>
+      <id>Lucio</id>
+      <name>Lucio Regina</name>
+      <email>lucio.regina@gmail.com</email>
+      <timezone>Rome</timezone>
+      <roles>
+      </roles>
+    </developer>
+  </developers>
 
+  <build>
 
-			<!-- Testing framework -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.5</version>
-				<configuration>
-					<skipTests>${fm.audiobox.skipTests}</skipTests>
-				</configuration>
-			</plugin>
+    <resources>
+      <resource>
+        <directory>${basedir}/src/main/resources</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>**/*.*</include>
+        </includes>
+      </resource>
+    </resources>
 
-			<!-- Test coverage reports -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>cobertura-maven-plugin</artifactId>
-				<version>2.4</version>
-				<configuration>
-					<instrumentation>
-						<ignores>
-							<ignore>fm.audiobox.core.util.*</ignore>
-							<ignore>fm.audiobox.sync.*</ignore>
-							<ignore>com.twmacinta.*</ignore>
-						</ignores>
-						<excludes>
-							<exclude>com/twmacinta/**/*.class</exclude>
-							<exclude>**/util/*.class</exclude>
-						</excludes>
-					</instrumentation>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>clean</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-
-			<!-- Javadoc -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.7</version>
-				<configuration>
-					<excludePackageNames>*.test.*:*.util.*:com.twmacinta.*</excludePackageNames>
-				</configuration>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-
-			<!-- Compiler (used to set the JDK version) -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.1</version>
-				<configuration>
-					<compilerVersion>1.6</compilerVersion>
-					<fork>true</fork>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
-			</plugin>
-
-			<!-- Release (used to perform deploy) -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-release-plugin</artifactId>
-				<version>2.0</version>
-			</plugin>
+    <plugins>
 
 
-			<!-- Manifest -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.2</version>
-				<configuration>
-					<archive>
-						<manifestEntries>
-							<Url>${project.url}</Url>
-							<Extension-Name>${project.name}</Extension-Name>
-							<Specification-Vendor>${project.organization.name}
-							</Specification-Vendor>
-							<Implementation-Vendor>${project.organization.name}
-							</Implementation-Vendor>
-							<Implementation-Title>${project.name}</Implementation-Title>
-							<Implementation-Version>${project.version}
-							</Implementation-Version>
-						</manifestEntries>
-					</archive>
-				</configuration>
-			</plugin>
+      <!-- Testing framework -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.5</version>
+        <configuration>
+          <skipTests>${fm.audiobox.skipTests}</skipTests>
+        </configuration>
+      </plugin>
 
-		</plugins>
+      <!-- Test coverage reports -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+          <instrumentation>
+            <ignores>
+              <ignore>fm.audiobox.core.util.*</ignore>
+              <ignore>fm.audiobox.sync.*</ignore>
+              <ignore>com.twmacinta.*</ignore>
+            </ignores>
+            <excludes>
+              <exclude>com/twmacinta/**/*.class</exclude>
+              <exclude>**/util/*.class</exclude>
+            </excludes>
+          </instrumentation>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
 
-		<extensions>
-			<!-- Enabling the use of FTP -->
-			<extension>
-				<groupId>org.apache.maven.wagon</groupId>
-				<artifactId>wagon-ftp</artifactId>
-				<version>1.0-beta-6</version>
-			</extension>
-		</extensions>
-	</build>
+      <!-- Javadoc -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.7</version>
+        <configuration>
+          <excludePackageNames>*.test.*:*.util.*:com.twmacinta.*</excludePackageNames>
+        </configuration>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Compiler (used to set the JDK version) -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.3.1</version>
+        <configuration>
+          <compilerVersion>1.6</compilerVersion>
+          <fork>true</fork>
+          <source>1.6</source>
+          <target>1.6</target>
+        </configuration>
+      </plugin>
+
+      <!-- Release (used to perform deploy) -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.0</version>
+      </plugin>
 
 
-	<reporting>
-		<plugins>
+      <!-- Manifest -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.2</version>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Url>${project.url}</Url>
+              <Extension-Name>${project.name}</Extension-Name>
+              <Specification-Vendor>${project.organization.name}
+              </Specification-Vendor>
+              <Implementation-Vendor>${project.organization.name}
+              </Implementation-Vendor>
+              <Implementation-Title>${project.name}</Implementation-Title>
+              <Implementation-Version>${project.version}
+              </Implementation-Version>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
 
-			<!-- APIviz -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.7</version>
-				<configuration>
-					<doclet>org.jboss.apiviz.APIviz</doclet>
-					<docletArtifact>
-						<groupId>org.jboss.apiviz</groupId>
-						<artifactId>apiviz</artifactId>
-						<version>1.3.1.GA</version>
-					</docletArtifact>
-					<useStandardDocletOptions>true</useStandardDocletOptions>
-					<charset>UTF-8</charset>
-					<encoding>UTF-8</encoding>
-					<docencoding>UTF-8</docencoding>
-					<breakiterator>true</breakiterator>
-					<version>true</version>
-					<author>true</author>
-					<keywords>true</keywords>
-					<excludePackageNames>*.test.*:*.util.*:com.twmacinta.*</excludePackageNames>
-				</configuration>
-				<reportSets>
-					<reportSet>
-						<id>default</id>
-						<reports>
-							<report>javadoc</report>
-						</reports>
-					</reportSet>
-					<reportSet>
-						<id>aggregate</id>
-						<reports>
-							<report>aggregate</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-			</plugin>
+    </plugins>
 
-			<!-- Changelog reports -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-changelog-plugin</artifactId>
-				<version>2.2</version>
-				<reportSets>
-					<reportSet>
-						<configuration>
-							<type>range</type>
-							<range>30</range>
-						</configuration>
-						<reports>
-							<report>changelog</report>
-							<report>file-activity</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-			</plugin>
+    <extensions>
+      <!-- Enabling the use of FTP -->
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-ftp</artifactId>
+        <version>1.0-beta-6</version>
+      </extension>
+    </extensions>
+  </build>
 
-			<!-- Reporting site -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-project-info-reports-plugin</artifactId>
-				<version>2.1.1</version>
-				<reportSets>
-					<reportSet>
-						<reports>
-							<report>index</report>
-							<report>dependencies</report>
-							<report>project-team</report>
-							<report>issue-tracking</report>
-							<report>license</report>
-							<report>scm</report>
-							<report>summary</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-			</plugin>
-		</plugins>
-	</reporting>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.apache.httpcomponents</groupId>
-				<artifactId>httpclient</artifactId>
-				<version>4.0.1</version>
-				<type>jar</type>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.httpcomponents</groupId>
-				<artifactId>httpmime</artifactId>
-				<version>4.0.1</version>
-				<type>jar</type>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-api</artifactId>
-				<version>1.6.1</version>
-				<type>jar</type>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>ch.qos.logback</groupId>
-				<artifactId>logback-core</artifactId>
-				<version>0.9.28</version>
-				<type>jar</type>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>ch.qos.logback</groupId>
-				<artifactId>logback-classic</artifactId>
-				<version>0.9.28</version>
-				<type>jar</type>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<version>4.8.1</version>
-				<type>jar</type>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.google.code.gson</groupId>
-				<artifactId>gson</artifactId>
-				<version>2.1</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-client</artifactId>
-				<version>8.1.1.v20120215</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+  <reporting>
+    <plugins>
 
-	<distributionManagement>
-		<repository>
-			<id>keytwo.net</id>
-			<name>Keytwo.net Repository</name>
-			<url>ftp://ftp.keytwo.net</url>
-		</repository>
-		<site>
-			<id>keytwo.net</id>
-			<name>maven.keytwo.net doc site</name>
-			<url>ftp://ftp.keytwo.net</url>
-		</site>
-	</distributionManagement>
+      <!-- APIviz -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.7</version>
+        <configuration>
+          <doclet>org.jboss.apiviz.APIviz</doclet>
+          <docletArtifact>
+            <groupId>org.jboss.apiviz</groupId>
+            <artifactId>apiviz</artifactId>
+            <version>1.3.1.GA</version>
+          </docletArtifact>
+          <useStandardDocletOptions>true</useStandardDocletOptions>
+          <charset>UTF-8</charset>
+          <encoding>UTF-8</encoding>
+          <docencoding>UTF-8</docencoding>
+          <breakiterator>true</breakiterator>
+          <version>true</version>
+          <author>true</author>
+          <keywords>true</keywords>
+          <excludePackageNames>*.test.*:*.util.*:com.twmacinta.*</excludePackageNames>
+        </configuration>
+        <reportSets>
+          <reportSet>
+            <id>default</id>
+            <reports>
+              <report>javadoc</report>
+            </reports>
+          </reportSet>
+          <reportSet>
+            <id>aggregate</id>
+            <reports>
+              <report>aggregate</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
 
-	<profiles>
-		<profile>
-			<id>default-profile</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<properties>
-				<fm.audiobox.protocol>https</fm.audiobox.protocol>
-				<fm.audiobox.host>audiobox.fm</fm.audiobox.host>
-				<fm.audiobox.port>443</fm.audiobox.port>
-				<fm.audiobox.skipTests>true</fm.audiobox.skipTests>
-				<fm.audiobox.logLevel>WARN</fm.audiobox.logLevel>
-				<maven.javadoc.skip>false</maven.javadoc.skip>
-			</properties>
-		</profile>
+      <!-- Changelog reports -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changelog-plugin</artifactId>
+        <version>2.2</version>
+        <reportSets>
+          <reportSet>
+            <configuration>
+              <type>range</type>
+              <range>30</range>
+            </configuration>
+            <reports>
+              <report>changelog</report>
+              <report>file-activity</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
 
-		<profile>
-			<id>dev-profile</id>
-			<activation>
-				<property>
-					<name>env</name>
-					<value>dev</value>
-				</property>
-			</activation>
-			<properties>
-				<fm.audiobox.protocol>http</fm.audiobox.protocol>
-				<fm.audiobox.host>0.0.0.0</fm.audiobox.host>
-				<fm.audiobox.port>3000</fm.audiobox.port>
-				<fm.audiobox.skipTests>true</fm.audiobox.skipTests>
-				<fm.audiobox.logLevel>DEBUG</fm.audiobox.logLevel>
-				<maven.javadoc.skip>true</maven.javadoc.skip>
-			</properties>
-		</profile>
+      <!-- Reporting site -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.1.1</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>index</report>
+              <report>dependencies</report>
+              <report>project-team</report>
+              <report>issue-tracking</report>
+              <report>license</report>
+              <report>scm</report>
+              <report>summary</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
 
-		<profile>
-			<id>android-dev-profile</id>
-			<activation>
-				<property>
-					<name>env</name>
-					<value>dev</value>
-				</property>
-			</activation>
-			<properties>
-				<fm.audiobox.protocol>http</fm.audiobox.protocol>
-				<fm.audiobox.host>192.168.1.3</fm.audiobox.host>
-				<fm.audiobox.port>3000</fm.audiobox.port>
-				<fm.audiobox.skipTests>true</fm.audiobox.skipTests>
-				<fm.audiobox.logLevel>DEBUG</fm.audiobox.logLevel>
-				<maven.javadoc.skip>true</maven.javadoc.skip>
-			</properties>
-		</profile>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpclient</artifactId>
+        <version>4.0.1</version>
+        <type>jar</type>
+        <scope>compile</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpmime</artifactId>
+        <version>4.0.1</version>
+        <type>jar</type>
+        <scope>compile</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>1.6.1</version>
+        <type>jar</type>
+        <scope>compile</scope>
+      </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-core</artifactId>
+        <version>0.9.28</version>
+        <type>jar</type>
+        <scope>compile</scope>
+      </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>0.9.28</version>
+        <type>jar</type>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.8.1</version>
+        <type>jar</type>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.google.code.gson</groupId>
+        <artifactId>gson</artifactId>
+        <version>2.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-client</artifactId>
+        <version>8.1.1.v20120215</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
-		<profile>
-			<id>test-profile</id>
-			<activation>
-				<property>
-					<name>env</name>
-					<value>test</value>
-				</property>
-			</activation>
-			<properties>
-				<fm.audiobox.protocol>http</fm.audiobox.protocol>
-				<fm.audiobox.host>0.0.0.0</fm.audiobox.host>
-				<fm.audiobox.port>3000</fm.audiobox.port>
-				<fm.audiobox.skipTests>false</fm.audiobox.skipTests>
-				<fm.audiobox.logLevel>INFO</fm.audiobox.logLevel>
-			</properties>
-			<reporting>
-				<plugins>
+  <distributionManagement>
+    <repository>
+      <id>keytwo.net</id>
+      <name>Keytwo.net Repository</name>
+      <url>ftp://ftp.keytwo.net</url>
+    </repository>
+    <site>
+      <id>keytwo.net</id>
+      <name>audiobox.keytwo.net doc site</name>
+      <url>ftp://ftp.keytwo.net</url>
+    </site>
+  </distributionManagement>
 
-					<!-- Test coverage reports -->
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>cobertura-maven-plugin</artifactId>
-						<version>2.4</version>
-						<configuration>
-							<formats>
-								<format>html</format>
-								<format>xml</format>
-							</formats>
-						</configuration>
-					</plugin>
-				</plugins>
-			</reporting>
-		</profile>
+  <profiles>
+    <profile>
+      <id>default-profile</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        
+        <fm.audiobox.rails.protocol>http</fm.audiobox.rails.protocol>
+        <fm.audiobox.rails.host>audiobox.fm</fm.audiobox.rails.host>
+        <fm.audiobox.rails.port>80</fm.audiobox.rails.port>
+        <fm.audiobox.rails.apiPath>/api/v1</fm.audiobox.rails.apiPath>
+        
+        <fm.audiobox.node.protocol>http</fm.audiobox.node.protocol>
+        <fm.audiobox.node.host>node.audiobox.fm</fm.audiobox.node.host>
+        <fm.audiobox.node.port>3000</fm.audiobox.node.port>
+        <fm.audiobox.node.apiPath></fm.audiobox.node.apiPath>
+        
+        <fm.audiobox.skipTests>true</fm.audiobox.skipTests>
+        <fm.audiobox.logLevel>WARN</fm.audiobox.logLevel>
+        <maven.javadoc.skip>false</maven.javadoc.skip>
+        
+        
+      </properties>
+    </profile>
 
-	</profiles>
+    <profile>
+      <id>dev-profile</id>
+      <activation>
+        <property>
+          <name>env</name>
+          <value>dev</value>
+        </property>
+      </activation>
+      <properties>
+        
+        <fm.audiobox.rails.protocol>http</fm.audiobox.rails.protocol>
+        <fm.audiobox.rails.host>0.0.0.0</fm.audiobox.rails.host>
+        <fm.audiobox.rails.port>5000</fm.audiobox.rails.port>
+        <fm.audiobox.rails.apiPath>/api/v1</fm.audiobox.rails.apiPath>
+        
+        <fm.audiobox.node.protocol>http</fm.audiobox.node.protocol>
+        <fm.audiobox.node.host>0.0.0.0</fm.audiobox.node.host>
+        <fm.audiobox.node.port>3000</fm.audiobox.node.port>
+        <fm.audiobox.node.apiPath></fm.audiobox.node.apiPath>
+        
 
-	<repositories>
-		<!-- JBoss.org repository (used of APIviz) -->
-		<repository>
-			<id>jboss.releases</id>
-			<name>JBoss releases</name>
-			<url>http://repository.jboss.org/maven2</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
+        <fm.audiobox.skipTests>true</fm.audiobox.skipTests>
+        <fm.audiobox.logLevel>DEBUG</fm.audiobox.logLevel>
+        <maven.javadoc.skip>true</maven.javadoc.skip>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>staging-profile</id>
+      <activation>
+        <property>
+          <name>env</name>
+          <value>staging</value>
+        </property>
+      </activation>
+      <properties>
+        
+        
+        <fm.audiobox.rails.protocol>http</fm.audiobox.rails.protocol>
+        <fm.audiobox.rails.host>staging.audiobox.fm</fm.audiobox.rails.host>
+        <fm.audiobox.rails.port>80</fm.audiobox.rails.port>
+        <fm.audiobox.rails.apiPath>/api/v1</fm.audiobox.rails.apiPath>
+        
+        <fm.audiobox.node.protocol>http</fm.audiobox.node.protocol>
+        <fm.audiobox.node.host>staging.audiobox.fm</fm.audiobox.node.host>
+        <fm.audiobox.node.port>3000</fm.audiobox.node.port>
+        <fm.audiobox.node.apiPath></fm.audiobox.node.apiPath>
+        
+
+        <fm.audiobox.skipTests>true</fm.audiobox.skipTests>
+        <fm.audiobox.logLevel>DEBUG</fm.audiobox.logLevel>
+        <maven.javadoc.skip>true</maven.javadoc.skip>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>test-profile</id>
+      <activation>
+        <property>
+          <name>env</name>
+          <value>test</value>
+        </property>
+      </activation>
+      <properties>
+        <fm.audiobox.protocol>http</fm.audiobox.protocol>
+        <fm.audiobox.host>0.0.0.0</fm.audiobox.host>
+        <fm.audiobox.port>3000</fm.audiobox.port>
+        <fm.audiobox.skipTests>false</fm.audiobox.skipTests>
+        <fm.audiobox.logLevel>INFO</fm.audiobox.logLevel>
+      </properties>
+      <reporting>
+        <plugins>
+
+          <!-- Test coverage reports -->
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>cobertura-maven-plugin</artifactId>
+            <version>2.4</version>
+            <configuration>
+              <formats>
+                <format>html</format>
+                <format>xml</format>
+              </formats>
+            </configuration>
+          </plugin>
+        </plugins>
+      </reporting>
+    </profile>
+
+  </profiles>
+
+  <repositories>
+    <!-- JBoss.org repository (used of APIviz) -->
+    <repository>
+      <id>jboss.releases</id>
+      <name>JBoss releases</name>
+      <url>http://repository.jboss.org/maven2</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
 </project>
 
 
