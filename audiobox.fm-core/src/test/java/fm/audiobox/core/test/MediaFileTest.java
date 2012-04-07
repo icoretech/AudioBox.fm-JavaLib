@@ -26,7 +26,7 @@ public class MediaFileTest extends AudioBoxTestCase {
       assertNull(media.getToken());
       assertNull(media.getMediaFileName());
       
-      File fileToUpload = new File( Fixtures.get("file_to_upload") );
+      File fileToUpload = new File( Fixtures.get( Fixtures.FILE_TO_UPLOAD ) );
       
       assertTrue( media.upload( fileToUpload ) );
       

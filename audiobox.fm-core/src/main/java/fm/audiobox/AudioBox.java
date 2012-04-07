@@ -391,6 +391,15 @@ public class AudioBox extends Observable {
       }
 
       log.info( "[ " + httpVerb + " ] Next request will be: " + url );
+      
+      log.info("Setting default headers");
+      
+      method.addHeader("Accept-Encoding", "gzip");
+      method.addHeader("User-Agent",  getConfiguration().getUserAgent());
+      
+      if ( user != null && user.getToken() != null ){
+        method.addHeader(IConnector.X_AUTH_TOKEN_HEADER, user.getAuthToken());
+      }
 
       return method;
     }
@@ -526,40 +535,26 @@ public class AudioBox extends Observable {
       connPerRoute.setMaxForRoute(mAudioBoxRoute, 50);
       ConnManagerParams.setMaxConnectionsPerRoute(params, connPerRoute);
 
+      
+      /*
+       * This interceptor must be added in order to set the Base64 credentials
+       */
       this.mClient.addRequestInterceptor(new HttpRequestInterceptor() {
 
         public void process( final HttpRequest request,  final HttpContext context) throws HttpException, IOException {
 
           log.trace("New request detected");
 
-          if (!request.containsHeader("Accept-Encoding")) {
-            request.addHeader("Accept-Encoding", "gzip");
+          if ( user == null || user.getAuthToken() != null ){
+            log.trace("Request to AudioBox, add user credentials");
+            request.addHeader( mScheme.authenticate(mCredentials,  request) );  
           }
-
-          if (log.isTraceEnabled())
-            log.trace("User-Agent: " + getConfiguration().getUserAgent() );
-
-          request.addHeader("User-Agent",  getConfiguration().getUserAgent() );
-
-          Header hostHeader = request.getFirstHeader("HOST");
-
-          /*
-           * NOTE: we have to add PORT because HttpClient is instantiated specifing PORT into URL
-           */
-          if ( hostHeader.getValue().equals( HOST + ":" + PORT ) ) {
-            if ( user != null && user.getAuthToken() != null ){
-              log.trace("Request to AudioBox, add auth_token");
-              request.addHeader(IConnector.X_AUTH_TOKEN_HEADER, user.getAuthToken() );              
-            } else { 
-              log.trace("Request to AudioBox, add user credentials");
-              request.addHeader( mScheme.authenticate(mCredentials,  request) );  
-            }
-          }
-
         }
 
       });
 
+      
+      
       this.mClient.addResponseInterceptor(new HttpResponseInterceptor() {
 
         public void process( final HttpResponse response, final HttpContext context) throws HttpException, IOException {
@@ -572,6 +567,7 @@ public class AudioBox extends Observable {
               for (int i = 0; i < codecs.length; i++) {
                 if (codecs[i].getName().equalsIgnoreCase("gzip")) {
                   log.trace("Response is gzipped");
+                  
                   response.setEntity( new HttpEntityWrapper(entity){
                     @Override
                     public InputStream getContent() throws IOException, IllegalStateException {
@@ -583,7 +579,8 @@ public class AudioBox extends Observable {
                     @Override
                     public long getContentLength() { return 1; }
 
-                  }); 
+                  });
+                  
                   return;
                 }
               }

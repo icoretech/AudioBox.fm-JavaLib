@@ -33,11 +33,15 @@ public class Fixtures {
     
     public static final String TEST_FILE = "test_file";
     
+    public static final String FILE_TO_UPLOAD = "file_to_upload";
+    
+    public static final String VIDEO_FILE = "video_file";
+    public static final String AUDIO_FILE = "audio_file";
+    
     private static Properties ps = new Properties();
 
     static {
         try {
-            
             ps.load(Fixtures.class.getResourceAsStream("fixtures.properties"));
             
         } catch (FileNotFoundException e) {

@@ -66,6 +66,18 @@ public class Error implements IEntity, Serializable {
 
   @SuppressWarnings("unused")
   private IEntity parent;
+  
+  
+  
+  /**
+   * The {@link Error} entity can be manually instantiated
+   * for any general purpose
+   */
+  public Error(){
+
+  }
+  
+  
 
   /**
    * <p>Constructor for Error.</p>
