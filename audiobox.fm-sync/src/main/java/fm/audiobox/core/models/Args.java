@@ -16,8 +16,8 @@ public class Args extends AbstractEntity implements Serializable{
   
   private String filename;
   private String etag;
-  private int rangeMin;
-  private int rangeMax;
+  private long rangeMin;
+  private long rangeMax;
   
   public Args(IConfiguration config) {
     super(config);
@@ -42,7 +42,7 @@ public class Args extends AbstractEntity implements Serializable{
     this.filename = filename;
   }
 
-  public int getRangeMin() {
+  public long getRangeMin() {
     return rangeMin;
   }
 
@@ -50,7 +50,7 @@ public class Args extends AbstractEntity implements Serializable{
     this.rangeMin = rangeMin;
   }
 
-  public int getRangeMax() {
+  public long getRangeMax() {
     return rangeMax;
   }
 
@@ -64,9 +64,9 @@ public class Args extends AbstractEntity implements Serializable{
     if ( tagName.equals("filename") ){
       return this.getClass().getMethod("setFileName", String.class);
     } else if ( tagName.equals("rangemin") ){
-      return this.getClass().getMethod("setRangeMin", int.class);
+      return this.getClass().getMethod("setRangeMin", long.class);
     } else if ( tagName.equals("rangemax") ){
-      return this.getClass().getMethod("setRangeMax", int.class);
+      return this.getClass().getMethod("setRangeMax", long.class);
     } else if ( tagName.equals("etag") ){
       return this.getClass().getMethod("setEtag", int.class);
     }
