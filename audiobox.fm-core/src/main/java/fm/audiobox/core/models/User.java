@@ -127,6 +127,7 @@ public final class User extends AbstractEntity implements Serializable {
 
   // User's collection relations
   private Playlists playlists;
+  private Permissions permissions;
 
   /**
    * <p>Constructor for User.</p>
@@ -368,11 +369,16 @@ public final class User extends AbstractEntity implements Serializable {
   }
 
 
-
-  public void setPlaylists(Playlists playlists) {
-    this.playlists = playlists;
+  
+  public void setPermissions(Permissions permissions) {
+    this.permissions = permissions;
   }
-
+  
+  public Permissions getPermissions() {
+    return this.permissions;
+  }
+  
+  
 
   /**
    * <p>Getter for the auth_token</p>
@@ -393,8 +399,9 @@ public final class User extends AbstractEntity implements Serializable {
     setChanged();
     notifyObservers();
   }
-
-
+  
+  
+  
   /* ------------------- */
   /* Collection Browsing */
   /* ------------------- */
@@ -585,6 +592,9 @@ public final class User extends AbstractEntity implements Serializable {
     } else if ( tagName.equals("dropbox_data_stored_this_month") ){
       return this.getClass().getMethod("setDropboxDataStoredThisMonth", long.class);
 
+    } else if ( tagName.equals("permissions") ) {
+      return this.getClass().getMethod("setPermissions", Permissions.class);
+      
     }
     
     
