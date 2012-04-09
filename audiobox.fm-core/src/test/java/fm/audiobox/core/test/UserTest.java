@@ -30,20 +30,10 @@ public class UserTest extends AudioBoxTestCase {
     
     assertNotSame(user.getAuthToken(), "");
 
-    assertNotNull(user.getBytesServed());
     assertNotNull(user.getEmail());
     assertEquals(Fixtures.get(Fixtures.LOGIN), user.getEmail());
-    assertNotNull(user.getQuota());
-    assertNotNull(user.getAvailableStorage());
-    //assertEquals(162135015424L, user.getAvailableStorage());
     assertNotNull(user.getUsername());
-    //assertEquals(Fixtures.get(Fixtures.USERNAME), user.getUsername());
     assertNotNull(user.getTimeZone());
-    //assertTrue(user.getQuota() < user.getAvailableStorage());
-//    assertNotNull(user.getAllowedFormats());
-//    for (String fmt : user.getAllowedFormats()) {
-//      assertTrue(Arrays.asList(ADMIN_ALLOWED_FORMATS).contains(fmt));
-//    }
 
     
     try {
@@ -56,14 +46,14 @@ public class UserTest extends AudioBoxTestCase {
       File fileForDownload = new File( Fixtures.get("file_for_download") );
       mdfs.get(1).download( fileForDownload );
       
-//    	user.getUploadedTracks();
-  	} catch (ServiceException e) {
-  		// TODO Auto-generated catch block
-  		e.printStackTrace();
-  	} catch (LoginException e) {
-  		// TODO Auto-generated catch block
-  		e.printStackTrace();
-  	}
+//      user.getUploadedTracks();
+    } catch (ServiceException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (LoginException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
     // Profile
 //    Profile p = user.getProfile();
 //    assertNotNull(p.hasAutoplay());

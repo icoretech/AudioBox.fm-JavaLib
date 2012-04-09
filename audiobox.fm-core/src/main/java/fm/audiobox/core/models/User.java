@@ -43,29 +43,35 @@ import fm.audiobox.interfaces.IResponseHandler;
  * 
  * <pre>
  * @code
- * <user> 
- *  <bytes_served>25352551153</bytes_served> 
- *  <email>user@domain.com</email> 
- *  <play_count>3378</play_count> 
- *  <quota>1318739344</quota> 
- *  <tracks_count>273</tracks_count> 
- *  <username>username</username> 
- *  <available_storage>162135015424</available_storage> 
- *  <allowed_formats>aac;mp3;mp2;m4a;m4b;m4r;mp4;3gp;ogg;oga;flac;spx;wma;rm;ram;wav;mpc;mp+;mpp;aiff;aif;aifc;tta</allowed_formats> 
- *  <time_zone>Rome</time_zone> 
- *  <trial_ends_at>2011-03-05 08:20:38 +0100</trial_ends_at> 
- *  <profile>....</profile>
- *  <plan>...</plan>
- * </user>
+ * username: 'username',
+ * real_name: 'Real Name',
+ * email: 'email@domain.com',
+ * auth_token: '',
+ * media_files_count: 100,
+ * playlists_count: 3,
+ * total_play_count: 122,
+ * country: 'country',
+ * time_zone: 'UTC',
+ * data_served_this_month: 17402342,
+ * data_served_overall: 17402342,
+ * cloud_data_stored_overall: 0,
+ * cloud_data_stored_this_month: 0,
+ * local_data_stored_overall: 0,
+ * local_data_stored_this_month: 0,
+ * dropbox_data_stored_overall: 17402342,
+ * dropbox_data_stored_this_month: 17402342,
+ * accepted_extensions: 'aac,mp3,mp2,m4a,m4b,m4r,3gp,ogg,oga,flac,spx,wma,rm,ram,wav,mpc,mp+,mpp,aiff,aif,aifc,tta,mp4,m4v,mov,avi,flv,webm',
+ * accepted_formats: 'audio/aac,audio/mpeg,audio/mp4,audio/ogg,audio/flac,audio/speex,audio/x-ms-wma,audio/x-pn-realaudio,audio/vnd.wave,audio/x-musepack,audio/x-aiff,audio/x-tta,video/mp4,video/x-m4v,video/quicktime,video/x-msvideo,video/x-flv,video/webm',
+ * permissions:
+ *   cloud: true,
+ *   local: true,
+ *   dropbox: true
  * @endcode
  * </pre>
  *
  * Through the User object you have access to its library that can be browsed by:
  * <ul>
  *  <li>Playlists</li>
- *  <li>Genres</li>
- *  <li>Artists</li>
- *  <li>Albums</li>
  * </ul>
  * 
  * using its respective getter method.
@@ -76,12 +82,11 @@ import fm.audiobox.interfaces.IResponseHandler;
  * by getting its tracks:
  * 
  * <pre>
- * Artists artists = user.getArtists();
- * artists.invoke();
- * Artists artist = artists.get( "token" or "index" );
- * Tracks trs = artist.getTracks();
- * trs.invoke();
- * Track track = trs.get( "token" or "index" );
+ * Playlists playlists = user.getPlaylists();
+ * playlists.load();
+ * Playlist musicPlaylist = playlists.get(0);
+ * MediaFiles media = musicPlaylist.getMediaFiles();
+ * media.load();
  * </pre>
  * 
  * Or you can get informations about a specific, token-known track's, by calling {@link User#getTrackByToken(String)}
@@ -100,25 +105,29 @@ public final class User extends AbstractEntity implements Serializable {
   /** Separator used to split the allowed formats string */
   public static final String ALLOWED_EXTENSIONS_SEPARATOR = ";";
 
-  private long bytesServed;
-  private String email;
-  private long quota;
   private String username;
-  private long availableStorage;
-  private String timeZone;
-  private String trialEndsAt;
-  private String[] allowedFormats;
-  private int media_files_count;
-  private int playlists_count;
-  private int total_play_count;
-  private boolean can_upload;
+  private String real_name;
+  private String email;
+  private String auth_token;
+  private String country;
+  private String time_zone;
+  private String accepted_extensions;
+  private String accepted_formats;
+  private int    playlists_count;
+  private long   media_files_count;
+  private long   total_play_count;
+  private long   data_served_this_month;
+  private long   data_served_overall;
+  private long   cloud_data_stored_overall;
+  private long   cloud_data_stored_this_month;
+  private long   local_data_stored_overall;
+  private long   local_data_stored_this_month;
+  private long   dropbox_data_stored_overall;
+  private long   dropbox_data_stored_this_month;
 
   // User's collection relations
   private Playlists playlists;
 
-  private String auth_token;
-
-  private String name;
   /**
    * <p>Constructor for User.</p>
    */
@@ -141,192 +150,229 @@ public final class User extends AbstractEntity implements Serializable {
   /* ------------------- */
   /* Getters and setters */
   /* ------------------- */
-
-
-  /**
-   * <p>Setter for the user bytes served: used by the parser.</p>
-   *
-   * @param bytes the String value of the bytes served.
-   */
-  public void setBytesServed(long bytes) {
-    this.bytesServed = bytes;
-  }
-
-  /**
-   * <p>Getter for the user bytes served.</p>
-   *
-   * @return the user bytes served
-   */
-  public long getBytesServed() {
-    return this.bytesServed;
+  
+  
+  public String getUsername() {
+    return username;
   }
 
 
 
-  /**
-   * <p>Setter for the user email: used by the parser.<p>
-   *
-   * @param email the user email
-   */
+  public void setUsername(String username) {
+    this.username = username;
+  }
+
+
+
+  public String getRealName() {
+    return real_name;
+  }
+
+
+
+  public void setRealName(String real_name) {
+    this.real_name = real_name;
+  }
+
+
+
+  public String getEmail() {
+    return email;
+  }
+
+
+
   public void setEmail(String email) {
     this.email = email;
   }
 
-  /**
-   * <p>Getter for the user email.</p>
-   *
-   * @return the user email
-   */
-  public String getEmail() {
-    return this.email;
-  }
 
 
-  public int getTotal_play_count() {
-    return total_play_count;
+  public String getCountry() {
+    return country;
   }
 
 
 
-  public void setTotal_play_count(int total_play_count) {
-    this.total_play_count = total_play_count;
+  public void setCountry(String country) {
+    this.country = country;
   }
 
 
 
-  /**
-   * <p>Setter for the user allowed-formats: used by the parser.</p>
-   *
-   * @param allowedFormats the allowed format semicolon-separated {@link String}.
-   */
-  @Deprecated
-  public void setAllowedFormats(String allowedFormats){
-    this.setAllowedFormats( allowedFormats.split( ALLOWED_EXTENSIONS_SEPARATOR ) );
-  }
-
-  /**
-   * <p>Setter for the user allowed-formats</p>
-   *
-   * @param allowedFormats a String array the contains the user subscription allowed media formats 
-   */
-  public void setAllowedFormats(String[] allowedFormats){
-    this.allowedFormats =  allowedFormats;
-  }
-
-  /**
-   * <p>Getter for the allowed-formats</p>
-   *
-   * @return String[] the allowed-formats
-   */
-  public String[] getAllowedFormats(){
-    return this.allowedFormats;
+  public String getTimeZone() {
+    return time_zone;
   }
 
 
-  /**
-   * <p>Setter for the user quota in bytes: used by the parser.</p>
-   *
-   * @param quota the String representing the user quota bytes
-   */
-  public void setQuota(long quota) {
-    this.quota = quota;
-  }
 
-  /**
-   * <p>Getter for the user quota bytes.</p>
-   *
-   * @return the user quota bytes
-   */
-  public long getQuota() {
-    return this.quota;
+  public void setTimeZone(String time_zone) {
+    this.time_zone = time_zone;
   }
 
 
-  public int getPlaylists_count() {
+
+  public String getAcceptedExtensions() {
+    return accepted_extensions;
+  }
+
+
+
+  public void setAcceptedExtensions(String accepted_extensions) {
+    this.accepted_extensions = accepted_extensions;
+  }
+
+
+
+  public String getAcceptedFormats() {
+    return accepted_formats;
+  }
+
+
+
+  public void setAcceptedFormats(String accepted_formats) {
+    this.accepted_formats = accepted_formats;
+  }
+
+
+
+  public int getPlaylistsCount() {
     return playlists_count;
   }
 
 
-  public void setPlaylists_count(int playlists_count) {
+
+  public void setPlaylistsCount(int playlists_count) {
     this.playlists_count = playlists_count;
   }
 
 
 
-  /**
-   * <p>Setter for the user nickname: used by the parser.</p>
-   *
-   * @param username the user nickname
-   */
-  public void setUsername(String username) {
-    this.username = username;
-  }
-
-  /**
-   * <p>Getter for the nickname.</p>
-   *
-   * @return the user nickname
-   */
-  public String getUsername() {
-    return this.username;
+  public long getMediaFilesCount() {
+    return media_files_count;
   }
 
 
 
-  /**
-   * <p>Setter for the user remote available storage: used by the parser.</p>
-   *
-   * @param availableStorage a {@link String} representing numbers of available storage bytes.
-   */
-  public void setAvailableStorage(long availableStorage) {
-    this.availableStorage = availableStorage;
-  }
-
-  /**
-   * <p>Getter for the user remote available storage.</p>
-   *
-   * @return the user available storage
-   */
-  public long getAvailableStorage() {
-    return this.availableStorage;
+  public void setMediaFilesCount(long media_files_count) {
+    this.media_files_count = media_files_count;
   }
 
 
-  /**
-   * <p>Setter for the user time zone: used by the parser.</p>
-   *
-   * @param timeZone the time zone {@link String}.
-   */
-  public void setTimeZone(String timeZone) {
-    this.timeZone = timeZone;
-  }
 
-  /**
-   * <p>Getter for the user time zone.</p>
-   *
-   * @return the user time zone
-   */
-  public String getTimeZone() {
-    return this.timeZone;
+  public long getTotalPlayCount() {
+    return total_play_count;
   }
 
 
-  /**
-   * <p>Sets the expiration date of trial plan: used by the parser.</p>
-   *
-   * @param trialEndsAt the expiration date as {@link String}.
-   */
-  public void setTrialEndsAt(String trialEndsAt) {
-    this.trialEndsAt = trialEndsAt;
+
+  public void setTotalPlayCount(long total_play_count) {
+    this.total_play_count = total_play_count;
   }
 
 
-  /**
-   * @return the expiration date of trial plan
-   */
-  public String getTrialEndsAt() {
-    return this.trialEndsAt;
+
+  public long getDataServedTthisMonth() {
+    return data_served_this_month;
   }
+
+
+
+  public void setDataServedThisMonth(long data_served_this_month) {
+    this.data_served_this_month = data_served_this_month;
+  }
+
+
+
+  public long getDataServedOverall() {
+    return data_served_overall;
+  }
+
+
+
+  public void setDataServedOverall(long data_served_overall) {
+    this.data_served_overall = data_served_overall;
+  }
+
+
+
+  public long getCloudDataStoredOverall() {
+    return cloud_data_stored_overall;
+  }
+
+
+
+  public void setCloudDataStoredOverall(long cloud_data_stored_overall) {
+    this.cloud_data_stored_overall = cloud_data_stored_overall;
+  }
+
+
+
+  public long getCloudDataStoredThisMonth() {
+    return cloud_data_stored_this_month;
+  }
+
+
+
+  public void setCloudDataStoredThisMonth(long cloud_data_stored_this_month) {
+    this.cloud_data_stored_this_month = cloud_data_stored_this_month;
+  }
+
+
+
+  public long getLocalDataStoredOverall() {
+    return local_data_stored_overall;
+  }
+
+
+
+  public void setLocalDataStoredOverall(long local_data_stored_overall) {
+    this.local_data_stored_overall = local_data_stored_overall;
+  }
+
+
+
+  public long getLocalDataStoredthisMonth() {
+    return local_data_stored_this_month;
+  }
+
+
+
+  public void setLocalDataStoredThisMonth(long local_data_stored_this_month) {
+    this.local_data_stored_this_month = local_data_stored_this_month;
+  }
+
+
+
+  public long getDropboxDataStoredOverall() {
+    return dropbox_data_stored_overall;
+  }
+
+
+
+  public void setDropboxDataStoredOverall(long dropbox_data_stored_overall) {
+    this.dropbox_data_stored_overall = dropbox_data_stored_overall;
+  }
+
+
+
+  public long getDropboxDataStoredThisMonth() {
+    return dropbox_data_stored_this_month;
+  }
+
+
+
+  public void setDropboxDataStoredThisMonth(
+      long dropbox_data_stored_this_month) {
+    this.dropbox_data_stored_this_month = dropbox_data_stored_this_month;
+  }
+
+
+
+  public void setPlaylists(Playlists playlists) {
+    this.playlists = playlists;
+  }
+
 
   /**
    * <p>Getter for the auth_token</p>
@@ -348,34 +394,6 @@ public final class User extends AbstractEntity implements Serializable {
     notifyObservers();
   }
 
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public int getMedia_files_count() {
-    return media_files_count;
-  }
-
-
-  public void setMedia_files_count(int media_files_count) {
-    this.media_files_count = media_files_count;
-  }
-
-
-
-  public boolean isCan_upload() {
-    return can_upload;
-  }
-
-
-
-  public void setCan_upload(boolean can_upload) {
-    this.can_upload = can_upload;
-  }
 
   /* ------------------- */
   /* Collection Browsing */
@@ -510,50 +528,63 @@ public final class User extends AbstractEntity implements Serializable {
 
   public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException{
 
-    if ( tagName.equals("token") ){
-      return this.getClass().getMethod("setToken", long.class);
+    if ( tagName.equals("username") ){
+      return this.getClass().getMethod("setUsername", String.class);
 
-    } else if ( tagName.equals("bytes_served") ){
-      return this.getClass().getMethod("setBytesServed", long.class);
+    } else if ( tagName.equals("real_name") ){
+      return this.getClass().getMethod("setRealName", String.class);
 
     } else if ( tagName.equals("email") ){
       return this.getClass().getMethod("setEmail", String.class);
 
-    } else if ( tagName.equals("total_play_count") ){
-      return this.getClass().getMethod("setTotal_play_count", int.class);
+    } else if ( tagName.equals("auth_token") ){
+      return this.getClass().getMethod("setAuthToken", String.class);
 
-    } else if ( tagName.equals("quota") ){
-      return this.getClass().getMethod("setQuota", long.class);
-
-    } else if ( tagName.equals("playlists_count") ){
-      return this.getClass().getMethod("setPlaylists_count", int.class);
-
-    } else if ( tagName.equals("username") ){
-      return this.getClass().getMethod("setUsername", String.class);
-
-    } else if ( tagName.equals("available_storage") ){
-      return this.getClass().getMethod("setAvailableStorage", long.class);
+    } else if ( tagName.equals("country") ){
+      return this.getClass().getMethod("setCountry", String.class);
 
     } else if ( tagName.equals("time_zone") ){
       return this.getClass().getMethod("setTimeZone", String.class);
 
-    } else if ( tagName.equals("trial_ends_at") ){
-      return this.getClass().getMethod("setTrialEndsAt", String.class);
+    } else if ( tagName.equals("accepted_extensions") ){
+      return this.getClass().getMethod("setAcceptedExtensions", String.class);
 
-    } else if ( tagName.equals("allowed_formats") ){
-      return this.getClass().getMethod("setAllowedFormats", String.class);
+    } else if ( tagName.equals("accepted_formats") ){
+      return this.getClass().getMethod("setAcceptedFormats", String.class);
 
-    } else if ( tagName.equals("auth_token")){
-      return this.getClass().getMethod("setAuthToken", String.class);
+    } else if ( tagName.equals("playlists_count") ){
+      return this.getClass().getMethod("setPlaylistsCount", int.class);
 
-    } else if ( tagName.equals("name")){
-      return this.getClass().getMethod("setName", String.class);
-      
-    } else if ( tagName.equals("media_files_count")){
-      return this.getClass().getMethod("setMedia_files_count", int.class);
-      
-    } else if ( tagName.equals("can_upload")){
-      return this.getClass().getMethod("setCan_upload", boolean.class);
+    } else if ( tagName.equals("media_files_count") ){
+      return this.getClass().getMethod("setMediaFilesCount", long.class);
+
+    } else if ( tagName.equals("total_play_count") ){
+      return this.getClass().getMethod("setTotalPlayCount", long.class);
+
+    } else if ( tagName.equals("data_served_this_month") ){
+      return this.getClass().getMethod("setDataServedThisMonth", long.class);
+
+    } else if ( tagName.equals("data_served_overall") ){
+      return this.getClass().getMethod("setDataServedOverall", long.class);
+
+    } else if ( tagName.equals("cloud_data_stored_overall") ){
+      return this.getClass().getMethod("setCloudDataStoredOverall", long.class);
+
+    } else if ( tagName.equals("cloud_data_stored_this_month") ){
+      return this.getClass().getMethod("setCloudDataStoredThisMonth", long.class);
+
+    } else if ( tagName.equals("local_data_stored_overall") ){
+      return this.getClass().getMethod("setLocalDataStoredOverall", long.class);
+
+    } else if ( tagName.equals("local_data_stored_this_month") ){
+      return this.getClass().getMethod("setLocalDataStoredThisMonth", long.class);
+
+    } else if ( tagName.equals("dropbox_data_stored_overall") ){
+      return this.getClass().getMethod("setDropboxDataStoredOverall", long.class);
+
+    } else if ( tagName.equals("dropbox_data_stored_this_month") ){
+      return this.getClass().getMethod("setDropboxDataStoredThisMonth", long.class);
+
     }
     
     
