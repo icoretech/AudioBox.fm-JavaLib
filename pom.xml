@@ -25,7 +25,7 @@
     <project.rails.protocol>${fm.audiobox.rails.protocol}</project.rails.protocol>
     <project.rails.host>${fm.audiobox.rails.host}</project.rails.host>
     <project.rails.port>${fm.audiobox.rails.port}</project.rails.port>
-    <project.rails.apiPath>/api/v1/</project.rails.apiPath>
+    <project.rails.apiPath>${fm.audiobox.rails.apiPath}</project.rails.apiPath>
     
     <project.node.protocol>${fm.audiobox.node.protocol}</project.node.protocol>
     <project.node.host>${fm.audiobox.node.host}</project.node.host>

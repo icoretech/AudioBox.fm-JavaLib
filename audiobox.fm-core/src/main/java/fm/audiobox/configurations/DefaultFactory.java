@@ -13,6 +13,7 @@ import fm.audiobox.AudioBox;
 import fm.audiobox.core.models.ArtWork;
 import fm.audiobox.core.models.MediaFile;
 import fm.audiobox.core.models.MediaFiles;
+import fm.audiobox.core.models.Permissions;
 import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
 import fm.audiobox.core.models.User;
@@ -26,7 +27,7 @@ public class DefaultFactory implements IFactory {
 
   private static final Logger log = LoggerFactory.getLogger(DefaultFactory.class);
   
-  private static final String[] EXCLUDED_EXTENDABLE_CLASSES = new String[]{ User.TAGNAME };
+  private static final String[] EXCLUDED_EXTENDABLE_CLASSES = new String[]{ User.TAGNAME, Permissions.TAGNAME };
   
   /**
    * Default Entities map.
@@ -49,6 +50,7 @@ public class DefaultFactory implements IFactory {
   static {
     gEntities = new HashMap<String, Class<? extends IEntity>>();
     gEntities.put( User.TAGNAME, User.class );
+    gEntities.put( Permissions.TAGNAME, Permissions.class );
     
     gEntities.put( Playlists.TAGNAME, Playlists.class );
     gEntities.put( Playlist.TAGNAME, Playlist.class );
