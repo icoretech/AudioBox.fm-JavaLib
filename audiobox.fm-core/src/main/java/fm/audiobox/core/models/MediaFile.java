@@ -27,11 +27,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.activation.MimetypesFileTypeMap;
 
+import org.apache.http.NameValuePair;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +44,7 @@ import fm.audiobox.configurations.DefaultResponseParser;
 import fm.audiobox.configurations.Response;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.models.MediaFiles.Types;
+import fm.audiobox.core.models.MediaFiles.Type;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IEntity;
@@ -104,26 +108,62 @@ public class MediaFile extends AbstractEntity implements Serializable{
   
   public static final String TAGNAME = "media_file";
   public static final String NAMESPACE = MediaFile.TAGNAME;
-
+  
+  public static final String TITLE_FIELD =            "title";
+  public static final String ARTIST_FIELD =           "artist";
+  public static final String ALBUM_FIELD =            "album";
+  public static final String GENRE_FIELD =            "genre";
+  public static final String LEN_STR_FIELD =          "len_str";
+  public static final String MEDIA_FILE_NAME_FIELD =  "media_file_name";
+  public static final String MIME_FIELD =             "mime";
+  public static final String YEAR_FIELD =             "year";
+  public static final String LEN_INT_FIELD =          "len_int";
+  public static final String POSITION_FIELD =         "position";
+  public static final String PLAYS_FIELD =            "plays";
+  public static final String DISC_FIELD =             "disc";
+  public static final String TYPE_FIELD =             "type";
+  public static final String SIZE_FIELD =             "size";
+  public static final String AUDIO_SAMPLE_RATE_FIELD = "audio_sample_rate";
+  public static final String AUDIO_BIT_RATE_FIELD =    "audio_bit_rate";
+  public static final String SOURCE_FIELD =            "source";
+  public static final String ORIGINAL_FILE_NAME_FIELD = "original_file_name";
+  public static final String MD5_FIELD =                "md5";
+  
+  
+  
   private String artist;
   private String album;
   private String genre;
   private int year;
   private String title;
-  private String len_str;
-  private int len_int;
+  private String lenStr;
+  private int lenInt;
   private int position;
   private int plays;
   private int disc;
   private String mediaFileName;
-  private Types type;
+  private Type type;
   private int rating;
+  private long size;
   private String mime;
+  private Source source;
+  private String audioSampleRate;
+  private String audioBitRate;
+  private String originalFileName;
+  private String md5;
+
   private IEntity parent;
 
   private enum Actions{
     stream,
-    upload
+    upload,
+    local
+  }
+  
+  public static enum Source {
+    local,
+    cloud,
+    dropbox
   }
 
   public MediaFile(IConfiguration config) {
@@ -190,20 +230,20 @@ public class MediaFile extends AbstractEntity implements Serializable{
     this.title = title;
   }
 
-  public String getLen_str() {
-    return len_str;
+  public String getLenStr() {
+    return lenStr;
   }
 
-  public void setLen_str(String len_str) {
-    this.len_str = len_str;
+  public void setLenStr(String len_str) {
+    this.lenStr = len_str;
   }
 
-  public int getLen_int() {
-    return len_int;
+  public int getLenInt() {
+    return lenInt;
   }
 
-  public void setLen_int(int len_int) {
-    this.len_int = len_int;
+  public void setLenInt(int len_int) {
+    this.lenInt = len_int;
   }
 
   public int getPosition() {
@@ -212,6 +252,14 @@ public class MediaFile extends AbstractEntity implements Serializable{
 
   public void setPosition(int position) {
     this.position = position;
+  }
+  
+  public long getSize() {
+    return this.size;
+  }
+
+  public void setSize(long size) {
+    this.size = size;
   }
 
   public int getPlays() {
@@ -238,16 +286,39 @@ public class MediaFile extends AbstractEntity implements Serializable{
     this.mediaFileName = filename;
   }
 
-  public Types getType() {
+  public Type getType() {
     return type;
+  }
+  
+  public void setType(Type t) {
+    this.type = t;
   }
 
   public void setType(String type) {
 
-    if( Types.AudioFile.toString().equals( type ) ){
-      this.type = Types.AudioFile;	
-    } else if( Types.VideoFile.toString().equals( type ) ){
-      this.type = Types.VideoFile;
+    if( Type.AudioFile.toString().equals( type ) ){
+      this.type = Type.AudioFile;	
+    } else if( Type.VideoFile.toString().equals( type ) ){
+      this.type = Type.VideoFile;
+    }
+  }
+  
+  public Source getSource() {
+    return this.source;
+  }
+  
+  public void setSource(Source s) {
+    this.source = s;
+  }
+
+  public void setSource(String s) {
+
+    if( Source.cloud.toString().equals( s ) ){
+      this.source = Source.cloud; 
+    } else if( Source.local.toString().equals( s ) ){
+      this.source = Source.local;
+    } else if( Source.dropbox.toString().equals( s ) ){
+      this.source = Source.dropbox;
     }
   }
 
@@ -266,42 +337,86 @@ public class MediaFile extends AbstractEntity implements Serializable{
   public void setMime(String mime) {
     this.mime = mime;
   }
+  
+  public String getAudioSampleRate() {
+    return audioSampleRate;
+  }
+
+  public void setAudioSampleRate(String audioSampleRate) {
+    this.audioSampleRate = audioSampleRate;
+  }
+
+  public String getAudioBitRate() {
+    return audioBitRate;
+  }
+
+  public void setAudioBitRate(String audioBitRate) {
+    this.audioBitRate = audioBitRate;
+  }
+  
+
+  public String getOriginalFileName() {
+    return originalFileName;
+  }
+
+  public void setOriginalFileName(String originalFileName) {
+    this.originalFileName = originalFileName;
+  }
+  
+
+  public String getMd5() {
+    return md5;
+  }
+
+  public void setMd5(String md5) {
+    this.md5 = md5;
+  }
+  
+  
 
   @Override
   public Method getSetterMethod(String tagName) throws SecurityException,	NoSuchMethodException {
-    if ( tagName.equals("token") || tagName.equals("tk") ){
+    if ( tagName.equals( TOKEN_FIELD ) || tagName.equals( TOKEN_SHORT_FIELD ) ){
       return this.getClass().getMethod("setToken", String.class);
-    } else if ( tagName.equals("artist") ){
+    } else if ( tagName.equals(ARTIST_FIELD) ){
       return this.getClass().getMethod("setArtist", String.class);
-    } else if ( tagName.equals("album") ){
+    } else if ( tagName.equals(ALBUM_FIELD) ){
       return this.getClass().getMethod("setAlbum", String.class);
-    } else if ( tagName.equals("genre") ){
+    } else if ( tagName.equals(GENRE_FIELD) ){
       return this.getClass().getMethod("setGenre", String.class);
-    } else if ( tagName.equals("year") ){
+    } else if ( tagName.equals(YEAR_FIELD) ){
       return this.getClass().getMethod("setYear", int.class);
-    } else if ( tagName.equals("title") ){
+    } else if ( tagName.equals(TITLE_FIELD) ){
       return this.getClass().getMethod("setTitle", String.class);
-    } else if ( tagName.equals("len_str") ){
-      return this.getClass().getMethod("setLen_str", String.class);
-    } else if ( tagName.equals("len_int") ){
-      return this.getClass().getMethod("setLen_int", int.class);
-    } else if ( tagName.equals("position") ){
+    } else if ( tagName.equals(LEN_STR_FIELD) ){
+      return this.getClass().getMethod("setLenStr", String.class);
+    } else if ( tagName.equals(LEN_INT_FIELD) ){
+      return this.getClass().getMethod("setLenInt", int.class);
+    } else if ( tagName.equals(POSITION_FIELD) ){
       return this.getClass().getMethod("setPosition", int.class);
-    } else if ( tagName.equals("plays") ){
+    } else if ( tagName.equals(PLAYS_FIELD) ){
       return this.getClass().getMethod("setPlays", int.class);
-    } else if ( tagName.equals("disc") ){
+    } else if ( tagName.equals(DISC_FIELD) ){
       return this.getClass().getMethod("setDisc", int.class);
-    } else if ( tagName.equals("media_file_name") ){
+    } else if ( tagName.equals(MEDIA_FILE_NAME_FIELD) ){
       return this.getClass().getMethod("setMediaFileName", String.class);
-    } else if ( tagName.equals("rating") ){
-      return this.getClass().getMethod("setRating", int.class);
-    } else if ( tagName.equals("mime") ){
+    } else if ( tagName.equals(MIME_FIELD) ){
       return this.getClass().getMethod("setMime", String.class);
-    } else if ( tagName.equals("type") ){
+    } else if ( tagName.equals(TYPE_FIELD) ){
       return this.getClass().getMethod("setType", String.class);
+    } else if ( tagName.equals(SOURCE_FIELD) ){
+      return this.getClass().getMethod("setSource", String.class);
+    } else if ( tagName.equals(SIZE_FIELD) ){
+      return this.getClass().getMethod("setSize", long.class);
+    } else if ( tagName.equals(AUDIO_SAMPLE_RATE_FIELD) ){
+      return this.getClass().getMethod("setAudioSampleRate", String.class);
+    } else if ( tagName.equals(AUDIO_BIT_RATE_FIELD) ){
+      return this.getClass().getMethod("setAudioBitRate", String.class);
     }
+    
     return null;
   }
+
 
   @Override
   protected void copy(IEntity entity) {
@@ -400,6 +515,39 @@ public class MediaFile extends AbstractEntity implements Serializable{
     }else
       log.warn("Input file is null");
 
+  }
+  
+  /**
+   * This method makes a POST request for notifying AudioBox.fm this {@link MediaFile}
+   * is a local file which can be used through AudioBox.fm - PC feauture
+   */
+  public void notifyAsLocal() throws ServiceException, LoginException {
+    String path = IConnector.URI_SEPARATOR.concat( Actions.local.toString() );
+    String action = Actions.upload.toString();
+    
+    List<NameValuePair> params = new ArrayList<NameValuePair>();
+    params.add(  new BasicNameValuePair(TITLE_FIELD,               this.title ) );
+    params.add(  new BasicNameValuePair(ARTIST_FIELD,              this.artist )  );
+    params.add(  new BasicNameValuePair(ALBUM_FIELD,               this.album )  );
+    params.add(  new BasicNameValuePair(GENRE_FIELD,               this.genre )  );
+    params.add(  new BasicNameValuePair(LEN_STR_FIELD,             this.lenStr )  );
+    params.add(  new BasicNameValuePair(MEDIA_FILE_NAME_FIELD,     this.mediaFileName )  );
+    params.add(  new BasicNameValuePair(MIME_FIELD,                this.mime )  );
+    params.add(  new BasicNameValuePair(YEAR_FIELD,                String.valueOf( this.year ) )  );
+    params.add(  new BasicNameValuePair(LEN_INT_FIELD,             String.valueOf( this.lenInt ) )  );
+    params.add(  new BasicNameValuePair(POSITION_FIELD,            String.valueOf( this.position ) )  );
+    params.add(  new BasicNameValuePair(PLAYS_FIELD,               String.valueOf( this.plays ) )  );
+    params.add(  new BasicNameValuePair(DISC_FIELD,                String.valueOf( this.disc ) )  );
+    params.add(  new BasicNameValuePair(SIZE_FIELD,                String.valueOf( this.size )  )  );
+    params.add(  new BasicNameValuePair(TYPE_FIELD,                this.type.toString() )  );
+    params.add(  new BasicNameValuePair(SOURCE_FIELD,              this.source.toString() )  );
+    params.add(  new BasicNameValuePair(AUDIO_SAMPLE_RATE_FIELD,   this.audioSampleRate )  );
+    params.add(  new BasicNameValuePair(AUDIO_BIT_RATE_FIELD,      this.audioBitRate )  );
+    params.add(  new BasicNameValuePair(ORIGINAL_FILE_NAME_FIELD,  this.originalFileName )  );
+    params.add(  new BasicNameValuePair(MD5_FIELD,                 this.md5 )  );
+    
+    
+    this.getConnector(IConfiguration.Connectors.NODE).post(this, path, action, null).send(false, params);
   }
 
 }

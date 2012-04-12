@@ -51,7 +51,7 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
    *   <li>{@link MediaFilesTypes#VideoFile VideoFile}</li>
    * </ul>
    */
-  public enum Types {
+  public enum Type {
 
     AudioFile,
 
@@ -96,7 +96,7 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
    * @param type the {@link MediaFilesTypes}
    * @return a list of {@link MediaFile} that matches with the given {@link MediaFilesTypes}
    */
-  public List<MediaFile> getMediaFilesByType( Types type ){
+  public List<MediaFile> getMediaFilesByType( Type type ){
     List<MediaFile> pls = new ArrayList<MediaFile>();
     for ( Iterator<MediaFile> it = this.iterator(); it.hasNext();  ){
       MediaFile mdf = it.next();

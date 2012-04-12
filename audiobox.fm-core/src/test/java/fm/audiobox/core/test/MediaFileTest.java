@@ -8,6 +8,7 @@ import org.junit.Test;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.MediaFile;
+import fm.audiobox.core.models.MediaFiles;
 import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 
 public class MediaFileTest extends AudioBoxTestCase {
@@ -72,6 +73,46 @@ public class MediaFileTest extends AudioBoxTestCase {
     assertNull(media.getToken());
     assertNull(media.getMediaFileName());
 
+  }
+  
+  
+  
+  public void testMediaAsLocal() {
+    
+    MediaFile media = new MediaFile( this.abc );
+    
+    media.setTitle(   "title"    );
+    media.setArtist (  "artist"     );
+    media.setAlbum (  "album"     );
+    media.setGenre (   "genre"    );
+    media.setLenStr (  "1:24"     );
+    media.setMediaFileName (   "media_file_name.mp3"    );
+    media.setMime (   "audio/mp3"    );
+    media.setYear (   2012    );
+    media.setLenInt (   203    );
+    media.setPosition (  1     );
+    media.setPlays (   4    );
+    media.setDisc (   9    );
+    media.setSize(  1234     );
+    media.setType(    MediaFiles.Type.AudioFile   );
+    media.setSource(  MediaFile.Source.local     );
+    media.setAudioSampleRate (   "192"    );
+    media.setAudioBitRate (  "44100"   );
+    media.setOriginalFileName (  "/User/path/to/media_file_name.mp3"     );
+    media.setMd5(  "HASH_MD5_FILE"     );
+    
+    try {
+      media.notifyAsLocal();
+    } catch (ServiceException e) {
+      assertNull(e);
+      e.printStackTrace();
+    } catch (LoginException e) {
+      assertNull(e);
+      e.printStackTrace();
+    }
+    
+    assertNotNull( media.getToken() );
+    
   }
   
   

@@ -397,7 +397,7 @@ public class AudioBox extends Observable {
       method.addHeader("Accept-Encoding", "gzip");
       method.addHeader("User-Agent",  getConfiguration().getUserAgent());
       
-      if ( user != null && user.getToken() != null ){
+      if ( user != null && user.getAuthToken() != null ){
         method.addHeader(IConnector.X_AUTH_TOKEN_HEADER, user.getAuthToken());
       }
 

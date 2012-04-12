@@ -15,6 +15,9 @@ public abstract class AbstractEntity extends Observable implements IEntity {
 
   private static Logger log = LoggerFactory.getLogger(AbstractEntity.class);
   
+  public static final String TOKEN_FIELD = "token";
+  public static final String TOKEN_SHORT_FIELD = "tk";
+  
   private IConfiguration configuration; 
   protected Map<String, Object> properties;
   
