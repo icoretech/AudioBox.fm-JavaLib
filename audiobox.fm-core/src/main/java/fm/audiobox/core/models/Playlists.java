@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import fm.audiobox.interfaces.IConfiguration;
+import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IEntity;
 
 
@@ -168,13 +169,13 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
 
   @Override
   public String getSubTagName() {
-	return Playlist.TAGNAME;
+    return Playlist.TAGNAME;
   }
 
 
   @Override
   public String getApiPath() {
-    return "/" + NAMESPACE;
+    return IConnector.URI_SEPARATOR + NAMESPACE;
   }
 
 

@@ -153,7 +153,7 @@ public class MediaFile extends AbstractEntity implements Serializable{
   private String originalFileName;
   private String md5;
 
-  private List<ArtWork> artworks = new ArrayList<ArtWork>();
+  private ArtWorks artworks;
    
   private IEntity parent;
 
@@ -376,14 +376,13 @@ public class MediaFile extends AbstractEntity implements Serializable{
     this.md5 = md5;
   }
   
-  public void addArtWork(ArtWork artwork){
-    this.artworks.add( artwork );
+  public void setArtWorks(ArtWorks artworks){
+    this.artworks = artworks;
   }
   
-  public List<ArtWork> getArtWorks(){
+  public ArtWorks getArtWorks(){
     return this.artworks;
   }
-  
   
 
   @Override
@@ -424,8 +423,8 @@ public class MediaFile extends AbstractEntity implements Serializable{
       return this.getClass().getMethod("setAudioSampleRate", String.class);
     } else if ( tagName.equals(AUDIO_BIT_RATE_FIELD) ){
       return this.getClass().getMethod("setAudioBitRate", String.class);
-    } else if ( tagName.equals( ArtWork.NAMESPACE )  ) {
-      return this.getClass().getMethod("addArtWork", ArtWork.class);
+    } else if ( tagName.equals( ArtWorks.NAMESPACE )  ) {
+      return this.getClass().getMethod("setArtWorks", ArtWorks.class);
     }
     
     return null;
