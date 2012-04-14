@@ -130,6 +130,8 @@ public class MediaFile extends AbstractEntity implements Serializable{
   public static final String MD5_FIELD =                "md5";
   
   
+  private static final String TOKENS_PARAMETER =        "tokens[]";
+  
   
   private String artist;
   private String album;
@@ -154,10 +156,11 @@ public class MediaFile extends AbstractEntity implements Serializable{
 
   private IEntity parent;
 
-  private enum Actions{
+  private enum Actions {
     stream,
     upload,
-    local
+    local,
+    destroy_multiple
   }
   
   public static enum Source {
@@ -448,6 +451,35 @@ public class MediaFile extends AbstractEntity implements Serializable{
   public String getApiPath() {
     return this.parent.getApiPath() + IConnector.URI_SEPARATOR + this.getToken();
   }
+  
+  
+  // DELETE /api/v1/media_files/destroy_multiple.json?tokens[]=
+  public boolean delete() throws ServiceException, LoginException {
+    String namespace = IConnector.URI_SEPARATOR.concat( MediaFiles.NAMESPACE );
+    String action = IConnector.URI_SEPARATOR.concat( Actions.destroy_multiple.toString() );
+    
+    List<NameValuePair> params = new ArrayList<NameValuePair>();
+    params.add(  new BasicNameValuePair(TOKENS_PARAMETER,               this.getToken() ) );
+    
+    Response response = this.getConnector(IConfiguration.Connectors.RAILS).post(this, namespace, action, null).send(false, params);
+    
+    return response.isOK();
+  }
+  
+  
+  
+  // PUT /api/v1/media_files/:token.json
+  public boolean update() throws ServiceException, LoginException {
+    String namespace = MediaFiles.NAMESPACE;
+    String action = this.getToken();
+    
+    List<NameValuePair> params = this.toQueryParameters(true);
+    Response response = this.getConnector(IConfiguration.Connectors.RAILS).post(this, namespace, action, null).send(false, params);
+    
+    return response.isOK();
+  }
+  
+  
 
   @Override
   public void setParent(IEntity parent) {
@@ -525,29 +557,38 @@ public class MediaFile extends AbstractEntity implements Serializable{
     String path = IConnector.URI_SEPARATOR.concat( Actions.local.toString() );
     String action = Actions.upload.toString();
     
-    List<NameValuePair> params = new ArrayList<NameValuePair>();
-    params.add(  new BasicNameValuePair(TITLE_FIELD,               this.title ) );
-    params.add(  new BasicNameValuePair(ARTIST_FIELD,              this.artist )  );
-    params.add(  new BasicNameValuePair(ALBUM_FIELD,               this.album )  );
-    params.add(  new BasicNameValuePair(GENRE_FIELD,               this.genre )  );
-    params.add(  new BasicNameValuePair(LEN_STR_FIELD,             this.lenStr )  );
-    params.add(  new BasicNameValuePair(MEDIA_FILE_NAME_FIELD,     this.mediaFileName )  );
-    params.add(  new BasicNameValuePair(MIME_FIELD,                this.mime )  );
-    params.add(  new BasicNameValuePair(YEAR_FIELD,                String.valueOf( this.year ) )  );
-    params.add(  new BasicNameValuePair(LEN_INT_FIELD,             String.valueOf( this.lenInt ) )  );
-    params.add(  new BasicNameValuePair(POSITION_FIELD,            String.valueOf( this.position ) )  );
-    params.add(  new BasicNameValuePair(PLAYS_FIELD,               String.valueOf( this.plays ) )  );
-    params.add(  new BasicNameValuePair(DISC_FIELD,                String.valueOf( this.disc ) )  );
-    params.add(  new BasicNameValuePair(SIZE_FIELD,                String.valueOf( this.size )  )  );
-    params.add(  new BasicNameValuePair(TYPE_FIELD,                this.type.toString() )  );
-    params.add(  new BasicNameValuePair(SOURCE_FIELD,              this.source.toString() )  );
-    params.add(  new BasicNameValuePair(AUDIO_SAMPLE_RATE_FIELD,   this.audioSampleRate )  );
-    params.add(  new BasicNameValuePair(AUDIO_BIT_RATE_FIELD,      this.audioBitRate )  );
-    params.add(  new BasicNameValuePair(ORIGINAL_FILE_NAME_FIELD,  this.originalFileName )  );
-    params.add(  new BasicNameValuePair(MD5_FIELD,                 this.md5 )  );
-    
+    List<NameValuePair> params = this.toQueryParameters(false);
     
     this.getConnector(IConfiguration.Connectors.NODE).post(this, path, action, null).send(false, params);
+  }
+  
+  
+  private List<NameValuePair> toQueryParameters(boolean withPrefix) {
+    String prefix = withPrefix ? NAMESPACE + "." : "";
+    
+    List<NameValuePair> params = new ArrayList<NameValuePair>();
+    
+    params.add(  new BasicNameValuePair( prefix + TITLE_FIELD,               this.title ) );
+    params.add(  new BasicNameValuePair( prefix + ARTIST_FIELD,              this.artist )  );
+    params.add(  new BasicNameValuePair( prefix + ALBUM_FIELD,               this.album )  );
+    params.add(  new BasicNameValuePair( prefix + GENRE_FIELD,               this.genre )  );
+    params.add(  new BasicNameValuePair( prefix + LEN_STR_FIELD,             this.lenStr )  );
+    params.add(  new BasicNameValuePair( prefix + MEDIA_FILE_NAME_FIELD,     this.mediaFileName )  );
+    params.add(  new BasicNameValuePair( prefix + MIME_FIELD,                this.mime )  );
+    params.add(  new BasicNameValuePair( prefix + YEAR_FIELD,                String.valueOf( this.year ) )  );
+    params.add(  new BasicNameValuePair( prefix + LEN_INT_FIELD,             String.valueOf( this.lenInt ) )  );
+    params.add(  new BasicNameValuePair( prefix + POSITION_FIELD,            String.valueOf( this.position ) )  );
+    params.add(  new BasicNameValuePair( prefix + PLAYS_FIELD,               String.valueOf( this.plays ) )  );
+    params.add(  new BasicNameValuePair( prefix + DISC_FIELD,                String.valueOf( this.disc ) )  );
+    params.add(  new BasicNameValuePair( prefix + SIZE_FIELD,                String.valueOf( this.size )  )  );
+    params.add(  new BasicNameValuePair( prefix + TYPE_FIELD,                this.type.toString() )  );
+    params.add(  new BasicNameValuePair( prefix + SOURCE_FIELD,              this.source.toString() )  );
+    params.add(  new BasicNameValuePair( prefix + AUDIO_SAMPLE_RATE_FIELD,   this.audioSampleRate )  );
+    params.add(  new BasicNameValuePair( prefix + AUDIO_BIT_RATE_FIELD,      this.audioBitRate )  );
+    params.add(  new BasicNameValuePair( prefix + ORIGINAL_FILE_NAME_FIELD,  this.originalFileName )  );
+    params.add(  new BasicNameValuePair( prefix + MD5_FIELD,                 this.md5 )  );
+    
+    return params;
   }
 
 }
