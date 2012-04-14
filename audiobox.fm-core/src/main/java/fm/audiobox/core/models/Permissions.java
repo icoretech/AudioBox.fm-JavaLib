@@ -8,6 +8,8 @@ import fm.audiobox.interfaces.IEntity;
 
 public class Permissions  extends AbstractEntity implements Serializable {
 
+  private static final long serialVersionUID = 3196523340942887761L;
+
   public static final String NAMESPACE = "permissions";
   public static final String TAGNAME = NAMESPACE;
   
