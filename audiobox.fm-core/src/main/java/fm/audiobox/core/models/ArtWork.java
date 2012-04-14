@@ -39,11 +39,10 @@ import fm.audiobox.interfaces.IEntity;
  * 
  * <pre>
  * @code
- * <covers> 
- *   <l>http://media.audiobox.fm/images/albums/HOBh1lMt/l.jpg?1277867432</l> 
- *   <m>http://media.audiobox.fm/images/albums/HOBh1lMt/m.jpg?1277867432</m> 
- *   <s>http://media.audiobox.fm/images/albums/HOBh1lMt/s.jpg?1277867432</s> 
- * </covers>
+ * {
+ *  l: 'http://assets.development.audiobox.fm/a//l.jpg',
+ *  s: 'http://assets.development.audiobox.fm/a//s.jpg'
+ * }
  * @endcode
  * </pre>
  *
@@ -54,20 +53,14 @@ public class ArtWork extends AbstractEntity implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  /** The XML tag name for the Album element */
-  public static final String NAMESPACE = null;
-  public static final String TAGNAME = "artwork|ar";
+  public static final String NAMESPACE = "artworks";
 
   private String large;
-  private String medium;
   private String small;
 
-  @SuppressWarnings("unused")
   private IEntity parent;
 
-  /**
-   * <p>Constructor for CoverUrls.</p>
-   */
+  
   public ArtWork(IConfiguration config){
     super(config);
   }
@@ -75,7 +68,7 @@ public class ArtWork extends AbstractEntity implements Serializable {
 
   @Override
   public String getTagName() {
-    return TAGNAME;
+    return null;
   }
 
   @Override
@@ -88,66 +81,20 @@ public class ArtWork extends AbstractEntity implements Serializable {
   /* Getters and setters */
   /* ------------------- */
 
-  /**
-   * This method is used by the parser. Do not use it directly.
-   * 
-   * <p>Setter for the field <code>l</code>.</p>
-   *
-   * @param large a {@link java.lang.String} object.
-   */
-  @Deprecated
   public void setLarge(String large) {
     this.large = large;
   }
 
-  /**
-   * <p>Getter for the field <code>l</code>.</p>
-   *
-   * @return the large
-   */
   public String getLarge() {
     return this.large;
   }
 
 
-  /**
-   * This method is used by the parser. Do not use it directly.
-   * 
-   * <p>Setter for the field <code>m</code>.</p>
-   *
-   * @param medium a {@link java.lang.String} object.
-   */
-  @Deprecated
-  public void setMedium(String medium) {
-    this.medium = medium;
-  }
 
-  /**
-   * <p>Getter for the field <code>m</code>.</p>
-   *
-   * @return the medium
-   */
-  public String getMedium() {
-    return this.medium;
-  }
-
-
-  /**
-   * This method is used by the parser. Do not use it directly.
-   * 
-   * <p>Setter for the field <code>s</code>.</p>
-   *
-   * @param small a {@link java.lang.String} object.
-   */
   public void setSmall(String small) {
     this.small = small;
   }
 
-  /**
-   * <p>Getter for the field <code>s</code>.</p>
-   *
-   * @return the small
-   */
   public String getSmall() {
     return this.small;
   }
@@ -158,9 +105,6 @@ public class ArtWork extends AbstractEntity implements Serializable {
 
     if ( tagName.equals("l") ){
       return this.getClass().getMethod("setLarge", String.class);
-
-    } else if ( tagName.equals("m") ){
-      return this.getClass().getMethod("setMedium", String.class);
 
     } else if ( tagName.equals("s") ){
       return this.getClass().getMethod("setSmall", String.class);
@@ -176,7 +120,6 @@ public class ArtWork extends AbstractEntity implements Serializable {
     ArtWork artwork = (ArtWork) entity;
 
     this.large = artwork.getLarge();
-    this.medium = artwork.getMedium();
     this.small = artwork.getSmall();
 
     this.setChanged();
@@ -194,6 +137,10 @@ public class ArtWork extends AbstractEntity implements Serializable {
   @Override
   public void setParent(IEntity parent) {
     this.parent = parent;
+  }
+  
+  public IEntity getParent() {
+    return this.parent;
   }
 
 }
