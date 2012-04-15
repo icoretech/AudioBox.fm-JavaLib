@@ -52,11 +52,12 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
    * </ul>
    */
   public enum Type {
-
     AudioFile,
-
     VideoFile
-
+  }
+  
+  public enum Actions {
+    hashes
   }
 
   public MediaFiles(IConfiguration config) {

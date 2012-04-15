@@ -38,11 +38,14 @@ public class ThreadedTest extends AudioBoxTestCase {
           Log logger = LogFactory.getLog("Test thread #1");
           logger.debug("Started thread #1");
 
-          String[] tracks = user.getUploadedTracks();
-          assertNotNull(tracks);
-          assertTrue(tracks.length > 0);
-          for (int i = 0; i < tracks.length; i++)
-            assertTrue(tracks[i].length() == 32);
+          MediaFiles mediaFiles = user.getMediaFilesMap();
+          assertNotNull(mediaFiles);
+          assertTrue(mediaFiles.size() > 0);
+          for (int i = 0, l = mediaFiles.size(); i < l; i++){
+            assertNotNull( mediaFiles.get(i).getMd5() );
+            assertTrue( mediaFiles.get(i).getMd5().length() == 32 );            
+          }
+            
           h1.setDone(true);
 
           logger.debug("Ended thread #1");

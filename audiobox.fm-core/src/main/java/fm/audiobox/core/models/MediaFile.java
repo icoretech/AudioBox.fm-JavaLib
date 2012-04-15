@@ -167,7 +167,9 @@ public class MediaFile extends AbstractEntity implements Serializable{
   public static enum Source {
     local,
     cloud,
-    dropbox
+    dropbox,
+    youtube,
+    soundcloud
   }
 
   public MediaFile(IConfiguration config) {

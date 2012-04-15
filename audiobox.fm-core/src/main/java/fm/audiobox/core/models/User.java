@@ -24,11 +24,16 @@ package fm.audiobox.core.models;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConfiguration;
-import fm.audiobox.interfaces.IConnector.IConnectionMethod;
+import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
 
@@ -378,7 +383,6 @@ public final class User extends AbstractEntity implements Serializable {
     return this.permissions;
   }
   
-  
 
   /**
    * <p>Getter for the auth_token</p>
@@ -427,36 +431,42 @@ public final class User extends AbstractEntity implements Serializable {
 
 
 
+  
+  public MediaFiles getMediaFilesMap() throws ServiceException, LoginException {
+    return this.getMediaFilesMap(null);
+  }
 
   /**
-   * Use this method to get a String array of MD5 hashes of user's already uploaded and ready media files.
-   * 
-   * <p>
+   * Use this method to get a {@link MediaFiles} instance containing 
+   * all the {@code MD5} and {@code token} for media files owned by this User.
+   * You can specify the Source for filtering the results
    * 
    * This method is useful for sync tools.
    *
-   * @return an array of {@link String} objects containing MD5 hashes for each uploaded track.
+   * @param source a {@link MediaFile.Source}
+   *
+   * @return a {@link MediaFiles} instance
    * 
    * @throws ServiceException if any connection problem to AudioBox.fm services occurs.
    * @throws LoginException if any authentication problem occurs.
    */
-  public String[] getUploadedTracks() throws ServiceException, LoginException {
-    MediaFiles files = (MediaFiles) getConfiguration().getFactory().getEntity( MediaFiles.TAGNAME, getConfiguration() );
-
-    files.load(false);
-    String requestFormat = this.getConfiguration().getRequestFormat().toString().toLowerCase();
+  public MediaFiles getMediaFilesMap(MediaFile.Source source) throws ServiceException, LoginException {
+    MediaFiles mediaFiles = (MediaFiles) getConfiguration().getFactory().getEntity( MediaFiles.TAGNAME, getConfiguration() );
     
-    IConnectionMethod method = getConnector().get(files, null, requestFormat, null);
-    method.send( true );
-
-    String result = method.getResponse().getBody();
-    String[] resultSplitted = result.split( ";" , result.length() );
-    String[] hashes = new String[ resultSplitted.length ];
-    int pos = 0;
-    for ( String hash : resultSplitted )
-      hashes[ pos++ ] = hash.trim();
-
-    return hashes;
+    IConnector connector = this.getConnector(IConfiguration.Connectors.RAILS);
+    
+    String path = IConnector.URI_SEPARATOR.concat( MediaFiles.NAMESPACE );
+    String action = MediaFiles.Actions.hashes.toString();
+    
+    List<NameValuePair> params = null;
+    if ( source != null ){
+      params = new ArrayList<NameValuePair>();
+      params.add( new BasicNameValuePair("source", source.toString().toLowerCase() ) );
+    }
+    
+    connector.get(mediaFiles, path, action, null).send(false, params);
+    
+    return mediaFiles;
   }
 
 
