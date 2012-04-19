@@ -46,7 +46,7 @@ public class Args extends AbstractEntity implements Serializable{
     return rangeMin;
   }
 
-  public void setRangeMin(int rangeMin) {
+  public void setRangeMin(long rangeMin) {
     this.rangeMin = rangeMin;
   }
 
@@ -54,7 +54,7 @@ public class Args extends AbstractEntity implements Serializable{
     return rangeMax;
   }
 
-  public void setRangeMax(int rangeMax) {
+  public void setRangeMax(long rangeMax) {
     this.rangeMax = rangeMax;
   }
 
@@ -68,7 +68,7 @@ public class Args extends AbstractEntity implements Serializable{
     } else if ( tagName.equals("rangemax") ){
       return this.getClass().getMethod("setRangeMax", long.class);
     } else if ( tagName.equals("etag") ){
-      return this.getClass().getMethod("setEtag", int.class);
+      return this.getClass().getMethod("setEtag", String.class);
     }
   
     return null;

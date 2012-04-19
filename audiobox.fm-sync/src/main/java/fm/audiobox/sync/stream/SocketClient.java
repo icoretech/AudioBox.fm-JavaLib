@@ -19,6 +19,13 @@
  ***************************************************************************/
 package fm.audiobox.sync.stream;
 
+import fm.audiobox.AudioBox;
+import fm.audiobox.core.exceptions.ServiceException;
+import fm.audiobox.core.models.Action;
+import fm.audiobox.core.models.Args;
+import fm.audiobox.core.parsers.JParser;
+import fm.audiobox.interfaces.IConfiguration;
+import fm.audiobox.interfaces.IConnector;
 import io.socket.IOAcknowledge;
 import io.socket.IOCallback;
 import io.socket.SocketIO;
@@ -34,14 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.gson.JsonElement;
-
-import fm.audiobox.AudioBox;
-import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.models.Action;
-import fm.audiobox.core.models.Args;
-import fm.audiobox.core.parsers.JParser;
-import fm.audiobox.interfaces.IConfiguration;
-import fm.audiobox.interfaces.IConnector;
+import com.google.gson.JsonObject;
 
 public class SocketClient extends Observable implements IOCallback {
 
@@ -200,28 +200,32 @@ public class SocketClient extends Observable implements IOCallback {
 
   @Override
   public void onMessage(JsonElement json, IOAcknowledge arg1) {
-    log.info("Action received");
-
-    // {action: {name: "stream", id: 123, args:{filename: "", rangemin: 0, rangemax: 1000, etag: ""}} }
     
-    JsonElement jobj = json.getAsJsonObject().get( Action.TAGNAME );
-    if( jobj != null && jobj.isJsonObject() ){
-      String msg = jobj.getAsString();
+    try {
+      log.info("Action received");
+  
+      // {action: {name: "stream", id: 123, args:{filename: "", rangemin: 0, rangemax: 1000, etag: ""}} }
       
-      log.debug("message is: " + msg);
-      
-      Action action = new Action(this.configuration);
-      JParser jp = new JParser( action );
-      
-      jp.parse( msg );
-      
-      // Message received: notify observers
-      // Should we do that via Thread?!
-      this.setChanged();
-      this.notifyObservers(action);
-      
-    } else {
-      log.error("Invalid message received: " + json.toString() );
+      JsonObject jobj = json.getAsJsonObject();
+      if( jobj != null && jobj.isJsonObject() ){
+        
+        log.debug("message is: " + jobj.toString() );
+        
+        Action action = new Action(this.configuration);
+        JParser jp = new JParser( action );
+        
+        jp.parse( jobj );
+        
+        // Message received: notify observers
+        // Should we do that via Thread?!
+        this.setChanged();
+        this.notifyObservers(action);
+        
+      } else {
+        log.error("Invalid message received: " + json.toString() );
+      }
+    } catch(Exception e) {
+      log.error("Error while reveiving message: " + json.toString(), e );
     }
   }
 
