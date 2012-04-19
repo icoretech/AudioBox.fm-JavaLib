@@ -54,7 +54,8 @@ public interface IConfiguration {
    */
   public static enum Connectors {
     RAILS,
-    NODE
+    NODE,
+    DAEMON
   }
 
   

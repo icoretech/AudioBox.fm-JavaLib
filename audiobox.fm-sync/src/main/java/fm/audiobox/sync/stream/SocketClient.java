@@ -154,9 +154,9 @@ public class SocketClient extends Observable implements IOCallback {
   
   
   protected URL getServerUrl() throws MalformedURLException {
-    String protocol = this.configuration.getProtocol(IConfiguration.Connectors.NODE);
-    String host = this.configuration.getHost(IConfiguration.Connectors.NODE);
-    String port = "" + this.configuration.getPort(IConfiguration.Connectors.NODE);
+    String protocol = this.configuration.getProtocol(IConfiguration.Connectors.DAEMON);
+    String host = this.configuration.getHost(IConfiguration.Connectors.DAEMON);
+    String port = "" + this.configuration.getPort(IConfiguration.Connectors.DAEMON);
     log.info("URL found: " + protocol + "://" + host + ":" + port);
     return new URL(protocol + "://" + host + ":" + port);
   }

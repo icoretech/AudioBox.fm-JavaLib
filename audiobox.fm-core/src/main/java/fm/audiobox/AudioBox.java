@@ -189,9 +189,11 @@ public class AudioBox extends Observable {
 
     IConnector standardConnector = new Connector(IConfiguration.Connectors.RAILS);
     IConnector uploaderConnector = new Connector(IConfiguration.Connectors.NODE);
+    IConnector daemonerConnector = new Connector(IConfiguration.Connectors.DAEMON);
 
     config.getFactory().addConnector(IConfiguration.Connectors.RAILS, standardConnector );
     config.getFactory().addConnector(IConfiguration.Connectors.NODE, uploaderConnector );
+    config.getFactory().addConnector(IConfiguration.Connectors.DAEMON, daemonerConnector );
 
     log.trace("New AudioBox correctly instantiated");
   }
