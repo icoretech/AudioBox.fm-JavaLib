@@ -112,7 +112,7 @@ public class AsyncTaskManager implements Observer{
       //      this._autoStart = true;
       if( this._threads.size() > 0  )
         for(int i=0;  (i < this.max_threads && i < this._threads.size() ); i++)      
-          this._start( this._threads.remove( i ) );
+          this._start( this._threads.remove( 0 ) );
     }
   }
 
