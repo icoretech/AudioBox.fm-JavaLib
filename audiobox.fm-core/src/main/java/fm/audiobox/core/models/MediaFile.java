@@ -128,6 +128,7 @@ public class MediaFile extends AbstractEntity implements Serializable{
   public static final String SOURCE_FIELD =            "source";
   public static final String ORIGINAL_FILE_NAME_FIELD = "original_file_name";
   public static final String MD5_FIELD =                "md5";
+  public static final String HASH_FIELD =                "hash";
   
   private static final String TOKENS_PARAMETER =        "tokens[]";
   
@@ -427,6 +428,8 @@ public class MediaFile extends AbstractEntity implements Serializable{
       return this.getClass().getMethod("setAudioBitRate", String.class);
     } else if ( tagName.equals( ArtWorks.NAMESPACE )  ) {
       return this.getClass().getMethod("setArtWorks", ArtWorks.class);
+    } else if ( tagName.equals( HASH_FIELD ) || tagName.equals( MD5_FIELD ) ){
+      return this.getClass().getMethod("setMd5", String.class);
     }
     
     return null;
