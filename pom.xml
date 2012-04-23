@@ -524,6 +524,19 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
+    
+    <repository>
+      <id>keytwo.releases</id>
+      <name>AudioBox.fm releases</name>
+      <url>http://audiobox.keytwo.net/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    
   </repositories>
 </project>
 
