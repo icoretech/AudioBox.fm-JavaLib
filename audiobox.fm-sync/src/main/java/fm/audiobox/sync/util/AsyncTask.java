@@ -74,7 +74,7 @@ public abstract class AsyncTask extends Observable implements Runnable {
     return properties.get( key );
   }
 
-  protected abstract void start();
+  protected abstract boolean start();
   protected abstract void doTask();
   protected abstract Object end();
 
@@ -83,10 +83,10 @@ public abstract class AsyncTask extends Observable implements Runnable {
   public final void run() {
     this.stopped = false;
     if ( this.threadListener.onStart( this ) ){
-      this.start();
-
-      this.doTask();
-
+      
+      if ( this.start() ){
+        this.doTask();
+      }
 
       if ( this.stopped )
         this.threadListener.onStop(this);

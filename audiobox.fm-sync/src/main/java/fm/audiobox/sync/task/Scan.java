@@ -131,8 +131,9 @@ public class Scan extends AsyncTask {
     }
 
     @Override
-    protected synchronized void start() {
+    protected synchronized boolean start() {
         this.files = new ArrayList<File>();
+        return true;
     }
 
 }

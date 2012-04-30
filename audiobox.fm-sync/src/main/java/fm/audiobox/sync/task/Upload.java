@@ -72,7 +72,8 @@ public class Upload extends AsyncTask {
     }
 
     @Override
-    protected synchronized void start() {
+    protected synchronized boolean start() {
+      return true;
 
 //        final Upload me = this;
 //        final ThreadListener tl = this.getThreadListener();
