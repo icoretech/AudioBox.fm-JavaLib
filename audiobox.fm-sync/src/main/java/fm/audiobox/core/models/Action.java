@@ -66,7 +66,7 @@ public class Action extends AbstractEntity implements Serializable {
 
     if ( tagName.equals("name") ){
       return this.getClass().getMethod("setName", String.class);
-    } else if ( tagName.equals("id") ){
+    } else if ( tagName.equals("requestId") ){
       return this.getClass().getMethod("setId", int.class);
     } else if ( tagName.equals("args") ){
       return this.getClass().getMethod("setArgs", Args.class);
