@@ -464,7 +464,7 @@ public final class User extends AbstractEntity implements Serializable {
       params.add( new BasicNameValuePair("source", source.toString().toLowerCase() ) );
     }
     
-    connector.get(mediaFiles, path, action, null).send(false, params);
+    connector.get(mediaFiles, path, action, params).send(false);
     
     return mediaFiles;
   }
