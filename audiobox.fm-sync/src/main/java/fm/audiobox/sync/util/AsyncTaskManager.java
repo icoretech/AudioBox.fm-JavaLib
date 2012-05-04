@@ -158,6 +158,8 @@ public class AsyncTaskManager implements Observer{
     Thread thread = this.createThread( _task );
     thread.setName( this.generateThreadName( thread, _task ) );
 
+    _task.addObserver( this );
+    
     thread.start();
 
     /**

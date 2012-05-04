@@ -63,9 +63,9 @@ public class Args extends AbstractEntity implements Serializable{
     
     if ( tagName.equals("filename") ){
       return this.getClass().getMethod("setFileName", String.class);
-    } else if ( tagName.equals("rangemin") ){
+    } else if ( tagName.equals("rangeMin") ){
       return this.getClass().getMethod("setRangeMin", long.class);
-    } else if ( tagName.equals("rangemax") ){
+    } else if ( tagName.equals("rangeMax") ){
       return this.getClass().getMethod("setRangeMax", long.class);
     } else if ( tagName.equals("etag") ){
       return this.getClass().getMethod("setEtag", String.class);

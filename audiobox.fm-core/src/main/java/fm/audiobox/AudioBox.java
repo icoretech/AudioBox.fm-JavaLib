@@ -481,21 +481,21 @@ public class AudioBox extends Observable {
 
     
     @Override
-    public IConnectionMethod delete(IEntity destEntity, String action) {
-     return delete(destEntity, destEntity.getApiPath(), action, getConfiguration().getRequestFormat());
+    public IConnectionMethod delete(IEntity destEntity, String action, List<NameValuePair> params) {
+     return delete(destEntity, destEntity.getApiPath(), action, params);
     }
     
     @Override
-    public IConnectionMethod delete(IEntity destEntity, String path, String action) {
-     return delete(destEntity, path, action, getConfiguration().getRequestFormat());
+    public IConnectionMethod delete(IEntity destEntity, String path, String action, List<NameValuePair> params) {
+     return delete(destEntity, path, action, getConfiguration().getRequestFormat(), params);
     }
 
     @Override
-    public IConnectionMethod delete(IEntity destEntity, String path, String action, ContentFormat format) {
+    public IConnectionMethod delete(IEntity destEntity, String path, String action, ContentFormat format, List<NameValuePair> params) {
       IConnectionMethod method = getConnectionMethod();
 
       if ( method != null ) {
-        HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_DELETE, path, action, format, null);
+        HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_DELETE, path, action, format, params);
         method.init(destEntity, originalMethod, this.mClient, getConfiguration() );
       }
 
@@ -644,7 +644,7 @@ public class AudioBox extends Observable {
         url += IConnector.DOT + format.toString().toLowerCase();
       }
 
-      if ( httpVerb.equals( IConnectionMethod.METHOD_GET ) ){
+      if ( httpVerb.equals( IConnectionMethod.METHOD_GET ) || httpVerb.equals( IConnectionMethod.METHOD_DELETE ) ){
         String query = URLEncodedUtils.format( params , HTTP.UTF_8 );
         if ( query.length() > 0 )
           url += "?" + query; 

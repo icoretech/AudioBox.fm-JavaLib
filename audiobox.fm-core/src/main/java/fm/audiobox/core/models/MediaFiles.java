@@ -25,7 +25,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
+import fm.audiobox.configurations.Response;
+import fm.audiobox.core.exceptions.LoginException;
+import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConfiguration;
+import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IEntity;
 
 /**
@@ -42,6 +49,8 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
   /** The XML tag name for the MediaFiles element */
   public static final String NAMESPACE = MediaFiles.TAGNAME;
   public static final String TAGNAME = "media_files";
+  
+  protected static final String TOKENS_PARAMETER =        "tokens[]";
 
   private IEntity parent;
   /**
@@ -57,7 +66,9 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
   }
   
   public enum Actions {
-    hashes
+    hashes,
+    destroy_multiple,
+    remove
   }
 
   public MediaFiles(IConfiguration config) {
@@ -89,6 +100,57 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
     return super.addEntity(entity);
   }
 
+  
+  
+  // DELETE /api/v1/playlists/:playlist_id/media_files/remove
+  public boolean removeFromPlaylist(List<MediaFile> mediaFiles) throws ServiceException, LoginException {
+    
+    if ( mediaFiles == null || mediaFiles.size() == 0 )
+      return false;
+    
+    String action = IConnector.URI_SEPARATOR.concat( Actions.remove.toString() );
+    
+    List<NameValuePair> params = new ArrayList<NameValuePair>();
+    for ( MediaFile m : mediaFiles ){
+      params.add(  new BasicNameValuePair(TOKENS_PARAMETER, m.getToken() ) );
+    }
+    
+    Response response = this.getConnector(IConfiguration.Connectors.RAILS).delete(this, action, params).send(false);
+    
+    return response.isOK();
+    
+  }
+  
+  
+  public boolean destroy(List<MediaFile> mediaFiles) throws ServiceException, LoginException {
+    
+    if ( mediaFiles == null || mediaFiles.size() == 0 )
+      return false;
+    
+    String path = IConnector.URI_SEPARATOR.concat( NAMESPACE );
+    
+    List<NameValuePair> params = new ArrayList<NameValuePair>();
+    for ( MediaFile m : mediaFiles ){
+      params.add(  new BasicNameValuePair(TOKENS_PARAMETER, m.getToken() ) );
+    }
+    
+    Response response = this.getConnector(IConfiguration.Connectors.RAILS).delete(this, path, Actions.destroy_multiple.toString(), params).send(false);
+    
+    boolean result = response.isOK();
+    
+    if ( result ) {
+      for ( MediaFile m : mediaFiles ){
+        this.remove( m.getToken() );
+      }
+    }
+    
+    return result;
+  }
+  
+  public boolean destroyAll() throws ServiceException, LoginException {
+    return this.destroy( this.subList(0, this.size() ) );
+  }
+  
 
 
   /**
@@ -132,6 +194,6 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
 
   @Override
   public String getApiPath() {
-    return this.parent.getApiPath() + "/" + NAMESPACE;
+    return this.parent.getApiPath() + IConnector.URI_SEPARATOR + NAMESPACE;
   }
 }

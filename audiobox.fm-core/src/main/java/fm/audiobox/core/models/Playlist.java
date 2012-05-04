@@ -23,7 +23,6 @@
 package fm.audiobox.core.models;
 
 
-import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
@@ -38,16 +37,13 @@ import org.apache.http.protocol.HTTP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fm.audiobox.configurations.DefaultResponseParser;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Playlists.Types;
 import fm.audiobox.core.observables.Event;
 import fm.audiobox.interfaces.IConfiguration;
-import fm.audiobox.interfaces.IConfiguration.ContentFormat;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
-import fm.audiobox.interfaces.IResponseHandler;
 
 
 /**
@@ -95,6 +91,10 @@ public class Playlist extends AbstractEntity implements Serializable {
   private String updated_at;
   private boolean last_accessed;
   private IEntity parent;
+  private boolean offline;
+  private boolean embeddable;
+  private boolean visible;
+  
   
   /**
    * <p>Constructor for Playlist.</p>
@@ -164,11 +164,26 @@ public class Playlist extends AbstractEntity implements Serializable {
    */
   public void setType(String type) {
 
-    if ( type.equals( Types.AudioPlaylist.toString() ) ){
-      this.type = Types.AudioPlaylist;
+    if ( type.equals( Types.LocalPlaylist.toString() ) ){
+      this.type = Types.LocalPlaylist;
 
-    } else if ( type.equals( Types.VideoPlaylist.toString() ) ){
-      this.type = Types.VideoPlaylist;
+    } else if ( type.equals( Types.CloudPlaylist.toString() ) ){
+      this.type = Types.CloudPlaylist;
+
+    }  else if ( type.equals( Types.DropboxPlaylist.toString() ) ){
+      this.type = Types.DropboxPlaylist;
+
+    } else if ( type.equals( Types.GdrivePlaylist.toString() ) ){
+      this.type = Types.GdrivePlaylist;
+
+    } else if ( type.equals( Types.SkydrivePlaylist.toString() ) ){
+      this.type = Types.SkydrivePlaylist;
+
+    } else if ( type.equals( Types.YoutubePlaylist.toString() ) ){
+      this.type = Types.YoutubePlaylist;
+    
+    } else if ( type.equals( Types.SoundcloudPlaylist.toString() ) ){
+      this.type = Types.SoundcloudPlaylist;
 
     } else if ( type.equals( Types.CustomPlaylist.toString() ) ){
       this.type = Types.CustomPlaylist;
@@ -197,23 +212,54 @@ public class Playlist extends AbstractEntity implements Serializable {
   }
 
 
+  
+  public boolean isOffline() {
+    return offline;
+  }
 
-  public String getUpdated_at() {
+
+  public void setOffline(boolean offline) {
+    this.offline = offline;
+  }
+
+
+  public boolean isEmbeddable() {
+    return embeddable;
+  }
+
+
+  public void setEmbeddable(boolean embeddable) {
+    this.embeddable = embeddable;
+  }
+
+
+  public boolean isVisible() {
+    return visible;
+  }
+
+
+  public void setVisible(boolean visible) {
+    this.visible = visible;
+  }
+  
+  
+
+  public String getUpdatedAt() {
     return updated_at;
   }
 
 
-  public void setUpdated_at(String updated_at) {
+  public void setUpdatedAt(String updated_at) {
     this.updated_at = updated_at;
   }
 
 
 
-  public boolean isLast_accessed() {
+  public boolean isLastAccessed() {
     return last_accessed;
   }
 
-  public void setLast_accessed(boolean last_accessed) {
+  public void setLastAccessed(boolean last_accessed) {
     this.last_accessed = last_accessed;
   }
 
@@ -251,10 +297,10 @@ public class Playlist extends AbstractEntity implements Serializable {
       return this.getClass().getMethod("setMediaFilesCount", long.class);
 
     } else if ( tagName.equals("updated_at") ) {
-      return this.getClass().getMethod("setUpdated_at", String.class);
+      return this.getClass().getMethod("setUpdatedAt", String.class);
 
     } else if ( tagName.equals("last_accessed") ) {
-      return this.getClass().getMethod("setLast_accessed", boolean.class);
+      return this.getClass().getMethod("setLastAccessed", boolean.class);
     }
 
     return null;
@@ -401,12 +447,11 @@ public class Playlist extends AbstractEntity implements Serializable {
     String requestFormat = this.getConfiguration().getRequestFormat().toString().toLowerCase();
     
     IConnectionMethod method = this.getConnector().put(this, action, requestFormat);
-    IResponseHandler responseHandler = new PlaylistResponseHandler(_mediafiles);
 
     try {
 
       HttpEntity entity = new UrlEncodedFormEntity(params, HTTP.UTF_8);
-      method.send(false, entity, responseHandler);
+      method.send(false, entity);
 
     } catch (UnsupportedEncodingException e) {
       log.error("An error occurred while instantiating UrlEncodedFormEntity", e);
@@ -416,20 +461,6 @@ public class Playlist extends AbstractEntity implements Serializable {
 
   }
 
-  private class PlaylistResponseHandler extends DefaultResponseParser {
-
-    private MediaFiles mediafiles;
-
-    public PlaylistResponseHandler(MediaFiles _mediafiles) {
-      this.mediafiles = _mediafiles;
-    }
-
-    @Override
-    public String parse(InputStream in, IEntity destEntity, ContentFormat format) throws ServiceException {
-      return super.parse(in, this.mediafiles, format);
-    }
-  }
-  
   /**
    * Sets the parent {@link IEntity}
    * @param parent the {@link IEntity} parent object

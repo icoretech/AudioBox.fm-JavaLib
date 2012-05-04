@@ -45,11 +45,11 @@ public class PlaylistsTest extends AudioBoxTestCase {
     Playlist pl = pls.getPlaylistByName(Fixtures.get( Fixtures.SMALL_PLAYLIST_NAME ));
     assertEquals( pl.getName(), Fixtures.get( Fixtures.SMALL_PLAYLIST_NAME ) );
     
-    pl = pls.getPlaylistByType( Types.AudioPlaylist );
-    assertEquals( pl.getName(), "Music" );
+    pl = pls.getPlaylistByType( Types.LocalPlaylist );
+    assertNotNull( pl.getName() );
     
-    pl = pls.getPlaylistByType( Types.VideoPlaylist );
-    assertEquals( pl.getName(), "Video" );
+    pl = pls.getPlaylistByType( Types.CloudPlaylist );
+    assertNotNull( pl.getName() );
     
   }
   
@@ -136,10 +136,10 @@ public class PlaylistsTest extends AudioBoxTestCase {
     playlists.load(false);
     assertTrue(0 < playlists.size());
 
-    List<Playlist> pls = playlists.getPlaylistsByType(Types.AudioPlaylist);
+    List<Playlist> pls = playlists.getPlaylistsByType(Types.LocalPlaylist);
     assertEquals(1, pls.size());
 
-    pls = playlists.getPlaylistsByType(Types.VideoPlaylist);
+    pls = playlists.getPlaylistsByType(Types.CloudPlaylist);
     assertEquals(1, pls.size());
 
     pls = playlists.getPlaylistsByType(Types.CustomPlaylist);

@@ -68,9 +68,13 @@ import fm.audiobox.interfaces.IResponseHandler;
  * accepted_extensions: 'aac,mp3,mp2,m4a,m4b,m4r,3gp,ogg,oga,flac,spx,wma,rm,ram,wav,mpc,mp+,mpp,aiff,aif,aifc,tta,mp4,m4v,mov,avi,flv,webm',
  * accepted_formats: 'audio/aac,audio/mpeg,audio/mp4,audio/ogg,audio/flac,audio/speex,audio/x-ms-wma,audio/x-pn-realaudio,audio/vnd.wave,audio/x-musepack,audio/x-aiff,audio/x-tta,video/mp4,video/x-m4v,video/quicktime,video/x-msvideo,video/x-flv,video/webm',
  * permissions:
- *   cloud: true,
  *   local: true,
- *   dropbox: true
+ *   cloud: true,
+ *   dropbox: true,
+ *   gdrive: true,
+ *   skydrive: true,
+ *   soundcloud: true,
+ *   youtube: true
  * @endcode
  * </pre>
  *

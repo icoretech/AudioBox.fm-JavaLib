@@ -130,9 +130,6 @@ public class MediaFile extends AbstractEntity implements Serializable{
   public static final String MD5_FIELD =                "md5";
   public static final String HASH_FIELD =                "hash";
   
-  private static final String TOKENS_PARAMETER =        "tokens[]";
-  
-  
   private String artist;
   private String album;
   private String genre;
@@ -161,8 +158,7 @@ public class MediaFile extends AbstractEntity implements Serializable{
   private enum Actions {
     stream,
     upload,
-    local,
-    destroy_multiple
+    local
   }
   
   public static enum Source {
@@ -170,7 +166,9 @@ public class MediaFile extends AbstractEntity implements Serializable{
     cloud,
     dropbox,
     youtube,
-    soundcloud
+    soundcloud,
+    gdrive,
+    skydrive
   }
 
   public MediaFile(IConfiguration config) {
@@ -469,14 +467,29 @@ public class MediaFile extends AbstractEntity implements Serializable{
   
   
   // DELETE /api/v1/media_files/destroy_multiple.json?tokens[]=
-  public boolean delete() throws ServiceException, LoginException {
-    String namespace = IConnector.URI_SEPARATOR.concat( MediaFiles.NAMESPACE );
-    String action = IConnector.URI_SEPARATOR.concat( Actions.destroy_multiple.toString() );
+  public boolean destroy() throws ServiceException, LoginException {
+    
+    if ( this.parent == null ){
+      // We can delete an arbitrary MediaFile
+      return this._destroy();
+    }
+    
+    List<MediaFile> toRemove = new ArrayList<MediaFile>();
+    toRemove.add( this );
+    
+    return ((MediaFiles) this.parent).destroy( toRemove );
+  }
+  
+  
+  
+  private boolean _destroy() throws ServiceException, LoginException {
+    
+    String path = IConnector.URI_SEPARATOR.concat( MediaFiles.NAMESPACE );
     
     List<NameValuePair> params = new ArrayList<NameValuePair>();
-    params.add(  new BasicNameValuePair(TOKENS_PARAMETER,               this.getToken() ) );
+    params.add(  new BasicNameValuePair(MediaFiles.TOKENS_PARAMETER, this.getToken() ) );
     
-    Response response = this.getConnector(IConfiguration.Connectors.RAILS).post(this, namespace, action, null).send(false, params);
+    Response response = this.getConnector(IConfiguration.Connectors.RAILS).delete(this, path, MediaFiles.Actions.destroy_multiple.toString(), params).send(false);
     
     return response.isOK();
   }
@@ -489,7 +502,7 @@ public class MediaFile extends AbstractEntity implements Serializable{
     String action = this.getToken();
     
     List<NameValuePair> params = this.toQueryParameters(true);
-    Response response = this.getConnector(IConfiguration.Connectors.RAILS).post(this, namespace, action, null).send(false, params);
+    Response response = this.getConnector(IConfiguration.Connectors.RAILS).put(this, namespace, action, null).send(false, params);
     
     return response.isOK();
   }

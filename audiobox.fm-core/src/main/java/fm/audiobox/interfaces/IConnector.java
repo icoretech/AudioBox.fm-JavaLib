@@ -102,11 +102,11 @@ public interface IConnector {
    * 
    * @return the {@link IConnectionMethod} used for a DELETE request
    */
-  public IConnectionMethod delete(IEntity destEntity, String action);
+  public IConnectionMethod delete(IEntity destEntity, String action, List<NameValuePair> params);
   
-  public IConnectionMethod delete(IEntity destEntity, String path, String action);
+  public IConnectionMethod delete(IEntity destEntity, String path, String action, List<NameValuePair> params);
   
-  public IConnectionMethod delete(IEntity destEntity, String path, String action, ContentFormat format);
+  public IConnectionMethod delete(IEntity destEntity, String path, String action, ContentFormat format, List<NameValuePair> params);
   
   
   /**

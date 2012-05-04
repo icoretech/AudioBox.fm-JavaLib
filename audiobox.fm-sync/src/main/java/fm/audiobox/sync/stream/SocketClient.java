@@ -51,6 +51,8 @@ public class SocketClient extends Observable implements IOCallback {
   private AudioBox audiobox;
   private IConfiguration configuration;
   private SocketIO socket;
+  
+  private URL url;
 
 
   /** for knowing if we were connected, in case of logout and re-login */
@@ -67,10 +69,9 @@ public class SocketClient extends Observable implements IOCallback {
     this.configuration.getFactory().setEntity( Args.TAGNAME, Args.class);
     
     
-    URL url = null;
     try {
-      url = this.getServerUrl();
-      log.info("Server will be " + url.toURI().toString() );
+      this.url = this.getServerUrl();
+      log.info("Server will be " + this.url.toURI().toString() );
     } catch (MalformedURLException e) {
       log.error("Invalid url found");
       throw new ServiceException("No valid URL for server found");
@@ -78,9 +79,6 @@ public class SocketClient extends Observable implements IOCallback {
       log.error("Invalid url found");
       throw new ServiceException("No valid URL for server found");
     }
-    
-    this.socket = new SocketIO( url );
-    
     
     // Observer for catching the User status change events (login/logout)
     this.audiobox.addObserver(new Observer() {
@@ -130,6 +128,7 @@ public class SocketClient extends Observable implements IOCallback {
     }
     
     if ( this.audiobox.getUser() != null ){
+      this.socket = new SocketIO( this.url );
       this.socket.addHeader(IConnector.X_AUTH_TOKEN_HEADER, this.audiobox.getUser().getAuthToken() );
       this.socket.connect(this);
     } else {
@@ -146,10 +145,10 @@ public class SocketClient extends Observable implements IOCallback {
   
   
   public void disconnect() {
-    if ( this.isConnected() ){
+    if ( this.isConnected() && this.socket != null){
       this.socket.disconnect();
-      this.wasConnected = false;
     }
+    this.wasConnected = false;
   }
   
   
@@ -182,6 +181,7 @@ public class SocketClient extends Observable implements IOCallback {
   public void onConnect() {
     log.info("Connected!");
     SocketClient.this.connected = true;
+    SocketClient.this.wasConnected = true;
   }
 
 
@@ -193,8 +193,43 @@ public class SocketClient extends Observable implements IOCallback {
 
   @Override
   public void onError(SocketIOException ex) {
-    log.error( "Error occurs" + ex.getMessage() );
-    ex.printStackTrace();
+    log.error( "Error occurs" + ex.getMessage(), ex );
+    
+    
+    boolean socketConnected = false;
+    try {
+      socketConnected = this.socket.isConnected();
+    } catch( Exception e ) {
+      // Sylently fails
+    }
+    
+    
+    boolean shouldReconnect = this.wasConnected;
+    
+    if ( socketConnected ){
+      
+      log.warn("Socket is still connected, we want to disconnect just to be sure");
+      try {
+        
+        this.disconnect();
+        
+      } catch(Exception e){
+        // Sylently fails
+      }
+    }
+    
+    if ( shouldReconnect ){
+      log.warn("try to reconnect");
+      
+      this.connected = false;
+      this.wasConnected = false;
+      
+      try {
+        this.connect();
+      } catch( Exception e){
+        log.error( "Unable to reconnect to the server", e);
+      }
+    }
   }
 
 

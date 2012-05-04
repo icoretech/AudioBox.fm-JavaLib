@@ -62,11 +62,26 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
    * </ul> 
    */
   public enum Types {
-    /** The so called "Music" playlist, master audio media container */
-    AudioPlaylist,
+    /** The playlist associated with user's local storage */
+    LocalPlaylist,
 
-    /** The so called "Video" playlist, master video media container */
-    VideoPlaylist,
+    /** The playlist associated with user's AudioBox storage */
+    CloudPlaylist,
+    
+    /** The playlist associated with user's dropbox storage */
+    DropboxPlaylist,
+
+    /** The playlist associated with user's gdrive storage */
+    GdrivePlaylist,
+    
+    /** The playlist associated with user's skydrive storage */
+    SkydrivePlaylist,
+
+    /** The playlist associated with user's youtube storage */
+    YoutubePlaylist,
+    
+    /** The playlist associated with user's soundcloud storage */
+    SoundcloudPlaylist,
 
     /** User defined playlists */
     CustomPlaylist,

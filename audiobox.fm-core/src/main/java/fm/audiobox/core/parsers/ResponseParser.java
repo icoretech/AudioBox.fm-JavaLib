@@ -71,9 +71,9 @@ public class ResponseParser implements ResponseHandler<Response> {
       HttpEntity entity = httpResponse.getEntity();
       if (entity == null) {
         // Entity is null. We're assuming we are in case of 304, 201 or 204
-        throw new IOException("No content found");
+        log.warn("No response body found, maybe 204 status?");
       }
-      Header contentType = httpResponse.getEntity().getContentType();
+      Header contentType = entity != null ? entity.getContentType() : null;
       boolean
         isXml = false, 
         isJson = false,
@@ -89,7 +89,7 @@ public class ResponseParser implements ResponseHandler<Response> {
       ContentFormat format = isXml ? ContentFormat.XML : isJson ? ContentFormat.JSON : isText ? ContentFormat.TXT : ContentFormat.BINARY;
 
       // Build a new Response
-      response = new Response(format, responseCode, entity.getContent());
+      response = new Response(format, responseCode, entity != null ? entity.getContent() : null );
 
       if (this.configuration.isCacheEnabled() && responseCode == HttpStatus.SC_OK) {
         /*
@@ -129,7 +129,7 @@ public class ResponseParser implements ResponseHandler<Response> {
       break;
 
     case HttpStatus.SC_NO_CONTENT:
-      response = new Response(response.getFormat(), responseCode, "Resource not ready");
+      response = new Response(response.getFormat(), responseCode, "Ok, no content");
       break;
 
     case HttpStatus.SC_SEE_OTHER:

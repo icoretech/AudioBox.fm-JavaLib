@@ -11,7 +11,7 @@ import fm.audiobox.core.models.MediaFile;
 import fm.audiobox.core.models.MediaFiles;
 import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 
-public class MediaFileTest extends AudioBoxTestCase {
+public class MediaFileUploaderTest extends AudioBoxTestCase {
 
   @Before
   public void setUp() {
@@ -76,7 +76,7 @@ public class MediaFileTest extends AudioBoxTestCase {
   }
   
   
-  
+  @Test
   public void testMediaAsLocal() {
     
     MediaFile media = new MediaFile( this.abc );

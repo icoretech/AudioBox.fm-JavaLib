@@ -19,6 +19,10 @@ public class Permissions  extends AbstractEntity implements Serializable {
   private boolean dropbox;
   private boolean soundcloud;
   private boolean youtube;
+  private boolean gdrive;
+  private boolean skydrive;
+  
+  
   
   
   public Permissions(IConfiguration config) {
@@ -76,7 +80,21 @@ public class Permissions  extends AbstractEntity implements Serializable {
     this.youtube = youtube;
   }
   
-  
+  public boolean isGdrive() {
+    return gdrive;
+  }
+
+  public void setGdrive(boolean gdrive) {
+    this.gdrive = gdrive;
+  }
+
+  public boolean isSkydrive() {
+    return skydrive;
+  }
+
+  public void setSkydrive(boolean skydrive) {
+    this.skydrive = skydrive;
+  }
   
   
   @Override
@@ -96,6 +114,12 @@ public class Permissions  extends AbstractEntity implements Serializable {
 
     } else if ( tagName.equals("youtube") ){
       return this.getClass().getMethod("setYoutube", boolean.class);
+
+    } else if ( tagName.equals("gdrive") ){
+      return this.getClass().getMethod("setGdrive", boolean.class);
+
+    } else if ( tagName.equals("skydrive") ){
+      return this.getClass().getMethod("setSkydrive", boolean.class);
 
     } 
     
