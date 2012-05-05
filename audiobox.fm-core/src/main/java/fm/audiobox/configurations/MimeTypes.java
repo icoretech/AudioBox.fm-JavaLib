@@ -10,6 +10,8 @@ import java.util.Set;
 public final class MimeTypes implements Serializable {
   
   
+  private static final long serialVersionUID = 34533700701918745L;
+  
   private static Map<String, String[]> mimeTypes = new HashMap<String, String[]>();
   
   
