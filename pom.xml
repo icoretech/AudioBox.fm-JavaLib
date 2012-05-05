@@ -22,6 +22,8 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     
+    <project.env>${env}</project.env>
+    
     <project.rails.protocol>${fm.audiobox.rails.protocol}</project.rails.protocol>
     <project.rails.host>${fm.audiobox.rails.host}</project.rails.host>
     <project.rails.port>${fm.audiobox.rails.port}</project.rails.port>
@@ -392,6 +394,8 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <properties>
+      
+        <env></env>
         
         <fm.audiobox.rails.protocol>http</fm.audiobox.rails.protocol>
         <fm.audiobox.rails.host>staging.audiobox.fm</fm.audiobox.rails.host>
@@ -427,6 +431,8 @@
       </activation>
       <properties>
         
+        <env>development</env>
+        
         <fm.audiobox.rails.protocol>http</fm.audiobox.rails.protocol>
         <fm.audiobox.rails.host>0.0.0.0</fm.audiobox.rails.host>
         <fm.audiobox.rails.port>5000</fm.audiobox.rails.port>
@@ -458,6 +464,7 @@
       </activation>
       <properties>
         
+        <env>staging</env>
         
         <fm.audiobox.rails.protocol>http</fm.audiobox.rails.protocol>
         <fm.audiobox.rails.host>staging.audiobox.fm</fm.audiobox.rails.host>
@@ -491,6 +498,7 @@
       </activation>
       <properties>
       
+        <env>test</env>
       
         <fm.audiobox.rails.protocol>http</fm.audiobox.rails.protocol>
         <fm.audiobox.rails.host>staging.audiobox.fm</fm.audiobox.rails.host>

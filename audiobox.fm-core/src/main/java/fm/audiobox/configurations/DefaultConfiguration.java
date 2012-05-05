@@ -237,6 +237,10 @@ public class DefaultConfiguration implements IConfiguration {
 
 
 
+  public String getEnvProperty(){
+    String env = safelyGetProperty("env");
+    return env != null ? env : "default";
+  }
 
 
   /* 
@@ -281,7 +285,7 @@ public class DefaultConfiguration implements IConfiguration {
       sProperties.load(DefaultConfiguration.class.getResourceAsStream("/fm/audiobox/core/config/env.properties"));
     }
 
-    return sProperties.getProperty(PROP_PREFIX + server.toString().toLowerCase() + "." + key);
+    return getProperty(PROP_PREFIX + server.toString().toLowerCase() + "." + key);
   }
 
 
@@ -296,6 +300,23 @@ public class DefaultConfiguration implements IConfiguration {
   private static String safelyGetProperty(IConfiguration.Connectors server, String key) {
     try {
       return getProperty(server, key);
+    } catch (IOException e) {
+      log.warn("Error accessing environment properties file. Default values will be used");
+    }
+    return null;
+  }
+  
+  /**
+   * Use this method to get the property in a safe way.<br/>
+   * This method will return null if the property file is not accessible for any reason.
+   * 
+   * @param key the property you are looking for
+   * 
+   * @return the value of the property
+   */
+  private static String safelyGetProperty(String key) {
+    try {
+      return getProperty(key);
     } catch (IOException e) {
       log.warn("Error accessing environment properties file. Default values will be used");
     }

@@ -108,6 +108,11 @@ public interface IConfiguration {
    */
   public String getUserAgent();
 
+  
+  /**
+   * @return env used for connection
+   */
+  public String getEnvProperty();
 
   /**
    * @return protocol used for connection
