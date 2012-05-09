@@ -70,7 +70,7 @@ public class DefaultConfiguration implements IConfiguration {
     String version = "unattended";
     String ga_flag = "S";
     try {
-      version = DefaultConfiguration.getProperty("version");
+      version = DefaultConfiguration.getProperty(PROP_PREFIX + "version");
       ga_flag = version.contains(SNAPSHOT) ? ga_flag : "GA";
       version = version.replace(SNAPSHOT, "");
     } catch (FileNotFoundException e) {
@@ -267,7 +267,7 @@ public class DefaultConfiguration implements IConfiguration {
       sProperties.load(DefaultConfiguration.class.getResourceAsStream("/fm/audiobox/core/config/env.properties"));
     }
 
-    return sProperties.getProperty(PROP_PREFIX + key);
+    return sProperties.getProperty(key);
   }
   
   
@@ -316,7 +316,7 @@ public class DefaultConfiguration implements IConfiguration {
    */
   private static String safelyGetProperty(String key) {
     try {
-      return getProperty(key);
+      return getProperty(PROP_PREFIX + key);
     } catch (IOException e) {
       log.warn("Error accessing environment properties file. Default values will be used");
     }

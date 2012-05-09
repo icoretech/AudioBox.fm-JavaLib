@@ -1,11 +1,15 @@
 package fm.audiobox.core.observables;
 
 import java.util.EventObject;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Event extends EventObject {
 
   
   private static final long serialVersionUID = 1L;
+  
+  private Map<String, Object> properties = new HashMap<String, Object>();
 
   public int detail = -1;
 
@@ -29,5 +33,18 @@ public class Event extends EventObject {
     this.state = state;
   }
   
+  
+  public void addProperty(String key, Object value){
+    this.properties.put( key, value );
+  }
+  
+  public Object getProperty(String key){
+    
+    if ( this.properties.containsKey( key ) ){
+      return this.properties.get( key );
+    }
+    return null;
+    
+  }
   
 }
