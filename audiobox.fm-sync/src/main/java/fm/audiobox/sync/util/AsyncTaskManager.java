@@ -233,11 +233,16 @@ public class AsyncTaskManager implements Observer{
   }
 
   @Override
-  public void update(Observable arg0, Object arg1) {
+  public synchronized void update(Observable arg0, Object arg1) {
     this._runningthreads.remove(arg0);    
     if( this._threads.size() > 0 && this._runningthreads.size() <= this.max_threads){
-      AsyncTask _task = this._threads.remove(0);
-      this._start( _task );
+      try {
+        AsyncTask _task = this._threads.remove(0);
+        this._start( _task );
+      } catch ( Throwable t ){
+        // That's strange!!
+        System.out.println("[AsyncTaskManager] An error occurs while starting a new thread" + t.getMessage() );
+      }
     } else if( this._threads.size() == 0 )
       this.onComplete( arg0 );
   }
