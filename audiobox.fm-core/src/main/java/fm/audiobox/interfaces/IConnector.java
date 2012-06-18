@@ -50,6 +50,20 @@ public interface IConnector {
   public static final String DOT = ".";
   public static final String X_AUTH_TOKEN_HEADER = "X-AUTH-TOKEN";
   
+  
+  
+  
+  /**
+   * Returns the current {@link IConnectionMethod}
+   * This method can be used for aborting the current request
+   * 
+   * @return the current {@link IConnectionMethod}
+   */
+  public IConnectionMethod getCurrentRequest();
+  
+  
+  
+  
   /**
    * Builds {@link HttpMethodBase} using GET method and passing parameters
    * 
@@ -146,7 +160,7 @@ public interface IConnector {
      * @param connector the original {@link HttpClient} used as connector
      * @param config the {@link IConfiguration} object to reffer configuration to
      */
-    public void init(IEntity destEntity, HttpRequestBase method, HttpClient connector, IConfiguration config);
+    public void init(IEntity destEntity, HttpRequestBase method, HttpClient connector, IConfiguration config, IConfiguration.ContentFormat format);
     
     
     /**

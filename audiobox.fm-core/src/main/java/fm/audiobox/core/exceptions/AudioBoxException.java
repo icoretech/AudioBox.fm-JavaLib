@@ -13,6 +13,7 @@ public class AudioBoxException extends IOException {
   protected int errorCode = -1;
   protected Throwable cause;
   protected String message;
+  protected boolean fireGlobally = true;
 
   
   public AudioBoxException(){
@@ -49,5 +50,14 @@ public class AudioBoxException extends IOException {
   public String getMessage() {
     return message;
   }
+  
+  public void setFireGlobally(boolean value) {
+    this.fireGlobally = value;
+  }
+  
+  public boolean getFireGlobally() {
+    return this.fireGlobally;
+  }
+  
   
 }

@@ -282,6 +282,8 @@ public class AudioBox extends Observable {
 
     // Default value of the server
     private IConfiguration.Connectors SERVER = IConfiguration.Connectors.RAILS;
+    
+    private IConnectionMethod current;
 
 
     /** Get informations from configuration file */
@@ -357,6 +359,15 @@ public class AudioBox extends Observable {
     }
 
 
+    
+    
+    
+    public IConnectionMethod getCurrentRequest() {
+      return this.current;
+    }
+    
+    
+    
     /**
      * Creates a HttpRequestBase
      * 
@@ -421,14 +432,14 @@ public class AudioBox extends Observable {
     
     @Override
     public IConnectionMethod get(IEntity destEntity, String path, String action, ContentFormat format, List<NameValuePair> params) {
-      IConnectionMethod method = getConnectionMethod();
+      this.current = getConnectionMethod();
 
-      if ( method != null ) {
+      if ( this.current != null ) {
         HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_GET, path, action, format, params);
-        method.init(destEntity, originalMethod, this.mClient, getConfiguration() );
+        this.current.init(destEntity, originalMethod, this.mClient, getConfiguration(), format );
       }
 
-      return method;
+      return this.current;
     }
 
     
@@ -445,14 +456,14 @@ public class AudioBox extends Observable {
 
     @Override
     public IConnectionMethod put(IEntity destEntity, String path, String action, ContentFormat format) {
-      IConnectionMethod method = getConnectionMethod();
+      this.current = getConnectionMethod();
 
-      if ( method != null ) {
+      if ( this.current != null ) {
         HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_PUT, path, action, format, null);
-        method.init(destEntity, originalMethod, this.mClient, getConfiguration() );
+        this.current.init(destEntity, originalMethod, this.mClient, getConfiguration(), format );
       }
 
-      return method;
+      return this.current;
     }
     
     
@@ -469,14 +480,14 @@ public class AudioBox extends Observable {
 
     @Override
     public IConnectionMethod post(IEntity destEntity, String path, String action, ContentFormat format) {
-      IConnectionMethod method = getConnectionMethod();
+      this.current = getConnectionMethod();
 
-      if ( method != null ) {
+      if ( this.current != null ) {
         HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_POST, path, action, format, null);
-        method.init(destEntity, originalMethod, this.mClient, getConfiguration() );
+        this.current.init(destEntity, originalMethod, this.mClient, getConfiguration(), format );
       }
 
-      return method;
+      return this.current;
     }
 
     
@@ -492,14 +503,14 @@ public class AudioBox extends Observable {
 
     @Override
     public IConnectionMethod delete(IEntity destEntity, String path, String action, ContentFormat format, List<NameValuePair> params) {
-      IConnectionMethod method = getConnectionMethod();
+      this.current = getConnectionMethod();
 
-      if ( method != null ) {
+      if ( this.current != null ) {
         HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_DELETE, path, action, format, params);
-        method.init(destEntity, originalMethod, this.mClient, getConfiguration() );
+        this.current.init(destEntity, originalMethod, this.mClient, getConfiguration(), format );
       }
 
-      return method;
+      return this.current;
     }
 
     /* --------------- */

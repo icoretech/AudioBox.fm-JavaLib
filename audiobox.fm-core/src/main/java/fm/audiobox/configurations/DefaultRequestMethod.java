@@ -30,7 +30,6 @@ import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.parsers.ResponseParser;
 import fm.audiobox.interfaces.IConfiguration;
-import fm.audiobox.interfaces.IConfiguration.ContentFormat;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
@@ -44,18 +43,19 @@ public class DefaultRequestMethod implements IConnectionMethod {
   private volatile transient IEntity destEntity;
   private volatile transient IConfiguration configuration;
   private volatile transient Future<Response> futureResponse;
+  private volatile transient IConfiguration.ContentFormat format;
 
   public DefaultRequestMethod(){
     super();
   }
 
 
-  @Override
-  public void init(IEntity destEntity, HttpRequestBase method, HttpClient connector, IConfiguration config) {
+  public void init(IEntity destEntity, HttpRequestBase method, HttpClient connector, IConfiguration config, IConfiguration.ContentFormat format) {
     this.connector = connector;
     this.method = method;
     this.destEntity = destEntity;
     this.configuration = config;
+    this.format = format;
   }
 
   
@@ -118,36 +118,53 @@ public class DefaultRequestMethod implements IConnectionMethod {
         Response response = null;
         try {
 
-          return connector.execute( getHttpMethod(), new ResponseParser( configuration, DefaultRequestMethod.this, responseHandler), new BasicHttpContext() );
+          return connector.execute( getHttpMethod(), new ResponseParser( DefaultRequestMethod.this.configuration, DefaultRequestMethod.this, responseHandler), new BasicHttpContext() );
 
         } catch (ClientProtocolException e) {
           
-          response = new Response(ContentFormat.XML, AudioBoxException.GENERIC_ERROR, e.getMessage() );
+          response = new Response( DefaultRequestMethod.this.format, AudioBoxException.GENERIC_ERROR, e.getMessage() );
           log.error("ClientProtocolException thrown while executing request method", e);
           response.setException( new ServiceException(e) );
 
         } catch (IOException e) {
           
-          response = new Response(ContentFormat.XML, AudioBoxException.GENERIC_ERROR, e.getMessage() );
+          /*
+           * An error occurred:
+           * we have to catch the exception and cast it to a known custom exception object
+           */
+          
+          response = new Response( DefaultRequestMethod.this.format, AudioBoxException.GENERIC_ERROR, e.getMessage() );
           AudioBoxException responseException = null;
           
           if ( e instanceof LoginException ) {
+            // A login error occurred
             
             LoginException le = (LoginException) e;
-            if ( configuration.getDefaultLoginExceptionHandler() != null ){
-              configuration.getDefaultLoginExceptionHandler().handle( le );
-            }
-            responseException = le;
+            response = new Response( DefaultRequestMethod.this.format, le.getErrorCode(), le.getMessage() );
+            responseException =  le;
             
           } else {
             
-            ServiceException se = e instanceof ServiceException ? (ServiceException) e : new ServiceException(e);
-            if ( configuration.getDefaultServiceExceptionHandler() != null ){
-              configuration.getDefaultServiceExceptionHandler().handle( se );
+            // Generic error, we should catch the exception and cast it to a ServiceException
+            
+            if ( e instanceof ServiceException ) {
+              
+              ServiceException se = (ServiceException) e;
+              response = new Response( DefaultRequestMethod.this.format, se.getErrorCode(), se.getMessage() );
+              responseException =  se;
+              
+            } else {
+              // This is a generic exception
+              
+              ServiceException se = new ServiceException( e );
+              response = new Response( DefaultRequestMethod.this.format, se.getErrorCode(), se.getMessage() );
+              responseException =  se;
+              
             }
-            responseException = se;
+            
           }
           
+          // Set the exception into Response (this value will be used in getResponse() method)
           response.setException( responseException );
           
         }
@@ -156,20 +173,52 @@ public class DefaultRequestMethod implements IConnectionMethod {
 
     };
 
-    futureResponse = this.configuration.getExecutor().submit( start ); 
+    this.futureResponse = this.configuration.getExecutor().submit( start ); 
 
     return async ? null : this.getResponse();
   }
 
   public Response getResponse()  throws ServiceException, LoginException{
     try {
-      Response response = futureResponse.get();
+      Response response = this.futureResponse.get();
       if ( response.getException() != null ) {
         AudioBoxException ex = response.getException();
-        if ( ex instanceof LoginException ){
-          throw (LoginException) ex;
-        } else {
-          throw (ServiceException) ex;
+        try {
+          
+          // try/catch block, in order to correctly throw the exception
+          
+          if ( ex instanceof LoginException ){
+            throw (LoginException) ex;
+          } else {
+            throw (ServiceException) ex;
+          }
+          
+        } finally {
+          
+          // finally block in order to fire the global exception handlers
+          
+          if ( ex.getFireGlobally() ) {
+            if ( ex instanceof LoginException ) {
+              
+              LoginException le = (LoginException) ex;
+              if ( DefaultRequestMethod.this.configuration.getDefaultLoginExceptionHandler() != null ){
+                this.configuration.getDefaultLoginExceptionHandler().handle( le );
+              }
+              
+            } else if ( ex instanceof ServiceException ) {
+              
+              ServiceException se = (ServiceException) ex;
+              if ( DefaultRequestMethod.this.configuration.getDefaultServiceExceptionHandler() != null ){
+                this.configuration.getDefaultServiceExceptionHandler().handle( se );
+              }
+              
+            } else {
+              log.warn( "A generic exception found: " + ex.getClass().getName() );
+            }
+          } else {
+            log.info( "The exception will not be fired globally" );
+          }
+          
         }
       }
       return response;

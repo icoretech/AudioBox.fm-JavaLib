@@ -77,9 +77,9 @@ public class DefaultResponseParser implements IResponseHandler  {
 
   @Override
   public void parseAsJson(InputStream inputStream, IEntity destEntity) throws ServiceException {
-	
-	  JParser parser = new JParser(destEntity);
-	  parser.parse(new InputStreamReader(inputStream));
+  
+    JParser parser = new JParser(destEntity);
+    parser.parse(new InputStreamReader(inputStream));
   }
 
   @Override

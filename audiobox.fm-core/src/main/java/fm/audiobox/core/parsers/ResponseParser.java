@@ -11,7 +11,6 @@ import org.apache.http.client.ResponseHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fm.audiobox.configurations.DefaultResponseParser;
 import fm.audiobox.configurations.Response;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
@@ -42,7 +41,7 @@ public class ResponseParser implements ResponseHandler<Response> {
     this.method = method;
     this.destEntity = this.method.getDestinationEntity();
     this.configuration = config;
-    this.responseHandler = responseHandler != null ? responseHandler : new DefaultResponseParser();
+    this.responseHandler = responseHandler != null ? responseHandler : this.getResponseParser( config.getResponseParser() );
 
     if (log.isTraceEnabled()) {
       log.trace("ResponseParser instantiated for: " + this.method.getHttpMethod().getRequestLine().getUri());
@@ -162,6 +161,19 @@ public class ResponseParser implements ResponseHandler<Response> {
     }
 
     return response;
+  }
+  
+  
+  
+  private IResponseHandler getResponseParser(Class<? extends IResponseHandler> klass) {
+    try {
+      return klass.newInstance();
+    } catch (InstantiationException e) {
+      log.error("An error occurred while instantiating IResponseHandler class", e);
+    } catch (IllegalAccessException e) {
+      log.error("An error occurred while accessing to IResponseHandler class", e);
+    }
+    return null;
   }
 
 }

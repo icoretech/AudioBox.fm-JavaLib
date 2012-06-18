@@ -57,6 +57,13 @@ public interface IConfiguration {
     NODE,
     DAEMON
   }
+  
+  public static enum LogLevel {
+    DEBUG,
+    INFO,
+    WARN,
+    ERROR
+  }
 
   
   /**
@@ -69,6 +76,17 @@ public interface IConfiguration {
    * @return the default extension for each request
    */
   public ContentFormat getRequestFormat();
+  
+  
+  /**
+   * @return the global {@link IResponseHandler} used for parsing the response
+   */
+  public Class<? extends IResponseHandler> getResponseParser();
+  
+  /**
+   * Sets the global {@link IResponseHandler} used for parsing the response
+   */
+  public void setResponseParser(Class<? extends IResponseHandler> responseParser);
 
   /**
    * @return current {@link IFactory} associated with this configuration

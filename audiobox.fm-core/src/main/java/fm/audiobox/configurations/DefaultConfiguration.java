@@ -14,6 +14,7 @@ import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IFactory;
 import fm.audiobox.interfaces.ILoginExceptionHandler;
+import fm.audiobox.interfaces.IResponseHandler;
 import fm.audiobox.interfaces.IServiceExceptionHandler;
 
 public class DefaultConfiguration implements IConfiguration {
@@ -51,6 +52,7 @@ public class DefaultConfiguration implements IConfiguration {
   private String appName = APPLICATION_NAME;
   private String version = VERSION;
   private Class<? extends IConnectionMethod> connMethodClass = DefaultRequestMethod.class;
+  private Class<? extends IResponseHandler> responseParserClass = DefaultResponseParser.class;
   private ExecutorService executor;
   private ICacheManager cacheManager;
 
@@ -109,6 +111,19 @@ public class DefaultConfiguration implements IConfiguration {
     return this.requestFormat;
   }
 
+  
+  @Override
+  public Class<? extends IResponseHandler> getResponseParser() {
+    return responseParserClass;
+  }
+  
+  public void setResponseParser(Class<? extends IResponseHandler> responseParser){
+    this.responseParserClass = responseParser;
+  }
+  
+  
+  
+  
   @Override
   public IFactory getFactory() {
     return this.factory;
@@ -123,7 +138,7 @@ public class DefaultConfiguration implements IConfiguration {
   public String getApplicationName() {
     return this.appName;
   }
-
+  
 
   @Override
   public void setVersion(int major, int minor, int revision) {
