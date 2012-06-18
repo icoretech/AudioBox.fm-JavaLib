@@ -129,6 +129,8 @@ public class MediaFile extends AbstractEntity implements Serializable{
   public static final String ORIGINAL_FILE_NAME_FIELD = "original_file_name";
   public static final String MD5_FIELD =                "md5";
   public static final String HASH_FIELD =                "hash";
+  public static final String FILENAME_FIELD =                "filename";
+  public static final String LOVED_FIELD =                "loved";
   
   private String artist;
   private String album;
@@ -150,6 +152,8 @@ public class MediaFile extends AbstractEntity implements Serializable{
   private String audioBitRate;
   private String originalFileName;
   private String md5;
+  private String filename;
+  private boolean loved;
 
   private ArtWorks artworks;
    
@@ -218,6 +222,14 @@ public class MediaFile extends AbstractEntity implements Serializable{
   public void setGenre(String genre) {
     this.genre = genre;
   }
+  
+  public String getFilename() {
+    return this.filename;
+  }
+
+  public void setFilename(String filename) {
+    this.filename = filename;
+  }
 
   public int getYear() {
     return year;
@@ -225,6 +237,14 @@ public class MediaFile extends AbstractEntity implements Serializable{
 
   public void setYear(int year) {
     this.year = year;
+  }
+  
+  public boolean isLoved() {
+    return this.loved;
+  }
+
+  public void setLoved(boolean loved) {
+    this.loved = loved;
   }
 
   public String getTitle() {
@@ -428,6 +448,12 @@ public class MediaFile extends AbstractEntity implements Serializable{
       return this.getClass().getMethod("setArtWorks", ArtWorks.class);
     } else if ( tagName.equals( HASH_FIELD ) || tagName.equals( MD5_FIELD ) ){
       return this.getClass().getMethod("setMd5", String.class);
+    
+    } else if ( tagName.equals( FILENAME_FIELD ) ){
+      return this.getClass().getMethod("setFilename", String.class);
+    
+    } else if ( tagName.equals( LOVED_FIELD ) ){
+      return this.getClass().getMethod("setLoved", boolean.class);
     }
     
     return null;

@@ -94,6 +94,8 @@ public class Playlist extends AbstractEntity implements Serializable {
   private boolean offline;
   private boolean embeddable;
   private boolean visible;
+  private boolean sync_supported;
+  private String system_name;
   
   
   /**
@@ -131,7 +133,26 @@ public class Playlist extends AbstractEntity implements Serializable {
   public void setName(String name) {
     this.name = name;
   }
+  
+  
+  /**
+   * Returns the playlist name
+   * @return the playlist name
+   */
+  public String getSystemName() {
+    return this.system_name;
+  }
 
+  /**
+   * Sets the playlists name. Used by the parser
+   * @param name the playlist name
+   */
+  @Deprecated
+  public void setSystemName(String system_name) {
+    this.system_name = system_name;
+  }
+
+  
   /**
    * Return the playlist position index
    * @return the playlist position index
@@ -221,6 +242,15 @@ public class Playlist extends AbstractEntity implements Serializable {
   public void setOffline(boolean offline) {
     this.offline = offline;
   }
+  
+  public boolean isSyncSupported() {
+    return this.sync_supported;
+  }
+
+
+  public void setSyncSupported(boolean syncSupported) {
+    this.sync_supported = syncSupported;
+  }
 
 
   public boolean isEmbeddable() {
@@ -301,7 +331,25 @@ public class Playlist extends AbstractEntity implements Serializable {
 
     } else if ( tagName.equals("last_accessed") ) {
       return this.getClass().getMethod("setLastAccessed", boolean.class);
+    
+    } else if ( tagName.equals("system_name") ) {
+      return this.getClass().getMethod("setSystemName", String.class);
+    
+    } else if ( tagName.equals("offline") ) {
+      return this.getClass().getMethod("setOffline", boolean.class);
+    
+    } else if ( tagName.equals("embeddable") ) {
+      return this.getClass().getMethod("setEmbeddable", boolean.class);
+    
+    } else if ( tagName.equals("visible") ) {
+      return this.getClass().getMethod("setVisible", boolean.class);
+    
+    } else if ( tagName.equals("sync_supported") ) {
+      return this.getClass().getMethod("setSyncSupported", boolean.class);
+    
     }
+    
+    
 
     return null;
   }
