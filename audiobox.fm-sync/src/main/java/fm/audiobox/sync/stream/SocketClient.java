@@ -48,13 +48,14 @@ public class SocketClient extends Observable implements IOCallback {
   private static Logger log = LoggerFactory.getLogger(SocketClient.class);
 
   
+  public static enum EventsTypes {
+    MESSAGE
+  }
+  
   private AudioBox audiobox;
   private IConfiguration configuration;
   private SocketIO socket;
   
-  private URL url;
-
-
   /** for knowing if we were connected, in case of logout and re-login */
   private boolean wasConnected = false;
   
@@ -65,20 +66,9 @@ public class SocketClient extends Observable implements IOCallback {
     this.configuration = this.audiobox.getConfiguration();
     
     // I'm not sure it is needed
-    this.configuration.getFactory().setEntity( Action.TAGNAME, Action.class);
-    this.configuration.getFactory().setEntity( Args.TAGNAME, Args.class);
+    this.configuration.getFactory().setEntity( Action.TAGNAME, Action.class );
+    this.configuration.getFactory().setEntity( Args.TAGNAME, Args.class );
     
-    
-    try {
-      this.url = this.getServerUrl();
-      log.info("Server will be " + this.url.toURI().toString() );
-    } catch (MalformedURLException e) {
-      log.error("Invalid url found");
-      throw new ServiceException("No valid URL for server found");
-    } catch (URISyntaxException e) {
-      log.error("Invalid url found");
-      throw new ServiceException("No valid URL for server found");
-    }
     
     // Observer for catching the User status change events (login/logout)
     this.audiobox.addObserver(new Observer() {
@@ -106,7 +96,13 @@ public class SocketClient extends Observable implements IOCallback {
         } else if ( wasConnected ){
           // User is logged in, and we were connected.
           // We should reconnect
-          SocketClient.this.connect();
+          try {
+            SocketClient.this.connect();
+          } catch (ServiceException e) {
+            log.error( "An error occurred while connecting to server", e);
+            if ( SocketClient.this.audiobox.getConfiguration().getDefaultServiceExceptionHandler() != null )
+              SocketClient.this.audiobox.getConfiguration().getDefaultServiceExceptionHandler().handle( e );
+          }
         }
       }
     });
@@ -118,7 +114,8 @@ public class SocketClient extends Observable implements IOCallback {
    * Connects to Socket server and returns {@code true} it everithing went ok
    * @return boolean
    */
-  public void connect() {
+  public void connect() throws ServiceException {
+    
     log.info("Trying to connect to server");
     if ( this.isConnected() ){
       this.disconnect();
@@ -128,7 +125,22 @@ public class SocketClient extends Observable implements IOCallback {
     }
     
     if ( this.audiobox.getUser() != null ){
-      this.socket = new SocketIO( this.url );
+      
+      String urlStr = this.getServerUrl();
+      URL url = null;
+      try {
+        url = new URL( urlStr + this.audiobox.getUser().getAuthToken() );
+        log.info("Server will be " + url.toURI().toString() );
+        
+      } catch (MalformedURLException e) {
+        log.error("Invalid url found");
+        throw new ServiceException("No valid URL for server found");
+      } catch (URISyntaxException e) {
+        log.error("Invalid url found");
+        throw new ServiceException("No valid URL for server found");
+      }
+      
+      this.socket = new SocketIO( url );
       this.socket.addHeader(IConnector.X_AUTH_TOKEN_HEADER, this.audiobox.getUser().getAuthToken() );
       this.socket.connect(this);
     } else {
@@ -152,21 +164,29 @@ public class SocketClient extends Observable implements IOCallback {
   }
   
   
-  protected URL getServerUrl() throws MalformedURLException {
+  protected String getServerUrl() {
     String protocol = this.configuration.getProtocol(IConfiguration.Connectors.DAEMON);
     String host = this.configuration.getHost(IConfiguration.Connectors.DAEMON);
     String port = "" + this.configuration.getPort(IConfiguration.Connectors.DAEMON);
     log.info("URL found: " + protocol + "://" + host + ":" + port);
-    return new URL(protocol + "://" + host + ":" + port);
+    return protocol + "://" + host + ":" + port + IConnector.URI_SEPARATOR;
   }
 
 
   
   
   @Override
-  public void on(String arg0, IOAcknowledge arg1, JsonElement... arg2) {
-    // TODO Auto-generated method stub
-    
+  public void on(String event, IOAcknowledge ack, JsonElement... args) {
+    log.info( "An event emitted", args );
+    String messageEvent = EventsTypes.MESSAGE.toString().toLowerCase();
+    if ( messageEvent.equals( event ) ) {
+      log.info( "A message received with " + args.length + " arguments" );
+      
+      for ( JsonElement json : args ) {
+        log.debug("firing actions for '" + json.toString() + "'");
+        this.onMessage( json, ack);
+      }
+    }
   }
 
 
