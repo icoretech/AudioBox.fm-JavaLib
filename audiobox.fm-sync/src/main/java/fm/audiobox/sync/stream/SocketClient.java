@@ -169,7 +169,7 @@ public class SocketClient extends Observable implements IOCallback {
     String host = this.configuration.getHost(IConfiguration.Connectors.DAEMON);
     String port = "" + this.configuration.getPort(IConfiguration.Connectors.DAEMON);
     log.info("URL found: " + protocol + "://" + host + ":" + port);
-    return protocol + "://" + host + ":" + port + IConnector.URI_SEPARATOR;
+    return protocol + "://" + host + ":" + port + IConnector.URI_SEPARATOR + "socket.io" + IConnector.URI_SEPARATOR;
   }
 
 

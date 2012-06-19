@@ -19,6 +19,7 @@ public class Args extends AbstractEntity implements Serializable{
   private long rangeMin;
   private long rangeMax;
   private String serverIp;
+  private String serverPort;
   
   public Args(IConfiguration config) {
     super(config);
@@ -50,6 +51,14 @@ public class Args extends AbstractEntity implements Serializable{
   public void setServerIp(String ip) {
     this.serverIp = ip;
   }
+  
+  public String getServerPort() {
+    return this.serverPort;
+  }
+
+  public void setServerPort(String port) {
+    this.serverPort = port;
+  }
 
   public long getRangeMin() {
     return rangeMin;
@@ -80,6 +89,8 @@ public class Args extends AbstractEntity implements Serializable{
       return this.getClass().getMethod("setEtag", String.class);
     } else if ( tagName.equals("server_ip") ){
       return this.getClass().getMethod("setServerIp", String.class);
+    } else if ( tagName.equals("server_port") ){
+      return this.getClass().getMethod("setServerPort", String.class);
     }
   
     return null;
