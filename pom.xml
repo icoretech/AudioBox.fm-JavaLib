@@ -477,8 +477,8 @@
         <fm.audiobox.node.apiPath>/api/v1</fm.audiobox.node.apiPath>
         
         <fm.audiobox.daemon.protocol>http</fm.audiobox.daemon.protocol>
-        <fm.audiobox.daemon.host>desk.staging.audiobox.fm</fm.audiobox.daemon.host>
-        <fm.audiobox.daemon.port>5100</fm.audiobox.daemon.port>
+        <fm.audiobox.daemon.host>desk.audiobox.fm</fm.audiobox.daemon.host>
+        <fm.audiobox.daemon.port>81</fm.audiobox.daemon.port>
         <fm.audiobox.daemon.apiPath>/api/v1</fm.audiobox.daemon.apiPath>
 
 
