@@ -256,6 +256,23 @@ public class AudioBox extends Observable {
 
     return this.user;
   }
+  
+  
+  
+  public boolean logout() {
+    
+    if ( this.user != null ) {
+      // Destroy old user's pointer
+      this.user = null;
+      
+      // notify all observer User has been destroyed
+      this.setChanged();
+      this.notifyObservers(null);
+      return true;
+    }
+    
+    return false;
+  }
 
 
   public IConfiguration getConfiguration(){
