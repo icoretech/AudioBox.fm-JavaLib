@@ -18,7 +18,7 @@ public class Action extends AbstractEntity implements Serializable {
   public static final String NAMESPACE = Action.TAGNAME;
 
   private String name;
-  private int id;
+  private String id;
   private Args args;
 
 
@@ -45,11 +45,11 @@ public class Action extends AbstractEntity implements Serializable {
     this.name = name;
   }
 
-  public int getId() {
+  public String getId() {
     return id;
   }
 
-  public void setId(int id) {
+  public void setId(String id) {
     this.id = id;
   }
 
@@ -67,7 +67,7 @@ public class Action extends AbstractEntity implements Serializable {
     if ( tagName.equals("name") ){
       return this.getClass().getMethod("setName", String.class);
     } else if ( tagName.equals("requestId") ){
-      return this.getClass().getMethod("setId", int.class);
+      return this.getClass().getMethod("setId", String.class);
     } else if ( tagName.equals("args") ){
       return this.getClass().getMethod("setArgs", Args.class);
     }
