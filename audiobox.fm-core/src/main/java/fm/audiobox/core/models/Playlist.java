@@ -37,11 +37,13 @@ import org.apache.http.protocol.HTTP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fm.audiobox.configurations.Response;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Playlists.Types;
 import fm.audiobox.core.observables.Event;
 import fm.audiobox.interfaces.IConfiguration;
+import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
 
@@ -151,6 +153,23 @@ public class Playlist extends AbstractEntity implements Serializable {
   public void setSystemName(String system_name) {
     this.system_name = system_name;
   }
+  
+  
+  /**
+   * This method deletes entirly content of the {@link Playlists.Types.LocalPlaylist} drive.
+   * Use this method carefully
+   * Note: this action will be asynchronously performed by the server 
+   * @return {@code true} if everything went ok. {@code false} if not 
+   */
+  public boolean clearContent() throws ServiceException, LoginException {
+    
+    if ( this.getType() != Playlists.Types.LocalPlaylist ) return false;
+    
+    Response response = this.getConnector(IConfiguration.Connectors.RAILS).put(this, "/empty").send(false);
+    
+    return response.isOK();
+  }
+  
 
   
   /**
@@ -492,9 +511,8 @@ public class Playlist extends AbstractEntity implements Serializable {
     }
 
     MediaFiles _mediafiles = (MediaFiles) this.getConfiguration().getFactory().getEntity(MediaFiles.TAGNAME, this.getConfiguration());
-    String requestFormat = this.getConfiguration().getRequestFormat().toString().toLowerCase();
     
-    IConnectionMethod method = this.getConnector().put(this, action, requestFormat);
+    IConnectionMethod method = this.getConnector().put(this, action);
 
     try {
 
