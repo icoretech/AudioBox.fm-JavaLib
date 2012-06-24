@@ -43,7 +43,6 @@ import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Playlists.Types;
 import fm.audiobox.core.observables.Event;
 import fm.audiobox.interfaces.IConfiguration;
-import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
 
@@ -165,7 +164,7 @@ public class Playlist extends AbstractEntity implements Serializable {
     
     if ( this.getType() != Playlists.Types.LocalPlaylist ) return false;
     
-    Response response = this.getConnector(IConfiguration.Connectors.RAILS).put(this, "/empty").send(false);
+    Response response = this.getConnector(IConfiguration.Connectors.RAILS).put(this, "empty").send(false);
     
     return response.isOK();
   }
