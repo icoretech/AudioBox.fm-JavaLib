@@ -111,53 +111,53 @@ public class ResponseParser implements ResponseHandler<Response> {
 
     }
 
-    switch (response.getStatus()) {
+    switch ( responseCode ) {
 
-    case HttpStatus.SC_OK:
-    case HttpStatus.SC_NOT_MODIFIED:
-    case HttpStatus.SC_ACCEPTED:
-      // Try to parse response body
-      String content = this.responseHandler.parse(response.getStream(), destEntity, response.getFormat());
-      response = new Response(response.getFormat(), responseCode, content);
-      break;
-
-    // In all other cases new response will be instantiated and returned
-    case HttpStatus.SC_CREATED:
-
-      response = new Response(response.getFormat(), responseCode, "Created");
-      break;
-
-    case HttpStatus.SC_NO_CONTENT:
-      response = new Response(response.getFormat(), responseCode, "Ok, no content");
-      break;
-
-    case HttpStatus.SC_SEE_OTHER:
-      response = new Response(response.getFormat(), responseCode, httpResponse.getFirstHeader("Location").getValue());
-      break;
-
-    case HttpStatus.SC_PAYMENT_REQUIRED:
-      throw new LoginException(responseCode, "Unauthorized user plan");
-
-    case HttpStatus.SC_UNAUTHORIZED:
-    case HttpStatus.SC_FORBIDDEN:
-      throw new LoginException(responseCode, response.getBody());
-
-    default:
-      // Assuming we are in case of server error
-      if (response.getFormat() == ContentFormat.XML || response.getFormat() == ContentFormat.JSON) {
-        Error error = new Error(this.configuration);
-        if (response.getFormat() == ContentFormat.XML) {
-          this.responseHandler.parseAsXml(response.getStream(), error);
+      case HttpStatus.SC_OK:
+      case HttpStatus.SC_NOT_MODIFIED:
+      case HttpStatus.SC_ACCEPTED:
+        // Try to parse response body
+        String content = this.responseHandler.parse(response.getStream(), destEntity, response.getFormat());
+        response = new Response(response.getFormat(), responseCode, content);
+        break;
+  
+      // In all other cases new response will be instantiated and returned
+      case HttpStatus.SC_CREATED:
+  
+        response = new Response(response.getFormat(), responseCode, "Created");
+        break;
+  
+      case HttpStatus.SC_NO_CONTENT:
+        response = new Response(response.getFormat(), responseCode, "Ok, no content");
+        break;
+  
+      case HttpStatus.SC_SEE_OTHER:
+        response = new Response(response.getFormat(), responseCode, httpResponse.getFirstHeader("Location").getValue());
+        break;
+  
+      case HttpStatus.SC_PAYMENT_REQUIRED:
+        throw new LoginException(responseCode, "Unauthorized user plan");
+  
+      case HttpStatus.SC_UNAUTHORIZED:
+      case HttpStatus.SC_FORBIDDEN:
+        throw new LoginException(responseCode, response.getBody());
+  
+      default:
+        // Assuming we are in case of server error
+        if (response.getFormat() == ContentFormat.XML || response.getFormat() == ContentFormat.JSON) {
+          Error error = new Error(this.configuration);
+          if (response.getFormat() == ContentFormat.XML) {
+            this.responseHandler.parseAsXml(response.getStream(), error);
+          } else {
+            this.responseHandler.parseAsJson(response.getStream(), error);
+          }
+          response = new Response(response.getFormat(), error.getStatus(), error.getMessage());
+  
         } else {
-          this.responseHandler.parseAsJson(response.getStream(), error);
+          // default: do nothing
         }
-        response = new Response(response.getFormat(), error.getStatus(), error.getMessage());
-
-      } else {
-        // default: do nothing
-      }
-
-      throw new ServiceException(response.getStatus(), response.getBody());
+  
+        throw new ServiceException(response.getStatus(), response.getBody());
     }
 
     return response;
