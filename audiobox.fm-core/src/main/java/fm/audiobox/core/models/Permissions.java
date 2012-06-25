@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IEntity;
 
-public class Permissions  extends AbstractEntity implements Serializable {
+public final class Permissions  extends AbstractEntity implements Serializable {
 
   private static final long serialVersionUID = 3196523340942887761L;
 
@@ -22,12 +22,40 @@ public class Permissions  extends AbstractEntity implements Serializable {
   private boolean gdrive;
   private boolean skydrive;
   
-  
+  private boolean box;
+  private boolean lastfm;
+  private boolean partner;
   
   
   public Permissions(IConfiguration config) {
     super(config);
   }
+  
+  
+  public boolean isBox() {
+    return box;
+  }
+
+  public void setBox(boolean box) {
+    this.box = box;
+  }
+
+  public boolean isLastfm() {
+    return lastfm;
+  }
+
+  public void setLastfm(boolean lastfm) {
+    this.lastfm = lastfm;
+  }
+
+  public boolean isPartner() {
+    return partner;
+  }
+
+  public void setPartner(boolean partner) {
+    this.partner = partner;
+  }
+
 
   @Override
   public String getNamespace() {
@@ -47,7 +75,7 @@ public class Permissions  extends AbstractEntity implements Serializable {
   public void setCloud(boolean cloud) {
     this.cloud = cloud;
   }
-
+  
   public boolean isLocal() {
     return local;
   }
@@ -120,6 +148,15 @@ public class Permissions  extends AbstractEntity implements Serializable {
 
     } else if ( tagName.equals("skydrive") ){
       return this.getClass().getMethod("setSkydrive", boolean.class);
+
+    } else if ( tagName.equals("box") ){
+      return this.getClass().getMethod("setBox", boolean.class);
+
+    } else if ( tagName.equals("lastfm") ){
+      return this.getClass().getMethod("setLastfm", boolean.class);
+
+    } else if ( tagName.equals("partner") ){
+      return this.getClass().getMethod("setPartner", boolean.class);
 
     } 
     

@@ -3,14 +3,9 @@
  */
 package fm.audiobox.core.test;
 
-import java.io.File;
-
 import org.junit.Test;
 
-import fm.audiobox.core.exceptions.LoginException;
-import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.models.MediaFiles;
-import fm.audiobox.core.models.Playlists;
+import fm.audiobox.core.models.Permissions;
 import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 
 /**
@@ -36,42 +31,17 @@ public class UserTest extends AudioBoxTestCase {
     assertNotNull(user.getTimeZone());
 
     
-    try {
-      
-      Playlists pls = user.getPlaylists();
-      pls.load(false);
-      MediaFiles mdfs =  pls.get(0).getMediaFiles();
-      mdfs.load(false);
-      
-      File fileForDownload = new File( Fixtures.get("file_for_download") );
-      mdfs.get(1).download( fileForDownload );
-      
-//      user.getUploadedTracks();
-    } catch (ServiceException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } catch (LoginException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    // Profile
-//    Profile p = user.getProfile();
-//    assertNotNull(p.hasAutoplay());
-//    assertNotNull(p.getRealName());
-//    assertEquals(Fixtures.get(Fixtures.REAL_NAME), p.getRealName());
-//    assertNull(p.getToken());
-//
-//    // Plan
-//    Plan plan = user.getPlan();
-//    assertEquals(plan.getName(), "admin");
-//    assertTrue(plan.hasApi());
-//    assertTrue(plan.hasDropbox());
-//    assertTrue(plan.hasManager());
-//    assertTrue(plan.hasLastfm());
-//    assertTrue(plan.hasMultiformat());
-//    assertTrue(plan.hasSocialNetworks());
-//    assertTrue(plan.hasCloudWebPlayer());
-//    assertTrue(plan.hasYoutubeChannel());
+    // Permission
+    Permissions p = user.getPermissions();
+    
+    assertTrue( p.isCloud() );
+    assertFalse( p.isDropbox() );
+    assertFalse( p.isGdrive() );
+    assertTrue( p.isLocal() );
+    assertFalse( p.isSkydrive() );
+    assertFalse( p.isSoundcloud() );
+    assertFalse( p.isYoutube() );
+
   }
 
 //  @Test
