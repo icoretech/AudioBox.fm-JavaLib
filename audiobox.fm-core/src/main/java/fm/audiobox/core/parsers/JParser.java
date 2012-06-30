@@ -153,8 +153,6 @@ public class JParser{
 
     try{
       
-      log.debug("Invoking method for [" + entity.toString() + "]." + _method + " = " + value );
-      
       if (method.getParameterTypes().length == 1) {
         Class<?> paramType = method.getParameterTypes()[0];
 
