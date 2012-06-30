@@ -23,9 +23,11 @@ import fm.audiobox.AudioBox;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Action;
 import fm.audiobox.core.models.Args;
+import fm.audiobox.core.models.Error;
 import fm.audiobox.core.parsers.JParser;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
+import fm.audiobox.interfaces.IServiceExceptionHandler;
 import io.socket.IOAcknowledge;
 import io.socket.IOCallback;
 import io.socket.SocketIO;
@@ -128,16 +130,28 @@ public class SocketClient extends Observable implements IOCallback {
       
       String urlStr = this.getServerUrl();
       URL url = null;
+      ServiceException abxEx = null;
       try {
         url = new URL( urlStr );
         log.info("Server will be " + url.toURI().toString() );
         
       } catch (MalformedURLException e) {
         log.error("Invalid url found");
-        throw new ServiceException("No valid URL for server found");
+        ServiceException se = new ServiceException("No valid URL for server found");
+        abxEx = se;
+        throw se;
       } catch (URISyntaxException e) {
         log.error("Invalid url found");
-        throw new ServiceException("No valid URL for server found");
+        ServiceException se = new ServiceException("No valid URL for server found");
+        abxEx = se;
+        throw se;
+      } finally {
+        if ( abxEx != null && abxEx.getFireGlobally() ) {
+          IServiceExceptionHandler seh = this.configuration.getDefaultServiceExceptionHandler();
+          if ( seh != null ) {
+            seh.handle( abxEx );
+          }
+        }
       }
       
       this.socket = new SocketIO( url );
@@ -213,7 +227,7 @@ public class SocketClient extends Observable implements IOCallback {
 
   @Override
   public void onError(SocketIOException ex) {
-    log.error( "Error occurs" + ex.getMessage(), ex );
+    log.error( "Error occurs " + ex.getMessage(), ex );
     
     
     boolean socketConnected = false;
@@ -249,6 +263,11 @@ public class SocketClient extends Observable implements IOCallback {
       } catch( Exception e){
         log.error( "Unable to reconnect to the server", e);
       }
+    } else {
+      Error error = new Error();
+      error.setMessage( ex.getMessage() );
+      this.setChanged();
+      this.notifyObservers( error );
     }
   }
 

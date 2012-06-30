@@ -79,43 +79,70 @@ public class MediaFileUploaderTest extends AudioBoxTestCase {
   @Test
   public void testMediaAsLocal() {
     
-    MediaFile media = new MediaFile( this.abc );
     
-    media.setTitle(   "title"    );
-    media.setArtist (  "artist"     );
-    media.setAlbum (  "album"     );
-    media.setGenre (   "genre"    );
-    media.setLenStr (  "1:24"     );
-    media.setMediaFileName (   "media_file_name.mp3"    );
-    media.setMime (   "audio/mp3"    );
-    media.setYear (   2012    );
-    media.setLenInt (   203    );
-    media.setPosition (  1     );
-    media.setPlays (   4    );
-    media.setDisc (   9    );
-    media.setSize(  1234     );
-    media.setType(    MediaFiles.Type.AudioFile   );
-    media.setSource(  MediaFile.Source.local     );
-    media.setAudioSampleRate (   "192"    );
-    media.setAudioBitRate (  "44100"   );
-    media.setOriginalFileName (  "/User/path/to/media_file_name.mp3"     );
-    media.setMd5(  "HASH_MD5_FILE"     );
+    Thread t1 = new UploadAsLocal( "67820b3d14728669b27fb6653512cf18" );
+    Thread t2 = new UploadAsLocal( "41e1efd31428c322f02ad01533d42c47" );
+    
+    
+    t1.start();
+    t2.start();
     
     try {
-      media.notifyAsLocal();
-    } catch (ServiceException e) {
-      assertNull(e);
-      e.printStackTrace();
-    } catch (LoginException e) {
-      assertNull(e);
-      e.printStackTrace();
+      t1.join();
+      t2.join();
+    } catch (InterruptedException e) {
+      assertNull( e );
     }
-    
-    assertNotNull( media.getToken() );
     
   }
   
   
-  
+  private class UploadAsLocal extends Thread {
+    
+    private String md5;
+    
+    public UploadAsLocal(String md5) {
+      this.md5 = md5;
+    }
+    
+    public void run(){
+      MediaFile media = new MediaFile( abc );
+      
+      media.setTitle(   "title"    );
+      media.setArtist (  "artist"     );
+      media.setAlbum (  "album"     );
+      media.setGenre (   "genre"    );
+      media.setLenStr (  "1:24"     );
+      media.setMediaFileName (   "media_file_name.mp3"    );
+      media.setMime (   "audio/mp3"    );
+      media.setYear (   2012    );
+      media.setLenInt (   203    );
+      media.setPosition (  1     );
+      media.setPlays (   4    );
+      media.setDisc (   9    );
+      media.setSize(  1234     );
+      media.setType(    MediaFiles.Type.AudioFile   );
+      media.setSource(  MediaFile.Source.local     );
+      media.setAudioSampleRate (   "192"    );
+      media.setAudioBitRate (  "44100"   );
+      media.setOriginalFileName (  "/User/path/to/media_file_name.mp3"     );
+      media.setMd5(   this.md5    );
+      
+      try {
+        media.notifyAsLocal();
+      } catch (ServiceException e) {
+        assertNull(e);
+        e.printStackTrace();
+      } catch (LoginException e) {
+        assertNull(e);
+        e.printStackTrace();
+      }
+      
+      System.out.println( "===========" );
+      System.out.println( "[" + media.toString() + "] >> " + (media.getToken() != null ) );
+      System.out.println( "===========" );
+      
+    }
+  }
 
 }

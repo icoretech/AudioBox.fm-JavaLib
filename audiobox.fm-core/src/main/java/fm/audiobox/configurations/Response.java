@@ -60,7 +60,7 @@ public class Response implements Serializable {
   }
   
   public Response(ContentFormat format, int status, String body){
-    this(format, status, new ByteArrayInputStream( body.getBytes() ) );
+    this(format, status, new ByteArrayInputStream( body == null ? ("no response body").getBytes() : body.getBytes() ) );
   }
 
   

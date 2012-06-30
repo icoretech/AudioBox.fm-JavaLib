@@ -59,13 +59,22 @@ public class JParser{
   
   @SuppressWarnings("unchecked")
   public IEntity parse ( JsonObject jobj ){
-
+    
+    if ( log.isDebugEnabled() ) {
+      log.debug("Response from server is: " + jobj.toString() );
+    }
+    
+    
     if( jobj.has( entity.getTagName() ) ){
       if( jobj.get(entity.getTagName()).isJsonObject() ){
         fillJsonObject(jobj.get(entity.getTagName()).getAsJsonObject(), this.entity);
       } else if( jobj.get(entity.getTagName()).isJsonArray() ){
         fillJsonArray(jobj.get(entity.getTagName()).getAsJsonArray(), (AbstractCollectionEntity<IEntity>)this.entity);
-      }  
+      } else {
+        log.error("'" + entity.getTagName() + "' is not an object nor an array");
+      }
+    } else {
+      log.warn("json response doesn't contain the entity tag name '" + entity.getTagName() + "'" );
     }
     return entity;
   }
@@ -107,7 +116,7 @@ public class JParser{
           subentity = fillJsonObject(elem.getValue().getAsJsonObject(), subentity );
           invokemethod(entity, elem.getKey(), subentity);  
         } else {
-          log.warn( "The configuration doesn't contain the entity " + elem.getKey());
+          log.warn( "The configuration doesn't contain the entity " + elem.getKey() + " as object");
         }
 
       } else if( elem.getValue().isJsonArray() ){
@@ -116,7 +125,7 @@ public class JParser{
           subentity = fillJsonArray( elem.getValue().getAsJsonArray() , (AbstractCollectionEntity<IEntity>) subentity );
           invokemethod(entity, elem.getKey() , subentity);
         } else {
-          log.warn( "The configuration doesn't contain the entity " + elem.getKey());
+          log.warn( "The configuration doesn't contain the entity " + elem.getKey()  + " as array" );
         }
       } else if(elem.getValue().isJsonPrimitive()){
         invokemethod(entity, elem.getKey(), elem.getValue());
@@ -138,11 +147,14 @@ public class JParser{
       return;
     }
     if (method == null) {
-      log.warn(entity.getClass().getName() + " doesn't contain the request method for tag: " + _method);
+      log.warn(entity.getClass().getName() + " doesn't contain the requested method for tag: " + _method);
       return;
     }
 
     try{
+      
+      log.debug("Invoking method for [" + entity.toString() + "]." + _method + " = " + value );
+      
       if (method.getParameterTypes().length == 1) {
         Class<?> paramType = method.getParameterTypes()[0];
 

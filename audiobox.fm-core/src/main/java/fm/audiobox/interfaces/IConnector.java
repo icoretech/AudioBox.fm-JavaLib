@@ -53,16 +53,6 @@ public interface IConnector {
   
   
   
-  /**
-   * Returns the current {@link IConnectionMethod}
-   * This method can be used for aborting the current request
-   * 
-   * @return the current {@link IConnectionMethod}
-   */
-  public IConnectionMethod getCurrentRequest();
-  
-  
-  
   
   /**
    * Builds {@link HttpMethodBase} using GET method and passing parameters

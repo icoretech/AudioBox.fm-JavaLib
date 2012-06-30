@@ -80,6 +80,15 @@ public class DefaultRequestMethod implements IConnectionMethod {
     HttpEntity entity = null;
     if (  (! isGET() && ! isDELETE() )  && params != null ){
       try {
+        
+        if ( log.isDebugEnabled() ) {
+          StringBuffer sb = new StringBuffer();
+          for ( NameValuePair param : params ){
+            sb.append( "[" + param.getName() + ": '" + param.getValue() + "'], " );
+          }
+          log.debug("Params: " + sb.toString() );
+        }
+        
         entity = new UrlEncodedFormEntity(params, HTTP.UTF_8);
       } catch (UnsupportedEncodingException e) {
         log.error("An error occurred while instantiating UrlEncodedFormEntity", e);
@@ -96,7 +105,7 @@ public class DefaultRequestMethod implements IConnectionMethod {
 
 
   @Override
-  public Response send(boolean async, HttpEntity params, final IResponseHandler responseHandler) throws ServiceException, LoginException {
+  public synchronized Response send(boolean async, HttpEntity params, final IResponseHandler responseHandler) throws ServiceException, LoginException {
     if (   ( ! isGET() && ! isDELETE() )  && params != null ){
       ((HttpEntityEnclosingRequestBase) getHttpMethod() ).setEntity( params );
     }

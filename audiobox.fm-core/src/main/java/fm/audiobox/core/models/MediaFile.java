@@ -128,9 +128,9 @@ public class MediaFile extends AbstractEntity implements Serializable{
   public static final String SOURCE_FIELD =            "source";
   public static final String ORIGINAL_FILE_NAME_FIELD = "original_file_name";
   public static final String MD5_FIELD =                "md5";
-  public static final String HASH_FIELD =                "hash";
-  public static final String FILENAME_FIELD =                "filename";
-  public static final String LOVED_FIELD =                "loved";
+  public static final String HASH_FIELD =               "hash";
+  public static final String FILENAME_FIELD =           "filename";
+  public static final String LOVED_FIELD =              "loved";
   
   private String artist;
   private String album;
@@ -143,7 +143,7 @@ public class MediaFile extends AbstractEntity implements Serializable{
   private int plays;
   private int disc;
   private String mediaFileName;
-  private Type type;
+  private Type type = MediaFiles.Type.AudioFile;
   private int rating;
   private long size;
   private String mime;
@@ -636,7 +636,7 @@ public class MediaFile extends AbstractEntity implements Serializable{
     params.add(  new BasicNameValuePair( prefix + DISC_FIELD,                String.valueOf( this.disc ) )  );
     params.add(  new BasicNameValuePair( prefix + SIZE_FIELD,                String.valueOf( this.size )  )  );
     params.add(  new BasicNameValuePair( prefix + TYPE_FIELD,                this.type.toString() )  );
-    params.add(  new BasicNameValuePair( prefix + SOURCE_FIELD,              this.source.toString() )  );
+    params.add(  new BasicNameValuePair( prefix + SOURCE_FIELD,              this.source != null ? this.source.toString() : null )  );
     params.add(  new BasicNameValuePair( prefix + AUDIO_SAMPLE_RATE_FIELD,   this.audioSampleRate )  );
     params.add(  new BasicNameValuePair( prefix + AUDIO_BIT_RATE_FIELD,      this.audioBitRate )  );
     params.add(  new BasicNameValuePair( prefix + ORIGINAL_FILE_NAME_FIELD,  this.originalFileName )  );

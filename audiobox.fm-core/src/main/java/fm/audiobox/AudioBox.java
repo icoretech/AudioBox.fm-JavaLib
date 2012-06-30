@@ -300,9 +300,6 @@ public class AudioBox extends Observable {
     // Default value of the server
     private IConfiguration.Connectors SERVER = IConfiguration.Connectors.RAILS;
     
-    private IConnectionMethod current;
-
-
     /** Get informations from configuration file */
     private String PROTOCOL = ""; 
     private String HOST = "";
@@ -379,12 +376,6 @@ public class AudioBox extends Observable {
     
     
     
-    public IConnectionMethod getCurrentRequest() {
-      return this.current;
-    }
-    
-    
-    
     /**
      * Creates a HttpRequestBase
      * 
@@ -449,14 +440,14 @@ public class AudioBox extends Observable {
     
     @Override
     public IConnectionMethod get(IEntity destEntity, String path, String action, ContentFormat format, List<NameValuePair> params) {
-      this.current = getConnectionMethod();
+      IConnectionMethod method = getConnectionMethod();
 
-      if ( this.current != null ) {
+      if ( method != null ) {
         HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_GET, path, action, format, params);
-        this.current.init(destEntity, originalMethod, this.mClient, getConfiguration(), format );
+        method.init(destEntity, originalMethod, this.mClient, getConfiguration(), format );
       }
 
-      return this.current;
+      return method;
     }
 
     
@@ -473,14 +464,14 @@ public class AudioBox extends Observable {
 
     @Override
     public IConnectionMethod put(IEntity destEntity, String path, String action, ContentFormat format) {
-      this.current = getConnectionMethod();
+      IConnectionMethod method = getConnectionMethod();
 
-      if ( this.current != null ) {
+      if ( method != null ) {
         HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_PUT, path, action, format, null);
-        this.current.init(destEntity, originalMethod, this.mClient, getConfiguration(), format );
+        method.init(destEntity, originalMethod, this.mClient, getConfiguration(), format );
       }
 
-      return this.current;
+      return method;
     }
     
     
@@ -497,14 +488,16 @@ public class AudioBox extends Observable {
 
     @Override
     public IConnectionMethod post(IEntity destEntity, String path, String action, ContentFormat format) {
-      this.current = getConnectionMethod();
+      IConnectionMethod method = getConnectionMethod();
 
-      if ( this.current != null ) {
+      if ( method != null ) {
         HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_POST, path, action, format, null);
-        this.current.init(destEntity, originalMethod, this.mClient, getConfiguration(), format );
+        log.debug("2- Building ConnectionMethod [" + method.toString() + "]" + " for [" + destEntity.toString() + "]");
+        method.init(destEntity, originalMethod, this.mClient, getConfiguration(), format );
       }
 
-      return this.current;
+      
+      return method;
     }
 
     
@@ -520,14 +513,14 @@ public class AudioBox extends Observable {
 
     @Override
     public IConnectionMethod delete(IEntity destEntity, String path, String action, ContentFormat format, List<NameValuePair> params) {
-      this.current = getConnectionMethod();
+      IConnectionMethod method = getConnectionMethod();
 
-      if ( this.current != null ) {
+      if ( method != null ) {
         HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_DELETE, path, action, format, params);
-        this.current.init(destEntity, originalMethod, this.mClient, getConfiguration(), format );
+        method.init(destEntity, originalMethod, this.mClient, getConfiguration(), format );
       }
 
-      return this.current;
+      return method;
     }
 
     /* --------------- */
@@ -634,7 +627,9 @@ public class AudioBox extends Observable {
         log.trace("Instantiating IConnectionMethod by class: " + klass.getName() );
 
       try {
-        return klass.newInstance();
+        IConnectionMethod method = klass.newInstance();
+        log.debug("1- Building ConnectionMethod [" + method.toString() + "]");
+        return method;
       } catch (InstantiationException e) {
         log.error("An error occurred while instantiating IConnectionMethod class", e);
       } catch (IllegalAccessException e) {
