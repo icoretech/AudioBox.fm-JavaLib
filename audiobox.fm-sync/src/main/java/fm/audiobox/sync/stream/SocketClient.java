@@ -63,6 +63,8 @@ public class SocketClient extends Observable implements IOCallback {
   
   private boolean connected = false;
   
+  private boolean reconnectOnError = false;
+  
   public SocketClient(AudioBox abx) throws ServiceException {
     this.audiobox = abx;
     this.configuration = this.audiobox.getConfiguration();
@@ -178,6 +180,15 @@ public class SocketClient extends Observable implements IOCallback {
   }
   
   
+  public void setReconnectOnError(boolean value) {
+    this.reconnectOnError = value;
+  }
+  
+  public boolean isReconnectOnError() {
+    return this.reconnectOnError;
+  }
+  
+  
   protected String getServerUrl() {
     String protocol = this.configuration.getProtocol(IConfiguration.Connectors.DAEMON);
     String host = this.configuration.getHost(IConfiguration.Connectors.DAEMON);
@@ -252,7 +263,7 @@ public class SocketClient extends Observable implements IOCallback {
       }
     }
     
-    if ( shouldReconnect ){
+    if ( shouldReconnect && this.isReconnectOnError() ){
       log.warn("try to reconnect");
       
       this.connected = false;
@@ -263,11 +274,14 @@ public class SocketClient extends Observable implements IOCallback {
       } catch( Exception e){
         log.error( "Unable to reconnect to the server", e);
       }
+      
     } else {
+      
       Error error = new Error();
       error.setMessage( ex.getMessage() );
       this.setChanged();
       this.notifyObservers( error );
+      
     }
   }
 
