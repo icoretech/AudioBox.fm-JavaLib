@@ -62,10 +62,7 @@ public class DefaultConfiguration implements IConfiguration {
     this.setApplicationName(appName);
     this.setVersion(major, minor, revision);
     this.setRequestFormat(requestFormat);
-    log.debug("Application name: " + appName);
-    log.debug("Application version: " + this.getVersion() );
-    log.debug("Request format: " + requestFormat.toString() );
-    log.info("Configuration loaded");
+    
     this.executor = Executors.newSingleThreadExecutor();
     this.setCacheManager( new DefaultCacheManager() );
 
@@ -89,6 +86,8 @@ public class DefaultConfiguration implements IConfiguration {
         System.getProperty("java.vm.name") + "/" + 
         System.getProperty("java.vm.version") + 
         " " + APP_NAME_PLACEHOLDER + "/" + VERSION_PLACEHOLDER;
+   
+    log.info("Configuration loaded");
   }
 
 
@@ -104,6 +103,7 @@ public class DefaultConfiguration implements IConfiguration {
   @Override
   public void setRequestFormat(ContentFormat requestFormat) {
     this.requestFormat = requestFormat;
+    log.info("Request format: " + requestFormat.toString() );
   }
 
   @Override
@@ -132,6 +132,7 @@ public class DefaultConfiguration implements IConfiguration {
   @Override
   public void setApplicationName(String appName) {
     this.appName = appName;
+    log.info("Application name: " + appName);
   }
 
   @Override
@@ -143,6 +144,7 @@ public class DefaultConfiguration implements IConfiguration {
   @Override
   public void setVersion(int major, int minor, int revision) {
     this.version = major + "." + minor + "." + revision;
+    log.info("Application version: " + this.version );
   }
 
 
@@ -156,7 +158,6 @@ public class DefaultConfiguration implements IConfiguration {
     mUserAgent = mUserAgent
         .replace(APP_NAME_PLACEHOLDER, getApplicationName() )
         .replace(VERSION_PLACEHOLDER, getVersion() );
-    log.debug("Computed UA: " + mUserAgent);
     return mUserAgent;
   }
 

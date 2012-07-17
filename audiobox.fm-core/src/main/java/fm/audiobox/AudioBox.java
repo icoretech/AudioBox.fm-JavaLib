@@ -326,7 +326,7 @@ public class AudioBox extends Observable {
 
       API_PATH = PROTOCOL + "://" + HOST + ":" + PORT;
 
-      log.debug("Remote host will be: " + API_PATH );
+      log.info("Remote host for " + server.toString() + " will be: " + API_PATH );
 
       buildClient();
     }
@@ -398,28 +398,35 @@ public class AudioBox extends Observable {
       HttpRequestBase method = null;
 
       if ( IConnectionMethod.METHOD_POST.equals( httpVerb ) ) {
-        log.trace("Building HttpMethod POST");
+        log.debug("Building HttpMethod POST");
         method = new HttpPost(url);
       } else if ( IConnectionMethod.METHOD_PUT.equals( httpVerb ) ) {
-        log.trace("Building HttpMethod PUT");
+        log.debug("Building HttpMethod PUT");
         method = new HttpPut(url);
       } else if ( IConnectionMethod.METHOD_DELETE.equals( httpVerb ) ) {
-        log.trace("Building HttpMethod DELETE");
+        log.debug("Building HttpMethod DELETE");
         method = new HttpDelete(url);
       } else {
-        log.trace("Building HttpMethod GET");
+        log.debug("Building HttpMethod GET");
         method = new HttpGet(url);
       }
 
-      log.info( "[ " + httpVerb + " ] Next request will be: " + url );
+      log.info( "[ " + httpVerb + " ] " + url );
       
-      log.info("Setting default headers");
+      if ( log.isDebugEnabled() ) {
+        log.debug("Setting default headers");
+        log.debug("-> Accept-Encoding: gzip");
+        log.debug("-> User-Agent: " + getConfiguration().getUserAgent() );
+      }
       
       method.addHeader("Accept-Encoding", "gzip");
       method.addHeader("User-Agent",  getConfiguration().getUserAgent());
       
       if ( user != null && user.getAuthToken() != null ){
-        method.addHeader(IConnector.X_AUTH_TOKEN_HEADER, user.getAuthToken());
+        method.addHeader( IConnector.X_AUTH_TOKEN_HEADER, user.getAuthToken() );
+        if ( log.isDebugEnabled() ) {
+          log.debug( "-> " + IConnector.X_AUTH_TOKEN_HEADER + ": ******" + user.getAuthToken().substring( user.getAuthToken().length() - 5 ) );
+        }
       }
 
       return method;
@@ -492,10 +499,8 @@ public class AudioBox extends Observable {
 
       if ( method != null ) {
         HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_POST, path, action, format, null);
-        log.debug("2- Building ConnectionMethod [" + method.toString() + "]" + " for [" + destEntity.toString() + "]");
         method.init(destEntity, originalMethod, this.mClient, getConfiguration(), format );
       }
-
       
       return method;
     }
@@ -628,7 +633,6 @@ public class AudioBox extends Observable {
 
       try {
         IConnectionMethod method = klass.newInstance();
-        log.debug("1- Building ConnectionMethod [" + method.toString() + "]");
         return method;
       } catch (InstantiationException e) {
         log.error("An error occurred while instantiating IConnectionMethod class", e);

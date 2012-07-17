@@ -53,7 +53,12 @@ public class ResponseParser implements ResponseHandler<Response> {
 
     int responseCode = httpResponse.getStatusLine().getStatusCode();
 
-    log.info("Response code: " + responseCode);
+    
+    if ( log.isDebugEnabled() ) {
+      log.debug("Response code: " + responseCode + " for " + this.method.getHttpMethod().getURI().toString() );
+    } else {
+      log.info( "Response code: " + responseCode );
+    }
 
     Header etag = httpResponse.getFirstHeader(IConnectionMethod.HTTP_HEADER_ETAG);
     String respondedEtag = etag != null ? etag.getValue().replaceAll("\"", "") : null;

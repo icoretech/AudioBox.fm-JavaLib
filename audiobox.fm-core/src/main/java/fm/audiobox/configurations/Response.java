@@ -99,7 +99,6 @@ public class Response implements Serializable {
     try {
       this.stream.reset();
     } catch (IOException e) {
-      log.warn("Stream cannot be reset: " + e.getMessage());
     }
     return this.stream;
   }

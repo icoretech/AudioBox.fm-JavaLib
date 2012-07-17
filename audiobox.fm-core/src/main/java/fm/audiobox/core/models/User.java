@@ -57,6 +57,7 @@ import fm.audiobox.interfaces.IResponseHandler;
  * total_play_count: 122,
  * country: 'country',
  * time_zone: 'UTC',
+ * comet_channel: ""
  * data_served_this_month: 17402342,
  * data_served_overall: 17402342,
  * cloud_data_stored_overall: 0,
@@ -87,18 +88,15 @@ import fm.audiobox.interfaces.IResponseHandler;
  * 
  * <p>
  * 
- * Once obtained the desired collection you can get the tracks collection of each contained element 
- * by getting its tracks:
+ * Once obtained the desired collection you can get the media files collection of each contained element 
+ * by getting its files:
  * 
  * <pre>
  * Playlists playlists = user.getPlaylists();
  * playlists.load();
- * Playlist musicPlaylist = playlists.get(0);
- * MediaFiles media = musicPlaylist.getMediaFiles();
+ * MediaFiles media = playlists.get(0).getMediaFiles();
  * media.load();
  * </pre>
- * 
- * Or you can get informations about a specific, token-known track's, by calling {@link User#getTrackByToken(String)}
  * 
  * @author Valerio Chiodino
  * @author Fabio Tunno
@@ -120,6 +118,7 @@ public final class User extends AbstractEntity implements Serializable {
   private String auth_token;
   private String country;
   private String time_zone;
+  private String comet_channel;
   private String accepted_extensions;
   private String accepted_formats;
   private int    playlists_count;
@@ -173,6 +172,16 @@ public final class User extends AbstractEntity implements Serializable {
   }
 
 
+  public String getCometChannel() {
+    return this.comet_channel;
+  }
+
+
+  public void setCometChannel(String cometChl) {
+    this.comet_channel = cometChl;
+  }
+  
+  
 
   public String getRealName() {
     return real_name;
@@ -552,6 +561,9 @@ public final class User extends AbstractEntity implements Serializable {
     if ( tagName.equals("username") ){
       return this.getClass().getMethod("setUsername", String.class);
 
+    } else if ( tagName.equals("comet_channel") ){
+      return this.getClass().getMethod("setCometChannel", String.class);  
+      
     } else if ( tagName.equals("real_name") ){
       return this.getClass().getMethod("setRealName", String.class);
 
