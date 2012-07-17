@@ -202,6 +202,7 @@ public class AsyncTaskManager implements Observer{
     //    if ( this.started_thread == 0 ){
     //      this.getThreadListener().onComplete(null, null);
     this.isRunning = false;
+    this.getThreadListener().onComplete(null, null);
     //      return;
     //    }
     //
