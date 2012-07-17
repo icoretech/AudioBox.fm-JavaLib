@@ -192,43 +192,16 @@ public class DefaultRequestMethod implements IConnectionMethod {
       Response response = this.futureResponse.get();
       if ( response.getException() != null ) {
         AudioBoxException ex = response.getException();
-        try {
-          
-          // try/catch block, in order to correctly throw the exception
-          
-          if ( ex instanceof LoginException ){
-            throw (LoginException) ex;
-          } else {
-            throw (ServiceException) ex;
-          }
-          
-        } finally {
-          
-          // finally block in order to fire the global exception handlers
-          
-          if ( ex.getFireGlobally() ) {
-            if ( ex instanceof LoginException ) {
-              
-              LoginException le = (LoginException) ex;
-              if ( DefaultRequestMethod.this.configuration.getDefaultLoginExceptionHandler() != null ){
-                this.configuration.getDefaultLoginExceptionHandler().handle( le );
-              }
-              
-            } else if ( ex instanceof ServiceException ) {
-              
-              ServiceException se = (ServiceException) ex;
-              if ( DefaultRequestMethod.this.configuration.getDefaultServiceExceptionHandler() != null ){
-                this.configuration.getDefaultServiceExceptionHandler().handle( se );
-              }
-              
-            } else {
-              log.warn( "A generic exception found: " + ex.getClass().getName() );
-            }
-          } else {
-            log.info( "The exception will not be fired globally" );
-          }
-          
+        ex.setConfiguration( this.configuration );
+        
+        // try/catch block, in order to correctly throw the exception
+        
+        if ( ex instanceof LoginException ){
+          throw (LoginException) ex;
+        } else {
+          throw (ServiceException) ex;
         }
+        
       }
       return response;
     } catch (InterruptedException e) {

@@ -41,45 +41,49 @@ import org.apache.http.client.ClientProtocolException;
  */
 public class ServiceException extends AudioBoxException {
 
-    /** Socket exception error code */
-    public static final int SOCKET_ERROR = 1;
+  /** Socket exception error code */
+  public static final int SOCKET_ERROR = 1;
 
-    /** Client exception error code */
-    public static final int CLIENT_ERROR = 2;
+  /** Client exception error code */
+  public static final int CLIENT_ERROR = 2;
 
-    /** Timeout exception error code */
-    public static final int TIMEOUT_ERROR = 3;
+  /** Timeout exception error code */
+  public static final int TIMEOUT_ERROR = 3;
+  
+  private static final long serialVersionUID = 1L;
+
+  
+  public ServiceException() {
+    super();
+  }
+
+  public ServiceException(String message, Throwable cause) {
+    super(message, cause);
+  }
+  
+  public ServiceException(int errorCode, String message){
+    super(message);
+    this.errorCode = errorCode;
+  }
+  
+
+  public ServiceException(String message) {
+    super(message);
+  }
+
+  public ServiceException(Throwable cause) {
+    super(cause);
     
-    private static final long serialVersionUID = 1L;
-
-    
-    public ServiceException() {
-      super();
-    }
-
-    public ServiceException(String message, Throwable cause) {
-      super(message, cause);
-    }
-    
-    public ServiceException(int errorCode, String message){
-      super(message);
-      this.errorCode = errorCode;
-    }
-    
-
-    public ServiceException(String message) {
-      super(message);
-    }
-
-    public ServiceException(Throwable cause) {
-      super(cause);
-      
-      if ( cause instanceof ClientProtocolException ){
-        this.errorCode = CLIENT_ERROR;
-      } else if ( cause instanceof IOException ){
-        this.errorCode = SOCKET_ERROR;
-      }
-      
+    if ( cause instanceof ClientProtocolException ){
+      this.errorCode = CLIENT_ERROR;
+    } else if ( cause instanceof IOException ){
+      this.errorCode = SOCKET_ERROR;
     }
     
+  }
+  
+  public void fireGlobally() {
+    this.configuration.getDefaultServiceExceptionHandler().handle( this );
+  }
+  
 }

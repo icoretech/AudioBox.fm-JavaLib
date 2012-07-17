@@ -2,8 +2,10 @@ package fm.audiobox.core.exceptions;
 
 import java.io.IOException;
 
+import fm.audiobox.interfaces.IConfiguration;
 
-public class AudioBoxException extends IOException {
+
+public abstract class AudioBoxException extends IOException {
 
   private static final long serialVersionUID = 1L;
   
@@ -13,7 +15,8 @@ public class AudioBoxException extends IOException {
   protected int errorCode = -1;
   protected Throwable cause;
   protected String message;
-  protected boolean fireGlobally = true;
+  
+  protected IConfiguration configuration;
 
   
   public AudioBoxException(){
@@ -37,8 +40,6 @@ public class AudioBoxException extends IOException {
     this.cause = cause;
   }
   
-  
-  
   public int getErrorCode(){
     return errorCode;
   }
@@ -51,13 +52,10 @@ public class AudioBoxException extends IOException {
     return message;
   }
   
-  public void setFireGlobally(boolean value) {
-    this.fireGlobally = value;
+  public void setConfiguration(IConfiguration config) {
+    this.configuration = config;
   }
   
-  public boolean getFireGlobally() {
-    return this.fireGlobally;
-  }
-  
+  public abstract void fireGlobally();
   
 }

@@ -27,7 +27,6 @@ import fm.audiobox.core.models.Error;
 import fm.audiobox.core.parsers.JParser;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
-import fm.audiobox.interfaces.IServiceExceptionHandler;
 import io.socket.IOAcknowledge;
 import io.socket.IOCallback;
 import io.socket.SocketIO;
@@ -132,28 +131,16 @@ public class SocketClient extends Observable implements IOCallback {
       
       String urlStr = this.getServerUrl();
       URL url = null;
-      ServiceException abxEx = null;
       try {
         url = new URL( urlStr );
         log.info("Server will be " + url.toURI().toString() );
         
       } catch (MalformedURLException e) {
         log.error("Invalid url found");
-        ServiceException se = new ServiceException("No valid URL for server found");
-        abxEx = se;
-        throw se;
+        throw new ServiceException("No valid URL for server found");
       } catch (URISyntaxException e) {
         log.error("Invalid url found");
-        ServiceException se = new ServiceException("No valid URL for server found");
-        abxEx = se;
-        throw se;
-      } finally {
-        if ( abxEx != null && abxEx.getFireGlobally() ) {
-          IServiceExceptionHandler seh = this.configuration.getDefaultServiceExceptionHandler();
-          if ( seh != null ) {
-            seh.handle( abxEx );
-          }
-        }
+        throw new ServiceException("No valid URL for server found");
       }
       
       this.socket = new SocketIO( url );

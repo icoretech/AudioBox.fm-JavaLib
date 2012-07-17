@@ -39,6 +39,10 @@ public class LoginException extends AudioBoxException {
     super(message);
     this.errorCode = errorCode;
   }
-  
+
+
+  public void fireGlobally() {
+    this.configuration.getDefaultLoginExceptionHandler().handle( this );
+  }
   
 }
