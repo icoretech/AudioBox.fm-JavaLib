@@ -9,7 +9,9 @@ import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.MediaFile;
 import fm.audiobox.core.models.MediaFiles;
+import fm.audiobox.core.parsers.UploadHandler;
 import fm.audiobox.core.test.mocks.fixtures.Fixtures;
+import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 
 public class MediaFileUploaderTest extends AudioBoxTestCase {
 
@@ -28,8 +30,8 @@ public class MediaFileUploaderTest extends AudioBoxTestCase {
       assertNull(media.getMediaFileName());
       
       File fileToUpload = new File( Fixtures.get( Fixtures.FILE_TO_UPLOAD ) );
-      
-      assertTrue( media.upload( fileToUpload ) );
+      IConnectionMethod request = media.upload( false, new UploadHandler(fileToUpload) );
+      assertTrue( request.getResponse().isOK() );
       
       assertNotNull(media.getToken());
       assertNotNull(media.getMediaFileName());
@@ -52,9 +54,9 @@ public class MediaFileUploaderTest extends AudioBoxTestCase {
       assertNull(media.getToken());
       assertNull(media.getMediaFileName());
       
-      File fileToUpload = new File( Fixtures.get("file_to_upload") );
-      
-      assertFalse( media.upload( fileToUpload ) );
+      File fileToUpload = new File( Fixtures.get( Fixtures.FILE_TO_UPLOAD ) );
+      IConnectionMethod request = media.upload( false, new UploadHandler(fileToUpload) );
+      assertTrue( request.getResponse().isOK() );
       
     } catch (ServiceException e) {
       ex = e;

@@ -179,10 +179,23 @@ public class AsyncTaskManager implements Observer{
   public void stop(){
 
     this._stopped = true;
-    if ( this._threads != null )
+    if ( this._threads != null ) {
       /** Remove all remaining element from threads list */
-      while( this._threads.size() > 0 )
-        this._threads.remove( this._threads.size()-1 ).stop();
+      while( this._threads.size() > 0 ) {
+        // These threads is in waiting, so we should only remove them from the queue
+        this._threads.remove( this._threads.size()-1 ); //.stop();
+      }
+    }
+    
+    if ( this._runningthreads != null ) {
+      /** Remove all remaining element from threads list */
+      while( this._runningthreads.size() > 0 ) {
+        // These threads are running, we should stop them!
+        AsyncTask task = this._runningthreads.remove( this._runningthreads.size()-1 );
+        task.deleteObserver( this );
+        task.stop();
+      }
+    }
 
     this.threadGroup = null;
     //    this.current_thread_index = -1;

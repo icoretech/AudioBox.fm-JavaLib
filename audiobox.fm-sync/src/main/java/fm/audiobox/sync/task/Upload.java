@@ -27,6 +27,7 @@ import java.io.File;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.MediaFile;
+import fm.audiobox.core.parsers.UploadHandler;
 import fm.audiobox.sync.util.AsyncTask;
 
 /**
@@ -49,13 +50,13 @@ public class Upload extends AsyncTask {
     @Override
     protected synchronized void doTask() {
 
-        try {
-			this.media.upload(this.mFile);
-        } catch (LoginException e) {
-            e.printStackTrace();
-        } catch (ServiceException e) {
-            e.printStackTrace();
-        }
+      try {
+        this.media.upload( false, new UploadHandler(this.mFile) );
+      } catch (LoginException e) {
+          e.printStackTrace();
+      } catch (ServiceException e) {
+          e.printStackTrace();
+      }
 
     }
 

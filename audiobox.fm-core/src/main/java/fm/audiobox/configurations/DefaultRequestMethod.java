@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -44,6 +45,9 @@ public class DefaultRequestMethod implements IConnectionMethod {
   private volatile transient IConfiguration configuration;
   private volatile transient Future<Response> futureResponse;
   private volatile transient IConfiguration.ContentFormat format;
+  
+  private volatile transient boolean running = false;
+  private volatile transient boolean aborted = false;
 
   public DefaultRequestMethod(){
     super();
@@ -127,6 +131,9 @@ public class DefaultRequestMethod implements IConnectionMethod {
         Response response = null;
         try {
 
+          DefaultRequestMethod.this.running = true;
+          DefaultRequestMethod.this.aborted = false;
+          
           return connector.execute( getHttpMethod(), new ResponseParser( DefaultRequestMethod.this.configuration, DefaultRequestMethod.this, responseHandler), new BasicHttpContext() );
 
         } catch (ClientProtocolException e) {
@@ -187,35 +194,50 @@ public class DefaultRequestMethod implements IConnectionMethod {
     return async ? null : this.getResponse();
   }
 
-  public Response getResponse()  throws ServiceException, LoginException{
+  public Response getResponse()  throws ServiceException, LoginException {
     try {
       Response response = this.futureResponse.get();
-      if ( response.getException() != null ) {
-        AudioBoxException ex = response.getException();
-        ex.setConfiguration( this.configuration );
-        
-        // try/catch block, in order to correctly throw the exception
-        
-        if ( ex instanceof LoginException ){
-          throw (LoginException) ex;
-        } else {
-          throw (ServiceException) ex;
+      
+      this.running = false;
+      this.aborted = false;
+      
+      if ( response != null ) {
+        if ( response.getException() != null ) {
+          AudioBoxException ex = response.getException();
+          ex.setConfiguration( this.configuration );
+          
+          // try/catch block, in order to correctly throw the exception
+          
+          if ( ex instanceof LoginException ){
+            throw (LoginException) ex;
+          } else {
+            throw (ServiceException) ex;
+          }
+          
         }
-        
+        return response;
       }
-      return response;
     } catch (InterruptedException e) {
-      log.error(e.getMessage(), e);
+      log.error("Request has been interrupted: " + getHttpMethod().getURI().toString() );
+      return null;
+    } catch ( CancellationException ce ) {
+      log.error("Request has been cancelled: " + getHttpMethod().getURI().toString() );
+      return null;
     } catch (ExecutionException e) {
-      log.error(e.getMessage(), e);
+      log.error("An error occurred while executing request", e);
+      return null;
     }
-    throw new ServiceException(HttpStatus.SC_PRECONDITION_FAILED, "No response found");
+    
+    // A generic error occurred, throw a generic ServiceException
+    throw new ServiceException(HttpStatus.SC_PRECONDITION_FAILED, "No response");
   }
 
   @Override
   public void abort() {
     futureResponse.cancel(true);
     getHttpMethod().abort();
+    this.aborted = true;
+    this.running = false;
   }
 
 
@@ -230,6 +252,15 @@ public class DefaultRequestMethod implements IConnectionMethod {
   }
 
 
+  public boolean isRunning() {
+    return this.running;
+  }
+  
+  public boolean isAborted() {
+    return this.aborted;
+  }
+  
+  
   @Override
   public boolean isGET() {
     return getHttpMethod().getMethod().equals( HttpGet.METHOD_NAME );

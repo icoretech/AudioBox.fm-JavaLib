@@ -88,9 +88,10 @@ public abstract class AsyncTask extends Observable implements Runnable {
         this.doTask();
       }
 
-      if ( this.stopped )
+      if ( this.stopped ) {
         this.threadListener.onStop(this);
-      else {
+        this.threadListener.onComplete(this, null);
+      } else {
         Object result = this.end();
         this.threadListener.onComplete(this, result);
       }

@@ -20,35 +20,29 @@
 package fm.audiobox.core.models;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.activation.MimetypesFileTypeMap;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fm.audiobox.AudioBox;
-import fm.audiobox.configurations.DefaultResponseParser;
+import fm.audiobox.configurations.MimeTypes;
 import fm.audiobox.configurations.Response;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.MediaFiles.Type;
+import fm.audiobox.core.parsers.DownloadHandler;
+import fm.audiobox.core.parsers.UploadHandler;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
+import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
-import fm.audiobox.interfaces.IResponseHandler;
 
 /**
  * File is the main subject of the scope of these libraries.
@@ -462,29 +456,9 @@ public class MediaFile extends AbstractEntity implements Serializable{
 
   @Override
   protected void copy(IEntity entity) {
-    // TODO Auto-generated method stub
+    log.warn("Not implemented yet");
   }
 
-  //  /**
-  //   * Executes request populating this class
-  //   * 
-  //   * @throws ServiceException
-  //   * @throws LoginException
-  //   */
-  //  public void load() throws ServiceException, LoginException {
-  //    this.load(null);
-  //  }
-  //
-  //  /**
-  //   * Executes request populating this class and passing the {@link IResponseHandler} as response parser
-  //   * 
-  //   * @param responseHandler the {@link IResponseHandler} used as response content parser
-  //   * @throws ServiceException
-  //   * @throws LoginException
-  //   */
-  //  public void load(IResponseHandler responseHandler) throws ServiceException, LoginException {
-  //    getConnector().get(this, null, null).send(false, null, responseHandler);
-  //  }
 
   @Override
   public String getApiPath() {
@@ -540,15 +514,21 @@ public class MediaFile extends AbstractEntity implements Serializable{
     this.parent = parent;
   }
 
-  public boolean upload(File file) throws ServiceException, LoginException {
+  public IConnectionMethod upload(boolean async, UploadHandler uploadHandler) throws ServiceException, LoginException {
     String path = IConnector.URI_SEPARATOR.concat( Actions.upload.toString() );
 
     MultipartEntity entity = new MultipartEntity();
+    
+    String mime = MimeTypes.getMime( uploadHandler.getFile() );
+    if ( mime == null ) {
+      throw new ServiceException("mime type error: file is not supported by AudioBox2");
+    }
+    
+    entity.addPart("media", uploadHandler );
 
-    entity.addPart("media", new FileBody(file, new MimetypesFileTypeMap().getContentType(file)));
-
-    Response response = this.getConnector(IConfiguration.Connectors.NODE).post(this, path, null, null).send(false, entity);
-    return response.isOK();
+    IConnectionMethod request = this.getConnector(IConfiguration.Connectors.NODE).post(this, path, null, null);
+    request.send(async, entity);
+    return request;
   }
 
 
@@ -562,32 +542,15 @@ public class MediaFile extends AbstractEntity implements Serializable{
    */
   public void download(final File file) throws ServiceException, LoginException {
     if( file != null ){
-      IResponseHandler responseparser = new DefaultResponseParser(){
-        @Override
-        public void parseAsBinary(InputStream inputStream, IEntity destEntity) throws ServiceException {
-          try {
-            OutputStream out = new FileOutputStream(file);
-            byte buf[] = new byte[1024 * 64];
-            int len;
-            while((len=inputStream.read(buf))>0){
-              out.write(buf,0,len);
-            }          
-            out.close();
-            inputStream.close();
-
-          } catch (FileNotFoundException e) {
-            log.error("File not found: " + file.getName());
-          } catch (IOException e) {
-            log.error("IOException : " + e.getMessage());
-          }
-        }
-      };
-      download(file, responseparser);
-    }else
-      log.warn("Input file is null");
+      
+      download(file, new DownloadHandler(file, IConnector.DEFAULT_CHUNK ));
+      
+    } else {
+      throw new ServiceException("No file found for downloading media");
+    }
   }
 
-  public void download(final File file, IResponseHandler responseHandler) throws ServiceException, LoginException {
+  public IConnectionMethod download(final File file, DownloadHandler downloadHandler) throws ServiceException, LoginException {
 
     if( file != null ){
       // In this case we are using 'path' for the action
@@ -595,25 +558,27 @@ public class MediaFile extends AbstractEntity implements Serializable{
       String path = IConnector.URI_SEPARATOR.concat( Actions.stream.toString() );
       String action = this.getMediaFileName();
 
-      // TODO: perform this action only when filename property has been correctly populated
-      this.getConnector(IConfiguration.Connectors.NODE).get(this,  path , action, null , null).send(false,null,responseHandler);
+      IConnectionMethod request = this.getConnector(IConfiguration.Connectors.NODE).get(this,  path , action, null , null);
+      request.send(false, null, downloadHandler);
+      return request;
 
-    }else
-      log.warn("Input file is null");
-
+    } else {
+      throw new ServiceException("No file found for downloading media");
+    }
   }
   
   /**
    * This method makes a POST request for notifying AudioBox.fm this {@link MediaFile}
    * is a local file which can be used through AudioBox.fm - PC feauture
    */
-  public void notifyAsLocal() throws ServiceException, LoginException {
+  public boolean notifyAsLocal() throws ServiceException, LoginException {
     String path = IConnector.URI_SEPARATOR.concat( Actions.local.toString() );
     String action = Actions.upload.toString();
     
     List<NameValuePair> params = this.toQueryParameters(false);
     
-    this.getConnector(IConfiguration.Connectors.NODE).post(this, path, action, null).send(false, params);
+    Response response = this.getConnector(IConfiguration.Connectors.NODE).post(this, path, action, null).send(false, params);
+    return response.isOK();
   }
   
   

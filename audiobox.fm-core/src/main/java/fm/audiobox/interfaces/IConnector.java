@@ -50,7 +50,7 @@ public interface IConnector {
   public static final String DOT = ".";
   public static final String X_AUTH_TOKEN_HEADER = "X-AUTH-TOKEN";
   
-  
+  public static final int DEFAULT_CHUNK = 1024 * 256;
   
   
   
@@ -263,6 +263,21 @@ public interface IConnector {
      * Aborts all current pending requests 
      */
     public void abort();
+    
+    
+    /**
+     * Returns {@code true} if request is running. {@code false} if not
+     * @return boolean
+     */
+    public boolean isRunning();
+    
+    
+    /**
+     * Returns {@code true} if request has been aborted. {@code false} if not
+     * @return boolean
+     */
+    public boolean isAborted();
+    
     
     
     /**
