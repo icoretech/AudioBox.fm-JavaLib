@@ -161,7 +161,7 @@ public class ResponseParser implements ResponseHandler<Response> {
         } else {
           // default: do nothing
         }
-  
+        log.warn("Server has returned error: " + response.getBody() );
         throw new ServiceException(response.getStatus(), response.getBody());
     }
 
