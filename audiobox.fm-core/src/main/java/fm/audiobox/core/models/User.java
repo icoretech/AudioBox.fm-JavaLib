@@ -29,6 +29,8 @@ import java.util.List;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
@@ -48,34 +50,46 @@ import fm.audiobox.interfaces.IResponseHandler;
  * 
  * <pre>
  * @code
- * username: 'username',
- * real_name: 'Real Name',
- * email: 'email@domain.com',
- * auth_token: '',
- * media_files_count: 100,
- * playlists_count: 3,
- * total_play_count: 122,
- * country: 'country',
+ * real_name: Fabio Tunno,
+ * email: 'fat@fatshotty.net',
+ * auth_token: '....',
+ * media_files_count: 362,
+ * playlists_count: 8,
+ * total_play_count: 0,
+ * country: null,
  * time_zone: 'UTC',
- * comet_channel: ""
- * data_served_this_month: 17402342,
- * data_served_overall: 17402342,
- * cloud_data_stored_overall: 0,
- * cloud_data_stored_this_month: 0,
- * local_data_stored_overall: 0,
- * local_data_stored_this_month: 0,
- * dropbox_data_stored_overall: 17402342,
- * dropbox_data_stored_this_month: 17402342,
- * accepted_extensions: 'aac,mp3,mp2,m4a,m4b,m4r,3gp,ogg,oga,flac,spx,wma,rm,ram,wav,mpc,mp+,mpp,aiff,aif,aifc,tta,mp4,m4v,mov,avi,flv,webm',
- * accepted_formats: 'audio/aac,audio/mpeg,audio/mp4,audio/ogg,audio/flac,audio/speex,audio/x-ms-wma,audio/x-pn-realaudio,audio/vnd.wave,audio/x-musepack,audio/x-aiff,audio/x-tta,video/mp4,video/x-m4v,video/quicktime,video/x-msvideo,video/x-flv,video/webm',
- * permissions:
+ * accepted_extensions: 'aac,mp3,mp2 ....',
+ * accepted_formats: 'audio/aac,audio/mpeg ....',
+ * permissions: 
  *   local: true,
  *   cloud: true,
  *   dropbox: true,
  *   gdrive: true,
  *   skydrive: true,
- *   soundcloud: true,
- *   youtube: true
+ *   soundcloud: false,
+ *   youtube: true,
+ *   box: false,
+ *   lastfm: false,
+ *   partner: false },
+ * comet_channel: ' ... ',
+ * subscription_state: 'active',
+ * stats: 
+ *   data_served_this_month: 890484885,
+ *   data_served_overall: 890484885,
+ *   cloud_data_stored_overall: 644869578,
+ *   cloud_data_stored_this_month: 644869578,
+ *   local_data_stored_overall: 1927432772,
+ *   local_data_stored_this_month: 3857729035,
+ *   dropbox_data_stored_overall: 23689107,
+ *   dropbox_data_stored_this_month: 23689107,
+ *   gdrive_data_stored_this_month: 0,
+ *   gdrive_data_stored_overall: 0,
+ *   skydrive_data_stored_this_month: 95088577,
+ *   skydrive_data_stored_overall: 95088577,
+ *   box_data_stored_this_month: null,
+ *   box_data_stored_overall: null,
+ *   partner_data_stored_this_month: 0,
+ *   partner_data_stored_overall: 0
  * @endcode
  * </pre>
  *
@@ -102,12 +116,23 @@ import fm.audiobox.interfaces.IResponseHandler;
  * @author Fabio Tunno
  */
 public final class User extends AbstractEntity implements Serializable {
+  
+  private static final Logger log = LoggerFactory.getLogger(User.class);
 
   private static final long serialVersionUID = 1L;
 
   /** User API namespace */
   public static final String NAMESPACE = "user";
   public static final String TAGNAME = NAMESPACE;
+  
+  public static enum SubscriptionState {
+    nothing,
+    active,
+    trialing,
+    past_due,
+    canceled,
+    unpaid
+  }
 
   /** Separator used to split the allowed formats string */
   public static final String ALLOWED_EXTENSIONS_SEPARATOR = ";";
@@ -116,26 +141,20 @@ public final class User extends AbstractEntity implements Serializable {
   private String real_name;
   private String email;
   private String auth_token;
-  private String country;
   private String time_zone;
-  private String comet_channel;
   private String accepted_extensions;
   private String accepted_formats;
-  private int    playlists_count;
-  private long   media_files_count;
-  private long   total_play_count;
-  private long   data_served_this_month;
-  private long   data_served_overall;
-  private long   cloud_data_stored_overall;
-  private long   cloud_data_stored_this_month;
-  private long   local_data_stored_overall;
-  private long   local_data_stored_this_month;
-  private long   dropbox_data_stored_overall;
-  private long   dropbox_data_stored_this_month;
+  private String country;
+  private int playlists_count;
+  private long total_play_count;
+  private long media_files_count;
+  private SubscriptionState subscription_state = SubscriptionState.nothing;
+  private String comet_channel;
 
   // User's collection relations
   private Playlists playlists;
   private Permissions permissions;
+  private AccountStats accountStats;
 
   /**
    * <p>Constructor for User.</p>
@@ -171,17 +190,6 @@ public final class User extends AbstractEntity implements Serializable {
     this.username = username;
   }
 
-
-  public String getCometChannel() {
-    return this.comet_channel;
-  }
-
-
-  public void setCometChannel(String cometChl) {
-    this.comet_channel = cometChl;
-  }
-  
-  
 
   public String getRealName() {
     return real_name;
@@ -242,11 +250,9 @@ public final class User extends AbstractEntity implements Serializable {
   }
 
 
-
   public String getAcceptedFormats() {
     return accepted_formats;
   }
-
 
 
   public void setAcceptedFormats(String accepted_formats) {
@@ -254,6 +260,16 @@ public final class User extends AbstractEntity implements Serializable {
   }
 
 
+  public void setCometChannel(String cometChl) {
+    this.comet_channel = cometChl;
+  }
+
+
+  public String getCometChannel() {
+    return this.comet_channel;
+  }
+  
+  
 
   public int getPlaylistsCount() {
     return playlists_count;
@@ -290,100 +306,22 @@ public final class User extends AbstractEntity implements Serializable {
   }
 
 
-
-  public long getDataServedTthisMonth() {
-    return data_served_this_month;
+  public void setSubscriptionState(String flag) {
+    log.warn("subscription_state is not implemented yet");
+    SubscriptionState state = SubscriptionState.valueOf( flag );
+    if ( state != null ) {
+      this.subscription_state = state;
+    } else {
+      log.warn( "no vaild subscription_state given");
+    }
   }
-
-
-
-  public void setDataServedThisMonth(long data_served_this_month) {
-    this.data_served_this_month = data_served_this_month;
+  
+  public void setSubscriptionState(SubscriptionState state) {
+    this.subscription_state = state;
   }
-
-
-
-  public long getDataServedOverall() {
-    return data_served_overall;
-  }
-
-
-
-  public void setDataServedOverall(long data_served_overall) {
-    this.data_served_overall = data_served_overall;
-  }
-
-
-
-  public long getCloudDataStoredOverall() {
-    return cloud_data_stored_overall;
-  }
-
-
-
-  public void setCloudDataStoredOverall(long cloud_data_stored_overall) {
-    this.cloud_data_stored_overall = cloud_data_stored_overall;
-  }
-
-
-
-  public long getCloudDataStoredThisMonth() {
-    return cloud_data_stored_this_month;
-  }
-
-
-
-  public void setCloudDataStoredThisMonth(long cloud_data_stored_this_month) {
-    this.cloud_data_stored_this_month = cloud_data_stored_this_month;
-  }
-
-
-
-  public long getLocalDataStoredOverall() {
-    return local_data_stored_overall;
-  }
-
-
-
-  public void setLocalDataStoredOverall(long local_data_stored_overall) {
-    this.local_data_stored_overall = local_data_stored_overall;
-  }
-
-
-
-  public long getLocalDataStoredthisMonth() {
-    return local_data_stored_this_month;
-  }
-
-
-
-  public void setLocalDataStoredThisMonth(long local_data_stored_this_month) {
-    this.local_data_stored_this_month = local_data_stored_this_month;
-  }
-
-
-
-  public long getDropboxDataStoredOverall() {
-    return dropbox_data_stored_overall;
-  }
-
-
-
-  public void setDropboxDataStoredOverall(long dropbox_data_stored_overall) {
-    this.dropbox_data_stored_overall = dropbox_data_stored_overall;
-  }
-
-
-
-  public long getDropboxDataStoredThisMonth() {
-    return dropbox_data_stored_this_month;
-  }
-
-
-
-  public void setDropboxDataStoredThisMonth(
-      long dropbox_data_stored_this_month) {
-    this.dropbox_data_stored_this_month = dropbox_data_stored_this_month;
+  
+  public SubscriptionState getSubscriptionState() {
+    return this.subscription_state;
   }
 
 
@@ -394,6 +332,14 @@ public final class User extends AbstractEntity implements Serializable {
   
   public Permissions getPermissions() {
     return this.permissions;
+  }
+  
+  public void setAccountStats(AccountStats accountStats) {
+    this.accountStats = accountStats;
+  }
+  
+  public AccountStats getAccountStats() {
+    return this.accountStats;
   }
   
 
@@ -483,21 +429,6 @@ public final class User extends AbstractEntity implements Serializable {
   }
 
 
-  //  public boolean dropTracks(List<Track> tracks) throws LoginException, ServiceException {
-  //    try {
-  //      return this.getPlaylists().getPlaylistsByType( PlaylistTypes.TRASH ).get( AudioBox.FIRST ).addTracks(tracks);
-  //    } catch (ModelException e) {
-  //      e.printStackTrace();
-  //    }
-  //    return false;
-  //  }
-
-  //  public boolean dropTrack(Track track) throws LoginException, ServiceException {
-  //    List<Track> tracks = new ArrayList<Track>();
-  //    tracks.add(track);
-  //    return dropTracks( tracks );
-  //  }
-
 
   public void emptyTrash() throws LoginException, ServiceException {
     Playlists pls = (Playlists)getConfiguration().getFactory().getEntity( Playlists.NAMESPACE, getConfiguration() );
@@ -545,7 +476,7 @@ public final class User extends AbstractEntity implements Serializable {
    * @throws LoginException
    */
   public void load(IResponseHandler responseHandler) throws ServiceException, LoginException {
-    getConnector().get(this, null, null).send(false, null, responseHandler);
+    this.getConnector().get(this, null, null).send(false, null, responseHandler);
   }
 
 
@@ -558,69 +489,50 @@ public final class User extends AbstractEntity implements Serializable {
 
   public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException{
 
-    if ( tagName.equals("username") ){
+    if ( tagName.equals("username")  )  {
       return this.getClass().getMethod("setUsername", String.class);
 
-    } else if ( tagName.equals("comet_channel") ){
-      return this.getClass().getMethod("setCometChannel", String.class);  
-      
-    } else if ( tagName.equals("real_name") ){
+    } else if ( tagName.equals("real_name")  )  {
       return this.getClass().getMethod("setRealName", String.class);
 
-    } else if ( tagName.equals("email") ){
+    } else if ( tagName.equals("comet_channel")  )  {
+      return this.getClass().getMethod("setCometChannel", String.class);
+
+    } else if ( tagName.equals("email")  )  {
       return this.getClass().getMethod("setEmail", String.class);
 
-    } else if ( tagName.equals("auth_token") ){
+    } else if ( tagName.equals("auth_token")  )  {
       return this.getClass().getMethod("setAuthToken", String.class);
 
-    } else if ( tagName.equals("country") ){
-      return this.getClass().getMethod("setCountry", String.class);
-
-    } else if ( tagName.equals("time_zone") ){
+    } else if ( tagName.equals("time_zone")  )  {
       return this.getClass().getMethod("setTimeZone", String.class);
 
-    } else if ( tagName.equals("accepted_extensions") ){
+    } else if ( tagName.equals("accepted_extensions")  )  {
       return this.getClass().getMethod("setAcceptedExtensions", String.class);
 
-    } else if ( tagName.equals("accepted_formats") ){
+    } else if ( tagName.equals("accepted_formats")  )  {
       return this.getClass().getMethod("setAcceptedFormats", String.class);
 
-    } else if ( tagName.equals("playlists_count") ){
+    } else if ( tagName.equals("country")  )  {
+      return this.getClass().getMethod("setCountry", String.class);
+
+    } else if ( tagName.equals("playlists_count")  )  {
       return this.getClass().getMethod("setPlaylistsCount", int.class);
 
-    } else if ( tagName.equals("media_files_count") ){
-      return this.getClass().getMethod("setMediaFilesCount", long.class);
-
-    } else if ( tagName.equals("total_play_count") ){
+    } else if ( tagName.equals("total_play_count")  )  {
       return this.getClass().getMethod("setTotalPlayCount", long.class);
 
-    } else if ( tagName.equals("data_served_this_month") ){
-      return this.getClass().getMethod("setDataServedThisMonth", long.class);
-
-    } else if ( tagName.equals("data_served_overall") ){
-      return this.getClass().getMethod("setDataServedOverall", long.class);
-
-    } else if ( tagName.equals("cloud_data_stored_overall") ){
-      return this.getClass().getMethod("setCloudDataStoredOverall", long.class);
-
-    } else if ( tagName.equals("cloud_data_stored_this_month") ){
-      return this.getClass().getMethod("setCloudDataStoredThisMonth", long.class);
-
-    } else if ( tagName.equals("local_data_stored_overall") ){
-      return this.getClass().getMethod("setLocalDataStoredOverall", long.class);
-
-    } else if ( tagName.equals("local_data_stored_this_month") ){
-      return this.getClass().getMethod("setLocalDataStoredThisMonth", long.class);
-
-    } else if ( tagName.equals("dropbox_data_stored_overall") ){
-      return this.getClass().getMethod("setDropboxDataStoredOverall", long.class);
-
-    } else if ( tagName.equals("dropbox_data_stored_this_month") ){
-      return this.getClass().getMethod("setDropboxDataStoredThisMonth", long.class);
+    } else if ( tagName.equals("media_files_count")  )  {
+      return this.getClass().getMethod("setMediaFilesCount", long.class);
+     
+    } else if ( tagName.equals("subscription_state") ) {
+      return this.getClass().getMethod("setSubscriptionState", String.class);
 
     } else if ( tagName.equals("permissions") ) {
       return this.getClass().getMethod("setPermissions", Permissions.class);
       
+    } else if ( tagName.equals("stats") ) {
+      return this.getClass().getMethod("setAccountStats", AccountStats.class);
     }
     
     

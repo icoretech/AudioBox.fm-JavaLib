@@ -5,7 +5,9 @@ package fm.audiobox.core.test;
 
 import org.junit.Test;
 
+import fm.audiobox.core.models.AccountStats;
 import fm.audiobox.core.models.Permissions;
+import fm.audiobox.core.models.User;
 import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 
 /**
@@ -41,6 +43,14 @@ public class UserTest extends AudioBoxTestCase {
     assertFalse( p.isSkydrive() );
     assertFalse( p.isSoundcloud() );
     assertFalse( p.isYoutube() );
+    
+    // AccountStats
+    AccountStats accountStats = user.getAccountStats();
+    assertTrue( accountStats.getCloudDataStoredOverall() > 0 );
+    
+    assertNotSame(user.getSubscriptionState(), User.SubscriptionState.nothing );
+    
+    
 
   }
 
