@@ -24,6 +24,7 @@ import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.Action;
 import fm.audiobox.core.models.Args;
 import fm.audiobox.core.models.Error;
+import fm.audiobox.core.observables.Event;
 import fm.audiobox.core.parsers.JParser;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
@@ -76,11 +77,13 @@ public class SocketClient extends Observable implements IOCallback {
     // Observer for catching the User status change events (login/logout)
     this.audiobox.addObserver(new Observer() {
       @Override
-      public void update(Observable abx, Object usr) {
+      public void update(Observable abx, Object evt) {
         // new User has changed its status
         
+        Event event = (Event) evt;
+        
         log.info("User has changed its status");
-        if ( usr == null ){
+        if ( event.state == Event.States.DISCONNECTED ) {
           // User is no longer logged in
           
           /**
@@ -96,15 +99,14 @@ public class SocketClient extends Observable implements IOCallback {
             // in order to perform a new connection once User is logged in
             wasConnected = true;
         
-        } else if ( wasConnected ){
+        } else if ( event.state == Event.States.CONNECTED && wasConnected ){
           // User is logged in, and we were connected.
           // We should reconnect
           try {
             SocketClient.this.connect();
           } catch (ServiceException e) {
             log.error( "An error occurred while connecting to server", e);
-            if ( SocketClient.this.audiobox.getConfiguration().getDefaultServiceExceptionHandler() != null )
-              SocketClient.this.audiobox.getConfiguration().getDefaultServiceExceptionHandler().handle( e );
+            e.fireGlobally();
           }
         }
       }
@@ -206,6 +208,9 @@ public class SocketClient extends Observable implements IOCallback {
   public void onDisconnect() {
     log.info("Disconnected!");
     SocketClient.this.connected = false;
+    Event event = new Event(new Object(), Event.States.DISCONNECTED);
+    this.setChanged();
+    this.notifyObservers( event );
   }
 
 
@@ -214,12 +219,16 @@ public class SocketClient extends Observable implements IOCallback {
     log.info("Connected!");
     SocketClient.this.connected = true;
     SocketClient.this.wasConnected = true;
+    Event event = new Event(new Object(), Event.States.CONNECTED);
+    this.setChanged();
+    this.notifyObservers( event );
   }
 
 
   @Override
   public void onMessage(String data, IOAcknowledge ack) {
     log.info("Text message received" + data);
+    log.warn("Not supported yet");
   }
 
 
@@ -266,8 +275,9 @@ public class SocketClient extends Observable implements IOCallback {
       
       Error error = new Error();
       error.setMessage( ex.getMessage() );
+      Event event = new Event( error, Event.States.ERROR );
       this.setChanged();
-      this.notifyObservers( error );
+      this.notifyObservers( event );
       
     }
   }
@@ -292,9 +302,9 @@ public class SocketClient extends Observable implements IOCallback {
         jp.parse( jobj );
         
         // Message received: notify observers
-        // Should we do that via Thread?!
+        Event event = new Event(action, Event.States.ENTITY_REFRESHED);
         this.setChanged();
-        this.notifyObservers(action);
+        this.notifyObservers(event);
         
       } else {
         log.error("Invalid message received: " + json.toString() );

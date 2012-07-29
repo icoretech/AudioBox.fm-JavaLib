@@ -74,6 +74,7 @@ import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.AbstractCollectionEntity;
 import fm.audiobox.core.models.AbstractEntity;
 import fm.audiobox.core.models.User;
+import fm.audiobox.core.observables.Event;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConfiguration.ContentFormat;
 import fm.audiobox.interfaces.IConnector;
@@ -233,12 +234,7 @@ public class AudioBox extends Observable {
     log.info("Executing login for user: " + username);
     
     // Destroy old user's pointer
-    this.user = null;
-    
-    // notify all observer User has been destroyed
-    this.setChanged();
-    this.notifyObservers(null);
-
+    this.logout();
     
     User user = (User) this.configuration.getFactory().getEntity(User.TAGNAME, this.getConfiguration() );
     user.setUsername(username);
@@ -251,8 +247,9 @@ public class AudioBox extends Observable {
     this.user = user;
     
     // User has been authenticated, notify observers
+    Event event = new Event(this.user, Event.States.CONNECTED);
     this.setChanged();
-    this.notifyObservers(user);
+    this.notifyObservers(event);
 
     return this.user;
   }
@@ -264,10 +261,13 @@ public class AudioBox extends Observable {
     if ( this.user != null ) {
       // Destroy old user's pointer
       this.user = null;
+
       
       // notify all observer User has been destroyed
+      Event event = new Event(new Object(), Event.States.DISCONNECTED);
       this.setChanged();
-      this.notifyObservers(null);
+      this.notifyObservers(event);
+      
       return true;
     }
     

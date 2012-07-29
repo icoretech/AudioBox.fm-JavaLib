@@ -4,20 +4,29 @@ import java.util.EventObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Event extends EventObject {
 
+  private static Logger logger = LoggerFactory.getLogger( Event.class );
+  
   
   private static final long serialVersionUID = 1L;
   
   private Map<String, Object> properties = new HashMap<String, Object>();
 
+  // It could be used for indexing the entity into collection
   public int detail = -1;
 
   public static enum States {
     ENTITY_ADDED,
     ENTITY_REMOVED,
     COLLECTION_CLEARED,
-    ENTITY_REFRESHED
+    ENTITY_REFRESHED,
+    CONNECTED,
+    DISCONNECTED,
+    ERROR
   };
   
   
@@ -25,11 +34,12 @@ public class Event extends EventObject {
   
   public Event(Object source) {
     super(source);
+    logger.debug("New event will be fired");
   }
 
   
   public Event(Object source, States state) {
-    super(source);
+    this(source);
     this.state = state;
   }
   
