@@ -216,10 +216,10 @@ public final class AccountStats extends AbstractEntity implements Serializable {
       return this.getClass().getMethod("setSkydriveDataStoredOverall", long.class);
 
     } else if ( tagName.equals("box_data_stored_this_month") ) {
-      return this.getClass().getMethod("setBox_dataStoredThisMonth", long.class);
+      return this.getClass().getMethod("setBoxDataStoredThisMonth", long.class);
 
     } else if ( tagName.equals("box_data_stored_overall") ) {
-      return this.getClass().getMethod("setBox_dataStoredOverall", long.class);
+      return this.getClass().getMethod("setBoxDataStoredOverall", long.class);
 
     } else if ( tagName.equals("partner_data_stored_this_month") ) {
       return this.getClass().getMethod("setPartnerDataStoredThisMonth", long.class);
