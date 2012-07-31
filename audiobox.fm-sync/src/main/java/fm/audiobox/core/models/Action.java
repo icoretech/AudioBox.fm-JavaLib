@@ -17,6 +17,14 @@ public class Action extends AbstractEntity implements Serializable {
   public static final String TAGNAME = "action";
   public static final String NAMESPACE = Action.TAGNAME;
 
+  
+  public static enum Actions {
+    stream,
+    disconnect,
+    check,
+    error
+  }
+  
   private String name;
   private String id;
   private Args args;
@@ -75,6 +83,16 @@ public class Action extends AbstractEntity implements Serializable {
     return null;
   }
 
+  
+  public boolean is(Actions type) {
+    try {
+      return Actions.valueOf( this.getName() ).compareTo( type ) == 0;
+    } catch( Exception e) {
+      log.warn("Exception occurred while checking the action: " + this.getName() );
+    }
+    return false;
+  }
+  
   @Override
   public String getApiPath() {
     return null;
