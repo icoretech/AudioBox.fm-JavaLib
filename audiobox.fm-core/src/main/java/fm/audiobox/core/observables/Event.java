@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 public class Event extends EventObject {
 
+  @SuppressWarnings("unused")
   private static Logger logger = LoggerFactory.getLogger( Event.class );
   
   
@@ -34,7 +35,6 @@ public class Event extends EventObject {
   
   public Event(Object source) {
     super(source);
-    logger.debug("New event will be fired");
   }
 
   
