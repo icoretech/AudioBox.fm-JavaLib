@@ -25,6 +25,7 @@ public final class Permissions  extends AbstractEntity implements Serializable {
   private boolean box;
   private boolean lastfm;
   private boolean partner;
+  private boolean twitchtv;
   
   
   public Permissions(IConfiguration config) {
@@ -47,6 +48,17 @@ public final class Permissions  extends AbstractEntity implements Serializable {
   public void setLastfm(boolean lastfm) {
     this.lastfm = lastfm;
   }
+  
+
+  public boolean isTwitchTv() {
+    return this.twitchtv;
+  }
+
+  public void setTwitchTv(boolean twitchtv) {
+    this.twitchtv = twitchtv;
+  }
+  
+  
 
   public boolean isPartner() {
     return partner;
@@ -158,7 +170,10 @@ public final class Permissions  extends AbstractEntity implements Serializable {
     } else if ( tagName.equals("partner") ){
       return this.getClass().getMethod("setPartner", boolean.class);
 
-    } 
+    } else if ( tagName.equals("twitchtv") ){
+      return this.getClass().getMethod("setTwitchTv", boolean.class);
+    }
+    
     
     return null;
   }
