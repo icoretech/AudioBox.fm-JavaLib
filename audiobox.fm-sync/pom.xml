@@ -1,18 +1,17 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <artifactId>components</artifactId>
     <groupId>fm.audiobox</groupId>
-    <version>3.0-SNAPSHOT</version>
+    <version>3.0</version>
   </parent>
 
   <artifactId>audiobox.fm-sync</artifactId>
   <name>sync</name>
   <packaging>jar</packaging>
 
-  <version>${parent.version}</version>
+  <version>3.0</version>
   <description>AudioBox.fm JavaLib sync is inteded to be used for syncing tools.</description>
   <url>http://maven.keytwo.net/audiobox.fm-sync</url>
 
