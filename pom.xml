@@ -12,7 +12,7 @@
     <module>audiobox.fm-sync</module>
   </modules>
 
-  <version>3.0</version>
+  <version>3.1-SNAPSHOT</version>
   <description>AudioBox.fm JavaLib offers full access to the RESTful
     AudioBox.fm API, giving the developer the ability to make use of the
     native API through comfortable Java objects.</description>

@@ -4,14 +4,14 @@
   <parent>
     <artifactId>components</artifactId>
     <groupId>fm.audiobox</groupId>
-    <version>3.0</version>
+    <version>3.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>audiobox.fm-sync</artifactId>
   <name>sync</name>
   <packaging>jar</packaging>
 
-  <version>3.0</version>
+  <version>3.1-SNAPSHOT</version>
   <description>AudioBox.fm JavaLib sync is inteded to be used for syncing tools.</description>
   <url>http://maven.keytwo.net/audiobox.fm-sync</url>
 
