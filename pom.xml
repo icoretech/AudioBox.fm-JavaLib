@@ -61,14 +61,14 @@
 
   <scm>
     <connection>scm:git:git@github.com:audiobox/AudioBox.fm-JavaLib.git</connection>
-    <developerConnection>scm:git:git@github.com:audiobox/AudioBox.fm-JavaLib.git</developerConnection>
-    <url>http://github.com/audiobox/AudioBox.fm-JavaLib/tree/master</url>
+    <developerConnection>scm:git:git@github.com:icoretech/AudioBox.fm-JavaLib.git</developerConnection>
+    <url>https://github.com/icoretech/AudioBox.fm-JavaLib/tree/scalable</url>
   </scm>
 
 
   <issueManagement>
     <system>GitHub Issues</system>
-    <url>http://github.com/audiobox/AudioBox.fm-JavaLib/issues</url>
+    <url>https://github.com/icoretech/AudioBox.fm-JavaLib/issues</url>
   </issueManagement>
 
   <inceptionYear>2010</inceptionYear>
