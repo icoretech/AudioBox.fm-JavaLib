@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>fm.audiobox</groupId>
@@ -12,7 +13,7 @@
     <module>audiobox.fm-sync</module>
   </modules>
 
-  <version>3.1-SNAPSHOT</version>
+  <version>3.0-SNAPSHOT</version>
   <description>AudioBox.fm JavaLib offers full access to the RESTful
     AudioBox.fm API, giving the developer the ability to make use of the
     native API through comfortable Java objects.</description>
@@ -394,7 +395,7 @@
       </activation>
       <properties>
       
-        <env />
+        <env></env>
         
         <fm.audiobox.rails.protocol>http</fm.audiobox.rails.protocol>
         <fm.audiobox.rails.host>audiobox.fm</fm.audiobox.rails.host>
