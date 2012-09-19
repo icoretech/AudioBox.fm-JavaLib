@@ -90,6 +90,8 @@ import fm.audiobox.interfaces.IResponseHandler;
  *   box_data_stored_overall: null,
  *   partner_data_stored_this_month: 0,
  *   partner_data_stored_overall: 0
+ *   soundcloud_data_stored_this_month: 0
+ *   soundcloud_data_stored_overall: 0
  * @endcode
  * </pre>
  *

@@ -31,6 +31,8 @@ public final class AccountStats extends AbstractEntity implements Serializable {
   private long box_data_stored_overall;
   private long partner_data_stored_this_month;
   private long partner_data_stored_overall;
+  private long soundcloud_data_stored_this_month;
+  private long soundcloud_data_stored_overall;
   
   
 
@@ -176,6 +178,24 @@ public final class AccountStats extends AbstractEntity implements Serializable {
   public void setPartnerDataStoredOverall(long partner_data_stored_overall) {
     this.partner_data_stored_overall = partner_data_stored_overall;
   }
+  
+  public long getSoundcloudDataStoredThisMonth() {
+    return soundcloud_data_stored_this_month;
+  }
+
+  public void setSoundcloudDataStoredThisMonth(long soundcloud_data_stored_this_month) {
+    this.soundcloud_data_stored_this_month = soundcloud_data_stored_this_month;
+  }
+  
+  public long getSoundcloudDataStoredOverall() {
+    return soundcloud_data_stored_overall;
+  }
+
+  public void setSoundcloudDataStoredOverall(long soundcloud_data_stored_overall) {
+    this.soundcloud_data_stored_overall = soundcloud_data_stored_overall;
+  }
+  
+  
 
   @Override
   public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
@@ -227,7 +247,14 @@ public final class AccountStats extends AbstractEntity implements Serializable {
     } else if ( tagName.equals("partner_data_stored_overall") ) {
       return this.getClass().getMethod("setPartnerDataStoredOverall", long.class);
 
+    } else if ( tagName.equals("soundcloud_data_stored_this_month") ) {
+      return this.getClass().getMethod("setSoundcloudDataStoredThisMonth", long.class);
+
+    } else if ( tagName.equals("soundcloud_data_stored_overall") ) {
+      return this.getClass().getMethod("setSoundcloudDataStoredOverall", long.class);
+
     }
+    
     
     return null;
   }
