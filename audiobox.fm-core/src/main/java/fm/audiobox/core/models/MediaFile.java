@@ -113,11 +113,11 @@ public class MediaFile extends AbstractEntity implements Serializable{
   public static final String LEN_STR_FIELD =          "len_str";
   public static final String MEDIA_FILE_NAME_FIELD =  "media_file_name";
   public static final String MIME_FIELD =             "mime";
-  public static final String YEAR_FIELD =             "year";
+  public static final String YEAR_FIELD =             "release_year";
   public static final String LEN_INT_FIELD =          "len_int";
   public static final String POSITION_FIELD =         "position";
   public static final String PLAYS_FIELD =            "plays";
-  public static final String DISC_FIELD =             "disc";
+  public static final String DISC_FIELD =             "disc_number";
   public static final String TYPE_FIELD =             "type";
   public static final String SIZE_FIELD =             "size";
   public static final String AUDIO_SAMPLE_RATE_FIELD = "audio_sample_rate";
