@@ -52,7 +52,8 @@ public class UploadHandler extends FileBody {
       throw new ServiceException( e );
     
     } finally {
-      out.close();
+      // The output stream is automatically closed
+      //  out.close();
       in.close();
     }
   }
