@@ -21,12 +21,15 @@ package fm.audiobox.core.models;
 
 import java.io.File;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -514,7 +517,12 @@ public class MediaFile extends AbstractEntity implements Serializable{
     this.parent = parent;
   }
 
-  public IConnectionMethod upload(boolean async, UploadHandler uploadHandler) throws ServiceException, LoginException {
+  
+  public IConnectionMethod upload(boolean async, UploadHandler uploadHandler ) throws ServiceException, LoginException {
+    return this.upload(async, uploadHandler, false);
+  }
+  
+  public IConnectionMethod upload(boolean async, UploadHandler uploadHandler, boolean customFields) throws ServiceException, LoginException {
     String path = IConnector.URI_SEPARATOR.concat( Actions.upload.toString() );
 
     MultipartEntity entity = new MultipartEntity();
@@ -524,7 +532,20 @@ public class MediaFile extends AbstractEntity implements Serializable{
       throw new ServiceException("mime type error: file is not supported by AudioBox2");
     }
     
-    entity.addPart("media", uploadHandler );
+    entity.addPart("files[]", uploadHandler );
+    
+    if ( customFields ) {
+      
+      List<NameValuePair> fields = this.toQueryParametersCustomFields(false);
+      for ( NameValuePair field : fields ) {
+        try {
+          entity.addPart( field.getName(), new StringBody( field.getValue(), "text/plain", Charset.forName( "UTF-8" )));
+        } catch (UnsupportedEncodingException e) {
+          log.warn("Entity " + field.getName() + " cannot be added due to: " + e.getMessage() );
+        }
+      }
+    }
+    
 
     IConnectionMethod request = this.getConnector(IConfiguration.Connectors.NODE).post(this, path, null, null);
     request.send(async, entity);
@@ -606,6 +627,23 @@ public class MediaFile extends AbstractEntity implements Serializable{
     params.add(  new BasicNameValuePair( prefix + AUDIO_BIT_RATE_FIELD,      this.audioBitRate )  );
     params.add(  new BasicNameValuePair( prefix + ORIGINAL_FILE_NAME_FIELD,  this.originalFileName )  );
     params.add(  new BasicNameValuePair( prefix + MD5_FIELD,                 this.md5 )  );
+    
+    return params;
+  }
+  
+  
+  private List<NameValuePair> toQueryParametersCustomFields(boolean withPrefix) {
+    String prefix = withPrefix ? NAMESPACE + "." : "";
+    
+    List<NameValuePair> params = new ArrayList<NameValuePair>();
+    
+    params.add(  new BasicNameValuePair( prefix + TITLE_FIELD,               this.title ) );
+    params.add(  new BasicNameValuePair( prefix + ARTIST_FIELD,              this.artist )  );
+    params.add(  new BasicNameValuePair( prefix + ALBUM_FIELD,               this.album )  );
+    params.add(  new BasicNameValuePair( prefix + GENRE_FIELD,               this.genre )  );
+    params.add(  new BasicNameValuePair( prefix + YEAR_FIELD,                String.valueOf( this.year ) )  );
+    params.add(  new BasicNameValuePair( prefix + POSITION_FIELD,            String.valueOf( this.position ) )  );
+    params.add(  new BasicNameValuePair( prefix + PLAYS_FIELD,               String.valueOf( this.plays ) )  );
     
     return params;
   }
