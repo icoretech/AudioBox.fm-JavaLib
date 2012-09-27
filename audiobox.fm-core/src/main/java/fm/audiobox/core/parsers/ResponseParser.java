@@ -156,7 +156,7 @@ public class ResponseParser implements ResponseHandler<Response> {
           } else {
             this.responseHandler.parseAsJson(response.getStream(), error);
           }
-          response = new Response(response.getFormat(), error.getStatus(), error.getMessage());
+          response = new Response(response.getFormat(), response.getStatus(), error.getMessage());
   
         } else {
           // default: do nothing
