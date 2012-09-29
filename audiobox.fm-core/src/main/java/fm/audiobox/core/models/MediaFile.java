@@ -492,7 +492,7 @@ public class MediaFile extends AbstractEntity implements Serializable{
     List<NameValuePair> params = new ArrayList<NameValuePair>();
     params.add(  new BasicNameValuePair(MediaFiles.TOKENS_PARAMETER, this.getToken() ) );
     
-    Response response = this.getConnector(IConfiguration.Connectors.RAILS).delete(this, path, MediaFiles.Actions.destroy_multiple.toString(), params).send(false);
+    Response response = this.getConnector(IConfiguration.Connectors.RAILS).delete(this, path, MediaFiles.Actions.multidestroy.toString(), params).send(false);
     
     return response.isOK();
   }

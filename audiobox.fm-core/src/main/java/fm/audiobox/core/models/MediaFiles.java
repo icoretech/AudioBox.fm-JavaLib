@@ -67,7 +67,7 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
   
   public enum Actions {
     hashes,
-    destroy_multiple,
+    multidestroy,
     remove
   }
 
@@ -134,7 +134,7 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
       params.add(  new BasicNameValuePair(TOKENS_PARAMETER, m.getToken() ) );
     }
     
-    Response response = this.getConnector(IConfiguration.Connectors.RAILS).delete(this, path, Actions.destroy_multiple.toString(), params).send(false);
+    Response response = this.getConnector(IConfiguration.Connectors.RAILS).delete(this, path, Actions.multidestroy.toString(), params).send(false);
     
     boolean result = response.isOK();
     
