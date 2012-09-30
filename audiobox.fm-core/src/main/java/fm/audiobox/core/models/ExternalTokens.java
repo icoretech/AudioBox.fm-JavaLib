@@ -6,47 +6,45 @@ import java.lang.reflect.Method;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IEntity;
 
+
 /**
- * player: true,
- * local: true,
- * cloud: true,
- * dropbox: true,
+ * dropbox: false,
  * gdrive: true,
- * skydrive: true,
- * soundcloud: true,
+ * skydrive: false,
+ * soundcloud: false,
  * youtube: true,
- * box: true,
- * lastfm: true,
- * twitchtv: true,
- * facebook: true,
- * twitter: true 
+ * box: false,
+ * lastfm: false,
+ * twitchtv: false,
+ * facebook: false,
+ * twitter: false
  */
-public final class Permissions extends AbstractEntity implements Serializable {
 
+public final class ExternalTokens extends AbstractEntity implements Serializable {
+
+  
   private static final long serialVersionUID = 1L;
-
-  public static final String NAMESPACE = "permissions";
+  
+  public static final String NAMESPACE = "external_tokens";
   public static final String TAGNAME = NAMESPACE;
   
   
-  private boolean player = true;
-  private boolean local = true;
-  private boolean cloud = true;
-  private boolean dropbox = true;
-  private boolean gdrive = true;
-  private boolean skydrive = true;
-  private boolean soundcloud = true;
-  private boolean youtube = true;
-  private boolean box = true;
-  private boolean lastfm = true;
-  private boolean twitchtv = true;
-  private boolean facebook = true;
-  private boolean twitter = true;  
+  private boolean dropbox = false;
+  private boolean gdrive = false;
+  private boolean skydrive = false;
+  private boolean soundcloud = false;
+  private boolean youtube = false;
+  private boolean box = false;
+  private boolean lastfm = false;
+  private boolean twitchtv = false;
+  private boolean facebook = false;
+  private boolean twitter = false;
   
-  public Permissions(IConfiguration config) {
+  
+  
+  public ExternalTokens(IConfiguration config) {
     super(config);
   }
-  
 
 
   @Override
@@ -58,59 +56,16 @@ public final class Permissions extends AbstractEntity implements Serializable {
   public String getTagName() {
     return TAGNAME;
   }
-
   
   
   
   
   
-  public boolean isPlayer() {
-    return player;
-  }
-
-
-
-
-  public void setPlayer(boolean player) {
-    this.player = player;
-  }
-
-
-
-
-  public boolean isLocal() {
-    return local;
-  }
-
-
-
-
-  public void setLocal(boolean local) {
-    this.local = local;
-  }
-
-
-
-
-  public boolean isCloud() {
-    return cloud;
-  }
-
-
-
-
-  public void setCloud(boolean cloud) {
-    this.cloud = cloud;
-  }
-
-
-
-
+  
+  
   public boolean isDropbox() {
     return dropbox;
   }
-
-
 
 
   public void setDropbox(boolean dropbox) {
@@ -118,13 +73,9 @@ public final class Permissions extends AbstractEntity implements Serializable {
   }
 
 
-
-
   public boolean isGdrive() {
     return gdrive;
   }
-
-
 
 
   public void setGdrive(boolean gdrive) {
@@ -132,13 +83,9 @@ public final class Permissions extends AbstractEntity implements Serializable {
   }
 
 
-
-
   public boolean isSkydrive() {
     return skydrive;
   }
-
-
 
 
   public void setSkydrive(boolean skydrive) {
@@ -146,13 +93,9 @@ public final class Permissions extends AbstractEntity implements Serializable {
   }
 
 
-
-
   public boolean isSoundcloud() {
     return soundcloud;
   }
-
-
 
 
   public void setSoundcloud(boolean soundcloud) {
@@ -160,13 +103,9 @@ public final class Permissions extends AbstractEntity implements Serializable {
   }
 
 
-
-
   public boolean isYoutube() {
     return youtube;
   }
-
-
 
 
   public void setYoutube(boolean youtube) {
@@ -174,13 +113,9 @@ public final class Permissions extends AbstractEntity implements Serializable {
   }
 
 
-
-
   public boolean isBox() {
     return box;
   }
-
-
 
 
   public void setBox(boolean box) {
@@ -188,13 +123,9 @@ public final class Permissions extends AbstractEntity implements Serializable {
   }
 
 
-
-
   public boolean isLastfm() {
     return lastfm;
   }
-
-
 
 
   public void setLastfm(boolean lastfm) {
@@ -202,13 +133,9 @@ public final class Permissions extends AbstractEntity implements Serializable {
   }
 
 
-
-
   public boolean isTwitchtv() {
     return twitchtv;
   }
-
-
 
 
   public void setTwitchtv(boolean twitchtv) {
@@ -216,13 +143,9 @@ public final class Permissions extends AbstractEntity implements Serializable {
   }
 
 
-
-
   public boolean isFacebook() {
     return facebook;
   }
-
-
 
 
   public void setFacebook(boolean facebook) {
@@ -230,13 +153,9 @@ public final class Permissions extends AbstractEntity implements Serializable {
   }
 
 
-
-
   public boolean isTwitter() {
     return twitter;
   }
-
-
 
 
   public void setTwitter(boolean twitter) {
@@ -244,69 +163,55 @@ public final class Permissions extends AbstractEntity implements Serializable {
   }
 
 
-
-
   @Override
   public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
     
-    if ( tagName.equals("player") ) {
-
-      return this.getClass().getMethod("setPlayer", boolean.class);
-
-    } else if ( tagName.equals("local") ) {
-
-      return this.getClass().getMethod("setLocal", boolean.class);
-
-    } else if ( tagName.equals("cloud") ) {
-
-      return this.getClass().getMethod("setCloud", boolean.class);
-
-    } else if ( tagName.equals("dropbox") ) {
-
-      return this.getClass().getMethod("setDropbox", boolean.class);
-
+    if ( tagName.equals("dropbox") ) {
+      
+      return this.getClass().getMethod("setDropbox" , boolean.class);
+      
     } else if ( tagName.equals("gdrive") ) {
-
-      return this.getClass().getMethod("setGdrive", boolean.class);
-
+      
+      return this.getClass().getMethod("setGdrive" , boolean.class);
+      
     } else if ( tagName.equals("skydrive") ) {
-
-      return this.getClass().getMethod("setSkydrive", boolean.class);
-
+      
+      return this.getClass().getMethod("setSkydrive" , boolean.class);
+      
     } else if ( tagName.equals("soundcloud") ) {
-
-      return this.getClass().getMethod("setSoundcloud", boolean.class);
-
+      
+      return this.getClass().getMethod("setSoundcloud" , boolean.class);
+      
     } else if ( tagName.equals("youtube") ) {
-
-      return this.getClass().getMethod("setYoutube", boolean.class);
-
+      
+      return this.getClass().getMethod("setYoutube" , boolean.class);
+      
     } else if ( tagName.equals("box") ) {
-
-      return this.getClass().getMethod("setBox", boolean.class);
-
+      
+      return this.getClass().getMethod("setBox" , boolean.class);
+      
     } else if ( tagName.equals("lastfm") ) {
-
-      return this.getClass().getMethod("setLastfm", boolean.class);
-
+      
+      return this.getClass().getMethod("setLastfm" , boolean.class);
+      
     } else if ( tagName.equals("twitchtv") ) {
-
-      return this.getClass().getMethod("setTwitchtv", boolean.class);
-
+      
+      return this.getClass().getMethod("setTwitchtv" , boolean.class);
+      
     } else if ( tagName.equals("facebook") ) {
-
-      return this.getClass().getMethod("setFacebook", boolean.class);
-
+      
+      return this.getClass().getMethod("setFacebook" , boolean.class);
+      
     } else if ( tagName.equals("twitter") ) {
-
-      return this.getClass().getMethod("setTwitter", boolean.class);
-
+      
+      return this.getClass().getMethod("setTwitter" , boolean.class);
+      
     }
-    
     
     return null;
   }
-
+  
+  
   @Override
   public String getApiPath() {
     return null;
@@ -317,8 +222,8 @@ public final class Permissions extends AbstractEntity implements Serializable {
 
   @Override
   protected void copy(IEntity entity) { }
-  
-  
+
+
   
   
 }

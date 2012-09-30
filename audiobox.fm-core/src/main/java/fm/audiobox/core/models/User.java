@@ -50,48 +50,66 @@ import fm.audiobox.interfaces.IResponseHandler;
  * 
  * <pre>
  * @code
- * real_name: Fabio Tunno,
- * email: 'fat@fatshotty.net',
- * auth_token: '....',
- * media_files_count: 362,
- * playlists_count: 8,
- * total_play_count: 0,
- * country: null,
- * time_zone: 'UTC',
- * accepted_extensions: 'aac,mp3,mp2 ....',
- * accepted_formats: 'audio/aac,audio/mpeg ....',
- * permissions: 
- *   local: true,
- *   cloud: true,
- *   dropbox: true,
- *   gdrive: true,
- *   skydrive: true,
- *   soundcloud: false,
- *   youtube: true,
- *   box: false,
- *   lastfm: false,
- *   partner: false },
- * comet_channel: ' ... ',
- * subscription_state: 'active',
- * stats: 
- *   data_served_this_month: 890484885,
- *   data_served_overall: 890484885,
- *   cloud_data_stored_overall: 644869578,
- *   cloud_data_stored_this_month: 644869578,
- *   local_data_stored_overall: 1927432772,
- *   local_data_stored_this_month: 3857729035,
- *   dropbox_data_stored_overall: 23689107,
- *   dropbox_data_stored_this_month: 23689107,
- *   gdrive_data_stored_this_month: 0,
- *   gdrive_data_stored_overall: 0,
- *   skydrive_data_stored_this_month: 95088577,
- *   skydrive_data_stored_overall: 95088577,
- *   box_data_stored_this_month: null,
- *   box_data_stored_overall: null,
- *   partner_data_stored_this_month: 0,
- *   partner_data_stored_overall: 0
+ * real_name: null
+ * email: 'fat@fatshotty.net'
+ * auth_token: 'g88eu2f....'
+ * media_files_count: 33
+ * playlists_count: 13
+ * total_play_count: 3
+ * country: null
+ * time_zone: 'UTC'
+ * accepted_extensions: 'mp3,m4a,m4b,m4r,mp4,flv,webm'
+ * accepted_formats: 'audio/mpeg,audio/mp4,video/mp4,video/x-flv,video/webm'
+ * permissions:
+ *   player: true
+ *   local: true
+ *   cloud: true
+ *   dropbox: true
+ *   gdrive: true
+ *   skydrive: true
+ *   soundcloud: true
+ *   youtube: true
+ *   box: true
+ *   lastfm: true
+ *   twitchtv: true
+ *   facebook: true
+ *   twitter: true
+ * external_tokens:
+ *   dropbox: false
+ *   gdrive: true
+ *   skydrive: false
+ *   soundcloud: false
+ *   youtube: true
+ *   box: false
+ *   lastfm: false
+ *   twitchtv: false
+ *   facebook: false
+ *   twitter: false
+ * comet_channel: 'private-e03...'
+ * subscription_state: 'active'
+ * stats:
+ *   data_served_this_month: 2737914
+ *   data_served_overall: 2737914
+ *   cloud_data_stored_overall: 56684036
+ *   cloud_data_stored_this_month: 101905396
+ *   local_data_stored_overall: 0
+ *   local_data_stored_this_month: 40356240
+ *   dropbox_data_stored_overall: 0
+ *   dropbox_data_stored_this_month: 0
+ *   gdrive_data_stored_this_month: 38403869
+ *   gdrive_data_stored_overall: 38403869
+ *   skydrive_data_stored_this_month: 0
+ *   skydrive_data_stored_overall: 0
+ *   box_data_stored_this_month: 0
+ *   box_data_stored_overall: 0
  *   soundcloud_data_stored_this_month: 0
  *   soundcloud_data_stored_overall: 0
+ * preferences:
+ *   accept_emails: true
+ *   autoplay: false
+ *   volume_level: 85
+ *   color: 'audiobox-fm-blue'
+ *   top_bar_bg: 'default'
  * @endcode
  * </pre>
  *
@@ -157,6 +175,8 @@ public final class User extends AbstractEntity implements Serializable {
   private Playlists playlists;
   private Permissions permissions;
   private AccountStats accountStats;
+  private Preferences preferences;
+  private ExternalTokens externalTokens;
 
   /**
    * <p>Constructor for User.</p>
@@ -342,6 +362,24 @@ public final class User extends AbstractEntity implements Serializable {
   
   public AccountStats getAccountStats() {
     return this.accountStats;
+  }
+  
+  
+  public void setPreferences(Preferences preferences) {
+    this.preferences = preferences;
+  }
+  
+  public Preferences getPreferences() {
+    return this.preferences;
+  }
+  
+  
+  public void setExternalTokens(ExternalTokens externalTokens) {
+    this.externalTokens = externalTokens;
+  }
+  
+  public ExternalTokens getExternalTokens() {
+    return this.externalTokens;
   }
   
 
@@ -535,6 +573,12 @@ public final class User extends AbstractEntity implements Serializable {
       
     } else if ( tagName.equals("stats") ) {
       return this.getClass().getMethod("setAccountStats", AccountStats.class);
+      
+    } else if ( tagName.equals("external_tokens") ) {
+      return this.getClass().getMethod("setExternalTokens", ExternalTokens.class);
+      
+    } else if ( tagName.equals("preferences") ) {
+      return this.getClass().getMethod("setPreferences", Preferences.class);
     }
     
     

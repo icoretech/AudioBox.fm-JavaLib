@@ -1,9 +1,16 @@
 package fm.audiobox.interfaces;
 
 import fm.audiobox.AudioBox;
+import fm.audiobox.core.models.AccountStats;
+import fm.audiobox.core.models.ExternalTokens;
+import fm.audiobox.core.models.Permissions;
+import fm.audiobox.core.models.Preferences;
+import fm.audiobox.core.models.User;
 
 public interface IFactory {
 
+  
+  public static final String[] EXCLUDED_EXTENDABLE_CLASSES = new String[]{ User.TAGNAME, Permissions.TAGNAME, AccountStats.TAGNAME, Preferences.TAGNAME, ExternalTokens.TAGNAME };
   
   /**
    * Returns the right entity associated with its default class

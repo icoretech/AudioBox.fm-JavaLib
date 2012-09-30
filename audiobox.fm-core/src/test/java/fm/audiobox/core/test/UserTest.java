@@ -35,23 +35,18 @@ public class UserTest extends AudioBoxTestCase {
     
     // Permission
     Permissions p = user.getPermissions();
-    
-    assertTrue( p.isCloud() );
-    assertFalse( p.isDropbox() );
-    assertFalse( p.isGdrive() );
-    assertTrue( p.isLocal() );
-    assertFalse( p.isSkydrive() );
-    assertFalse( p.isSoundcloud() );
-    assertFalse( p.isYoutube() );
+    assertNotNull( p );
     
     // AccountStats
     AccountStats accountStats = user.getAccountStats();
-    assertTrue( accountStats.getCloudDataStoredOverall() > 0 );
+    assertNotNull( accountStats );
     
-    assertNotSame(user.getSubscriptionState(), User.SubscriptionState.nothing );
-    
-    
+    assertNotNull( user.getPreferences() );
+    assertNotNull( user.getExternalTokens() );
 
+    
+    assertSame( user.getSubscriptionState(), User.SubscriptionState.active );
+    
   }
 
 //  @Test
