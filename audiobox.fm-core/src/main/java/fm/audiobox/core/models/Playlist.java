@@ -95,8 +95,8 @@ public class Playlist extends AbstractEntity implements Serializable {
   private boolean offline;
   private boolean embeddable;
   private boolean visible;
-  private boolean sync_supported;
   private String system_name;
+  private boolean syncable;
   
   
   /**
@@ -264,13 +264,14 @@ public class Playlist extends AbstractEntity implements Serializable {
     this.offline = offline;
   }
   
-  public boolean isSyncSupported() {
-    return this.sync_supported;
+  
+  public boolean isSyncable() {
+    return this.syncable;
   }
 
 
-  public void setSyncSupported(boolean syncSupported) {
-    this.sync_supported = syncSupported;
+  public void setSyncable(boolean syncable) {
+    this.syncable = syncable;
   }
 
 
@@ -365,8 +366,8 @@ public class Playlist extends AbstractEntity implements Serializable {
     } else if ( tagName.equals("visible") ) {
       return this.getClass().getMethod("setVisible", boolean.class);
     
-    } else if ( tagName.equals("sync_supported") ) {
-      return this.getClass().getMethod("setSyncSupported", boolean.class);
+    } else if ( tagName.equals("syncable") ) {
+      return this.getClass().getMethod("setSyncable", boolean.class);
     
     }
     

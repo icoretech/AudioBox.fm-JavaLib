@@ -85,12 +85,12 @@ public class DefaultRequestMethod implements IConnectionMethod {
     if (  (! isGET() && ! isDELETE() )  && params != null ){
       try {
         
-        if ( log.isDebugEnabled() ) {
+        if ( log.isInfoEnabled() ) {
           StringBuffer sb = new StringBuffer();
           for ( NameValuePair param : params ){
             sb.append( "[" + param.getName() + ": '" + param.getValue() + "'], " );
           }
-          log.debug("Params: " + sb.toString() );
+          log.info("Params: " + sb.toString() );
         }
         
         entity = new UrlEncodedFormEntity(params, HTTP.UTF_8);
