@@ -164,7 +164,10 @@ public class Playlist extends AbstractEntity implements Serializable {
     
     if ( this.getType() != Playlists.Types.LocalPlaylist ) return false;
     
-    Response response = this.getConnector(IConfiguration.Connectors.RAILS).put(this, "empty").send(false);
+    List<NameValuePair> params = new ArrayList<NameValuePair>();
+    params.add( new BasicNameValuePair("confirm", "YES") );
+    
+    Response response = this.getConnector(IConfiguration.Connectors.RAILS).put(this, "empty").send(false, params);
     
     return response.isOK();
   }
