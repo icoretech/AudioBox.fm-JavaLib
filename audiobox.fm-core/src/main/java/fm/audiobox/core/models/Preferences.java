@@ -34,6 +34,9 @@ public class Preferences extends AbstractEntity implements Serializable {
   private int volume_level = 50;
   private String color = "";
   private String top_bar_bg = "";
+  private boolean prebuffer;
+  private boolean repeat;
+  private boolean shuffle;
   
   
   public Preferences(IConfiguration config) {
@@ -99,6 +102,38 @@ public class Preferences extends AbstractEntity implements Serializable {
   public void setTop_bar_bg(String top_bar_bg) {
     this.top_bar_bg = top_bar_bg;
   }
+  
+  
+
+
+  public boolean isPrebuffer() {
+    return prebuffer;
+  }
+
+
+  public void setPrebuffer(boolean prebuffer) {
+    this.prebuffer = prebuffer;
+  }
+
+
+  public boolean isRepeat() {
+    return repeat;
+  }
+
+
+  public void setRepeat(boolean repeat) {
+    this.repeat = repeat;
+  }
+
+
+  public boolean isShuffle() {
+    return shuffle;
+  }
+
+
+  public void setShuffle(boolean shuffle) {
+    this.shuffle = shuffle;
+  }
 
 
   @Override
@@ -118,6 +153,15 @@ public class Preferences extends AbstractEntity implements Serializable {
 
     } else if ( tagName.equals("top_bar_bg") ) {
       return this.getClass().getMethod("setTop_bar_bg", String.class);
+
+    } else if ( tagName.equals("prebuffer") ) {
+      return this.getClass().getMethod("setPrebuffer", boolean.class);
+
+    } else if ( tagName.equals("repeat") ) {
+      return this.getClass().getMethod("setRepeat", boolean.class);
+
+    } else if ( tagName.equals("shuffle") ) {
+      return this.getClass().getMethod("setShuffle", boolean.class);
 
     }
     
