@@ -32,16 +32,22 @@ public class ResponseParser implements ResponseHandler<Response> {
   private IResponseHandler responseHandler;
 
   private IEntity destEntity;
+  private String ecode;
 
   public ResponseParser(IConfiguration config, IConnectionMethod method) {
     this(config, method, null);
   }
-
+  
   public ResponseParser(IConfiguration config, IConnectionMethod method, IResponseHandler responseHandler) {
+    this(config, method, responseHandler, null);
+  }
+
+  public ResponseParser(IConfiguration config, IConnectionMethod method, IResponseHandler responseHandler, String ecode) {
     this.method = method;
     this.destEntity = this.method.getDestinationEntity();
     this.configuration = config;
     this.responseHandler = responseHandler != null ? responseHandler : this.getResponseParser( config.getResponseParser() );
+    this.ecode = ecode;
 
     if (log.isTraceEnabled()) {
       log.trace("ResponseParser instantiated for: " + this.method.getHttpMethod().getRequestLine().getUri());
@@ -60,70 +66,46 @@ public class ResponseParser implements ResponseHandler<Response> {
       log.info( "Response code: " + responseCode );
     }
 
-    Header etag = httpResponse.getFirstHeader(IConnectionMethod.HTTP_HEADER_ETAG);
-    String respondedEtag = etag != null ? etag.getValue().replaceAll("\"", "") : null;
-
-    Response response = null;
-
-    if (this.configuration.isCacheEnabled()) {
-      // Try to retrieve response from CacheManager
-      response = this.configuration.getCacheManager().getResponse(this.destEntity, respondedEtag);
+    // No response found. Build a new Response
+    HttpEntity entity = httpResponse.getEntity();
+    if (entity == null) {
+      // Entity is null. We're assuming we are in case of 304, 201 or 204
+      log.warn("No response body found, maybe 204 (or 304) status?");
+    }
+    Header contentType = entity != null ? entity.getContentType() : null;
+    boolean
+      isXml = false, 
+      isJson = false,
+      // Default value is TEXT
+      isText = true;
+    
+    if (contentType != null){
+      isXml = contentType.getValue().contains(ContentFormat.XML.toString().toLowerCase());
+      isJson = contentType.getValue().contains(ContentFormat.JSON.toString().toLowerCase());
+      isText = contentType.getValue().contains("text");
     }
 
-    if (response == null) {
-      // No response found. Build a new Response
-      HttpEntity entity = httpResponse.getEntity();
-      if (entity == null) {
-        // Entity is null. We're assuming we are in case of 304, 201 or 204
-        log.warn("No response body found, maybe 204 status?");
-      }
-      Header contentType = entity != null ? entity.getContentType() : null;
-      boolean
-        isXml = false, 
-        isJson = false,
-        // Default value is TEXT
-        isText = true;
-      
-      if (contentType != null){
-        isXml = contentType.getValue().contains(ContentFormat.XML.toString().toLowerCase());
-        isJson = contentType.getValue().contains(ContentFormat.JSON.toString().toLowerCase());
-        isText = contentType.getValue().contains("text");
-      }
+    ContentFormat format = isXml ? ContentFormat.XML : isJson ? ContentFormat.JSON : isText ? ContentFormat.TXT : ContentFormat.BINARY;
 
-      ContentFormat format = isXml ? ContentFormat.XML : isJson ? ContentFormat.JSON : isText ? ContentFormat.TXT : ContentFormat.BINARY;
+    // Build a new Response
+    Response response = new Response(format, responseCode, entity != null ? entity.getContent() : null );
 
-      // Build a new Response
-      response = new Response(format, responseCode, entity != null ? entity.getContent() : null );
-
-      if (this.configuration.isCacheEnabled() && responseCode == HttpStatus.SC_OK) {
-        /*
-         * CacheManager is enabled. So we have to store Response before parsing
-         * it. Note: we have to store Response in case of presence of response
-         * body ( response code should be 200 )
-         */
-        this.configuration.getCacheManager().store(this.destEntity, respondedEtag, response);
-
-        /*
-         * Retrive Response from CacheManager. In this way we bypass some bug
-         * caused by non reparsing httpresponse InputStream
-         */
-        Response tmpResponse = this.configuration.getCacheManager().getResponse(this.destEntity, respondedEtag);
-        if (tmpResponse != null) {
-          // CacheManager returned a Response. We have to use that
-          response = tmpResponse;
-        }
-      }
-
-    }
-
+    
+    
     switch ( responseCode ) {
 
       case HttpStatus.SC_OK:
-      case HttpStatus.SC_NOT_MODIFIED:
       case HttpStatus.SC_ACCEPTED:
         // Try to parse response body
         String content = this.responseHandler.parse(response.getStream(), destEntity, response.getFormat());
         response = new Response(response.getFormat(), responseCode, content);
+        if ( this.configuration.isCacheEnabled() ) {
+          this.configuration.getCacheManager().store(this.destEntity, this.ecode, response, httpResponse);
+        }
+        break;
+        
+      case HttpStatus.SC_NOT_MODIFIED:
+        response = this.configuration.getCacheManager().getResponse(destEntity, this.ecode);
         break;
   
       // In all other cases new response will be instantiated and returned

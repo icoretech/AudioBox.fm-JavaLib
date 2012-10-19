@@ -26,7 +26,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 
+import org.apache.http.HttpResponse;
+
 import fm.audiobox.configurations.Response;
+import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 
 /**
  * This interface describes how a cache manager should behave.
@@ -37,32 +40,38 @@ public interface ICacheManager extends Serializable {
 
   
   /**
+   * Sets the current configuration environment
+   * @param config the {@link IConfiguration current configuration}
+   */
+  public void setConfiguration(IConfiguration config);
+  
+  /**
    * This method must return the content of the original response
    * 
    * @param destEntity the {@link IEntity} to be populated
-   * @param etag the String representing the etag returned by the server
+   * @param ecode the String representing the {@code unique indentify} of the cache data
    * @return the {@link InputStream} where reading the response from
    */
-  public Response getResponse(IEntity destEntity, String etag);
+  public Response getResponse(IEntity destEntity, String ecode);
   
   /**
    * This method must save the response content represented by {@link InputStream}
    * 
    * @param destEntity the unique {@link IEntity} to store
-   * @param etag the univoque string linked to the {@link IEntity destEntity}
-   * @param in the {@link InputStream} where reading the response from
+   * @param ecode the unique string linked to the {@link IEntity destEntity}
+   * @param response the {@link InputStream} where reading the response from
    */
-  public void store(IEntity destEntity, String etag, Response response);
+  public void store(IEntity destEntity, String ecode, Response response, HttpResponse httpResponse);
   
   
   /**
-   * This method must return the {@code etag} used while invoking server
+   * This method must return the {@code unique identify} used while invoking server
    * 
    * @param destEntity the {@link IEntity}
    * @param url the request url
-   * @return String representing the {@code etag}
+   * @return String representing the {@code unique identify} of the cache data
    */
-  public String getEtag(IEntity destEntity, String url);
+  public String setup(IEntity destEntity, String url, IConnectionMethod request);
   
   /**
    * This method must clear the whole cache

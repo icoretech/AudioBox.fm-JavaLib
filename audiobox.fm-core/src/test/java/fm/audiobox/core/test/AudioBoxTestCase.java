@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fm.audiobox.AudioBox;
+import fm.audiobox.configurations.DefaultCacheManager;
 import fm.audiobox.configurations.DefaultConfiguration;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
@@ -27,7 +28,7 @@ public abstract class AudioBoxTestCase extends junit.framework.Assert {
     log.info("========================= Test started =========================");
     startTime = System.currentTimeMillis();
     
-    abc = new AudioBox(getConfig());
+    abc = new AudioBox( getConfig() );
     assertNotNull(abc);
     
   }
@@ -56,6 +57,7 @@ public abstract class AudioBoxTestCase extends junit.framework.Assert {
     configuration.setVersion(1, 0, 0);
     configuration.setRequestFormat(ContentFormat.JSON);
     configuration.setUseCache(false);
+    configuration.setCacheManager( new DefaultCacheManager() );
     
     return configuration;
   }

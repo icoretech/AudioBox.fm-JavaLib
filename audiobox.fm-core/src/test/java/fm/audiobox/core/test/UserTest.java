@@ -47,7 +47,14 @@ public class UserTest extends AudioBoxTestCase {
     
     assertSame( user.getSubscriptionState(), User.SubscriptionState.active );
     
+    this.abc.logout();
+    assertNull(this.abc.getUser());
+    
+    loginCatched();
+    assertNotSame(this.abc.getUser().getAuthToken(), "");
+    
   }
+  
 
 //  @Test
 //  public void testLoginShouldThrowsLoginExceptionOnWrongPassword() {

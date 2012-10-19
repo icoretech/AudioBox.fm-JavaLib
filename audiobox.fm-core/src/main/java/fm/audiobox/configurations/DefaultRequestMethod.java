@@ -115,15 +115,6 @@ public class DefaultRequestMethod implements IConnectionMethod {
     }
     
     
-    if ( isGET() && configuration.isCacheEnabled() ) {
-      String url = getHttpMethod().getRequestLine().getUri();
-      String etag = this.configuration.getCacheManager().getEtag(destEntity, url);
-      if (etag != null) {
-        getHttpMethod().addHeader( IConnectionMethod.HTTP_HEADER_IF_NONE_MATCH,  "\"" + etag + "\"" );
-      }
-    }
-    
-
     Callable<Response> start = new Callable<Response>() {
 
       @Override
@@ -134,7 +125,13 @@ public class DefaultRequestMethod implements IConnectionMethod {
           DefaultRequestMethod.this.running = true;
           DefaultRequestMethod.this.aborted = false;
           
-          return connector.execute( getHttpMethod(), new ResponseParser( DefaultRequestMethod.this.configuration, DefaultRequestMethod.this, responseHandler), new BasicHttpContext() );
+          String ecode = "";
+          if ( isGET() && configuration.isCacheEnabled() ) {
+            String url = getHttpMethod().getRequestLine().getUri();
+            ecode = DefaultRequestMethod.this.configuration.getCacheManager().setup(destEntity, url, DefaultRequestMethod.this);
+          }
+          
+          return connector.execute( getHttpMethod(), new ResponseParser( DefaultRequestMethod.this.configuration, DefaultRequestMethod.this, responseHandler, ecode), new BasicHttpContext() );
 
         } catch (ClientProtocolException e) {
           

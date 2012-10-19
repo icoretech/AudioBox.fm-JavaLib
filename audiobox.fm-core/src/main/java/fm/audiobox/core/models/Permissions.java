@@ -41,7 +41,8 @@ public final class Permissions extends AbstractEntity implements Serializable {
   private boolean lastfm = true;
   private boolean twitchtv = true;
   private boolean facebook = true;
-  private boolean twitter = true;  
+  private boolean twitter = true;
+  private boolean musixmatch = true;
   
   public Permissions(IConfiguration config) {
     super(config);
@@ -129,6 +130,19 @@ public final class Permissions extends AbstractEntity implements Serializable {
 
   public void setGdrive(boolean gdrive) {
     this.gdrive = gdrive;
+  }
+  
+  
+  
+  public boolean isMusixmatch() {
+    return musixmatch;
+  }
+
+
+
+
+  public void setMusixmatch(boolean musixmatch) {
+    this.musixmatch = musixmatch;
   }
 
 
@@ -300,6 +314,10 @@ public final class Permissions extends AbstractEntity implements Serializable {
     } else if ( tagName.equals("twitter") ) {
 
       return this.getClass().getMethod("setTwitter", boolean.class);
+
+    } else if ( tagName.equals("musixmatch") ) {
+
+      return this.getClass().getMethod("setMusixmatch", boolean.class);
 
     }
     

@@ -243,6 +243,12 @@ public class DefaultConfiguration implements IConfiguration {
   @Override
   public void setCacheManager(ICacheManager manager) {
     this.cacheManager = manager;
+    if ( this.cacheManager != null ) {
+      this.cacheManager.setConfiguration( this );
+      this.setUseCache( true );
+    } else {
+      this.setUseCache( false );
+    }
   }
 
 
