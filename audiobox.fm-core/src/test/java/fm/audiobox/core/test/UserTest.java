@@ -51,6 +51,7 @@ public class UserTest extends AudioBoxTestCase {
     assertNull(this.abc.getUser());
     
     loginCatched();
+    assertNotNull(this.abc.getUser().getAuthToken() );
     assertNotSame(this.abc.getUser().getAuthToken(), "");
     
   }

@@ -46,23 +46,17 @@ public class DefaultCacheManager implements ICacheManager {
   }
   
   
-  public void store(IEntity destEntity, String ecode, Response response, HttpResponse httpResponse) {
+  public void store(IEntity destEntity, String ecode, String url, Response response, HttpResponse httpResponse) {
     
-    try {
-      response = new Response( response.getFormat(), response.getStatus(), Response.streamToString(response.getStream() ));
+    String etag = null;
+    Header etagTag = httpResponse.getLastHeader( IConnectionMethod.HTTP_HEADER_ETAG );
+    if ( etagTag != null ) {
+      etag = etagTag.getValue();
+    }
       
-      String etag = null;
-      Header etagTag = httpResponse.getLastHeader( IConnectionMethod.HTTP_HEADER_ETAG );
-      if ( etagTag != null ) {
-        etag = etagTag.getValue();
-      }
-        
-      if ( etag != null) {
-        etags.put(ecode, etag);
-        entities.put( ecode, response );
-      }
-    } catch (IOException e) {
-      log.error("An error occurred while storing Reponse", e);
+    if ( etag != null) {
+      etags.put(ecode, etag);
+      entities.put( ecode, response );
     }
     
   }

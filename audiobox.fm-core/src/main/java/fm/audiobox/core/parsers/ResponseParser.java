@@ -58,10 +58,10 @@ public class ResponseParser implements ResponseHandler<Response> {
   public Response handleResponse(HttpResponse httpResponse) throws ClientProtocolException, IOException {
 
     int responseCode = httpResponse.getStatusLine().getStatusCode();
-
+    String url = this.method.getHttpMethod().getURI().toString();
     
     if ( log.isDebugEnabled() ) {
-      log.debug("Response code: " + responseCode + " for " + this.method.getHttpMethod().getURI().toString() );
+      log.debug("Response code: " + responseCode + " for " + url );
     } else {
       log.info( "Response code: " + responseCode );
     }
@@ -88,26 +88,23 @@ public class ResponseParser implements ResponseHandler<Response> {
     ContentFormat format = isXml ? ContentFormat.XML : isJson ? ContentFormat.JSON : isText ? ContentFormat.TXT : ContentFormat.BINARY;
 
     // Build a new Response
-    Response response = new Response(format, responseCode, entity != null ? entity.getContent() : null );
+    Response response = new Response(format, responseCode, entity != null ? Response.streamToString( entity.getContent() ) : null );
 
-    
-    
     switch ( responseCode ) {
+    
+      case HttpStatus.SC_NOT_MODIFIED:
+        response = this.configuration.getCacheManager().getResponse(destEntity, this.ecode);
 
       case HttpStatus.SC_OK:
       case HttpStatus.SC_ACCEPTED:
         // Try to parse response body
-        String content = this.responseHandler.parse(response.getStream(), destEntity, response.getFormat());
-        response = new Response(response.getFormat(), responseCode, content);
-        if ( this.configuration.isCacheEnabled() ) {
-          this.configuration.getCacheManager().store(this.destEntity, this.ecode, response, httpResponse);
+        this.responseHandler.parse(response.getStream(), destEntity, response.getFormat());
+        
+        if ( responseCode != HttpStatus.SC_NOT_MODIFIED && this.method.isGET() && this.configuration.isCacheEnabled() ) {
+          this.configuration.getCacheManager().store(this.destEntity, this.ecode, url, response, httpResponse);
         }
         break;
         
-      case HttpStatus.SC_NOT_MODIFIED:
-        response = this.configuration.getCacheManager().getResponse(destEntity, this.ecode);
-        break;
-  
       // In all other cases new response will be instantiated and returned
       case HttpStatus.SC_CREATED:
   

@@ -61,7 +61,7 @@ public interface ICacheManager extends Serializable {
    * @param ecode the unique string linked to the {@link IEntity destEntity}
    * @param response the {@link InputStream} where reading the response from
    */
-  public void store(IEntity destEntity, String ecode, Response response, HttpResponse httpResponse);
+  public void store(IEntity destEntity, String ecode, String url, Response response, HttpResponse httpResponse);
   
   
   /**
