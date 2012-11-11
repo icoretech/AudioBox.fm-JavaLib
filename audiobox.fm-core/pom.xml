@@ -11,7 +11,7 @@
   <artifactId>audiobox.fm-core</artifactId>
   <name>core</name>
   <packaging>jar</packaging>
-
+  
   <description>AudioBox.fm JavaLib core is the main part of the libraries. All connections and requests are made through this object.</description>
   <url>http://maven.keytwo.net/audiobox.fm-core</url>
 
