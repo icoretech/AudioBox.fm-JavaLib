@@ -24,6 +24,7 @@ package fm.audiobox.interfaces;
 
 import java.util.List;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -36,6 +37,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import fm.audiobox.configurations.Response;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
+import fm.audiobox.core.models.User;
 import fm.audiobox.interfaces.IConfiguration.ContentFormat;
 
 /**
@@ -170,6 +172,30 @@ public interface IConnector {
     
     
     /**
+     * Sets the {@link IAuthenticationHandle} for handling the authentication method
+     * @param handle
+     */
+    public void setAuthenticationHandle(IAuthenticationHandle handle);
+    
+    /**
+     * Returns the {@link IAuthenticationHandle}
+     */
+    public IAuthenticationHandle getAuthenticationHandle();
+    
+    
+    
+    /**
+     * Sets the current {@link User}
+     */
+    public void setUser( User user );
+    
+    /**
+     * Returns the current {@link User}
+     */
+    public User getUser();
+    
+    
+    /**
      * Returns the destination entity to populate while parsing response content
      * 
      * @return the destination {@link IEntity} to populate 
@@ -185,7 +211,7 @@ public interface IConnector {
      */
     public void addHeader(String header, String value);
     
-    
+    public void addHeader( Header header );
     
     /**
      * Start the request.

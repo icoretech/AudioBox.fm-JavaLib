@@ -8,6 +8,7 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
@@ -29,7 +30,9 @@ import org.slf4j.LoggerFactory;
 import fm.audiobox.core.exceptions.AudioBoxException;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
+import fm.audiobox.core.models.User;
 import fm.audiobox.core.parsers.ResponseParser;
+import fm.audiobox.interfaces.IAuthenticationHandle;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
@@ -45,9 +48,11 @@ public class DefaultRequestMethod implements IConnectionMethod {
   private volatile transient IConfiguration configuration;
   private volatile transient Future<Response> futureResponse;
   private volatile transient IConfiguration.ContentFormat format;
+  private volatile transient User user;
   
   private volatile transient boolean running = false;
   private volatile transient boolean aborted = false;
+  private volatile transient IAuthenticationHandle authenticationHandle;
 
   public DefaultRequestMethod(){
     super();
@@ -63,6 +68,28 @@ public class DefaultRequestMethod implements IConnectionMethod {
   }
 
   
+  public void setUser( User user ){
+    this.user = user;
+  }
+  
+  public User getUser() {
+    return this.user;
+  }
+  
+  /**
+   * Sets the {@link IAuthenticationHandle} for handling the authentication method
+   * @param handle
+   */
+  public void setAuthenticationHandle(IAuthenticationHandle handle){
+    this.authenticationHandle = handle;
+  }
+  
+  /**
+   * Returns the {@link IAuthenticationHandle}
+   */
+  public IAuthenticationHandle getAuthenticationHandle() {
+    return this.authenticationHandle != null ? this.authenticationHandle : this.configuration.getAuthenticationHandle();
+  }
   
   
   public void addHeader(String header, String value) {
@@ -70,6 +97,10 @@ public class DefaultRequestMethod implements IConnectionMethod {
       this.method.addHeader(header, value);
     else
       this.method.removeHeaders(header);
+  }
+  
+  public void addHeader(Header header) {
+    this.addHeader( header.getName(), header.getValue() );
   }
   
 
@@ -114,6 +145,7 @@ public class DefaultRequestMethod implements IConnectionMethod {
       ((HttpEntityEnclosingRequestBase) getHttpMethod() ).setEntity( params );
     }
     
+    this.getAuthenticationHandle().handle( this );
     
     Callable<Response> start = new Callable<Response>() {
 
@@ -130,6 +162,8 @@ public class DefaultRequestMethod implements IConnectionMethod {
             String url = getHttpMethod().getRequestLine().getUri();
             ecode = DefaultRequestMethod.this.configuration.getCacheManager().setup(destEntity, url, DefaultRequestMethod.this);
           }
+          
+          
           
           return connector.execute( getHttpMethod(), new ResponseParser( DefaultRequestMethod.this.configuration, DefaultRequestMethod.this, responseHandler, ecode), new BasicHttpContext() );
 

@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import fm.audiobox.interfaces.ICacheManager;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
+import fm.audiobox.interfaces.IAuthenticationHandle;
 import fm.audiobox.interfaces.IFactory;
 import fm.audiobox.interfaces.ILoginExceptionHandler;
 import fm.audiobox.interfaces.IResponseHandler;
@@ -55,6 +56,7 @@ public class DefaultConfiguration implements IConfiguration {
   private Class<? extends IResponseHandler> responseParserClass = DefaultResponseParser.class;
   private ExecutorService executor;
   private ICacheManager cacheManager;
+  private IAuthenticationHandle authenticationHandle = new DefaultAuthenticationHandle();
 
   private String mUserAgent;
 
@@ -122,7 +124,13 @@ public class DefaultConfiguration implements IConfiguration {
   }
   
   
+  public IAuthenticationHandle getAuthenticationHandle(){
+    return this.authenticationHandle;
+  }
   
+  public void setAuthenticationHandle(IAuthenticationHandle handle){
+    this.authenticationHandle = handle;
+  }
   
   @Override
   public IFactory getFactory() {

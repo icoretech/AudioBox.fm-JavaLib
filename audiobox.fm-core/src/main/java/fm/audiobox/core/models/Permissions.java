@@ -43,6 +43,7 @@ public final class Permissions extends AbstractEntity implements Serializable {
   private boolean facebook = true;
   private boolean twitter = true;
   private boolean musixmatch = true;
+  private boolean songkick = true;
   
   public Permissions(IConfiguration config) {
     super(config);
@@ -146,6 +147,14 @@ public final class Permissions extends AbstractEntity implements Serializable {
   }
 
 
+  
+  public boolean isSongkick() {
+    return this.songkick;
+  }
+
+  public void setSongkick(boolean songkick) {
+    this.songkick = songkick;
+  }
 
 
   public boolean isSkydrive() {
@@ -318,6 +327,10 @@ public final class Permissions extends AbstractEntity implements Serializable {
     } else if ( tagName.equals("musixmatch") ) {
 
       return this.getClass().getMethod("setMusixmatch", boolean.class);
+
+    } else if ( tagName.equals("songkick") ) {
+
+      return this.getClass().getMethod("setSongkick", boolean.class);
 
     }
     

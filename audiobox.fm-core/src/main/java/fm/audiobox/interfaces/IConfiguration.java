@@ -92,6 +92,15 @@ public interface IConfiguration {
    * @return current {@link IFactory} associated with this configuration
    */
   public IFactory getFactory();
+  
+  
+  /**
+   * Get/Set method for the global {@link IAuthenticationHandle}. It handles the authentication method
+   */
+  public IAuthenticationHandle getAuthenticationHandle();
+  
+  public void setAuthenticationHandle(IAuthenticationHandle handle);
+  
 
   /**
    * Sets the application name sent to server as "User-Agent" request header

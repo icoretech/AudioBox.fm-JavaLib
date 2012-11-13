@@ -42,6 +42,7 @@ import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.NameValuePair;
+import org.apache.http.auth.AuthenticationException;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -68,6 +69,7 @@ import org.apache.http.protocol.HttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fm.audiobox.configurations.DefaultAuthenticationHandle;
 import fm.audiobox.configurations.DefaultFactory;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
@@ -77,6 +79,8 @@ import fm.audiobox.core.models.User;
 import fm.audiobox.core.observables.Event;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConfiguration.ContentFormat;
+import fm.audiobox.interfaces.IConnector.IConnectionMethod;
+import fm.audiobox.interfaces.IAuthenticationHandle;
 import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IFactory;
@@ -172,8 +176,6 @@ public class AudioBox extends Observable {
   /** Prefix used to store each property into properties file */
   public static final String PREFIX = AudioBox.class.getPackage().getName() + ".";
 
-  private UsernamePasswordCredentials mCredentials;
-
   private IConfiguration configuration;
   private User user;
 
@@ -195,7 +197,7 @@ public class AudioBox extends Observable {
     config.getFactory().addConnector(IConfiguration.Connectors.RAILS, standardConnector );
     config.getFactory().addConnector(IConfiguration.Connectors.NODE, uploaderConnector );
     config.getFactory().addConnector(IConfiguration.Connectors.DAEMON, daemonerConnector );
-
+    
     log.trace("New AudioBox correctly instantiated");
   }
 
@@ -230,7 +232,7 @@ public class AudioBox extends Observable {
    * @throws LoginException if user doesn't exists or is inactive.
    * @throws ServiceException if any connection problem occurs.
    */
-  public User login(String username, String password) throws LoginException, ServiceException {
+  public User login(final String username, final String password, boolean async) throws LoginException, ServiceException {
     log.info("Executing login for user: " + username);
     
     // Destroy old user's pointer
@@ -238,10 +240,26 @@ public class AudioBox extends Observable {
     
     User user = (User) this.configuration.getFactory().getEntity(User.TAGNAME, this.getConfiguration() );
     user.setUsername(username);
-    //add the object to be observed, the observer 
-    mCredentials = new UsernamePasswordCredentials(username, password);
     
-    this.configuration.getFactory().getConnector().get(user, null, null).send(false);
+    //add the object to be observed, the observer 
+    IConnectionMethod req = this.configuration.getFactory().getConnector().get(user, null, null);
+    
+    
+    if ( username != null && password != null ) {
+      req.setAuthenticationHandle(new IAuthenticationHandle() {
+        public void handle(IConnectionMethod request) {
+          BasicScheme mScheme = new BasicScheme();
+          UsernamePasswordCredentials mCredentials = new UsernamePasswordCredentials( username, password );
+          try {
+            request.addHeader( mScheme.authenticate(mCredentials,  request.getHttpMethod() ) );
+          } catch (AuthenticationException e) {
+            log.error("Authentication cannot be set", e);
+          }
+        }
+      });
+    }
+    
+    req.send(async);
     
     // User can now be set. Note: set user before notifing observers
     this.user = user;
@@ -254,6 +272,10 @@ public class AudioBox extends Observable {
     return this.user;
   }
   
+  
+  public User login(String username, String password) throws LoginException, ServiceException {
+    return this.login( username, password, false);
+  }
   
   
   public boolean logout() {
@@ -278,7 +300,10 @@ public class AudioBox extends Observable {
   public IConfiguration getConfiguration(){
     return this.configuration;
   }
-
+  
+  
+  
+  
   /**
    * Connector is the AudioBox http request wrapper.
    * 
@@ -310,7 +335,6 @@ public class AudioBox extends Observable {
     private HttpRoute mAudioBoxRoute;
     private ThreadSafeClientConnManager mCm;
     private DefaultHttpClient mClient;
-    private BasicScheme mScheme = new BasicScheme();
 
 
 
@@ -422,13 +446,6 @@ public class AudioBox extends Observable {
       method.addHeader("Accept-Encoding", "gzip");
       method.addHeader("User-Agent",  getConfiguration().getUserAgent());
       
-      if ( user != null && user.getAuthToken() != null ){
-        method.addHeader( IConnector.X_AUTH_TOKEN_HEADER, user.getAuthToken() );
-        if ( log.isDebugEnabled() ) {
-          log.debug( "-> " + IConnector.X_AUTH_TOKEN_HEADER + ": ******" + user.getAuthToken().substring( user.getAuthToken().length() - 5 ) );
-        }
-      }
-
       return method;
     }
 
@@ -452,6 +469,7 @@ public class AudioBox extends Observable {
       if ( method != null ) {
         HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_GET, path, action, format, params);
         method.init(destEntity, originalMethod, this.mClient, getConfiguration(), format );
+        method.setUser( user );
       }
 
       return method;
@@ -476,6 +494,7 @@ public class AudioBox extends Observable {
       if ( method != null ) {
         HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_PUT, path, action, format, null);
         method.init(destEntity, originalMethod, this.mClient, getConfiguration(), format );
+        method.setUser( user );
       }
 
       return method;
@@ -500,6 +519,7 @@ public class AudioBox extends Observable {
       if ( method != null ) {
         HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_POST, path, action, format, null);
         method.init(destEntity, originalMethod, this.mClient, getConfiguration(), format );
+        method.setUser( user );
       }
       
       return method;
@@ -523,6 +543,7 @@ public class AudioBox extends Observable {
       if ( method != null ) {
         HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_DELETE, path, action, format, params);
         method.init(destEntity, originalMethod, this.mClient, getConfiguration(), format );
+        method.setUser( user );
       }
 
       return method;
@@ -568,17 +589,10 @@ public class AudioBox extends Observable {
        * This interceptor must be added in order to set the Base64 credentials
        */
       this.mClient.addRequestInterceptor(new HttpRequestInterceptor() {
-
         public void process( final HttpRequest request,  final HttpContext context) throws HttpException, IOException {
-
-          log.trace("New request detected");
-
-          if ( user == null || user.getAuthToken() != null ){
-            log.trace("Request to AudioBox, add user credentials");
-            request.addHeader( mScheme.authenticate(mCredentials,  request) );  
-          }
+          log.debug("New request detected");
+          request.getAllHeaders();
         }
-
       });
 
       
