@@ -1,53 +1,40 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>fm.audiobox</groupId>
   <artifactId>components</artifactId>
   <packaging>pom</packaging>
-
   <name>components</name>
-
   <modules>
     <module>audiobox.fm-core</module>
     <module>audiobox.fm-sync</module>
   </modules>
-
   <version>3.0-SNAPSHOT</version>
   <description>AudioBox.fm JavaLib offers full access to the RESTful
     AudioBox.fm API, giving the developer the ability to make use of the
     native API through comfortable Java objects.</description>
   <url>http://audiobox.keytwo.net/</url>
-
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    
     <project.env>${env}</project.env>
-    
     <project.rails.protocol>${fm.audiobox.rails.protocol}</project.rails.protocol>
     <project.rails.host>${fm.audiobox.rails.host}</project.rails.host>
     <project.rails.port>${fm.audiobox.rails.port}</project.rails.port>
     <project.rails.apiPath>${fm.audiobox.rails.apiPath}</project.rails.apiPath>
-    
     <project.node.protocol>${fm.audiobox.node.protocol}</project.node.protocol>
     <project.node.host>${fm.audiobox.node.host}</project.node.host>
     <project.node.port>${fm.audiobox.node.port}</project.node.port>
     <project.node.apiPath>${fm.audiobox.node.apiPath}</project.node.apiPath>
-    
-    
     <project.daemon.protocol>${fm.audiobox.daemon.protocol}</project.daemon.protocol>
     <project.daemon.host>${fm.audiobox.daemon.host}</project.daemon.host>
     <project.daemon.port>${fm.audiobox.daemon.port}</project.daemon.port>
     <project.daemon.apiPath>${fm.audiobox.daemon.apiPath}</project.daemon.apiPath>
-    
     <project.logLevel>${fm.audiobox.logLevel}</project.logLevel>
   </properties>
-
   <organization>
     <name>iCoreTech Inc.</name>
     <url>http://icorete.ch/</url>
   </organization>
-
   <licenses>
     <license>
       <name>GNU GPL 3</name>
@@ -58,23 +45,17 @@
         Richard Stallman for the GNU project.</comments>
     </license>
   </licenses>
-
   <scm>
     <connection>scm:git:git@github.com:audiobox/AudioBox.fm-JavaLib.git</connection>
     <developerConnection>scm:git:git@github.com:icoretech/AudioBox.fm-JavaLib.git</developerConnection>
     <url>https://github.com/icoretech/AudioBox.fm-JavaLib/tree/master</url>
   </scm>
-
-
   <issueManagement>
     <system>GitHub Issues</system>
     <url>https://github.com/icoretech/AudioBox.fm-JavaLib/issues</url>
   </issueManagement>
-
   <inceptionYear>2010</inceptionYear>
-
   <build>
-
     <resources>
       <resource>
         <directory>${basedir}/src/main/resources</directory>
@@ -93,9 +74,7 @@
         </includes>
       </testResource>
     </testResources>
-
     <plugins>
-    
       <!-- Testing framework -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -105,7 +84,6 @@
           <skipTests>${fm.audiobox.skipTests}</skipTests>
         </configuration>
       </plugin>
-
       <!-- Test coverage reports -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -132,7 +110,6 @@
           </execution>
         </executions>
       </plugin>
-
       <!-- Javadoc -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -140,7 +117,6 @@
         <version>2.7</version>
         <configuration>
           <excludePackageNames>*.test.*:*.util.*:com.twmacinta.*</excludePackageNames>
-          
           <docletArtifact>
             <groupId>com.google.doclava</groupId>
             <artifactId>doclava</artifactId>
@@ -148,7 +124,7 @@
           </docletArtifact>
           <doclet>com.google.doclava.Doclava</doclet>
           <!--
-            | bootclasspath required by Sun's JVM 
+            | bootclasspath required by Sun's JVM
           -->
           <bootclasspath>${sun.boot.class.path}</bootclasspath>
           <additionalparam>
@@ -165,7 +141,6 @@
           <additionalJOption>-J-Xmx1024m</additionalJOption>
         </configuration>
       </plugin>
-
       <!-- Compiler (used to set the JDK version) -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -178,15 +153,12 @@
           <target>1.6</target>
         </configuration>
       </plugin>
-
       <!-- Release (used to perform deploy) -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
         <version>2.3.2</version>
       </plugin>
-
-
       <!-- Manifest -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -208,9 +180,7 @@
           </archive>
         </configuration>
       </plugin>
-
     </plugins>
-
     <extensions>
       <!-- Enabling the use of FTP -->
       <extension>
@@ -220,7 +190,6 @@
       </extension>
     </extensions>
   </build>
-
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -267,7 +236,6 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-
   <distributionManagement>
     <repository>
       <id>keytwo.net</id>
@@ -280,7 +248,6 @@
       <url>ftp://ftp.keytwo.net</url>
     </site>
   </distributionManagement>
-
   <profiles>
     <profile>
       <id>dev-profile</id>
@@ -288,31 +255,24 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <properties>
-        
         <env>development</env>
-        
         <fm.audiobox.rails.protocol>http</fm.audiobox.rails.protocol>
         <fm.audiobox.rails.host>0.0.0.0</fm.audiobox.rails.host>
         <fm.audiobox.rails.port>5000</fm.audiobox.rails.port>
         <fm.audiobox.rails.apiPath>/api/v1</fm.audiobox.rails.apiPath>
-        
         <fm.audiobox.node.protocol>http</fm.audiobox.node.protocol>
         <fm.audiobox.node.host>0.0.0.0</fm.audiobox.node.host>
         <fm.audiobox.node.port>3000</fm.audiobox.node.port>
         <fm.audiobox.node.apiPath>/api/v1</fm.audiobox.node.apiPath>
-        
         <fm.audiobox.daemon.protocol>http</fm.audiobox.daemon.protocol>
         <fm.audiobox.daemon.host>0.0.0.0</fm.audiobox.daemon.host>
         <fm.audiobox.daemon.port>3000</fm.audiobox.daemon.port>
         <fm.audiobox.daemon.apiPath>/api/v1</fm.audiobox.daemon.apiPath>
-        
         <fm.audiobox.skipTests>true</fm.audiobox.skipTests>
         <fm.audiobox.logLevel>DEBUG</fm.audiobox.logLevel>
         <maven.javadoc.skip>true</maven.javadoc.skip>
       </properties>
     </profile>
-  
-  
     <profile>
       <id>test-profile</id>
       <activation>
@@ -322,32 +282,25 @@
         </property>
       </activation>
       <properties>
-      
         <env>test</env>
-      
         <fm.audiobox.rails.protocol>http</fm.audiobox.rails.protocol>
         <fm.audiobox.rails.host>staging.audiobox.fm</fm.audiobox.rails.host>
         <fm.audiobox.rails.port>80</fm.audiobox.rails.port>
         <fm.audiobox.rails.apiPath>/api/v1</fm.audiobox.rails.apiPath>
-        
         <fm.audiobox.node.protocol>http</fm.audiobox.node.protocol>
         <fm.audiobox.node.host>staging.audiobox.fm</fm.audiobox.node.host>
         <fm.audiobox.node.port>80</fm.audiobox.node.port>
         <fm.audiobox.node.apiPath>/api/v1</fm.audiobox.node.apiPath>
-        
         <fm.audiobox.daemon.protocol>http</fm.audiobox.daemon.protocol>
         <fm.audiobox.daemon.host>desk.staging.audiobox.fm</fm.audiobox.daemon.host>
         <fm.audiobox.daemon.port>5100</fm.audiobox.daemon.port>
         <fm.audiobox.daemon.apiPath>/api/v1</fm.audiobox.daemon.apiPath>
-
-
         <fm.audiobox.skipTests>false</fm.audiobox.skipTests>
         <fm.audiobox.logLevel>DEBUG</fm.audiobox.logLevel>
         <maven.javadoc.skip>true</maven.javadoc.skip>
       </properties>
       <reporting>
         <plugins>
-
           <!-- Test coverage reports -->
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
@@ -363,8 +316,6 @@
         </plugins>
       </reporting>
     </profile>
-    
-    
     <profile>
       <id>staging-profile</id>
       <activation>
@@ -374,31 +325,24 @@
         </property>
       </activation>
       <properties>
-        
         <env>staging</env>
-        
         <fm.audiobox.rails.protocol>http</fm.audiobox.rails.protocol>
         <fm.audiobox.rails.host>staging.audiobox.fm</fm.audiobox.rails.host>
         <fm.audiobox.rails.port>80</fm.audiobox.rails.port>
         <fm.audiobox.rails.apiPath>/api/v1</fm.audiobox.rails.apiPath>
-        
         <fm.audiobox.node.protocol>http</fm.audiobox.node.protocol>
         <fm.audiobox.node.host>staging.audiobox.fm</fm.audiobox.node.host>
         <fm.audiobox.node.port>80</fm.audiobox.node.port>
         <fm.audiobox.node.apiPath>/api/v1</fm.audiobox.node.apiPath>
-        
         <fm.audiobox.daemon.protocol>http</fm.audiobox.daemon.protocol>
         <fm.audiobox.daemon.host>staging.audiobox.fm</fm.audiobox.daemon.host>
         <fm.audiobox.daemon.port>8082</fm.audiobox.daemon.port>
         <fm.audiobox.daemon.apiPath>/api/v1</fm.audiobox.daemon.apiPath>
-
-
         <fm.audiobox.skipTests>true</fm.audiobox.skipTests>
         <fm.audiobox.logLevel>DEBUG</fm.audiobox.logLevel>
         <maven.javadoc.skip>true</maven.javadoc.skip>
       </properties>
     </profile>
-
     <profile>
       <id>production-profile</id>
       <activation>
@@ -407,37 +351,25 @@
           <value>production</value>
         </property>
       </activation>
-
       <properties>
-      
         <env>production</env>
-        
         <fm.audiobox.rails.protocol>http</fm.audiobox.rails.protocol>
         <fm.audiobox.rails.host>audiobox.fm</fm.audiobox.rails.host>
         <fm.audiobox.rails.port>80</fm.audiobox.rails.port>
         <fm.audiobox.rails.apiPath>/api/v1</fm.audiobox.rails.apiPath>
-        
         <fm.audiobox.node.protocol>http</fm.audiobox.node.protocol>
         <fm.audiobox.node.host>audiobox.fm</fm.audiobox.node.host>
         <fm.audiobox.node.port>80</fm.audiobox.node.port>
         <fm.audiobox.node.apiPath>/api/v1</fm.audiobox.node.apiPath>
-        
         <fm.audiobox.daemon.protocol>http</fm.audiobox.daemon.protocol>
         <fm.audiobox.daemon.host>audiobox.fm</fm.audiobox.daemon.host>
         <fm.audiobox.daemon.port>8082</fm.audiobox.daemon.port>
         <fm.audiobox.daemon.apiPath>/api/v1</fm.audiobox.daemon.apiPath>
-        
-        
-        <fm.audiobox.skipTests>false</fm.audiobox.skipTests>
         <fm.audiobox.logLevel>WARN</fm.audiobox.logLevel>
         <maven.javadoc.skip>false</maven.javadoc.skip>
-        
-        
       </properties>
     </profile>
-  
   </profiles>
-
   <repositories>
     <!-- JBoss.org repository (used of APIviz) -->
     <repository>
@@ -451,7 +383,6 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
-    
     <repository>
       <id>keytwo.releases</id>
       <name>AudioBox.fm releases</name>
@@ -463,8 +394,5 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
-    
   </repositories>
 </project>
-
-
