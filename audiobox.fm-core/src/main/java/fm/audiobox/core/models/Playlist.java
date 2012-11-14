@@ -226,6 +226,9 @@ public class Playlist extends AbstractEntity implements Serializable {
     
     } else if ( type.equals( Types.SoundcloudPlaylist.toString() ) ){
       this.type = Types.SoundcloudPlaylist;
+      
+    } else if ( type.equals( Types.BoxPlaylist.toString() ) ){
+      this.type = Types.BoxPlaylist;
 
     } else if ( type.equals( Types.CustomPlaylist.toString() ) ){
       this.type = Types.CustomPlaylist;
