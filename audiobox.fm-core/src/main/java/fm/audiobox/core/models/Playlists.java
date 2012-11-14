@@ -82,6 +82,9 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
     
     /** The playlist associated with user's soundcloud storage */
     SoundcloudPlaylist,
+    
+    /** The playlist associated with user's box.net storage */
+    BoxPlaylist,
 
     /** User defined playlists */
     CustomPlaylist,
