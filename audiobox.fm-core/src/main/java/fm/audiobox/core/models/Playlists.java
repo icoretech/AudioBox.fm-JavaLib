@@ -90,11 +90,8 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
     CustomPlaylist,
 
     /** User defined playlists */
-    SmartPlaylist,
+    SmartPlaylist
     
-    /** The playlist associated with user's box.net storage */
-    BoxPlaylist
-
   }
 
   /**
