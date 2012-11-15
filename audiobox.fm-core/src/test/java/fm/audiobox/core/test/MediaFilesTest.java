@@ -37,7 +37,7 @@ public class MediaFilesTest extends AudioBoxTestCase {
       
     }
     
-    Playlist local = playlists.getPlaylistByType( Playlists.Types.LocalPlaylist );
+    Playlist local = playlists.getPlaylistByType( "LocalPlaylist" );
     
     assertNotNull( local );
     
@@ -101,7 +101,7 @@ public class MediaFilesTest extends AudioBoxTestCase {
       
     }
     
-    Playlist local = playlists.getPlaylistByType( Playlists.Types.LocalPlaylist );
+    Playlist local = playlists.getPlaylistByType( "LocalPlaylist" );
     
     MediaFiles mediaFiles = local.getMediaFiles();
     

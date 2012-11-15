@@ -10,7 +10,6 @@ import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.MediaFiles;
 import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
-import fm.audiobox.core.models.Playlists.Types;
 import fm.audiobox.interfaces.IConfiguration;
 
 
@@ -29,7 +28,7 @@ public class CacheTest extends AudioBoxTestCase {
     pls.load(false);
     
     
-    Playlist pl =  pls.getPlaylistByType( Types.CustomPlaylist );
+    Playlist pl =  pls.getPlaylistByType( "CustomPlaylist" );
     assertNotNull(pl);
     
     

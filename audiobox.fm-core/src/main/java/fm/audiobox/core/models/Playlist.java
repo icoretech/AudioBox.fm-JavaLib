@@ -40,7 +40,6 @@ import org.slf4j.LoggerFactory;
 import fm.audiobox.configurations.Response;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.models.Playlists.Types;
 import fm.audiobox.core.observables.Event;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
@@ -86,7 +85,7 @@ public class Playlist extends AbstractEntity implements Serializable {
 
   private String name;
   private int position = 0;
-  private Types type;
+  private String type;
   private long media_files_count;
   private MediaFiles mediafiles;
   private String updated_at;
@@ -162,8 +161,6 @@ public class Playlist extends AbstractEntity implements Serializable {
    */
   public boolean clearContent() throws ServiceException, LoginException {
     
-    if ( this.getType() != Playlists.Types.LocalPlaylist ) return false;
-    
     List<NameValuePair> params = new ArrayList<NameValuePair>();
     params.add( new BasicNameValuePair("confirm", "YES") );
     
@@ -196,7 +193,7 @@ public class Playlist extends AbstractEntity implements Serializable {
    * Returns the playlist type
    * @return the playlist type
    */
-  public Types getType() {
+  public String getType() {
     return type;
   }
 
@@ -206,37 +203,7 @@ public class Playlist extends AbstractEntity implements Serializable {
    */
   public void setType(String type) {
 
-    if ( type.equals( Types.LocalPlaylist.toString() ) ){
-      this.type = Types.LocalPlaylist;
-
-    } else if ( type.equals( Types.CloudPlaylist.toString() ) ){
-      this.type = Types.CloudPlaylist;
-
-    }  else if ( type.equals( Types.DropboxPlaylist.toString() ) ){
-      this.type = Types.DropboxPlaylist;
-
-    } else if ( type.equals( Types.GdrivePlaylist.toString() ) ){
-      this.type = Types.GdrivePlaylist;
-
-    } else if ( type.equals( Types.SkydrivePlaylist.toString() ) ){
-      this.type = Types.SkydrivePlaylist;
-
-    } else if ( type.equals( Types.YoutubePlaylist.toString() ) ){
-      this.type = Types.YoutubePlaylist;
-    
-    } else if ( type.equals( Types.SoundcloudPlaylist.toString() ) ){
-      this.type = Types.SoundcloudPlaylist;
-      
-    } else if ( type.equals( Types.BoxPlaylist.toString() ) ){
-      this.type = Types.BoxPlaylist;
-
-    } else if ( type.equals( Types.CustomPlaylist.toString() ) ){
-      this.type = Types.CustomPlaylist;
-
-    } else if ( type.equals( Types.SmartPlaylist.toString() ) ){
-      this.type = Types.SmartPlaylist;
-
-    }
+    this.type = type;
     
   }
 

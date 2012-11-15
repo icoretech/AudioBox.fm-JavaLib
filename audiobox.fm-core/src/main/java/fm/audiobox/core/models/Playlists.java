@@ -61,38 +61,6 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
    *   <li>{@link PlaylistTypes#CustomPlaylist custom}</li>
    * </ul> 
    */
-  public enum Types {
-    /** The playlist associated with user's local storage */
-    LocalPlaylist,
-
-    /** The playlist associated with user's AudioBox storage */
-    CloudPlaylist,
-    
-    /** The playlist associated with user's dropbox storage */
-    DropboxPlaylist,
-
-    /** The playlist associated with user's gdrive storage */
-    GdrivePlaylist,
-    
-    /** The playlist associated with user's skydrive storage */
-    SkydrivePlaylist,
-
-    /** The playlist associated with user's youtube storage */
-    YoutubePlaylist,
-    
-    /** The playlist associated with user's soundcloud storage */
-    SoundcloudPlaylist,
-    
-    /** The playlist associated with user's box.net storage */
-    BoxPlaylist,
-
-    /** User defined playlists */
-    CustomPlaylist,
-
-    /** User defined playlists */
-    SmartPlaylist
-    
-  }
 
   /**
    * <p>Constructor for Playlists.</p>
@@ -141,10 +109,10 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
    * @param type the {@link PlaylistTypes}
    * @return the first {@link MediaFiles} that matches with the given {@link PlaylistTypes}
    */
-  public Playlist getPlaylistByType( Types type ){
+  public Playlist getPlaylistByType( String type ){
     for ( Iterator<Playlist> it = this.iterator(); it.hasNext();  ){
       Playlist pl = it.next();
-      if (  pl.getType() == type  ) {
+      if (  type.equals( pl.getType() )  ) {
         return pl;
       }
     }
@@ -157,11 +125,11 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
    * @param type the {@link PlaylistTypes}
    * @return a list of {@link MediaFiles} that matches with the given {@link PlaylistTypes}
    */
-  public List<Playlist> getPlaylistsByType( Types type ){
+  public List<Playlist> getPlaylistsByType( String type ){
     List<Playlist> pls = new ArrayList<Playlist>();
     for ( Iterator<Playlist> it = this.iterator(); it.hasNext();  ){
       Playlist pl = it.next();
-      if (  pl.getType() == type  ) {
+      if ( type.equals( pl.getType() ) ) {
         pls.add(pl);
       }
     }

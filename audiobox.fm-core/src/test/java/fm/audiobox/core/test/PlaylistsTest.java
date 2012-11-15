@@ -15,7 +15,6 @@ import fm.audiobox.core.models.MediaFile;
 import fm.audiobox.core.models.MediaFiles;
 import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
-import fm.audiobox.core.models.Playlists.Types;
 import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 
 /**
@@ -45,10 +44,10 @@ public class PlaylistsTest extends AudioBoxTestCase {
     Playlist pl = pls.getPlaylistByName(Fixtures.get( Fixtures.SMALL_PLAYLIST_NAME ));
     assertEquals( pl.getName(), Fixtures.get( Fixtures.SMALL_PLAYLIST_NAME ) );
     
-    pl = pls.getPlaylistByType( Types.LocalPlaylist );
+    pl = pls.getPlaylistByType( "LocalPlaylist" );
     assertNotNull( pl.getName() );
     
-    pl = pls.getPlaylistByType( Types.CloudPlaylist );
+    pl = pls.getPlaylistByType( "CloudPlaylist" );
     assertNotNull( pl.getName() );
     
   }
@@ -136,13 +135,13 @@ public class PlaylistsTest extends AudioBoxTestCase {
     playlists.load(false);
     assertTrue(0 < playlists.size());
 
-    List<Playlist> pls = playlists.getPlaylistsByType(Types.LocalPlaylist);
+    List<Playlist> pls = playlists.getPlaylistsByType( "LocalPlaylist" );
     assertEquals(1, pls.size());
 
-    pls = playlists.getPlaylistsByType(Types.CloudPlaylist);
+    pls = playlists.getPlaylistsByType( "CloudPlaylist" );
     assertEquals(1, pls.size());
 
-    pls = playlists.getPlaylistsByType(Types.CustomPlaylist);
+    pls = playlists.getPlaylistsByType( "CustomPlaylist" );
     assertNotNull(pls);
   }
 
