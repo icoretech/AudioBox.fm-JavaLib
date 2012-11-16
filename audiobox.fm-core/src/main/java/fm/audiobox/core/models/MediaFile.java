@@ -152,6 +152,8 @@ public class MediaFile extends AbstractEntity implements Serializable{
   private String originalFileName;
   private String md5;
   private String filename;
+  private String remotePath;
+  private String shareToken;
   private boolean loved;
 
   private ArtWorks artworks;
@@ -345,6 +347,23 @@ public class MediaFile extends AbstractEntity implements Serializable{
       this.source = Source.dropbox;
     }
   }
+  
+  
+  public String getRemotePath() {
+    return remotePath;
+  }
+
+  public void setRemotePath(String remotePath) {
+    this.remotePath = remotePath;
+  }
+
+  public String getShareToken() {
+    return shareToken;
+  }
+
+  public void setShareToken(String shareToken) {
+    this.shareToken = shareToken;
+  }
 
   public int getRating() {
     return rating;
@@ -453,6 +472,12 @@ public class MediaFile extends AbstractEntity implements Serializable{
     
     } else if ( tagName.equals( LOVED_FIELD ) ){
       return this.getClass().getMethod("setLoved", boolean.class);
+      
+    } else if ( tagName.equals( REMOTE_PATH_FIELD ) ){
+      return this.getClass().getMethod("setRemotePath", String.class);
+    
+    } else if ( tagName.equals( SHARE_TOKEN_FIELD ) ){
+      return this.getClass().getMethod("setShareToken", String.class);
     }
     
     return null;
