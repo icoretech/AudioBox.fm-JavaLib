@@ -4,10 +4,10 @@ import org.junit.Test;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.models.Playlist;
+import fm.audiobox.core.models.MediaFiles;
 import fm.audiobox.core.models.Playlists;
 import fm.audiobox.core.test.mocks.models.MediaFile;
-import fm.audiobox.core.test.mocks.models.MediaFiles;
+import fm.audiobox.core.test.mocks.models.Playlist;
 
 public class ExtendableClasses extends AudioBoxTestCase {
   
@@ -17,7 +17,7 @@ public class ExtendableClasses extends AudioBoxTestCase {
   @Test
   public void testExtendsMediaFiles() {
     
-    abc.getConfiguration().getFactory().setEntity( MediaFiles.TAGNAME, MediaFiles.class);
+    abc.getConfiguration().getFactory().setEntity( Playlist.TAGNAME, Playlist.class);
     abc.getConfiguration().getFactory().setEntity( MediaFile.TAGNAME, MediaFile.class);
     
     loginCatched();
@@ -27,7 +27,7 @@ public class ExtendableClasses extends AudioBoxTestCase {
     
     try {
       pls.load(false);
-      Playlist pl = pls.getPlaylistByType("DropboxPlaylist");
+      Playlist pl = (Playlist) pls.getPlaylistByType("DropboxPlaylist");
       
       MediaFiles mfs = (MediaFiles) pl.getMediaFiles();
       mfs.load(false);
