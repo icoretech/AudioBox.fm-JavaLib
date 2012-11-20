@@ -69,7 +69,6 @@ import org.apache.http.protocol.HttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fm.audiobox.configurations.DefaultAuthenticationHandle;
 import fm.audiobox.configurations.DefaultFactory;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
@@ -77,11 +76,11 @@ import fm.audiobox.core.models.AbstractCollectionEntity;
 import fm.audiobox.core.models.AbstractEntity;
 import fm.audiobox.core.models.User;
 import fm.audiobox.core.observables.Event;
+import fm.audiobox.interfaces.IAuthenticationHandle;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConfiguration.ContentFormat;
-import fm.audiobox.interfaces.IConnector.IConnectionMethod;
-import fm.audiobox.interfaces.IAuthenticationHandle;
 import fm.audiobox.interfaces.IConnector;
+import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IFactory;
 

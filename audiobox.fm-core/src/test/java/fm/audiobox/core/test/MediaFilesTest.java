@@ -37,7 +37,7 @@ public class MediaFilesTest extends AudioBoxTestCase {
       
     }
     
-    Playlist local = playlists.getPlaylistByType( "LocalPlaylist" );
+    Playlist local = playlists.getPlaylistByType( Playlists.Type.LocalPlaylist );
     
     assertNotNull( local );
     
@@ -61,7 +61,7 @@ public class MediaFilesTest extends AudioBoxTestCase {
   @Test
   public void destroyMediaFilesFromHomeDrive() {
     
-    MediaFiles mediaFiles = this.getMediaFilesLocal();
+    MediaFiles mediaFiles = this.getMediaFiles(Playlists.Type.LocalPlaylist);
     
     int originalSize = mediaFiles.size();
     
@@ -83,7 +83,7 @@ public class MediaFilesTest extends AudioBoxTestCase {
   
   
   
-  private MediaFiles getMediaFilesLocal() {
+  private MediaFiles getMediaFiles(Playlists.Type type) {
 
     Playlists playlists = this.user.getPlaylists();
     
@@ -101,7 +101,7 @@ public class MediaFilesTest extends AudioBoxTestCase {
       
     }
     
-    Playlist local = playlists.getPlaylistByType( "LocalPlaylist" );
+    Playlist local = playlists.getPlaylistByType( type );
     
     MediaFiles mediaFiles = local.getMediaFiles();
     
@@ -114,6 +114,20 @@ public class MediaFilesTest extends AudioBoxTestCase {
     }
 
     return mediaFiles;
+    
+  }
+  
+  
+  @Test
+  public void streamURL() {
+    
+    MediaFiles mfs = this.getMediaFiles( Playlists.Type.DropboxPlaylist );
+    
+    MediaFile mf = mfs.get(0);
+    
+    assertEquals( mf.getStreamUrl(), "/stream/" + mf.getFilename() );
+    assertTrue( mf.computeStreamUrl().endsWith("/api/v1/stream/" + mf.getFilename() ) );
+   
     
   }
   

@@ -52,16 +52,20 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
   public static final String ADD_TRACKS_ACTION = "add_tracks";
   public static final String REMOVE_TRACKS_ACTION = "remove_tracks";
 
-  /** 
-   * Playlists are grouped by types that are:
-   * <ul> 
-   *   <li>{@link PlaylistTypes#AudioPlaylist audio}</li>
-   *   <li>{@link PlaylistTypes#SmartPlaylist smart}</li>
-   *   <li>{@link PlaylistTypes#VideoPlaylist video}</li>
-   *   <li>{@link PlaylistTypes#CustomPlaylist custom}</li>
-   * </ul> 
-   */
 
+  
+  public static enum Type {
+    LocalPlaylist,
+    CloudPlaylist,
+    DropboxPlaylist,
+    SkydrivePlaylist,
+    BoxPlaylist,
+    GdrivePlaylist,
+    YoutubePlaylist,
+    SoundcloudPlaylist,
+    CustomPlaylist
+  }
+  
   /**
    * <p>Constructor for Playlists.</p>
    */
@@ -119,6 +123,10 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
     return null;
   }
   
+  public Playlist getPlaylistByType( Type type ){
+    return this.getPlaylistByType( type.toString() );
+  }
+  
   /**
    * Returns a list of {@link MediaFiles} that matches the given {@link PlaylistTypes}
    * 
@@ -134,6 +142,11 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
       }
     }
     return pls;
+  }
+  
+  
+  public List<Playlist> getPlaylistsByType( Type type ){
+    return this.getPlaylistsByType( type.toString() );
   }
   
   @Override

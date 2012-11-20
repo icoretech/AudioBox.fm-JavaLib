@@ -163,7 +163,8 @@ public class MediaFile extends AbstractEntity implements Serializable{
   private enum Actions {
     stream,
     upload,
-    local
+    local,
+    download
   }
   
   public static enum Source {
@@ -488,6 +489,18 @@ public class MediaFile extends AbstractEntity implements Serializable{
   protected void copy(IEntity entity) {
     log.warn("Not implemented yet");
   }
+  
+  public String getStreamUrl() {
+    return IConnector.URI_SEPARATOR + Actions.stream + IConnector.URI_SEPARATOR + this.getFilename();
+  }
+  
+  public String computeStreamUrl() {
+    String path = IConnector.URI_SEPARATOR.concat( Actions.stream.toString() );
+    String action = this.getFilename();
+
+    IConnectionMethod request = this.getConnector(IConfiguration.Connectors.NODE).get(this,  path , action, null , null);
+    return request.getHttpMethod().getURI().toString();
+  }
 
 
   @Override
@@ -603,8 +616,8 @@ public class MediaFile extends AbstractEntity implements Serializable{
     if( file != null ){
       // In this case we are using 'path' for the action
       // and 'action' for the filename
-      String path = IConnector.URI_SEPARATOR.concat( Actions.stream.toString() );
-      String action = this.getMediaFileName();
+      String path = IConnector.URI_SEPARATOR.concat( Actions.download.toString() );
+      String action = this.getFilename();
 
       IConnectionMethod request = this.getConnector(IConfiguration.Connectors.NODE).get(this,  path , action, null , null);
       request.send(false, null, downloadHandler);
