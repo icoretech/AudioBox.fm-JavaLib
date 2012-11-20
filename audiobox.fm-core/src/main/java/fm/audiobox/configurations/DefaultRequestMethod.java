@@ -1,13 +1,13 @@
 package fm.audiobox.configurations;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import org.apache.http.Consts;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
@@ -23,7 +23,6 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HTTP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,20 +113,16 @@ public class DefaultRequestMethod implements IConnectionMethod {
   public Response send(boolean async, List<NameValuePair> params) throws ServiceException, LoginException {
     HttpEntity entity = null;
     if (  (! isGET() && ! isDELETE() )  && params != null ){
-      try {
-        
-        if ( log.isInfoEnabled() ) {
-          StringBuffer sb = new StringBuffer();
-          for ( NameValuePair param : params ){
-            sb.append( "[" + param.getName() + ": '" + param.getValue() + "'], " );
-          }
-          log.info("Params: " + sb.toString() );
+      
+      if ( log.isInfoEnabled() ) {
+        StringBuffer sb = new StringBuffer();
+        for ( NameValuePair param : params ){
+          sb.append( "[" + param.getName() + ": '" + param.getValue() + "'], " );
         }
-        
-        entity = new UrlEncodedFormEntity(params, HTTP.UTF_8);
-      } catch (UnsupportedEncodingException e) {
-        log.error("An error occurred while instantiating UrlEncodedFormEntity", e);
+        log.info("Params: " + sb.toString() );
       }
+      
+      entity = new UrlEncodedFormEntity(params, Consts.UTF_8);
     }
     return send(async, entity);
   }

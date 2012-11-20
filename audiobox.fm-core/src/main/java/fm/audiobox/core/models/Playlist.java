@@ -24,16 +24,15 @@ package fm.audiobox.core.models;
 
 
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.HTTP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -479,6 +478,8 @@ public class Playlist extends AbstractEntity implements Serializable {
    */
   private MediaFiles performAction(List<MediaFile> mediafiles, String action) throws ServiceException, LoginException  {
 
+    log.info("Performing action " + action + " on " + mediafiles.size() + " mediafiles");
+      
     List<NameValuePair> params = new ArrayList<NameValuePair>();
     for (MediaFile track : mediafiles) {
       params.add(new BasicNameValuePair(HTTP_PARAM, track.getToken()));
@@ -488,17 +489,10 @@ public class Playlist extends AbstractEntity implements Serializable {
     
     IConnectionMethod method = this.getConnector().put(this, action);
 
-    try {
-
-      HttpEntity entity = new UrlEncodedFormEntity(params, HTTP.UTF_8);
-      method.send(false, entity);
-
-    } catch (UnsupportedEncodingException e) {
-      log.error("An error occurred while instantiating UrlEncodedFormEntity", e);
-    }
+    HttpEntity entity = new UrlEncodedFormEntity(params, Consts.UTF_8);
+    method.send(false, entity);
 
     return _mediafiles;
-
   }
 
   /**
