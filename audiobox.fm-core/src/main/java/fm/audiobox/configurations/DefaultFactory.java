@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import fm.audiobox.AudioBox;
 import fm.audiobox.core.models.AccountStats;
-import fm.audiobox.core.models.ArtWorks;
 import fm.audiobox.core.models.ExternalTokens;
 import fm.audiobox.core.models.MediaFile;
 import fm.audiobox.core.models.MediaFiles;
