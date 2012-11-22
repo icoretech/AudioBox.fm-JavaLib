@@ -124,7 +124,7 @@ public class MediaFileUploaderTest extends AudioBoxTestCase {
       media.setDisc (   9    );
       media.setSize(  1234     );
       media.setType(    MediaFiles.Type.AudioFile   );
-      media.setSource(  MediaFile.Source.local     );
+      media.setSource(  MediaFile.Source.local.toString()     );
       media.setAudioSampleRate (   "192"    );
       media.setAudioBitRate (  "44100"   );
       media.setOriginalFileName (  "/User/path/to/media_file_name.mp3"     );
