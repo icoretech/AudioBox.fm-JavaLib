@@ -146,7 +146,7 @@ public class MediaFile extends AbstractEntity implements Serializable{
   private int rating;
   private long size;
   private String mime;
-  private Source source;
+  private String source;
   private String audioSampleRate;
   private String audioBitRate;
   private String originalFileName;
@@ -330,11 +330,11 @@ public class MediaFile extends AbstractEntity implements Serializable{
     }
   }
   
-  public Source getSource() {
+  public String getSource() {
     return this.source;
   }
   
-  public void setSource(Source s) {
+  public void setSource(String s) {
     this.source = s;
   }
 
