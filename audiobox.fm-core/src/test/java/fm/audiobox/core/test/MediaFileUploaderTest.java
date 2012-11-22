@@ -128,7 +128,7 @@ public class MediaFileUploaderTest extends AudioBoxTestCase {
       media.setAudioSampleRate (   "192"    );
       media.setAudioBitRate (  "44100"   );
       media.setOriginalFileName (  "/User/path/to/media_file_name.mp3"     );
-      media.setMd5(   this.md5    );
+      media.setHash(   this.md5    );
       
       try {
         media.notifyAsLocal();

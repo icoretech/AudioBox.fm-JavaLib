@@ -121,7 +121,6 @@ public class MediaFile extends AbstractEntity implements Serializable{
   public static final String AUDIO_BIT_RATE_FIELD =     "audio_bit_rate";
   public static final String SOURCE_FIELD =             "source";
   public static final String ORIGINAL_FILE_NAME_FIELD = "original_file_name";
-  public static final String MD5_FIELD =                "md5";
   public static final String HASH_FIELD =               "hash";
   public static final String FILENAME_FIELD =           "filename";
   public static final String LOVED_FIELD =              "loved";
@@ -148,7 +147,7 @@ public class MediaFile extends AbstractEntity implements Serializable{
   private String audioSampleRate;
   private String audioBitRate;
   private String originalFileName;
-  private String md5;
+  private String hash;
   private String filename;
   private String remotePath;
   private String shareToken;
@@ -394,12 +393,12 @@ public class MediaFile extends AbstractEntity implements Serializable{
   }
   
 
-  public String getMd5() {
-    return md5;
+  public String getHash() {
+    return this.hash;
   }
 
-  public void setMd5(String md5) {
-    this.md5 = md5;
+  public void setHash(String hash) {
+    this.hash = hash;
   }
   
   public void setArtwork(String artwork){
@@ -451,8 +450,8 @@ public class MediaFile extends AbstractEntity implements Serializable{
       return this.getClass().getMethod("setAudioBitRate", String.class);
     } else if ( tagName.equals( ARTWORK_FIELD )  ) {
       return this.getClass().getMethod("setArtwork", String.class);
-    } else if ( tagName.equals( HASH_FIELD ) || tagName.equals( MD5_FIELD ) ){
-      return this.getClass().getMethod("setMd5", String.class);
+    } else if ( tagName.equals( HASH_FIELD ) ){
+      return this.getClass().getMethod("setHash", String.class);
     
     } else if ( tagName.equals( FILENAME_FIELD ) ){
       return this.getClass().getMethod("setFilename", String.class);
@@ -652,7 +651,7 @@ public class MediaFile extends AbstractEntity implements Serializable{
     params.add(  new BasicNameValuePair( prefix + AUDIO_SAMPLE_RATE_FIELD,   this.audioSampleRate )  );
     params.add(  new BasicNameValuePair( prefix + AUDIO_BIT_RATE_FIELD,      this.audioBitRate )  );
     params.add(  new BasicNameValuePair( prefix + ORIGINAL_FILE_NAME_FIELD,  this.originalFileName )  );
-    params.add(  new BasicNameValuePair( prefix + MD5_FIELD,                 this.md5 )  );
+    params.add(  new BasicNameValuePair( prefix + HASH_FIELD,                 this.hash )  );
     
     return params;
   }
@@ -670,6 +669,7 @@ public class MediaFile extends AbstractEntity implements Serializable{
     params.add(  new BasicNameValuePair( prefix + YEAR_FIELD,                String.valueOf( this.year ) )  );
     params.add(  new BasicNameValuePair( prefix + POSITION_FIELD,            String.valueOf( this.position ) )  );
     params.add(  new BasicNameValuePair( prefix + PLAYS_FIELD,               String.valueOf( this.plays ) )  );
+    params.add(  new BasicNameValuePair( prefix + HASH_FIELD,                this.hash )  );
     
     return params;
   }

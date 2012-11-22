@@ -42,8 +42,8 @@ public class ThreadedTest extends AudioBoxTestCase {
           assertNotNull(mediaFiles);
           assertTrue(mediaFiles.size() > 0);
           for (int i = 0, l = mediaFiles.size(); i < l; i++){
-            assertNotNull( mediaFiles.get(i).getMd5() );
-            assertTrue( mediaFiles.get(i).getMd5().length() == 32 );            
+            assertNotNull( mediaFiles.get(i).getHash() );
+            assertTrue( mediaFiles.get(i).getHash().length() == 32 );            
           }
             
           h1.setDone(true);
