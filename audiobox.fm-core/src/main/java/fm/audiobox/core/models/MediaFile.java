@@ -402,11 +402,11 @@ public class MediaFile extends AbstractEntity implements Serializable{
     this.md5 = md5;
   }
   
-  public void setArtWorks(String artwork){
+  public void setArtwork(String artwork){
     this.artwork = artwork;
   }
   
-  public String getArtWork(){
+  public String getArtwork(){
     return this.artwork;
   }
   
@@ -450,7 +450,7 @@ public class MediaFile extends AbstractEntity implements Serializable{
     } else if ( tagName.equals(AUDIO_BIT_RATE_FIELD) ){
       return this.getClass().getMethod("setAudioBitRate", String.class);
     } else if ( tagName.equals( ARTWORK_FIELD )  ) {
-      return this.getClass().getMethod("setArtWork", String.class);
+      return this.getClass().getMethod("setArtwork", String.class);
     } else if ( tagName.equals( HASH_FIELD ) || tagName.equals( MD5_FIELD ) ){
       return this.getClass().getMethod("setMd5", String.class);
     
