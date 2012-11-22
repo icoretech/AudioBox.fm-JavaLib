@@ -338,18 +338,6 @@ public class MediaFile extends AbstractEntity implements Serializable{
     this.source = s;
   }
 
-  public void setSource(String s) {
-
-    if( Source.cloud.toString().equals( s ) ){
-      this.source = Source.cloud; 
-    } else if( Source.local.toString().equals( s ) ){
-      this.source = Source.local;
-    } else if( Source.dropbox.toString().equals( s ) ){
-      this.source = Source.dropbox;
-    }
-  }
-  
-  
   public String getRemotePath() {
     return remotePath;
   }
