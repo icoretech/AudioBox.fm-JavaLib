@@ -59,8 +59,6 @@ public class DefaultFactory implements IFactory {
     gEntities.put( Playlists.TAGNAME, Playlists.class );
     gEntities.put( Playlist.TAGNAME, Playlist.class );
     
-    gEntities.put( ArtWorks.TAGNAME, ArtWorks.class );
-    
     gEntities.put( MediaFiles.TAGNAME, MediaFiles.class );
     gEntities.put( MediaFile.TAGNAME, MediaFile.class );
     
