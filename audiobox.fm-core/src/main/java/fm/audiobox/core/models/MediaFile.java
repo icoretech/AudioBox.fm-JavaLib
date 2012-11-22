@@ -86,10 +86,7 @@ import fm.audiobox.interfaces.IEntity;
  *    audio_bitrate: '192',
  *    audio_codec: null,
  *    audio_sample_rate: '44100',
- *    artworks: {
- *      l: 'http://assets.development.audiobox.fm/a//l.jpg',
- *      s: 'http://assets.development.audiobox.fm/a//s.jpg'
- *    }
+ *    artworks: 'http://assets.development.audiobox.fm/a/l.jpg'
  *  }
  * @endcode
  * </pre>
@@ -130,6 +127,7 @@ public class MediaFile extends AbstractEntity implements Serializable{
   public static final String LOVED_FIELD =              "loved";
   public static final String REMOTE_PATH_FIELD  =       "remote_path";
   public static final String SHARE_TOKEN_FIELD =        "share_token";
+  public static final String ARTWORK_FIELD =            "artwork";
   
   private String artist;
   private String album;
@@ -156,7 +154,7 @@ public class MediaFile extends AbstractEntity implements Serializable{
   private String shareToken;
   private boolean loved;
 
-  private ArtWorks artworks;
+  private String artwork;
    
   private IEntity parent;
 
@@ -404,12 +402,12 @@ public class MediaFile extends AbstractEntity implements Serializable{
     this.md5 = md5;
   }
   
-  public void setArtWorks(ArtWorks artworks){
-    this.artworks = artworks;
+  public void setArtWorks(String artwork){
+    this.artwork = artwork;
   }
   
-  public ArtWorks getArtWorks(){
-    return this.artworks;
+  public String getArtWork(){
+    return this.artwork;
   }
   
 
@@ -451,8 +449,8 @@ public class MediaFile extends AbstractEntity implements Serializable{
       return this.getClass().getMethod("setAudioSampleRate", String.class);
     } else if ( tagName.equals(AUDIO_BIT_RATE_FIELD) ){
       return this.getClass().getMethod("setAudioBitRate", String.class);
-    } else if ( tagName.equals( ArtWorks.NAMESPACE )  ) {
-      return this.getClass().getMethod("setArtWorks", ArtWorks.class);
+    } else if ( tagName.equals( ARTWORK_FIELD )  ) {
+      return this.getClass().getMethod("setArtWork", String.class);
     } else if ( tagName.equals( HASH_FIELD ) || tagName.equals( MD5_FIELD ) ){
       return this.getClass().getMethod("setMd5", String.class);
     
