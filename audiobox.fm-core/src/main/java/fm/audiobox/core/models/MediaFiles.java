@@ -47,8 +47,8 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
   private static final long serialVersionUID = 1L;
 
   /** The XML tag name for the MediaFiles element */
-  public static final String NAMESPACE = MediaFiles.TAGNAME;
   public static final String TAGNAME = "media_files";
+  public static final String NAMESPACE = MediaFiles.TAGNAME;
   
   protected static final String TOKENS_PARAMETER =        "tokens[]";
 
