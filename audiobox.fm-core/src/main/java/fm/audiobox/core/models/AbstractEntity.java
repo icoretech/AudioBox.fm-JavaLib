@@ -22,6 +22,7 @@ public abstract class AbstractEntity extends Observable implements IEntity {
   protected Map<String, Object> properties;
   
   protected String token;
+  private IEntity parent;
   
   
   public AbstractEntity(IConfiguration config){
@@ -37,6 +38,16 @@ public abstract class AbstractEntity extends Observable implements IEntity {
   public String getToken() {
     return this.token;
   }
+
+  
+  public IEntity getParent() {
+    return parent;
+  }
+
+  public void setParent(IEntity parent) {
+    this.parent = parent;
+  }
+
 
   @Override
   public void setProperty(String key, Object value) {

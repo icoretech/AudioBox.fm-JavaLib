@@ -41,6 +41,7 @@ import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.observables.Event;
 import fm.audiobox.interfaces.IConfiguration;
+import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
 
@@ -87,9 +88,9 @@ public class Playlist extends AbstractEntity implements Serializable {
   private String type;
   private long media_files_count;
   private MediaFiles mediafiles;
+  private CoverFlows coverflows;
   private String updated_at;
   private boolean last_accessed;
-  private IEntity parent;
   private boolean offline;
   private boolean embeddable;
   private boolean visible;
@@ -298,6 +299,15 @@ public class Playlist extends AbstractEntity implements Serializable {
     }
     return this.mediafiles;
   }
+  
+  
+  public CoverFlows getCoverFlows() {
+    if ( this.coverflows == null ){
+      this.coverflows = new CoverFlows( getConfiguration() );
+      this.coverflows.setParent( this );
+    }
+    return this.coverflows;
+  }
 
 
   @Override
@@ -495,17 +505,8 @@ public class Playlist extends AbstractEntity implements Serializable {
     return _mediafiles;
   }
 
-  /**
-   * Sets the parent {@link IEntity}
-   * @param parent the {@link IEntity} parent object
-   */
-  public void setParent(IEntity parent){
-    this.parent = parent;
-  }
 
-
-  @Override
   public String getApiPath() {
-    return this.parent.getApiPath() + "/" + this.getToken();
+    return this.getParent().getApiPath() + IConnector.URI_SEPARATOR + this.getToken();
   }
 }

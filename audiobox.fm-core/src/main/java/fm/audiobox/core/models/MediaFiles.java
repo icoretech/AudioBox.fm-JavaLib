@@ -52,7 +52,8 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
   
   protected static final String TOKENS_PARAMETER =        "tokens[]";
 
-  private IEntity parent;
+
+  
   /**
    *  MediaFiles are grouped by types that are:
    * <ul> 
@@ -170,17 +171,6 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
     return pls;
   }
 
-  /**
-   * Sets the parent {@link IEntity}
-   * <p>
-   * <code>MediaFiles</code> can be a {@link Playlist}.
-   * So we have to manage each case setting this attribute
-   * </p>
-   * @param parent the {@link IEntity} parent object
-   */
-  public void setParent(IEntity parent){
-    this.parent = parent;
-  }
 
   @Override
   public String getSubTagName() {
@@ -194,6 +184,6 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
 
   @Override
   public String getApiPath() {
-    return this.parent.getApiPath() + IConnector.URI_SEPARATOR + NAMESPACE;
+    return this.getParent().getApiPath() + IConnector.URI_SEPARATOR + NAMESPACE;
   }
 }
