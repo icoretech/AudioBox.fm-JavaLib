@@ -178,7 +178,4 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
   }
 
 
-  @Override
-  public void setParent(IEntity parent) {}
-
 }

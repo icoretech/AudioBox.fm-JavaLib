@@ -176,10 +176,6 @@ public class Preferences extends AbstractEntity implements Serializable {
   }
 
   @Override
-  public void setParent(IEntity parent) { }
-
-  @Override
   protected void copy(IEntity entity) { }
-
   
 }

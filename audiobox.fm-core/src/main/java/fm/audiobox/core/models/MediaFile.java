@@ -155,8 +155,6 @@ public class MediaFile extends AbstractEntity implements Serializable{
 
   private String artwork;
    
-  private IEntity parent;
-
   private enum Actions {
     stream,
     upload,
@@ -490,14 +488,14 @@ public class MediaFile extends AbstractEntity implements Serializable{
 
   @Override
   public String getApiPath() {
-    return this.parent.getApiPath() + IConnector.URI_SEPARATOR + this.getToken();
+    return this.getParent().getApiPath() + IConnector.URI_SEPARATOR + this.getToken();
   }
   
   
   // DELETE /api/v1/media_files/destroy_multiple.json?tokens[]=
   public boolean destroy() throws ServiceException, LoginException {
     
-    if ( this.parent == null ){
+    if ( this.getParent() == null ){
       // We can delete an arbitrary MediaFile
       return this._destroy();
     }
@@ -505,7 +503,7 @@ public class MediaFile extends AbstractEntity implements Serializable{
     List<MediaFile> toRemove = new ArrayList<MediaFile>();
     toRemove.add( this );
     
-    return ((MediaFiles) this.parent).destroy( toRemove );
+    return ((MediaFiles) this.getParent()).destroy( toRemove );
   }
   
   
@@ -536,11 +534,6 @@ public class MediaFile extends AbstractEntity implements Serializable{
   }
   
   
-
-  @Override
-  public void setParent(IEntity parent) {
-    this.parent = parent;
-  }
 
   
   public IConnectionMethod upload(boolean async, UploadHandler uploadHandler ) throws ServiceException, LoginException {

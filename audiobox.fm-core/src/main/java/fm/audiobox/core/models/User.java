@@ -587,12 +587,8 @@ public final class User extends AbstractEntity implements Serializable {
 
   @Override
   public String getApiPath() {
-    return "/" + NAMESPACE;
+    return IConnector.URI_SEPARATOR + NAMESPACE;
   }
 
-
-
-  @Override
-  public void setParent(IEntity parent) {}
 
 }
