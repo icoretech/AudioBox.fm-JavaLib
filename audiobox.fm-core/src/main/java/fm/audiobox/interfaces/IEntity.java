@@ -2,6 +2,8 @@ package fm.audiobox.interfaces;
 
 import java.lang.reflect.Method;
 
+import fm.audiobox.core.observables.Event;
+
 
 public interface IEntity {
 
@@ -76,5 +78,16 @@ public interface IEntity {
    * @param parent the {@link IEntity} parent object
    */
   public void setParent(IEntity parent);
+  
+  
+  /**
+   * This method should fire the {@link Event.States.START_LOADING} event
+   */
+  public void startLoading();
+  
+  /**
+   * This method should fire the {@link Event.States.END_LOADING} event
+   */
+  public void endLoading();
   
 }

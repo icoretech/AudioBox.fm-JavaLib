@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fm.audiobox.core.observables.Event;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IEntity;
@@ -102,5 +103,23 @@ public abstract class AbstractEntity extends Observable implements IEntity {
    * @param entity the {@link IEntity} where copy data from
    */
   protected abstract void copy(IEntity entity);
+  
+  
+  @Override
+  public void startLoading() {
+    this.setChanged();
+    Event event = new Event(this);
+    event.state = Event.States.START_LOADING;
+    this.notifyObservers( event );
+  }
+
+  @Override
+  public void endLoading() {
+    this.setChanged();
+    Event event = new Event(this);
+    event.state = Event.States.END_LOADING;
+    this.notifyObservers( event );
+  }
+  
   
 }

@@ -194,5 +194,19 @@ public class Error implements IEntity, Serializable {
     // it doesn't need to be set as child
   }
 
+
+
+  @Override
+  public void startLoading() {
+    // nothning to do
+  }
+
+
+
+  @Override
+  public void endLoading() {
+    // nothing to do
+  }
+
 }
 

@@ -27,7 +27,9 @@ public class Event extends EventObject {
     ENTITY_REFRESHED,
     CONNECTED,
     DISCONNECTED,
-    ERROR
+    ERROR,
+    START_LOADING,
+    END_LOADING
   };
   
   

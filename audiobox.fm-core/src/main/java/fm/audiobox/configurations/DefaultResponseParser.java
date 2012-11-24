@@ -27,6 +27,8 @@ public class DefaultResponseParser implements IResponseHandler  {
   
   public String parse(InputStream in, IEntity destEntity, ContentFormat format ) throws ServiceException {
     
+    destEntity.startLoading();
+    
     if ( format == ContentFormat.XML ) {
         
       this.parseAsXml(in, destEntity );
@@ -44,6 +46,8 @@ public class DefaultResponseParser implements IResponseHandler  {
       this.parseAsBinary(in, destEntity );
       
     }
+    
+    destEntity.endLoading();
     
     return "";
       
