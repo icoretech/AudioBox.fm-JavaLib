@@ -38,7 +38,7 @@ public class ThreadedTest extends AudioBoxTestCase {
           Log logger = LogFactory.getLog("Test thread #1");
           logger.debug("Started thread #1");
 
-          MediaFiles mediaFiles = user.getMediaFilesMap();
+          MediaFiles mediaFiles = user.getMediaFilesMap( MediaFile.Source.cloud.toString() );
           assertNotNull(mediaFiles);
           assertTrue(mediaFiles.size() > 0);
           for (int i = 0, l = mediaFiles.size(); i < l; i++){

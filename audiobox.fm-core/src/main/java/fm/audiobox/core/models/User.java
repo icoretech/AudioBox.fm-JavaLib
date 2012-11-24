@@ -429,12 +429,6 @@ public final class User extends AbstractEntity implements Serializable {
   }
 
 
-
-  
-  public MediaFiles getMediaFilesMap() throws ServiceException, LoginException {
-    return this.getMediaFilesMap(null);
-  }
-
   /**
    * Use this method to get a {@link MediaFiles} instance containing 
    * all the {@code MD5} and {@code token} for media files owned by this User.
@@ -449,7 +443,7 @@ public final class User extends AbstractEntity implements Serializable {
    * @throws ServiceException if any connection problem to AudioBox.fm services occurs.
    * @throws LoginException if any authentication problem occurs.
    */
-  public MediaFiles getMediaFilesMap(MediaFile.Source source) throws ServiceException, LoginException {
+  public MediaFiles getMediaFilesMap(String source) throws ServiceException, LoginException {
     MediaFiles mediaFiles = (MediaFiles) getConfiguration().getFactory().getEntity( MediaFiles.TAGNAME, getConfiguration() );
     
     IConnector connector = this.getConnector(IConfiguration.Connectors.RAILS);
@@ -458,10 +452,8 @@ public final class User extends AbstractEntity implements Serializable {
     String action = MediaFiles.Actions.hashes.toString();
     
     List<NameValuePair> params = null;
-    if ( source != null ){
-      params = new ArrayList<NameValuePair>();
-      params.add( new BasicNameValuePair("source", source.toString().toLowerCase() ) );
-    }
+    params = new ArrayList<NameValuePair>();
+    params.add( new BasicNameValuePair("source", source.toLowerCase() ) );
     
     connector.get(mediaFiles, path, action, params).send(false);
     
