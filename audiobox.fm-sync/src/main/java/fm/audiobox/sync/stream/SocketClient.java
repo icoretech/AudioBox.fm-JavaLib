@@ -191,7 +191,7 @@ public class SocketClient extends Observable implements IOCallback {
   
   @Override
   public void on(String event, IOAcknowledge ack, JsonElement... args) {
-    log.info( "An event emitted", args );
+    log.info( "An event emitted " + event );
     String messageEvent = EventsTypes.MESSAGE.toString().toLowerCase();
     if ( messageEvent.equals( event ) ) {
       log.info( "A message received with " + args.length + " arguments" );

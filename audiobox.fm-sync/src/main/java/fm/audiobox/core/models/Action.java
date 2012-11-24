@@ -6,8 +6,12 @@ import java.lang.reflect.Method;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fm.audiobox.core.exceptions.LoginException;
+import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IEntity;
+import fm.audiobox.interfaces.IResponseHandler;
+import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 
 public class Action extends AbstractEntity implements Serializable {
 
@@ -109,4 +113,15 @@ public class Action extends AbstractEntity implements Serializable {
     // temporary not supported
   }
 
+  @Override
+  public IConnectionMethod load(boolean sync) throws ServiceException, LoginException {
+    return this.load(false, null);
+  }
+
+  @Override
+  public IConnectionMethod load(boolean sync, IResponseHandler responseHandler) throws ServiceException, LoginException {
+    throw new ServiceException("method not supported");
+  }
+  
+  
 }
