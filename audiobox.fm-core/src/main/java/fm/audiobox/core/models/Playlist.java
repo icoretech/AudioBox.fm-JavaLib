@@ -42,6 +42,7 @@ import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.observables.Event;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
+import fm.audiobox.interfaces.IResponseHandler;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
 
@@ -509,4 +510,19 @@ public class Playlist extends AbstractEntity implements Serializable {
   public String getApiPath() {
     return this.getParent().getApiPath() + IConnector.URI_SEPARATOR + this.getToken();
   }
+  
+  
+  
+  @Override
+  public IConnectionMethod load(boolean async) throws ServiceException, LoginException {
+    return this.load(false, null);
+  }
+
+  @Override
+  public IConnectionMethod load(boolean async, IResponseHandler responseHandler) throws ServiceException, LoginException {
+    IConnectionMethod request = getConnector(IConfiguration.Connectors.RAILS).get(this, null, null);
+    request.send(async, null, responseHandler);
+    return request;
+  }
+  
 }

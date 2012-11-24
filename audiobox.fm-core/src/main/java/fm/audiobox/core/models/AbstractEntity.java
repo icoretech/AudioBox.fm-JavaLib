@@ -7,10 +7,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fm.audiobox.core.exceptions.LoginException;
+import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.observables.Event;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
+import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
+import fm.audiobox.interfaces.IResponseHandler;
 
 public abstract class AbstractEntity extends Observable implements IEntity {
 
@@ -103,6 +107,10 @@ public abstract class AbstractEntity extends Observable implements IEntity {
    * @param entity the {@link IEntity} where copy data from
    */
   protected abstract void copy(IEntity entity);
+  
+  
+  public abstract IConnectionMethod load(boolean async)  throws ServiceException, LoginException;
+  public abstract IConnectionMethod load(boolean async, IResponseHandler responseHandler)  throws ServiceException, LoginException;
   
   
   @Override

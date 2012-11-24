@@ -11,6 +11,7 @@ import fm.audiobox.core.models.MediaFiles;
 import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
 import fm.audiobox.interfaces.IConfiguration;
+import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 
 
 public class CacheTest extends AudioBoxTestCase {
@@ -42,7 +43,8 @@ public class CacheTest extends AudioBoxTestCase {
       long end = 0;
       log.debug( "**** Start request at: " + start );
       
-      Response rsp = ms.load(false);
+      IConnectionMethod req = ms.load(false);
+      Response rsp = req.getResponse();
       if (i == 0) {
         assertEquals(HttpStatus.SC_OK, rsp.getStatus());
       } else {

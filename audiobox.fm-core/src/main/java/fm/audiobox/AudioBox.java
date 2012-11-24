@@ -236,21 +236,9 @@ public class AudioBox extends Observable {
     
     User user = (User) this.configuration.getFactory().getEntity(User.TAGNAME, this.getConfiguration() );
     user.setUsername(username);
+    user.setPassword( password );
     
-    //add the object to be observed, the observer 
-    IConnectionMethod req = this.configuration.getFactory().getConnector().get(user, null, null);
-    
-    
-    if ( username != null && password != null ) {
-      req.setAuthenticationHandle(new IAuthenticationHandle() {
-        public void handle(IConnectionMethod request) {
-          UsernamePasswordCredentials mCredentials = new UsernamePasswordCredentials( username, password );
-          request.addHeader( BasicScheme.authenticate(mCredentials,  Consts.UTF_8.name(), false ) );
-        }
-      });
-    }
-    
-    req.send(async);
+    user.load();
     
     // User can now be set. Note: set user before notifing observers
     this.user = user;

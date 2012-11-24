@@ -125,6 +125,14 @@ public class MediaFilesTest extends AudioBoxTestCase {
     
     MediaFile mf = mfs.get(0);
     
+    try {
+      mf.load(false);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
     assertEquals( mf.getStreamUrl(), "/stream/" + mf.getFilename() );
     assertTrue( mf.computeStreamUrl().endsWith("/api/v1/stream/" + mf.getFilename() ) );
    

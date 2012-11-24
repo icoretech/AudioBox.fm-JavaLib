@@ -3,8 +3,12 @@ package fm.audiobox.core.models;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
+import fm.audiobox.core.exceptions.LoginException;
+import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConfiguration;
+import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
+import fm.audiobox.interfaces.IResponseHandler;
 
 public final class AccountStats extends AbstractEntity implements Serializable {
   
@@ -266,5 +270,15 @@ public final class AccountStats extends AbstractEntity implements Serializable {
 
   @Override
   protected void copy(IEntity entity) { }
+
+  @Override
+  public IConnectionMethod load(boolean sync) throws ServiceException, LoginException {
+    return this.load(false, null);
+  }
+
+  @Override
+  public IConnectionMethod load(boolean sync, IResponseHandler responseHandler) throws ServiceException, LoginException {
+    throw new ServiceException("method not supported");
+  }
   
 }

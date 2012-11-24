@@ -44,6 +44,7 @@ import fm.audiobox.core.parsers.DownloadHandler;
 import fm.audiobox.core.parsers.UploadHandler;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
+import fm.audiobox.interfaces.IResponseHandler;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
 
@@ -94,7 +95,7 @@ import fm.audiobox.interfaces.IEntity;
  * @author Lucio Regina
  * @version 0.0.1
  */
-public class MediaFile extends AbstractEntity implements Serializable{
+public class MediaFile extends AbstractEntity implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
@@ -489,6 +490,19 @@ public class MediaFile extends AbstractEntity implements Serializable{
   @Override
   public String getApiPath() {
     return this.getParent().getApiPath() + IConnector.URI_SEPARATOR + this.getToken();
+  }
+  
+  
+  @Override
+  public IConnectionMethod load(boolean async) throws ServiceException, LoginException {
+    return this.load(false, null);
+  }
+
+  @Override
+  public IConnectionMethod load(boolean async, IResponseHandler responseHandler) throws ServiceException, LoginException {
+    IConnectionMethod request = getConnector(IConfiguration.Connectors.RAILS).get(this, IConnector.URI_SEPARATOR + MediaFiles.NAMESPACE, this.getToken(), null);
+    request.send(async, null, responseHandler);
+    return request;
   }
   
   

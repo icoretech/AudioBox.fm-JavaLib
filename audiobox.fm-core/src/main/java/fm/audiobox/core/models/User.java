@@ -27,17 +27,22 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.Consts;
 import org.apache.http.NameValuePair;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
+import fm.audiobox.interfaces.IAuthenticationHandle;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
+import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 
 
 /**
@@ -158,6 +163,7 @@ public final class User extends AbstractEntity implements Serializable {
   public static final String ALLOWED_EXTENSIONS_SEPARATOR = ";";
 
   private String username;
+  private String password;
   private String real_name;
   private String email;
   private String auth_token;
@@ -211,6 +217,21 @@ public final class User extends AbstractEntity implements Serializable {
   public void setUsername(String username) {
     this.username = username;
   }
+
+
+  
+  
+  
+  public String getPassword() {
+    return password;
+  }
+
+
+
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
 
 
   public String getRealName() {
@@ -497,18 +518,7 @@ public final class User extends AbstractEntity implements Serializable {
    * @throws LoginException
    */
   public void load() throws ServiceException, LoginException {
-    this.load(null);
-  }
-
-  /**
-   * Executes request populating this class and passing the {@link IResponseHandler} as response parser
-   * 
-   * @param responseHandler the {@link IResponseHandler} used as response content parser
-   * @throws ServiceException
-   * @throws LoginException
-   */
-  public void load(IResponseHandler responseHandler) throws ServiceException, LoginException {
-    this.getConnector().get(this, null, null).send(false, null, responseHandler);
+    this.load(false);
   }
 
 
@@ -580,6 +590,31 @@ public final class User extends AbstractEntity implements Serializable {
   @Override
   public String getApiPath() {
     return IConnector.URI_SEPARATOR + NAMESPACE;
+  }
+  
+  
+  @Override
+  public IConnectionMethod load(boolean async) throws ServiceException, LoginException {
+    return this.load(false, null);
+  }
+
+  @Override
+  public IConnectionMethod load(boolean async, IResponseHandler responseHandler) throws ServiceException, LoginException {
+  //add the object to be observed, the observer 
+    IConnectionMethod req = this.getConfiguration().getFactory().getConnector().get(this, null, null);
+    
+    if ( this.getUsername() != null && this.getPassword() != null ) {
+      req.setAuthenticationHandle(new IAuthenticationHandle() {
+        public void handle(IConnectionMethod request) {
+          UsernamePasswordCredentials mCredentials = new UsernamePasswordCredentials( username, password );
+          request.addHeader( BasicScheme.authenticate(mCredentials,  Consts.UTF_8.name(), false ) );
+        }
+      });
+    }
+    
+    req.send(async);
+    
+    return req;
   }
 
 
