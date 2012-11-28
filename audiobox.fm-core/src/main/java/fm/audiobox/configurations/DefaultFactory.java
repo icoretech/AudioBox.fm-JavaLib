@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import fm.audiobox.AudioBox;
 import fm.audiobox.core.models.AccountStats;
+import fm.audiobox.core.models.Album;
+import fm.audiobox.core.models.Albums;
 import fm.audiobox.core.models.ExternalTokens;
 import fm.audiobox.core.models.MediaFile;
 import fm.audiobox.core.models.MediaFiles;
@@ -57,6 +59,9 @@ public class DefaultFactory implements IFactory {
     
     gEntities.put( Playlists.TAGNAME, Playlists.class );
     gEntities.put( Playlist.TAGNAME, Playlist.class );
+    
+    gEntities.put( Albums.TAGNAME, Albums.class );
+    gEntities.put( Album.TAGNAME, Album.class );
     
     gEntities.put( MediaFiles.TAGNAME, MediaFiles.class );
     gEntities.put( MediaFile.TAGNAME, MediaFile.class );

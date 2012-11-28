@@ -5,12 +5,12 @@ import org.junit.Test;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.models.MediaFile;
-import fm.audiobox.core.models.MediaFiles;
+import fm.audiobox.core.models.Album;
+import fm.audiobox.core.models.Albums;
 import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
 
-public class CoverFlowTest extends AudioBoxTestCase {
+public class AlbumsTest extends AudioBoxTestCase {
 
   @Before
   public void setUp() {
@@ -18,7 +18,7 @@ public class CoverFlowTest extends AudioBoxTestCase {
   }
 
   @Test
-  public void coverFlowList() {
+  public void albumsList() {
     
     
     Playlists playlists = this.user.getPlaylists();
@@ -41,7 +41,7 @@ public class CoverFlowTest extends AudioBoxTestCase {
     
     assertNotNull( dropbox );
     
-    MediaFiles covers = dropbox.getCoverFlows();
+    Albums covers = dropbox.getAlbums();
     
     assertNotNull( covers );
     
@@ -56,7 +56,7 @@ public class CoverFlowTest extends AudioBoxTestCase {
     int originalSize = covers.size();
     assertFalse( originalSize  == 0 );
     
-    MediaFile mf = covers.get(0);
+    Album mf = covers.get(0);
     assertNull( mf.getToken() );
     
     
