@@ -257,8 +257,9 @@ public class AsyncTaskManager implements Observer{
         // That's strange!!
         System.out.println("[AsyncTaskManager] An error occurs while starting a new thread" + t.getMessage() );
       }
-    } else if( this._threads.size() == 0 )
+    } else if ( this._threads.size() == 0 && this._runningthreads.size() == 0 ) {
       this.onComplete( arg0 );
+    }
   }
 
 }
