@@ -538,7 +538,7 @@ public class MediaFile extends AbstractEntity implements Serializable {
   
   // PUT /api/v1/media_files/:token.json
   public boolean update() throws ServiceException, LoginException {
-    String namespace = MediaFiles.NAMESPACE;
+    String namespace = IConnector.URI_SEPARATOR + MediaFiles.NAMESPACE;
     String action = this.getToken();
     
     List<NameValuePair> params = this.toQueryParameters(true);
