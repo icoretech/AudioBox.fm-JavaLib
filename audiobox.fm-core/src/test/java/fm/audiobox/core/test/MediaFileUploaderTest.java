@@ -2,11 +2,6 @@ package fm.audiobox.core.test;
 
 import org.junit.Before;
 
-import fm.audiobox.core.exceptions.LoginException;
-import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.models.MediaFile;
-import fm.audiobox.core.models.MediaFiles;
-
 public class MediaFileUploaderTest extends AudioBoxTestCase {
 
   @Before
@@ -93,52 +88,52 @@ public class MediaFileUploaderTest extends AudioBoxTestCase {
 //  }
   
   
-  private class UploadAsLocal extends Thread {
-    
-    private String md5;
-    
-    public UploadAsLocal(String md5) {
-      this.md5 = md5;
-    }
-    
-    public void run(){
-      MediaFile media = new MediaFile( abc );
-      
-      media.setTitle(   "title"    );
-      media.setArtist (  "artist"     );
-      media.setAlbum (  "album"     );
-      media.setGenre (   "genre"    );
-      media.setLenStr (  "1:24"     );
-      media.setMediaFileName (   "media_file_name.mp3"    );
-      media.setMime (   "audio/mp3"    );
-      media.setYear (   2012    );
-      media.setLenInt (   203    );
-      media.setPosition (  1     );
-      media.setPlays (   4    );
-      media.setDisc (   9    );
-      media.setSize(  1234     );
-      media.setType(    MediaFiles.Type.AudioFile   );
-      media.setSource(  MediaFile.Source.local.toString()     );
-      media.setAudioSampleRate (   "192"    );
-      media.setAudioBitRate (  "44100"   );
-      media.setOriginalFileName (  "/User/path/to/media_file_name.mp3"     );
-      media.setHash(   this.md5    );
-      
-      try {
-        media.notifyAsLocal();
-      } catch (ServiceException e) {
-        assertNull(e);
-        e.printStackTrace();
-      } catch (LoginException e) {
-        assertNull(e);
-        e.printStackTrace();
-      }
-      
-      System.out.println( "===========" );
-      System.out.println( "[" + media.toString() + "] >> " + (media.getToken() != null ) );
-      System.out.println( "===========" );
-      
-    }
-  }
+//  private class UploadAsLocal extends Thread {
+//    
+//    private String md5;
+//    
+//    public UploadAsLocal(String md5) {
+//      this.md5 = md5;
+//    }
+//    
+//    public void run(){
+//      MediaFile media = new MediaFile( abc );
+//      
+//      media.setTitle(   "title"    );
+//      media.setArtist (  "artist"     );
+//      media.setAlbum (  "album"     );
+//      media.setGenre (   "genre"    );
+//      media.setLenStr (  "1:24"     );
+//      media.setMediaFileName (   "media_file_name.mp3"    );
+//      media.setMime (   "audio/mp3"    );
+//      media.setYear (   2012    );
+//      media.setLenInt (   203    );
+//      media.setPosition (  1     );
+//      media.setPlays (   4    );
+//      media.setDisc (   9    );
+//      media.setSize(  1234     );
+//      media.setType(    MediaFiles.Type.AudioFile   );
+//      media.setSource(  MediaFile.Source.local.toString()     );
+//      media.setAudioSampleRate (   "192"    );
+//      media.setAudioBitRate (  "44100"   );
+//      media.setOriginalFileName (  "/User/path/to/media_file_name.mp3"     );
+//      media.setHash(   this.md5    );
+//      
+//      try {
+//        media.notifyAsLocal();
+//      } catch (ServiceException e) {
+//        assertNull(e);
+//        e.printStackTrace();
+//      } catch (LoginException e) {
+//        assertNull(e);
+//        e.printStackTrace();
+//      }
+//      
+//      System.out.println( "===========" );
+//      System.out.println( "[" + media.toString() + "] >> " + (media.getToken() != null ) );
+//      System.out.println( "===========" );
+//      
+//    }
+//  }
 
 }
