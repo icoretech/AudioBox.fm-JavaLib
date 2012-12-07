@@ -28,6 +28,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IEntity;
@@ -43,6 +46,8 @@ import fm.audiobox.interfaces.IEntity;
 public class Playlists extends AbstractCollectionEntity<Playlist> implements Serializable {
 
   private static final long serialVersionUID = 1L;
+  
+  private static Logger log = LoggerFactory.getLogger(Playlists.class);
   
   /** Tracks API end point */
   public static final String NAMESPACE = "playlists";
@@ -156,10 +161,16 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
 
 
   @Override
-  public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
+  public Method getSetterMethod(String tagName) {
 
     if ( tagName.equals( Playlist.TAGNAME ) ) {
-      return this.getClass().getMethod("add", Playlist.class);
+      try {
+        return this.getClass().getMethod("add", Playlist.class);
+      } catch (SecurityException e) {
+        log.error("Security error", e);
+      } catch (NoSuchMethodException e) {
+        log.error("No method found", e);
+      }
     }
 
     return null;

@@ -2,13 +2,18 @@ package fm.audiobox.core.models;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConfiguration;
+import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
-import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 
 
 
@@ -24,13 +29,21 @@ import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 public class Preferences extends AbstractEntity implements Serializable {
   
   
-  
   private static final long serialVersionUID = -4286453333519508598L;
+  private static Logger log = LoggerFactory.getLogger(Preferences.class);
   
   
   public static final String NAMESPACE = "preferences";
   public static final String TAGNAME = NAMESPACE;
   
+  public static final String ACCEPT_EMAILS = "accept_emails";
+  public static final String AUTOPLAY = "autoplay";
+  public static final String VOLUME_LEVEL = "volume_level";
+  public static final String COLOR = "color";
+  public static final String TOP_BAR_BG = "top_bar_bg";
+  public static final String PREBUFFER = "prebuffer";
+  public static final String REPEAT = "repeat";
+  public static final String SHUFFLE = "shuffle";
   
   
   private boolean accept_emails = false;
@@ -41,6 +54,25 @@ public class Preferences extends AbstractEntity implements Serializable {
   private boolean prebuffer;
   private boolean repeat;
   private boolean shuffle;
+  
+  
+  private static final Map<String, Method> setterMethods = new HashMap<String, Method>();
+  static {
+    try {
+      setterMethods.put( ACCEPT_EMAILS, Preferences.class.getMethod( "setAccept_emails", boolean.class )  );
+      setterMethods.put( AUTOPLAY, Preferences.class.getMethod( "setAutoplay", boolean.class )  );
+      setterMethods.put( VOLUME_LEVEL, Preferences.class.getMethod( "setVolume_level", int.class )  );
+      setterMethods.put( COLOR, Preferences.class.getMethod( "setColor", String.class )  );
+      setterMethods.put( TOP_BAR_BG, Preferences.class.getMethod( "setTop_bar_bg", String.class )  );
+      setterMethods.put( PREBUFFER, Preferences.class.getMethod( "setPrebuffer", boolean.class )  );
+      setterMethods.put( REPEAT, Preferences.class.getMethod( "setRepeat", boolean.class )  );
+      setterMethods.put( SHUFFLE, Preferences.class.getMethod( "setShuffle", boolean.class )  );
+    } catch (SecurityException e) {
+      log.error("Security error", e);
+    } catch (NoSuchMethodException e) {
+      log.error("No method found", e);
+    }
+  }
   
   
   public Preferences(IConfiguration config) {
@@ -139,39 +171,13 @@ public class Preferences extends AbstractEntity implements Serializable {
     this.shuffle = shuffle;
   }
 
-
-  @Override
-  public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
-    
-    if ( tagName.equals("accept_emails") ) {
-      return this.getClass().getMethod("setAccept_emails", boolean.class);
-
-    } else if ( tagName.equals("autoplay") ) {
-      return this.getClass().getMethod("setAutoplay", boolean.class);
-
-    } else if ( tagName.equals("volume_level") ) {
-      return this.getClass().getMethod("setVolume_level", int.class);
-
-    } else if ( tagName.equals("color") ) {
-      return this.getClass().getMethod("setColor", String.class);
-
-    } else if ( tagName.equals("top_bar_bg") ) {
-      return this.getClass().getMethod("setTop_bar_bg", String.class);
-
-    } else if ( tagName.equals("prebuffer") ) {
-      return this.getClass().getMethod("setPrebuffer", boolean.class);
-
-    } else if ( tagName.equals("repeat") ) {
-      return this.getClass().getMethod("setRepeat", boolean.class);
-
-    } else if ( tagName.equals("shuffle") ) {
-      return this.getClass().getMethod("setShuffle", boolean.class);
-
-    }
-    
-    return null;
-  }
   
+  public Method getSetterMethod(String tagName) {
+    if ( setterMethods.containsKey( tagName) ) {
+      return setterMethods.get( tagName );
+    }
+    return null;
+  }  
   
   
   @Override

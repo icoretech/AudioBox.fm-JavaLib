@@ -133,9 +133,6 @@ public class XmlParser extends DefaultHandler {
       } catch (SecurityException e) {
         log.error("No accessible method found under key: " + localName, e);
         return;
-      } catch (NoSuchMethodException e) {
-        log.error("No declared method found under key: " + localName, e);
-        return;
       }
 
       if (setterMethod == null) {

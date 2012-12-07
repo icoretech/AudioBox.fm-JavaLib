@@ -20,83 +20,83 @@ public class MediaFileUploaderTest extends AudioBoxTestCase {
     loginCatched();
   }
 
-  @Test
-  public void testMediaFileUpload() {
-    
-    try {
-      MediaFile media = new MediaFile(this.abc);
-      
-      assertNull(media.getToken());
-      assertNull(media.getMediaFileName());
-      
-      File fileToUpload = new File( Fixtures.get( Fixtures.FILE_TO_UPLOAD ) );
-      IConnectionMethod request = media.upload( false, new UploadHandler(fileToUpload) );
-      assertTrue( request.getResponse().isOK() );
-      
-      assertNotNull(media.getToken());
-      assertNotNull(media.getMediaFileName());
-      
-    } catch (ServiceException e) {
-      e.printStackTrace();
-    } catch (LoginException e) {
-      e.printStackTrace();
-    }
-
-  }
+//  @Test
+//  public void testMediaFileUpload() {
+//    
+//    try {
+//      MediaFile media = new MediaFile(this.abc);
+//      
+//      assertNull(media.getToken());
+//      assertNull(media.getMediaFileName());
+//      
+//      File fileToUpload = new File( Fixtures.get( Fixtures.FILE_TO_UPLOAD ) );
+//      IConnectionMethod request = media.upload( false, new UploadHandler(fileToUpload) );
+//      assertTrue( request.getResponse().isOK() );
+//      
+//      assertNotNull(media.getToken());
+//      assertNotNull(media.getMediaFileName());
+//      
+//    } catch (ServiceException e) {
+//      e.printStackTrace();
+//    } catch (LoginException e) {
+//      e.printStackTrace();
+//    }
+//
+//  }
   
-  @Test
-  public void testMediaFileUploadFailed() {
-    
-    MediaFile media = new MediaFile(this.abc);
-    Exception ex = null;
-    try {
-      
-      assertNull(media.getToken());
-      assertNull(media.getMediaFileName());
-      
-      File fileToUpload = new File( Fixtures.get( Fixtures.FILE_TO_UPLOAD ) );
-      IConnectionMethod request = media.upload( false, new UploadHandler(fileToUpload) );
-      assertTrue( request.getResponse().isOK() );
-      
-    } catch (ServiceException e) {
-      ex = e;
-    } catch (LoginException e) {
-      ex = e;
-    }
-    
-    assertNotNull(ex);
-    assertTrue( ex instanceof ServiceException );
-    
-    ServiceException se = (ServiceException)ex;
-    
-    assertEquals( se.getErrorCode(), 422 );
-    assertNotNull( se.getMessage() );
-    
-    assertNull(media.getToken());
-    assertNull(media.getMediaFileName());
-
-  }
+//  @Test
+//  public void testMediaFileUploadFailed() {
+//    
+//    MediaFile media = new MediaFile(this.abc);
+//    Exception ex = null;
+//    try {
+//      
+//      assertNull(media.getToken());
+//      assertNull(media.getMediaFileName());
+//      
+//      File fileToUpload = new File( Fixtures.get( Fixtures.FILE_TO_UPLOAD ) );
+//      IConnectionMethod request = media.upload( false, new UploadHandler(fileToUpload) );
+//      assertTrue( request.getResponse().isOK() );
+//      
+//    } catch (ServiceException e) {
+//      ex = e;
+//    } catch (LoginException e) {
+//      ex = e;
+//    }
+//    
+//    assertNotNull(ex);
+//    assertTrue( ex instanceof ServiceException );
+//    
+//    ServiceException se = (ServiceException)ex;
+//    
+//    assertEquals( se.getErrorCode(), 422 );
+//    assertNotNull( se.getMessage() );
+//    
+//    assertNull(media.getToken());
+//    assertNull(media.getMediaFileName());
+//
+//  }
   
   
-  @Test
-  public void testMediaAsLocal() {
-    
-    
-    Thread t1 = new UploadAsLocal( "67820b3d14728669b27fb6653512cf18" );
-    Thread t2 = new UploadAsLocal( "41e1efd31428c322f02ad01533d42c47" );
-    
-    
-    t1.start();
-    t2.start();
-    
-    try {
-      t1.join();
-      t2.join();
-    } catch (InterruptedException e) {
-      assertNull( e );
-    }
-    
-  }
+//  @Test
+//  public void testMediaAsLocal() {
+//    
+//    
+//    Thread t1 = new UploadAsLocal( "67820b3d14728669b27fb6653512cf18" );
+//    Thread t2 = new UploadAsLocal( "41e1efd31428c322f02ad01533d42c47" );
+//    
+//    
+//    t1.start();
+//    t2.start();
+//    
+//    try {
+//      t1.join();
+//      t2.join();
+//    } catch (InterruptedException e) {
+//      assertNull( e );
+//    }
+//    
+//  }
   
   
   private class UploadAsLocal extends Thread {

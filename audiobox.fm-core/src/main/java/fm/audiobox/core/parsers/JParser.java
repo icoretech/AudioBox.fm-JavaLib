@@ -142,9 +142,6 @@ public class JParser{
     }catch (SecurityException e) {
       log.error("No accessible method found under key: " + _method, e);
       return;
-    } catch (NoSuchMethodException e) {
-      log.error("No declared method found under key: " + _method, e);
-      return;
     }
     if (method == null) {
       log.warn(entity.getClass().getName() + " doesn't contain the requested method for tag: " + _method);

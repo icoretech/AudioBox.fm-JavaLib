@@ -21,6 +21,8 @@ package fm.audiobox.core.models;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,14 +60,28 @@ public class Album extends AbstractEntity implements Serializable {
   public static final String TAGNAME = "album";
   
   
-  public static final String ARTIST_FIELD =             "artist";
-  public static final String ALBUM_FIELD =              "album";
-  public static final String ARTWORK_FIELD =            "artwork";
+  public static final String ARTIST =             "artist";
+  public static final String ALBUM =              "album";
+  public static final String ARTWORK =            "artwork";
   
   private String artist;
   private String album;
   private String artwork;
-   
+  
+  
+  private static final Map<String, Method> setterMethods = new HashMap<String, Method>();
+  static {
+    try {
+      setterMethods.put( ARTIST, Album.class.getMethod( "setArtist", String.class ) );
+      setterMethods.put( ALBUM, Album.class.getMethod( "setAlbum", String.class ) );
+      setterMethods.put( ALBUM, Album.class.getMethod( "setArtwork", String.class ) );
+    } catch (SecurityException e) {
+      log.error("Security error", e);
+    } catch (NoSuchMethodException e) {
+      log.error("No method found", e);
+    }
+  }
+  
 
   public Album(IConfiguration config) {
     super(config);
@@ -107,22 +123,15 @@ public class Album extends AbstractEntity implements Serializable {
   }
   
 
-  @Override
-  public Method getSetterMethod(String tagName) throws SecurityException,	NoSuchMethodException {
-    if ( tagName.equals(ARTIST_FIELD) ){
-      return this.getClass().getMethod("setArtist", String.class);
-    
-    } else if ( tagName.equals(ALBUM_FIELD) ){
-      return this.getClass().getMethod("setAlbum", String.class);
-
-    } else if ( tagName.equals( ARTWORK_FIELD )  ) {
-      return this.getClass().getMethod("setArtwork", String.class);
-      
+  public Method getSetterMethod(String tagName) {
+    if ( setterMethods.containsKey( tagName) ) {
+      return setterMethods.get( tagName );
     }
-    
     return null;
   }
-
+  
+  
+  
 
   @Override
   protected void copy(IEntity entity) {

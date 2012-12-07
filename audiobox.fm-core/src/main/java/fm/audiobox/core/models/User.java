@@ -25,7 +25,9 @@ package fm.audiobox.core.models;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.http.Consts;
 import org.apache.http.NameValuePair;
@@ -40,9 +42,9 @@ import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IAuthenticationHandle;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
+import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
-import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 
 
 /**
@@ -65,6 +67,8 @@ import fm.audiobox.interfaces.IConnector.IConnectionMethod;
  * time_zone: 'UTC'
  * accepted_extensions: 'mp3,m4a,m4b,m4r,mp4,flv,webm'
  * accepted_formats: 'audio/mpeg,audio/mp4,video/mp4,video/x-flv,video/webm'
+ * created_at: '',
+ * updated_at: '',
  * permissions:
  *   player: true
  *   local: true
@@ -150,6 +154,24 @@ public final class User extends AbstractEntity implements Serializable {
   public static final String NAMESPACE = "user";
   public static final String TAGNAME = NAMESPACE;
   
+  public static final String ID = "id";
+  public static final String USERNAME = "username";
+  public static final String PASSWORD = "password";
+  public static final String REAL_NAME = "real_name";
+  public static final String EMAIL = "email";
+  public static final String AUTH_TOKEN = "auth_token";
+  public static final String TIME_ZONE = "time_zone";
+  public static final String ACCEPTED_EXTENSIONS = "accepted_extensions";
+  public static final String ACCEPTED_FORMATS = "accepted_formats";
+  public static final String COUNTRY = "country";
+  public static final String PLAYLISTS_COUNT = "playlists_count";
+  public static final String TOTAL_PLAY_COUNT = "total_play_count";
+  public static final String MEDIA_FILES_COUNT = "media_files_count";
+  public static final String SUBSCRIPTION_STATE = "subscription_state";
+  public static final String COMET_CHANNEL = "comet_channel";
+  public static final String CREATED_AT = "created_at";
+  public static final String UPDATED_AT = "updated_at";
+  
   public static enum SubscriptionState {
     nothing,
     active,
@@ -160,8 +182,9 @@ public final class User extends AbstractEntity implements Serializable {
   }
 
   /** Separator used to split the allowed formats string */
-  public static final String ALLOWED_EXTENSIONS_SEPARATOR = ";";
+  public static final String ALLOWED_EXTENSIONS_SEPARATOR = ",";
 
+  private String id;
   private String username;
   private String password;
   private String real_name;
@@ -176,6 +199,8 @@ public final class User extends AbstractEntity implements Serializable {
   private long media_files_count;
   private SubscriptionState subscription_state = SubscriptionState.nothing;
   private String comet_channel;
+  private String createdAt;
+  private String updatedAt;
 
   // User's collection relations
   private Playlists playlists;
@@ -183,6 +208,43 @@ public final class User extends AbstractEntity implements Serializable {
   private AccountStats accountStats;
   private Preferences preferences;
   private ExternalTokens externalTokens;
+  
+  
+  
+  private static Map<String, Method> setterMethods = new HashMap<String, Method>();
+  
+  static {
+    try {
+      setterMethods.put( ID, User.class.getMethod("setId", String.class) );
+      setterMethods.put( USERNAME, User.class.getMethod("setUsername", String.class) );
+      setterMethods.put( REAL_NAME, User.class.getMethod("setRealName", String.class) );
+      setterMethods.put( COMET_CHANNEL, User.class.getMethod("setCometChannel", String.class) );
+      setterMethods.put( EMAIL, User.class.getMethod("setEmail", String.class) );
+      setterMethods.put( AUTH_TOKEN, User.class.getMethod("setAuthToken", String.class) );
+      setterMethods.put( TIME_ZONE, User.class.getMethod("setTimeZone", String.class) );
+      setterMethods.put( ACCEPTED_EXTENSIONS, User.class.getMethod("setAcceptedExtensions", String.class) );
+      setterMethods.put( ACCEPTED_FORMATS, User.class.getMethod("setAcceptedFormats", String.class) );
+      setterMethods.put( CREATED_AT, User.class.getMethod("setCreatedAt", String.class) );
+      setterMethods.put( UPDATED_AT, User.class.getMethod("setUpdatedAt", String.class) );
+      setterMethods.put( COUNTRY, User.class.getMethod("setCountry", String.class) );
+      setterMethods.put( PLAYLISTS_COUNT, User.class.getMethod("setPlaylistsCount", int.class) );
+      setterMethods.put( TOTAL_PLAY_COUNT, User.class.getMethod("setTotalPlayCount", long.class) );
+      setterMethods.put( MEDIA_FILES_COUNT, User.class.getMethod("setMediaFilesCount", long.class) );
+      setterMethods.put( SUBSCRIPTION_STATE, User.class.getMethod("setSubscriptionState", String.class) );
+      setterMethods.put( Permissions.TAGNAME, User.class.getMethod("setPermissions", Permissions.class) );
+      setterMethods.put( AccountStats.TAGNAME, User.class.getMethod("setAccountStats", AccountStats.class) );
+      setterMethods.put( ExternalTokens.TAGNAME, User.class.getMethod("setExternalTokens", ExternalTokens.class) );
+      setterMethods.put( Preferences.TAGNAME, User.class.getMethod("setPreferences", Preferences.class) );
+      
+    } catch (SecurityException e) {
+      log.error("Security error", e);
+    } catch (NoSuchMethodException e) {
+      log.error("No method found", e);
+    }
+    
+  }
+  
+  
 
   /**
    * <p>Constructor for User.</p>
@@ -219,7 +281,15 @@ public final class User extends AbstractEntity implements Serializable {
   }
 
 
-  
+  public String getId() {
+    return id;
+  }
+
+
+
+  public void setId(String id) {
+    this.id = id;
+  }
   
   
   public String getPassword() {
@@ -254,6 +324,30 @@ public final class User extends AbstractEntity implements Serializable {
 
   public void setEmail(String email) {
     this.email = email;
+  }
+
+  
+
+  public String getCreatedAt() {
+    return createdAt;
+  }
+
+
+
+  public void setCreatedAt(String createdAt) {
+    this.createdAt = createdAt;
+  }
+
+
+
+  public String getUpdatedAt() {
+    return updatedAt;
+  }
+
+
+
+  public void setUpdatedAt(String updatedAt) {
+    this.updatedAt = updatedAt;
   }
 
 
@@ -529,61 +623,10 @@ public final class User extends AbstractEntity implements Serializable {
   }
 
 
-  public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException{
-
-    if ( tagName.equals("username")  )  {
-      return this.getClass().getMethod("setUsername", String.class);
-
-    } else if ( tagName.equals("real_name")  )  {
-      return this.getClass().getMethod("setRealName", String.class);
-
-    } else if ( tagName.equals("comet_channel")  )  {
-      return this.getClass().getMethod("setCometChannel", String.class);
-
-    } else if ( tagName.equals("email")  )  {
-      return this.getClass().getMethod("setEmail", String.class);
-
-    } else if ( tagName.equals("auth_token")  )  {
-      return this.getClass().getMethod("setAuthToken", String.class);
-
-    } else if ( tagName.equals("time_zone")  )  {
-      return this.getClass().getMethod("setTimeZone", String.class);
-
-    } else if ( tagName.equals("accepted_extensions")  )  {
-      return this.getClass().getMethod("setAcceptedExtensions", String.class);
-
-    } else if ( tagName.equals("accepted_formats")  )  {
-      return this.getClass().getMethod("setAcceptedFormats", String.class);
-
-    } else if ( tagName.equals("country")  )  {
-      return this.getClass().getMethod("setCountry", String.class);
-
-    } else if ( tagName.equals("playlists_count")  )  {
-      return this.getClass().getMethod("setPlaylistsCount", int.class);
-
-    } else if ( tagName.equals("total_play_count")  )  {
-      return this.getClass().getMethod("setTotalPlayCount", long.class);
-
-    } else if ( tagName.equals("media_files_count")  )  {
-      return this.getClass().getMethod("setMediaFilesCount", long.class);
-     
-    } else if ( tagName.equals("subscription_state") ) {
-      return this.getClass().getMethod("setSubscriptionState", String.class);
-
-    } else if ( tagName.equals("permissions") ) {
-      return this.getClass().getMethod("setPermissions", Permissions.class);
-      
-    } else if ( tagName.equals("stats") ) {
-      return this.getClass().getMethod("setAccountStats", AccountStats.class);
-      
-    } else if ( tagName.equals("external_tokens") ) {
-      return this.getClass().getMethod("setExternalTokens", ExternalTokens.class);
-      
-    } else if ( tagName.equals("preferences") ) {
-      return this.getClass().getMethod("setPreferences", Preferences.class);
+  public Method getSetterMethod(String tagName) {
+    if ( setterMethods.containsKey( tagName) ) {
+      return setterMethods.get( tagName );
     }
-    
-    
     return null;
   }
 

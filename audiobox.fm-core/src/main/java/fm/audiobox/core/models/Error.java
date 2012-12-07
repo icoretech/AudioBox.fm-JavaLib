@@ -24,6 +24,10 @@ package fm.audiobox.core.models;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IEntity;
@@ -54,11 +58,17 @@ public class Error implements IEntity, Serializable {
 
 
   private static final long serialVersionUID = 1L;
+  
+  private static Logger log = LoggerFactory.getLogger(Error.class);
 
   /** The XML tag name for the Error element */
   public static final String NAMESPACE = null;
   public static final String TAGNAME = "error";
 
+  public static final String MESSAGE = "message";
+  public static final String STATUS = "status";
+  
+  protected Map<String, Object> properties;
   
   private IConfiguration configuration;
   private int status;
@@ -151,28 +161,39 @@ public class Error implements IEntity, Serializable {
 
 
   @Override
-  public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
-    
-    if ( tagName.equals("message") ){
-      return this.getClass().getMethod("setMessage", String.class);
+  public Method getSetterMethod(String tagName) {
+    try {
       
-    } else if ( tagName.equals("status") ){
-      return this.getClass().getMethod("setStatus", int.class);
+      if ( tagName.equals( MESSAGE ) ){
+        return this.getClass().getMethod("setMessage", String.class);
+        
+      } else if ( tagName.equals( STATUS ) ){
+        return this.getClass().getMethod("setStatus", int.class);
+        
+      }
       
+    } catch (SecurityException e) {
+      log.error("Security error", e);
+    } catch (NoSuchMethodException e) {
+      log.error("No method found", e);
     }
     
     return null;
   }
 
 
-  @Override
   public void setProperty(String key, Object value) {
+    if ( value == null ) {
+      if ( this.properties.containsKey( key )  ) {
+        this.properties.remove(key);
+      }
+    } else {
+      this.properties.put(key, value);
+    }
   }
-
-
-  @Override
+  
   public Object getProperty(String key) {
-    return null;
+    return this.properties.get(key);
   }
 
 

@@ -2,6 +2,11 @@ package fm.audiobox.core.models;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
@@ -26,11 +31,23 @@ import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 
 public final class ExternalTokens extends AbstractEntity implements Serializable {
 
-  
   private static final long serialVersionUID = 1L;
+  
+  private static Logger log = LoggerFactory.getLogger(ExternalTokens.class);
   
   public static final String NAMESPACE = "external_tokens";
   public static final String TAGNAME = NAMESPACE;
+  
+  public static final String DROPBOX = "dropbox";
+  public static final String GDRIVE = "gdrive";
+  public static final String SKYDRIVE = "skydrive";
+  public static final String SOUNDCLOUD = "soundcloud";
+  public static final String YOUTUBE = "youtube";
+  public static final String BOX = "box";
+  public static final String LASTFM = "lastfm";
+  public static final String TWITCHTV = "twitchtv";
+  public static final String FACEBOOK = "facebook";
+  public static final String TWITTER = "twitter";
   
   
   private boolean dropbox = false;
@@ -44,6 +61,28 @@ public final class ExternalTokens extends AbstractEntity implements Serializable
   private boolean facebook = false;
   private boolean twitter = false;
   
+  
+  
+  
+  private static final Map<String, Method> setterMethods = new HashMap<String, Method>();
+  static {
+    try {
+      setterMethods.put( DROPBOX, ExternalTokens.class.getMethod( "setDropbox" , boolean.class ) );
+      setterMethods.put( GDRIVE, ExternalTokens.class.getMethod( "setGdrive" , boolean.class ) );
+      setterMethods.put( SKYDRIVE, ExternalTokens.class.getMethod( "setSkydrive" , boolean.class ) );
+      setterMethods.put( SOUNDCLOUD, ExternalTokens.class.getMethod( "setSoundcloud" , boolean.class ) );
+      setterMethods.put( YOUTUBE, ExternalTokens.class.getMethod( "setYoutube" , boolean.class ) );
+      setterMethods.put( BOX, ExternalTokens.class.getMethod( "setBox" , boolean.class ) );
+      setterMethods.put( LASTFM, ExternalTokens.class.getMethod( "setLastfm" , boolean.class ) );
+      setterMethods.put( TWITCHTV, ExternalTokens.class.getMethod( "setTwitchtv" , boolean.class ) );
+      setterMethods.put( FACEBOOK, ExternalTokens.class.getMethod( "setFacebook" , boolean.class ) );
+      setterMethods.put( TWITTER, ExternalTokens.class.getMethod( "setTwitter" , boolean.class ) );
+    } catch (SecurityException e) {
+      log.error("Security error", e);
+    } catch (NoSuchMethodException e) {
+      log.error("No method found", e);
+    }
+  }
   
   
   public ExternalTokens(IConfiguration config) {
@@ -60,11 +99,6 @@ public final class ExternalTokens extends AbstractEntity implements Serializable
   public String getTagName() {
     return TAGNAME;
   }
-  
-  
-  
-  
-  
   
   
   public boolean isDropbox() {
@@ -167,51 +201,10 @@ public final class ExternalTokens extends AbstractEntity implements Serializable
   }
 
 
-  @Override
-  public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
-    
-    if ( tagName.equals("dropbox") ) {
-      
-      return this.getClass().getMethod("setDropbox" , boolean.class);
-      
-    } else if ( tagName.equals("gdrive") ) {
-      
-      return this.getClass().getMethod("setGdrive" , boolean.class);
-      
-    } else if ( tagName.equals("skydrive") ) {
-      
-      return this.getClass().getMethod("setSkydrive" , boolean.class);
-      
-    } else if ( tagName.equals("soundcloud") ) {
-      
-      return this.getClass().getMethod("setSoundcloud" , boolean.class);
-      
-    } else if ( tagName.equals("youtube") ) {
-      
-      return this.getClass().getMethod("setYoutube" , boolean.class);
-      
-    } else if ( tagName.equals("box") ) {
-      
-      return this.getClass().getMethod("setBox" , boolean.class);
-      
-    } else if ( tagName.equals("lastfm") ) {
-      
-      return this.getClass().getMethod("setLastfm" , boolean.class);
-      
-    } else if ( tagName.equals("twitchtv") ) {
-      
-      return this.getClass().getMethod("setTwitchtv" , boolean.class);
-      
-    } else if ( tagName.equals("facebook") ) {
-      
-      return this.getClass().getMethod("setFacebook" , boolean.class);
-      
-    } else if ( tagName.equals("twitter") ) {
-      
-      return this.getClass().getMethod("setTwitter" , boolean.class);
-      
+  public Method getSetterMethod(String tagName) {
+    if ( setterMethods.containsKey( tagName) ) {
+      return setterMethods.get( tagName );
     }
-    
     return null;
   }
   

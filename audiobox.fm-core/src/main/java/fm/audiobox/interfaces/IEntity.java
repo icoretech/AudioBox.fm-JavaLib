@@ -41,7 +41,7 @@ public interface IEntity {
    * @param tagName the field tagName found while parsing response content
    * @return the method to invoke
    */
-  public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException;
+  public Method getSetterMethod(String tagName);
   
   
   /**

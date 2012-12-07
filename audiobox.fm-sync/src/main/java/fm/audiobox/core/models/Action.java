@@ -2,6 +2,8 @@ package fm.audiobox.core.models;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +22,11 @@ public class Action extends AbstractEntity implements Serializable {
 
   public static final String TAGNAME = "action";
   public static final String NAMESPACE = Action.TAGNAME;
+  
+  
+  public static final String NAME = "name";
+  public static final String REQUESTID = "requestId";
+  public static final String ARGS = "args";
 
   
   public static enum Actions {
@@ -32,6 +39,20 @@ public class Action extends AbstractEntity implements Serializable {
   private String name;
   private String id;
   private Args args;
+  
+  
+  private static final Map<String, Method> setterMethods = new HashMap<String, Method>();
+  static {
+    try {
+      setterMethods.put( NAME, Action.class.getMethod("setName", String.class) );
+      setterMethods.put( REQUESTID, Action.class.getMethod("setId", String.class) );
+      setterMethods.put( ARGS, Action.class.getMethod("setArgs", Args.class) );
+    } catch (SecurityException e) {
+      log.error("Security error", e);
+    } catch (NoSuchMethodException e) {
+      log.error("No method found", e);
+    }
+  }
 
 
   public Action(IConfiguration config) {
@@ -73,17 +94,12 @@ public class Action extends AbstractEntity implements Serializable {
     this.args = args;
   }
 
-  @Override
-  public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
-
-    if ( tagName.equals("name") ){
-      return this.getClass().getMethod("setName", String.class);
-    } else if ( tagName.equals("requestId") ){
-      return this.getClass().getMethod("setId", String.class);
-    } else if ( tagName.equals("args") ){
-      return this.getClass().getMethod("setArgs", Args.class);
+  
+  
+  public Method getSetterMethod(String tagName) {
+    if ( setterMethods.containsKey( tagName) ) {
+      return setterMethods.get( tagName );
     }
-
     return null;
   }
 

@@ -2,6 +2,11 @@ package fm.audiobox.core.models;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
@@ -28,9 +33,28 @@ import fm.audiobox.interfaces.IResponseHandler;
 public final class Permissions extends AbstractEntity implements Serializable {
 
   private static final long serialVersionUID = 1L;
+  
+  private static final Logger log = LoggerFactory.getLogger(Permissions.class);
 
   public static final String NAMESPACE = "permissions";
   public static final String TAGNAME = NAMESPACE;
+  
+  
+  public static final String PLAYER = "player";
+  public static final String LOCAL = "local";
+  public static final String CLOUD = "cloud";
+  public static final String DROPBOX = "dropbox";
+  public static final String GDRIVE = "gdrive";
+  public static final String SKYDRIVE = "skydrive";
+  public static final String SOUNDCLOUD = "soundcloud";
+  public static final String YOUTUBE = "youtube";
+  public static final String BOX = "box";
+  public static final String LASTFM = "lastfm";
+  public static final String TWITCHTV = "twitchtv";
+  public static final String FACEBOOK = "facebook";
+  public static final String TWITTER = "twitter";
+  public static final String MUSIXMATCH = "musixmatch";
+  public static final String SONGKICK = "songkick";
   
   
   private boolean player = true;
@@ -48,6 +72,33 @@ public final class Permissions extends AbstractEntity implements Serializable {
   private boolean twitter = true;
   private boolean musixmatch = true;
   private boolean songkick = true;
+  
+  
+  private static final Map<String, Method> setterMethods = new HashMap<String, Method>();
+  static {
+    try {
+      setterMethods.put( PLAYER,  Permissions.class.getMethod( "setPlayer", boolean.class )  );
+      setterMethods.put( LOCAL,  Permissions.class.getMethod( "setLocal", boolean.class )  );
+      setterMethods.put( CLOUD,  Permissions.class.getMethod( "setCloud", boolean.class )  );
+      setterMethods.put( DROPBOX,  Permissions.class.getMethod( "setDropbox", boolean.class )  );
+      setterMethods.put( GDRIVE,  Permissions.class.getMethod( "setGdrive", boolean.class )  );
+      setterMethods.put( SKYDRIVE,  Permissions.class.getMethod( "setSkydrive", boolean.class )  );
+      setterMethods.put( SOUNDCLOUD,  Permissions.class.getMethod( "setSoundcloud", boolean.class )  );
+      setterMethods.put( YOUTUBE,  Permissions.class.getMethod( "setYoutube", boolean.class )  );
+      setterMethods.put( BOX,  Permissions.class.getMethod( "setBox", boolean.class )  );
+      setterMethods.put( LASTFM,  Permissions.class.getMethod( "setLastfm", boolean.class )  );
+      setterMethods.put( TWITCHTV,  Permissions.class.getMethod( "setTwitchtv", boolean.class )  );
+      setterMethods.put( FACEBOOK,  Permissions.class.getMethod( "setFacebook", boolean.class )  );
+      setterMethods.put( TWITTER,  Permissions.class.getMethod( "setTwitter", boolean.class )  );
+      setterMethods.put( MUSIXMATCH,  Permissions.class.getMethod( "setMusixmatch", boolean.class )  );
+      setterMethods.put( SONGKICK,  Permissions.class.getMethod( "setSongkick", boolean.class )  );
+    } catch (SecurityException e) {
+      log.error("Security error", e);
+    } catch (NoSuchMethodException e) {
+      log.error("No method found", e);
+    }
+  }
+  
   
   public Permissions(IConfiguration config) {
     super(config);
@@ -272,76 +323,15 @@ public final class Permissions extends AbstractEntity implements Serializable {
 
 
 
-
-  @Override
-  public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
-    
-    if ( tagName.equals("player") ) {
-
-      return this.getClass().getMethod("setPlayer", boolean.class);
-
-    } else if ( tagName.equals("local") ) {
-
-      return this.getClass().getMethod("setLocal", boolean.class);
-
-    } else if ( tagName.equals("cloud") ) {
-
-      return this.getClass().getMethod("setCloud", boolean.class);
-
-    } else if ( tagName.equals("dropbox") ) {
-
-      return this.getClass().getMethod("setDropbox", boolean.class);
-
-    } else if ( tagName.equals("gdrive") ) {
-
-      return this.getClass().getMethod("setGdrive", boolean.class);
-
-    } else if ( tagName.equals("skydrive") ) {
-
-      return this.getClass().getMethod("setSkydrive", boolean.class);
-
-    } else if ( tagName.equals("soundcloud") ) {
-
-      return this.getClass().getMethod("setSoundcloud", boolean.class);
-
-    } else if ( tagName.equals("youtube") ) {
-
-      return this.getClass().getMethod("setYoutube", boolean.class);
-
-    } else if ( tagName.equals("box") ) {
-
-      return this.getClass().getMethod("setBox", boolean.class);
-
-    } else if ( tagName.equals("lastfm") ) {
-
-      return this.getClass().getMethod("setLastfm", boolean.class);
-
-    } else if ( tagName.equals("twitchtv") ) {
-
-      return this.getClass().getMethod("setTwitchtv", boolean.class);
-
-    } else if ( tagName.equals("facebook") ) {
-
-      return this.getClass().getMethod("setFacebook", boolean.class);
-
-    } else if ( tagName.equals("twitter") ) {
-
-      return this.getClass().getMethod("setTwitter", boolean.class);
-
-    } else if ( tagName.equals("musixmatch") ) {
-
-      return this.getClass().getMethod("setMusixmatch", boolean.class);
-
-    } else if ( tagName.equals("songkick") ) {
-
-      return this.getClass().getMethod("setSongkick", boolean.class);
-
+  public Method getSetterMethod(String tagName) {
+    if ( setterMethods.containsKey( tagName) ) {
+      return setterMethods.get( tagName );
     }
-    
-    
     return null;
   }
-
+  
+  
+  
   @Override
   public String getApiPath() {
     return null;

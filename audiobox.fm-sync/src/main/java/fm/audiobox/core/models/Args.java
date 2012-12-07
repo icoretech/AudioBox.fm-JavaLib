@@ -2,6 +2,11 @@ package fm.audiobox.core.models;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
@@ -14,9 +19,19 @@ public class Args extends AbstractEntity implements Serializable{
 
   private static final long serialVersionUID = 1L;
   
-  public static final String TAGNAME = "args";
+  private static Logger log = LoggerFactory.getLogger(Args.class);
   
+  public static final String TAGNAME = "args";
   public static final String NAMESPACE = Args.TAGNAME;
+  
+  
+  public static final String FILENAME = "filename";
+  public static final String RANGEMIN = "rangeMin";
+  public static final String RANGEMAX = "rangeMax";
+  public static final String ETAG = "etag";
+  public static final String SERVER_IP = "server_ip";
+  public static final String SERVER_PORT = "server_port";
+  
   
   private String filename;
   private String etag;
@@ -24,6 +39,25 @@ public class Args extends AbstractEntity implements Serializable{
   private long rangeMax;
   private String serverIp;
   private String serverPort;
+  
+  
+  
+  private static final Map<String, Method> setterMethods = new HashMap<String, Method>();
+  static {
+    try {
+      setterMethods.put( FILENAME, Args.class.getMethod("setFileName", String.class) );
+      setterMethods.put( RANGEMIN, Args.class.getMethod("setRangeMin", long.class) );
+      setterMethods.put( RANGEMAX, Args.class.getMethod("setRangeMax", long.class) );
+      setterMethods.put( ETAG, Args.class.getMethod("setEtag", String.class) );
+      setterMethods.put( SERVER_IP, Args.class.getMethod("setServerIp", String.class) );
+      setterMethods.put( SERVER_PORT, Args.class.getMethod("setServerPort", String.class) );
+    } catch (SecurityException e) {
+      log.error("Security error", e);
+    } catch (NoSuchMethodException e) {
+      log.error("No method found", e);
+    }
+  }
+  
   
   public Args(IConfiguration config) {
     super(config);
@@ -80,25 +114,12 @@ public class Args extends AbstractEntity implements Serializable{
     this.rangeMax = rangeMax;
   }
 
-  @Override
-  public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
-    
-    if ( tagName.equals("filename") ){
-      return this.getClass().getMethod("setFileName", String.class);
-    } else if ( tagName.equals("rangeMin") ){
-      return this.getClass().getMethod("setRangeMin", long.class);
-    } else if ( tagName.equals("rangeMax") ){
-      return this.getClass().getMethod("setRangeMax", long.class);
-    } else if ( tagName.equals("etag") ){
-      return this.getClass().getMethod("setEtag", String.class);
-    } else if ( tagName.equals("server_ip") ){
-      return this.getClass().getMethod("setServerIp", String.class);
-    } else if ( tagName.equals("server_port") ){
-      return this.getClass().getMethod("setServerPort", String.class);
+
+  public Method getSetterMethod(String tagName) {
+    if ( setterMethods.containsKey( tagName) ) {
+      return setterMethods.get( tagName );
     }
-  
     return null;
-    
   }
 
   @Override

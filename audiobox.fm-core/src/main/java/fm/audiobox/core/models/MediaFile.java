@@ -25,7 +25,9 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.entity.mime.MultipartEntity;
@@ -104,30 +106,30 @@ public class MediaFile extends AbstractEntity implements Serializable {
   public static final String TAGNAME = "media_file";
   public static final String NAMESPACE = MediaFile.TAGNAME;
   
-  public static final String TITLE_FIELD =              "title";
-  public static final String ARTIST_FIELD =             "artist";
-  public static final String ALBUM_FIELD =              "album";
-  public static final String GENRE_FIELD =              "genre";
-  public static final String LEN_STR_FIELD =            "len_str";
-  public static final String MEDIA_FILE_NAME_FIELD =    "media_file_name";
-  public static final String MIME_FIELD =               "mime";
-  public static final String YEAR_FIELD =               "release_year";
-  public static final String LEN_INT_FIELD =            "len_int";
-  public static final String POSITION_FIELD =           "position";
-  public static final String PLAYS_FIELD =              "plays";
-  public static final String DISC_FIELD =               "disc_number";
-  public static final String TYPE_FIELD =               "type";
-  public static final String SIZE_FIELD =               "size";
-  public static final String AUDIO_SAMPLE_RATE_FIELD =  "audio_sample_rate";
-  public static final String AUDIO_BIT_RATE_FIELD =     "audio_bit_rate";
-  public static final String SOURCE_FIELD =             "source";
-  public static final String ORIGINAL_FILE_NAME_FIELD = "original_file_name";
-  public static final String HASH_FIELD =               "hash";
-  public static final String FILENAME_FIELD =           "filename";
-  public static final String LOVED_FIELD =              "loved";
-  public static final String REMOTE_PATH_FIELD  =       "remote_path";
-  public static final String SHARE_TOKEN_FIELD =        "share_token";
-  public static final String ARTWORK_FIELD =            "artwork";
+  public static final String TITLE =              "title";
+  public static final String ARTIST =             "artist";
+  public static final String ALBUM =              "album";
+  public static final String GENRE =              "genre";
+  public static final String LEN_STR =            "len_str";
+  public static final String MEDIA_FILE_NAME =    "media_file_name";
+  public static final String MIME =               "mime";
+  public static final String YEAR =               "release_year";
+  public static final String LEN_INT =            "len_int";
+  public static final String POSITION =           "position";
+  public static final String PLAYS =              "plays";
+  public static final String DISC =               "disc_number";
+  public static final String TYPE =               "type";
+  public static final String SIZE =               "size";
+  public static final String AUDIO_SAMPLE_RATE =  "audio_sample_rate";
+  public static final String AUDIO_BIT_RATE =     "audio_bit_rate";
+  public static final String SOURCE =             "source";
+  public static final String ORIGINAL_FILE_NAME = "original_file_name";
+  public static final String HASH =               "hash";
+  public static final String FILENAME =           "filename";
+  public static final String LOVED =              "loved";
+  public static final String REMOTE_PATH  =       "remote_path";
+  public static final String SHARE_TOKEN =        "share_token";
+  public static final String ARTWORK =            "artwork";
   
   private String artist;
   private String album;
@@ -172,6 +174,43 @@ public class MediaFile extends AbstractEntity implements Serializable {
     gdrive,
     skydrive
   }
+  
+  
+  private static final Map<String, Method> setterMethods = new HashMap<String, Method>();
+  static {
+    try {
+      setterMethods.put( TOKEN_SHORT, MediaFile.class.getMethod( "setToken", String.class ) );
+      setterMethods.put( TOKEN, MediaFile.class.getMethod( "setToken", String.class ) );
+      setterMethods.put( ARTIST, MediaFile.class.getMethod( "setArtist", String.class ) );
+      setterMethods.put( ALBUM, MediaFile.class.getMethod( "setAlbum", String.class ) );
+      setterMethods.put( GENRE, MediaFile.class.getMethod( "setGenre", String.class ) );
+      setterMethods.put( YEAR, MediaFile.class.getMethod( "setYear", int.class ) );
+      setterMethods.put( TITLE, MediaFile.class.getMethod( "setTitle", String.class ) );
+      setterMethods.put( LEN_STR, MediaFile.class.getMethod( "setLenStr", String.class ) );
+      setterMethods.put( LEN_INT, MediaFile.class.getMethod( "setLenInt", int.class ) );
+      setterMethods.put( POSITION, MediaFile.class.getMethod( "setPosition", int.class ) );
+      setterMethods.put( PLAYS, MediaFile.class.getMethod( "setPlays", int.class ) );
+      setterMethods.put( DISC, MediaFile.class.getMethod( "setDisc", int.class ) );
+      setterMethods.put( MEDIA_FILE_NAME, MediaFile.class.getMethod( "setMediaFileName", String.class ) );
+      setterMethods.put( MIME, MediaFile.class.getMethod( "setMime", String.class ) );
+      setterMethods.put( TYPE, MediaFile.class.getMethod( "setType", String.class ) );
+      setterMethods.put( SOURCE, MediaFile.class.getMethod( "setSource", String.class ) );
+      setterMethods.put( SIZE, MediaFile.class.getMethod( "setSize", long.class ) );
+      setterMethods.put( AUDIO_SAMPLE_RATE, MediaFile.class.getMethod( "setAudioSampleRate", String.class ) );
+      setterMethods.put( AUDIO_BIT_RATE, MediaFile.class.getMethod( "setAudioBitRate", String.class ) );
+      setterMethods.put( ARTWORK, MediaFile.class.getMethod( "setArtwork", String.class ) );
+      setterMethods.put( HASH, MediaFile.class.getMethod( "setHash", String.class ) );
+      setterMethods.put( FILENAME, MediaFile.class.getMethod( "setFilename", String.class ) );
+      setterMethods.put( LOVED, MediaFile.class.getMethod( "setLoved", boolean.class ) );
+      setterMethods.put( REMOTE_PATH, MediaFile.class.getMethod( "setRemotePath", String.class ) );
+      setterMethods.put( SHARE_TOKEN, MediaFile.class.getMethod( "setShareToken", String.class ) );
+    } catch (SecurityException e) {
+      log.error("Security error", e);
+    } catch (NoSuchMethodException e) {
+      log.error("No method found", e);
+    }
+  }
+  
 
   public MediaFile(IConfiguration config) {
     super(config);
@@ -409,65 +448,14 @@ public class MediaFile extends AbstractEntity implements Serializable {
   }
   
 
-  @Override
-  public Method getSetterMethod(String tagName) throws SecurityException,	NoSuchMethodException {
-    if ( tagName.equals( TOKEN_FIELD ) || tagName.equals( TOKEN_SHORT_FIELD ) ){
-      return this.getClass().getMethod("setToken", String.class);
-    } else if ( tagName.equals(ARTIST_FIELD) ){
-      return this.getClass().getMethod("setArtist", String.class);
-    } else if ( tagName.equals(ALBUM_FIELD) ){
-      return this.getClass().getMethod("setAlbum", String.class);
-    } else if ( tagName.equals(GENRE_FIELD) ){
-      return this.getClass().getMethod("setGenre", String.class);
-    } else if ( tagName.equals(YEAR_FIELD) ){
-      return this.getClass().getMethod("setYear", int.class);
-    } else if ( tagName.equals(TITLE_FIELD) ){
-      return this.getClass().getMethod("setTitle", String.class);
-    } else if ( tagName.equals(LEN_STR_FIELD) ){
-      return this.getClass().getMethod("setLenStr", String.class);
-    } else if ( tagName.equals(LEN_INT_FIELD) ){
-      return this.getClass().getMethod("setLenInt", int.class);
-    } else if ( tagName.equals(POSITION_FIELD) ){
-      return this.getClass().getMethod("setPosition", int.class);
-    } else if ( tagName.equals(PLAYS_FIELD) ){
-      return this.getClass().getMethod("setPlays", int.class);
-    } else if ( tagName.equals(DISC_FIELD) ){
-      return this.getClass().getMethod("setDisc", int.class);
-    } else if ( tagName.equals(MEDIA_FILE_NAME_FIELD) ){
-      return this.getClass().getMethod("setMediaFileName", String.class);
-    } else if ( tagName.equals(MIME_FIELD) ){
-      return this.getClass().getMethod("setMime", String.class);
-    } else if ( tagName.equals(TYPE_FIELD) ){
-      return this.getClass().getMethod("setType", String.class);
-    } else if ( tagName.equals(SOURCE_FIELD) ){
-      return this.getClass().getMethod("setSource", String.class);
-    } else if ( tagName.equals(SIZE_FIELD) ){
-      return this.getClass().getMethod("setSize", long.class);
-    } else if ( tagName.equals(AUDIO_SAMPLE_RATE_FIELD) ){
-      return this.getClass().getMethod("setAudioSampleRate", String.class);
-    } else if ( tagName.equals(AUDIO_BIT_RATE_FIELD) ){
-      return this.getClass().getMethod("setAudioBitRate", String.class);
-    } else if ( tagName.equals( ARTWORK_FIELD )  ) {
-      return this.getClass().getMethod("setArtwork", String.class);
-    } else if ( tagName.equals( HASH_FIELD ) ){
-      return this.getClass().getMethod("setHash", String.class);
-    
-    } else if ( tagName.equals( FILENAME_FIELD ) ){
-      return this.getClass().getMethod("setFilename", String.class);
-    
-    } else if ( tagName.equals( LOVED_FIELD ) ){
-      return this.getClass().getMethod("setLoved", boolean.class);
-      
-    } else if ( tagName.equals( REMOTE_PATH_FIELD ) ){
-      return this.getClass().getMethod("setRemotePath", String.class);
-    
-    } else if ( tagName.equals( SHARE_TOKEN_FIELD ) ){
-      return this.getClass().getMethod("setShareToken", String.class);
+  public Method getSetterMethod(String tagName) {
+    if ( setterMethods.containsKey( tagName) ) {
+      return setterMethods.get( tagName );
     }
-    
     return null;
   }
-
+  
+  
 
   @Override
   protected void copy(IEntity entity) {
@@ -640,25 +628,25 @@ public class MediaFile extends AbstractEntity implements Serializable {
     
     List<NameValuePair> params = new ArrayList<NameValuePair>();
     
-    params.add(  new BasicNameValuePair( prefix + TITLE_FIELD,               this.title ) );
-    params.add(  new BasicNameValuePair( prefix + ARTIST_FIELD,              this.artist )  );
-    params.add(  new BasicNameValuePair( prefix + ALBUM_FIELD,               this.album )  );
-    params.add(  new BasicNameValuePair( prefix + GENRE_FIELD,               this.genre )  );
-    params.add(  new BasicNameValuePair( prefix + LEN_STR_FIELD,             this.lenStr )  );
-    params.add(  new BasicNameValuePair( prefix + MEDIA_FILE_NAME_FIELD,     this.mediaFileName )  );
-    params.add(  new BasicNameValuePair( prefix + MIME_FIELD,                this.mime )  );
-    params.add(  new BasicNameValuePair( prefix + YEAR_FIELD,                String.valueOf( this.year ) )  );
-    params.add(  new BasicNameValuePair( prefix + LEN_INT_FIELD,             String.valueOf( this.lenInt ) )  );
-    params.add(  new BasicNameValuePair( prefix + POSITION_FIELD,            String.valueOf( this.position ) )  );
-    params.add(  new BasicNameValuePair( prefix + PLAYS_FIELD,               String.valueOf( this.plays ) )  );
-    params.add(  new BasicNameValuePair( prefix + DISC_FIELD,                String.valueOf( this.disc ) )  );
-    params.add(  new BasicNameValuePair( prefix + SIZE_FIELD,                String.valueOf( this.size )  )  );
-    params.add(  new BasicNameValuePair( prefix + TYPE_FIELD,                this.type.toString() )  );
-    params.add(  new BasicNameValuePair( prefix + SOURCE_FIELD,              this.source != null ? this.source.toString() : null )  );
-    params.add(  new BasicNameValuePair( prefix + AUDIO_SAMPLE_RATE_FIELD,   this.audioSampleRate )  );
-    params.add(  new BasicNameValuePair( prefix + AUDIO_BIT_RATE_FIELD,      this.audioBitRate )  );
-    params.add(  new BasicNameValuePair( prefix + ORIGINAL_FILE_NAME_FIELD,  this.originalFileName )  );
-    params.add(  new BasicNameValuePair( prefix + HASH_FIELD,                 this.hash )  );
+    params.add(  new BasicNameValuePair( prefix + TITLE,               this.title ) );
+    params.add(  new BasicNameValuePair( prefix + ARTIST,              this.artist )  );
+    params.add(  new BasicNameValuePair( prefix + ALBUM,               this.album )  );
+    params.add(  new BasicNameValuePair( prefix + GENRE,               this.genre )  );
+    params.add(  new BasicNameValuePair( prefix + LEN_STR,             this.lenStr )  );
+    params.add(  new BasicNameValuePair( prefix + MEDIA_FILE_NAME,     this.mediaFileName )  );
+    params.add(  new BasicNameValuePair( prefix + MIME,                this.mime )  );
+    params.add(  new BasicNameValuePair( prefix + YEAR,                String.valueOf( this.year ) )  );
+    params.add(  new BasicNameValuePair( prefix + LEN_INT,             String.valueOf( this.lenInt ) )  );
+    params.add(  new BasicNameValuePair( prefix + POSITION,            String.valueOf( this.position ) )  );
+    params.add(  new BasicNameValuePair( prefix + PLAYS,               String.valueOf( this.plays ) )  );
+    params.add(  new BasicNameValuePair( prefix + DISC,                String.valueOf( this.disc ) )  );
+    params.add(  new BasicNameValuePair( prefix + SIZE,                String.valueOf( this.size )  )  );
+    params.add(  new BasicNameValuePair( prefix + TYPE,                this.type.toString() )  );
+    params.add(  new BasicNameValuePair( prefix + SOURCE,              this.source != null ? this.source.toString() : null )  );
+    params.add(  new BasicNameValuePair( prefix + AUDIO_SAMPLE_RATE,   this.audioSampleRate )  );
+    params.add(  new BasicNameValuePair( prefix + AUDIO_BIT_RATE,      this.audioBitRate )  );
+    params.add(  new BasicNameValuePair( prefix + ORIGINAL_FILE_NAME,  this.originalFileName )  );
+    params.add(  new BasicNameValuePair( prefix + HASH,                 this.hash )  );
     
     return params;
   }
@@ -669,14 +657,14 @@ public class MediaFile extends AbstractEntity implements Serializable {
     
     List<NameValuePair> params = new ArrayList<NameValuePair>();
     
-    params.add(  new BasicNameValuePair( prefix + TITLE_FIELD,               this.title ) );
-    params.add(  new BasicNameValuePair( prefix + ARTIST_FIELD,              this.artist )  );
-    params.add(  new BasicNameValuePair( prefix + ALBUM_FIELD,               this.album )  );
-    params.add(  new BasicNameValuePair( prefix + GENRE_FIELD,               this.genre )  );
-    params.add(  new BasicNameValuePair( prefix + YEAR_FIELD,                String.valueOf( this.year ) )  );
-    params.add(  new BasicNameValuePair( prefix + POSITION_FIELD,            String.valueOf( this.position ) )  );
-    params.add(  new BasicNameValuePair( prefix + PLAYS_FIELD,               String.valueOf( this.plays ) )  );
-    params.add(  new BasicNameValuePair( prefix + HASH_FIELD,                this.hash )  );
+    params.add(  new BasicNameValuePair( prefix + TITLE,               this.title ) );
+    params.add(  new BasicNameValuePair( prefix + ARTIST,              this.artist )  );
+    params.add(  new BasicNameValuePair( prefix + ALBUM,               this.album )  );
+    params.add(  new BasicNameValuePair( prefix + GENRE,               this.genre )  );
+    params.add(  new BasicNameValuePair( prefix + YEAR,                String.valueOf( this.year ) )  );
+    params.add(  new BasicNameValuePair( prefix + POSITION,            String.valueOf( this.position ) )  );
+    params.add(  new BasicNameValuePair( prefix + PLAYS,               String.valueOf( this.plays ) )  );
+    params.add(  new BasicNameValuePair( prefix + HASH,                this.hash )  );
     
     return params;
   }

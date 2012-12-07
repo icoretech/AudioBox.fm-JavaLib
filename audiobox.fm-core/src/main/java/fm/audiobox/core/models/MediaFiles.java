@@ -27,6 +27,8 @@ import java.util.List;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fm.audiobox.configurations.Response;
 import fm.audiobox.core.exceptions.LoginException;
@@ -45,6 +47,7 @@ import fm.audiobox.interfaces.IEntity;
 public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements Serializable {
 
   private static final long serialVersionUID = 1L;
+  private static Logger log = LoggerFactory.getLogger(MediaFiles.class);
 
   /** The XML tag name for the MediaFiles element */
   public static final String TAGNAME = "media_files";
@@ -71,6 +74,8 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
     multidestroy,
     remove
   }
+  
+  
 
   public MediaFiles(IConfiguration config) {
     super(config);
@@ -87,10 +92,16 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
   }
 
   @Override
-  public Method getSetterMethod(String tagName) throws SecurityException,  NoSuchMethodException {
+  public Method getSetterMethod(String tagName) {
 
     if ( tagName.equals( MediaFile.TAGNAME ) ) {
-      return this.getClass().getMethod("add", MediaFile.class);
+      try {
+        return this.getClass().getMethod("add", MediaFile.class);
+      } catch (SecurityException e) {
+        log.error("Security error", e);
+      } catch (NoSuchMethodException e) {
+        log.error("No method found", e);
+      }
     }
 
     return null;

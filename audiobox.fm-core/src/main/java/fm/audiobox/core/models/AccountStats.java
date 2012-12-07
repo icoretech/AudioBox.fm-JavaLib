@@ -2,6 +2,11 @@ package fm.audiobox.core.models;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
@@ -12,11 +17,32 @@ import fm.audiobox.interfaces.IResponseHandler;
 
 public final class AccountStats extends AbstractEntity implements Serializable {
   
-  
   private static final long serialVersionUID = 1L;
+  
+  private static final Logger log = LoggerFactory.getLogger(AccountStats.class);
   
   public static final String NAMESPACE = "stats";
   public static final String TAGNAME = NAMESPACE;
+  
+  
+  public static final String DATA_SERVED_THIS_MONTH = "data_served_this_month";
+  public static final String DATA_SERVED_OVERALL = "data_served_overall";
+  public static final String CLOUD_DATA_STORED_OVERALL = "cloud_data_stored_overall";
+  public static final String CLOUD_DATA_STORED_THIS_MONTH = "cloud_data_stored_this_month";
+  public static final String LOCAL_DATA_STORED_OVERALL = "local_data_stored_overall";
+  public static final String LOCAL_DATA_STORED_THIS_MONTH = "local_data_stored_this_month";
+  public static final String DROPBOX_DATA_STORED_OVERALL = "dropbox_data_stored_overall";
+  public static final String DROPBOX_DATA_STORED_THIS_MONTH = "dropbox_data_stored_this_month";
+  public static final String GDRIVE_DATA_STORED_THIS_MONTH = "gdrive_data_stored_this_month";
+  public static final String GDRIVE_DATA_STORED_OVERALL = "gdrive_data_stored_overall";
+  public static final String SKYDRIVE_DATA_STORED_THIS_MONTH = "skydrive_data_stored_this_month";
+  public static final String SKYDRIVE_DATA_STORED_OVERALL = "skydrive_data_stored_overall";
+  public static final String BOX_DATA_STORED_THIS_MONTH = "box_data_stored_this_month";
+  public static final String BOX_DATA_STORED_OVERALL = "box_data_stored_overall";
+  public static final String PARTNER_DATA_STORED_THIS_MONTH = "partner_data_stored_this_month";
+  public static final String PARTNER_DATA_STORED_OVERALL = "partner_data_stored_overall";
+  public static final String SOUNDCLOUD_DATA_STORED_THIS_MONTH = "soundcloud_data_stored_this_month";
+  public static final String SOUNDCLOUD_DATA_STORED_OVERALL = "soundcloud_data_stored_overall";
   
   
   private long data_served_this_month;
@@ -37,6 +63,35 @@ public final class AccountStats extends AbstractEntity implements Serializable {
   private long partner_data_stored_overall;
   private long soundcloud_data_stored_this_month;
   private long soundcloud_data_stored_overall;
+  
+  
+  private static final Map<String, Method> setterMethods = new HashMap<String, Method>();
+  static {
+    try {
+      setterMethods.put( DATA_SERVED_THIS_MONTH, AccountStats.class.getMethod( "setDataServedThisMonth", long.class ) );
+      setterMethods.put( DATA_SERVED_OVERALL, AccountStats.class.getMethod( "setDataServedOverall", long.class ) );
+      setterMethods.put( CLOUD_DATA_STORED_OVERALL, AccountStats.class.getMethod( "setCloudDataStoredOverall", long.class ) );
+      setterMethods.put( CLOUD_DATA_STORED_THIS_MONTH, AccountStats.class.getMethod( "setCloudDataStoredThisMonth", long.class ) );
+      setterMethods.put( LOCAL_DATA_STORED_OVERALL, AccountStats.class.getMethod( "setLocalDataStoredOverall", long.class ) );
+      setterMethods.put( LOCAL_DATA_STORED_THIS_MONTH, AccountStats.class.getMethod( "setLocalDataStoredThisMonth", long.class ) );
+      setterMethods.put( DROPBOX_DATA_STORED_OVERALL, AccountStats.class.getMethod( "setDropboxDataStoredOverall", long.class ) );
+      setterMethods.put( DROPBOX_DATA_STORED_THIS_MONTH, AccountStats.class.getMethod( "setDropboxDataStoredThisMonth", long.class ) );
+      setterMethods.put( GDRIVE_DATA_STORED_THIS_MONTH, AccountStats.class.getMethod( "setGdriveDataStoredThisMonth", long.class ) );
+      setterMethods.put( GDRIVE_DATA_STORED_OVERALL, AccountStats.class.getMethod( "setGdriveDataStoredOverall", long.class ) );
+      setterMethods.put( SKYDRIVE_DATA_STORED_THIS_MONTH, AccountStats.class.getMethod( "setSkydriveDataStoredThisMonth", long.class ) );
+      setterMethods.put( SKYDRIVE_DATA_STORED_OVERALL, AccountStats.class.getMethod( "setSkydriveDataStoredOverall", long.class ) );
+      setterMethods.put( BOX_DATA_STORED_THIS_MONTH, AccountStats.class.getMethod( "setBoxDataStoredThisMonth", long.class ) );
+      setterMethods.put( BOX_DATA_STORED_OVERALL, AccountStats.class.getMethod( "setBoxDataStoredOverall", long.class ) );
+      setterMethods.put( PARTNER_DATA_STORED_THIS_MONTH, AccountStats.class.getMethod( "setPartnerDataStoredThisMonth", long.class ) );
+      setterMethods.put( PARTNER_DATA_STORED_OVERALL, AccountStats.class.getMethod( "setPartnerDataStoredOverall", long.class ) );
+      setterMethods.put( SOUNDCLOUD_DATA_STORED_THIS_MONTH, AccountStats.class.getMethod( "setSoundcloudDataStoredThisMonth", long.class ) );
+      setterMethods.put( SOUNDCLOUD_DATA_STORED_OVERALL, AccountStats.class.getMethod( "setSoundcloudDataStoredOverall", long.class ) );
+    } catch (SecurityException e) {
+      log.error("Security error", e);
+    } catch (NoSuchMethodException e) {
+      log.error("No method found", e);
+    }
+  }
   
   
 
@@ -200,69 +255,15 @@ public final class AccountStats extends AbstractEntity implements Serializable {
   }
   
   
-
-  @Override
-  public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
-    if ( tagName.equals("data_served_this_month") ) {
-      return this.getClass().getMethod("setDataServedThisMonth", long.class);
-
-    } else if ( tagName.equals("data_served_overall") ) {
-      return this.getClass().getMethod("setDataServedOverall", long.class);
-
-    } else if ( tagName.equals("cloud_data_stored_overall") ) {
-      return this.getClass().getMethod("setCloudDataStoredOverall", long.class);
-
-    } else if ( tagName.equals("cloud_data_stored_this_month") ) {
-      return this.getClass().getMethod("setCloudDataStoredThisMonth", long.class);
-
-    } else if ( tagName.equals("local_data_stored_overall") ) {
-      return this.getClass().getMethod("setLocalDataStoredOverall", long.class);
-
-    } else if ( tagName.equals("local_data_stored_this_month") ) {
-      return this.getClass().getMethod("setLocalDataStoredThisMonth", long.class);
-
-    } else if ( tagName.equals("dropbox_data_stored_overall") ) {
-      return this.getClass().getMethod("setDropboxDataStoredOverall", long.class);
-
-    } else if ( tagName.equals("dropbox_data_stored_this_month") ) {
-      return this.getClass().getMethod("setDropboxDataStoredThisMonth", long.class);
-
-    } else if ( tagName.equals("gdrive_data_stored_this_month") ) {
-      return this.getClass().getMethod("setGdriveDataStoredThisMonth", long.class);
-
-    } else if ( tagName.equals("gdrive_data_stored_overall") ) {
-      return this.getClass().getMethod("setGdriveDataStoredOverall", long.class);
-
-    } else if ( tagName.equals("skydrive_data_stored_this_month") ) {
-      return this.getClass().getMethod("setSkydriveDataStoredThisMonth", long.class);
-
-    } else if ( tagName.equals("skydrive_data_stored_overall") ) {
-      return this.getClass().getMethod("setSkydriveDataStoredOverall", long.class);
-
-    } else if ( tagName.equals("box_data_stored_this_month") ) {
-      return this.getClass().getMethod("setBoxDataStoredThisMonth", long.class);
-
-    } else if ( tagName.equals("box_data_stored_overall") ) {
-      return this.getClass().getMethod("setBoxDataStoredOverall", long.class);
-
-    } else if ( tagName.equals("partner_data_stored_this_month") ) {
-      return this.getClass().getMethod("setPartnerDataStoredThisMonth", long.class);
-
-    } else if ( tagName.equals("partner_data_stored_overall") ) {
-      return this.getClass().getMethod("setPartnerDataStoredOverall", long.class);
-
-    } else if ( tagName.equals("soundcloud_data_stored_this_month") ) {
-      return this.getClass().getMethod("setSoundcloudDataStoredThisMonth", long.class);
-
-    } else if ( tagName.equals("soundcloud_data_stored_overall") ) {
-      return this.getClass().getMethod("setSoundcloudDataStoredOverall", long.class);
-
+  public Method getSetterMethod(String tagName) {
+    if ( setterMethods.containsKey( tagName) ) {
+      return setterMethods.get( tagName );
     }
-    
-    
     return null;
   }
-
+  
+  
+  
   @Override
   public String getApiPath() {
     return null;

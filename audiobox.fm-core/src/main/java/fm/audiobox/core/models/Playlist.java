@@ -24,7 +24,9 @@ package fm.audiobox.core.models;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
@@ -77,6 +79,19 @@ public class Playlist extends AbstractEntity implements Serializable {
   /** The XML tag name for the Playlist element */
   public static final String NAMESPACE = Playlists.NAMESPACE;
   public static final String TAGNAME = "playlist";
+  
+  public static final String NAME = "name";
+  public static final String POSITION = "position";
+  public static final String TYPE = "type";
+  public static final String MEDIA_FILES_COUNT = "media_files_count";
+  public static final String UPDATED_AT = "updated_at";
+  public static final String LAST_ACCESSED = "last_accessed";
+  public static final String SYSTEM_NAME = "system_name";
+  public static final String OFFLINE = "offline";
+  public static final String EMBEDDABLE = "embeddable";
+  public static final String VISIBLE = "visible";
+  public static final String SYNCABLE = "syncable";
+  
 
   /* Parameters */
   /** Used as HTTP parameters to specify the tracks list */
@@ -95,6 +110,31 @@ public class Playlist extends AbstractEntity implements Serializable {
   private boolean visible;
   private String system_name;
   private boolean syncable;
+  
+  
+  private static final Map<String, Method> setterMethods = new HashMap<String, Method>();
+  static {
+    try {
+      setterMethods.put( TOKEN, Playlist.class.getMethod( "setToken", String.class )  );
+      setterMethods.put( NAME, Playlist.class.getMethod( "setName", String.class )  );
+      setterMethods.put( POSITION, Playlist.class.getMethod( "setPosition", int.class )  );
+      setterMethods.put( TYPE, Playlist.class.getMethod( "setType", String.class )  );
+      setterMethods.put( MEDIA_FILES_COUNT, Playlist.class.getMethod( "setMediaFilesCount", long.class )  );
+      setterMethods.put( UPDATED_AT, Playlist.class.getMethod( "setUpdatedAt", String.class )  );
+      setterMethods.put( LAST_ACCESSED, Playlist.class.getMethod( "setLastAccessed", boolean.class )  );
+      setterMethods.put( SYSTEM_NAME, Playlist.class.getMethod( "setSystemName", String.class )  );
+      setterMethods.put( OFFLINE, Playlist.class.getMethod( "setOffline", boolean.class )  );
+      setterMethods.put( EMBEDDABLE, Playlist.class.getMethod( "setEmbeddable", boolean.class )  );
+      setterMethods.put( VISIBLE, Playlist.class.getMethod( "setVisible", boolean.class )  );
+      setterMethods.put( SYNCABLE, Playlist.class.getMethod( "setSyncable", boolean.class )  );
+    } catch (SecurityException e) {
+      log.error("Security error", e);
+    } catch (NoSuchMethodException e) {
+      log.error("No method found", e);
+    }
+  }
+  
+  
 
   /**
    * <p>
@@ -301,50 +341,14 @@ public class Playlist extends AbstractEntity implements Serializable {
     return this.albums;
   }
 
-  @Override
-  public Method getSetterMethod(String tagName) throws SecurityException, NoSuchMethodException {
-
-    if (tagName.equals("token")) {
-      return this.getClass().getMethod("setToken", String.class);
-
-    } else if (tagName.equals("name")) {
-      return this.getClass().getMethod("setName", String.class);
-
-    } else if (tagName.equals("position")) {
-      return this.getClass().getMethod("setPosition", int.class);
-
-    } else if (tagName.equals("type")) {
-      return this.getClass().getMethod("setType", String.class);
-
-    } else if (tagName.equals("media_files_count")) {
-      return this.getClass().getMethod("setMediaFilesCount", long.class);
-
-    } else if (tagName.equals("updated_at")) {
-      return this.getClass().getMethod("setUpdatedAt", String.class);
-
-    } else if (tagName.equals("last_accessed")) {
-      return this.getClass().getMethod("setLastAccessed", boolean.class);
-
-    } else if (tagName.equals("system_name")) {
-      return this.getClass().getMethod("setSystemName", String.class);
-
-    } else if (tagName.equals("offline")) {
-      return this.getClass().getMethod("setOffline", boolean.class);
-
-    } else if (tagName.equals("embeddable")) {
-      return this.getClass().getMethod("setEmbeddable", boolean.class);
-
-    } else if (tagName.equals("visible")) {
-      return this.getClass().getMethod("setVisible", boolean.class);
-
-    } else if (tagName.equals("syncable")) {
-      return this.getClass().getMethod("setSyncable", boolean.class);
-
+  public Method getSetterMethod(String tagName) {
+    if ( setterMethods.containsKey( tagName) ) {
+      return setterMethods.get( tagName );
     }
-
     return null;
   }
-
+  
+  
   @Override
   protected void copy(IEntity entity) {
 
