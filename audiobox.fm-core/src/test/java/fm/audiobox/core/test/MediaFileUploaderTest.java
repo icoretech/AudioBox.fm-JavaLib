@@ -1,17 +1,11 @@
 package fm.audiobox.core.test;
 
-import java.io.File;
-
 import org.junit.Before;
-import org.junit.Test;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.MediaFile;
 import fm.audiobox.core.models.MediaFiles;
-import fm.audiobox.core.parsers.UploadHandler;
-import fm.audiobox.core.test.mocks.fixtures.Fixtures;
-import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 
 public class MediaFileUploaderTest extends AudioBoxTestCase {
 
