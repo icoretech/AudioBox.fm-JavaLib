@@ -14,10 +14,6 @@ import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
-<<<<<<< HEAD
-import fm.audiobox.interfaces.IConnector.IConnectionMethod;
-=======
->>>>>>> ba1ece7... New tests
 
 public class Action extends AbstractEntity implements Serializable {
 
@@ -26,15 +22,6 @@ public class Action extends AbstractEntity implements Serializable {
 
   public static final String TAGNAME = "action";
   public static final String NAMESPACE = Action.TAGNAME;
-<<<<<<< HEAD
-  
-  
-  public static final String NAME = "name";
-  public static final String REQUESTID = "requestId";
-  public static final String ARGS = "args";
-
-=======
->>>>>>> ba1ece7... New tests
   
   
   public static final String NAME = "name";
@@ -151,9 +138,4 @@ public class Action extends AbstractEntity implements Serializable {
   public IConnectionMethod load(boolean sync, IResponseHandler responseHandler) throws ServiceException, LoginException {
     throw new ServiceException("method not supported");
   }
-<<<<<<< HEAD
-  
-  
-=======
->>>>>>> ba1ece7... New tests
 }

@@ -14,23 +14,10 @@ import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
-<<<<<<< HEAD
-import fm.audiobox.interfaces.IConnector.IConnectionMethod;
-=======
->>>>>>> ba1ece7... New tests
 
 public class Args extends AbstractEntity implements Serializable{
 
   private static final long serialVersionUID = 1L;
-<<<<<<< HEAD
-  
-  private static Logger log = LoggerFactory.getLogger(Args.class);
-  
-  public static final String TAGNAME = "args";
-  public static final String NAMESPACE = Args.TAGNAME;
-  
-  
-=======
 
   private static Logger log = LoggerFactory.getLogger(Args.class);
 
@@ -38,35 +25,22 @@ public class Args extends AbstractEntity implements Serializable{
   public static final String NAMESPACE = Args.TAGNAME;
 
 
->>>>>>> ba1ece7... New tests
   public static final String FILENAME = "filename";
   public static final String RANGEMIN = "rangeMin";
   public static final String RANGEMAX = "rangeMax";
   public static final String ETAG = "etag";
   public static final String SERVER_IP = "server_ip";
   public static final String SERVER_PORT = "server_port";
-<<<<<<< HEAD
-  
-  
-=======
 
-
->>>>>>> ba1ece7... New tests
   private String filename;
   private String etag;
   private long rangeMin;
   private long rangeMax;
   private String serverIp;
   private String serverPort;
-<<<<<<< HEAD
-  
-  
-  
-=======
 
 
 
->>>>>>> ba1ece7... New tests
   private static final Map<String, Method> setterMethods = new HashMap<String, Method>();
   static {
     try {
@@ -82,13 +56,8 @@ public class Args extends AbstractEntity implements Serializable{
       log.error("No method found", e);
     }
   }
-<<<<<<< HEAD
-  
-  
-=======
 
 
->>>>>>> ba1ece7... New tests
   public Args(IConfiguration config) {
     super(config);
   }
@@ -174,16 +143,6 @@ public class Args extends AbstractEntity implements Serializable{
     this.etag = etag;
   }
   
-  @Override
-  public IConnectionMethod load(boolean sync) throws ServiceException, LoginException {
-    return this.load(false, null);
-  }
-
-  @Override
-  public IConnectionMethod load(boolean sync, IResponseHandler responseHandler) throws ServiceException, LoginException {
-    throw new ServiceException("method not supported");
-  }
-
   @Override
   public IConnectionMethod load(boolean sync) throws ServiceException, LoginException {
     return this.load(false, null);
