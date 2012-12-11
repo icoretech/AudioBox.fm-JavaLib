@@ -2,6 +2,7 @@ package fm.audiobox.configurations;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Observable;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -37,7 +38,7 @@ import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
 
-public class DefaultRequestMethod implements IConnectionMethod {
+public class DefaultRequestMethod extends Observable implements IConnectionMethod {
 
   private static Logger log = LoggerFactory.getLogger(DefaultRequestMethod.class);
 

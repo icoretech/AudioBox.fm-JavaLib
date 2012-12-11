@@ -12,7 +12,7 @@ import fm.audiobox.interfaces.IAuthenticationHandle;
 import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 
-public class AuthenticationTest extends AudioBoxTestCase {
+public class AuthenticationTest extends AbxTestCase {
   
   private static String auth_token;
   
@@ -27,7 +27,7 @@ public class AuthenticationTest extends AudioBoxTestCase {
   
   @Test
   public void headerAuthtokenAuth() throws ServiceException, LoginException {
-    this.abc.getConfiguration().setAuthenticationHandle(new IAuthenticationHandle() {
+    this.abx.getConfiguration().setAuthenticationHandle(new IAuthenticationHandle() {
       public void handle(IConnectionMethod request) {
         request.addHeader( IConnector.X_AUTH_TOKEN_HEADER, auth_token );
       }
@@ -35,7 +35,7 @@ public class AuthenticationTest extends AudioBoxTestCase {
     
     
     try {
-      user = (User) abc.login(null, null);
+      user = (User) abx.login(null, null);
     } catch (LoginException e) {
       fail(e.getMessage());
     } catch (ServiceException e) {
@@ -50,7 +50,7 @@ public class AuthenticationTest extends AudioBoxTestCase {
   
   @Test
   public void urlAuthtokenAuth() throws ServiceException, LoginException {
-    this.abc.getConfiguration().setAuthenticationHandle(new IAuthenticationHandle() {
+    this.abx.getConfiguration().setAuthenticationHandle(new IAuthenticationHandle() {
       public void handle(IConnectionMethod request) {
         URI uri = request.getHttpMethod().getURI();
         String url = uri.toString() + "?auth_token=" + auth_token;
@@ -64,7 +64,7 @@ public class AuthenticationTest extends AudioBoxTestCase {
     
     
     try {
-      user = (User) abc.login(null, null);
+      user = (User) abx.login(null, null);
     } catch (LoginException e) {
       fail(e.getMessage());
     } catch (ServiceException e) {

@@ -94,6 +94,7 @@ public class ResponseParser implements ResponseHandler<Response> {
     
       case HttpStatus.SC_NOT_MODIFIED:
         response = this.configuration.getCacheManager().getResponse(destEntity, this.ecode);
+        response.setStatus( HttpStatus.SC_NOT_MODIFIED );
 
       case HttpStatus.SC_OK:
       case HttpStatus.SC_ACCEPTED:

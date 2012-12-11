@@ -4,20 +4,23 @@ import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
 
+import fm.audiobox.configurations.DefaultCacheManager;
 import fm.audiobox.configurations.Response;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.MediaFiles;
 import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
-import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 
 
-public class CacheTest extends AudioBoxTestCase {
+public class CacheTest extends AbxTestCase {
 
   @Before
-  public void setUp() throws Exception {
+  public void setup() {
+    super.setup();
+    abx.getConfiguration().setUseCache( true );
+    abx.getConfiguration().setCacheManager( new DefaultCacheManager() );
     loginCatched();
   }
 
@@ -29,9 +32,7 @@ public class CacheTest extends AudioBoxTestCase {
     pls.load(false);
     
     
-    Playlist pl =  pls.getPlaylistByType( "CustomPlaylist" );
-    assertNotNull(pl);
-    
+    Playlist pl =  pls.getPlaylistByType( Playlists.Type.CloudPlaylist );
     
     MediaFiles ms = pl.getMediaFiles();
 
@@ -61,13 +62,4 @@ public class CacheTest extends AudioBoxTestCase {
     
   }
 
-
-  @Override
-  protected IConfiguration getConfig() {
-    IConfiguration config = super.getConfig();
-    config.setUseCache(true);
-    return config;
-  }
-  
-  
 }

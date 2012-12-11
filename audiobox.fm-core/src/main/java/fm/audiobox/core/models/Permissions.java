@@ -28,7 +28,7 @@ import fm.audiobox.interfaces.IResponseHandler;
  * lastfm: true,
  * twitchtv: true,
  * facebook: true,
- * twitter: true 
+ * twitter: true
  */
 public final class Permissions extends AbstractEntity implements Serializable {
 
@@ -38,8 +38,7 @@ public final class Permissions extends AbstractEntity implements Serializable {
 
   public static final String NAMESPACE = "permissions";
   public static final String TAGNAME = NAMESPACE;
-  
-  
+
   public static final String PLAYER = "player";
   public static final String LOCAL = "local";
   public static final String CLOUD = "cloud";
@@ -55,7 +54,7 @@ public final class Permissions extends AbstractEntity implements Serializable {
   public static final String TWITTER = "twitter";
   public static final String MUSIXMATCH = "musixmatch";
   public static final String SONGKICK = "songkick";
-  
+
   
   private boolean player = true;
   private boolean local = true;
@@ -72,8 +71,8 @@ public final class Permissions extends AbstractEntity implements Serializable {
   private boolean twitter = true;
   private boolean musixmatch = true;
   private boolean songkick = true;
-  
-  
+
+
   private static final Map<String, Method> setterMethods = new HashMap<String, Method>();
   static {
     try {
@@ -98,12 +97,12 @@ public final class Permissions extends AbstractEntity implements Serializable {
       log.error("No method found", e);
     }
   }
-  
-  
+
+
   public Permissions(IConfiguration config) {
     super(config);
   }
-  
+
 
 
   @Override
@@ -116,11 +115,11 @@ public final class Permissions extends AbstractEntity implements Serializable {
     return TAGNAME;
   }
 
-  
-  
-  
-  
-  
+
+
+
+
+
   public boolean isPlayer() {
     return player;
   }
@@ -187,9 +186,9 @@ public final class Permissions extends AbstractEntity implements Serializable {
   public void setGdrive(boolean gdrive) {
     this.gdrive = gdrive;
   }
-  
-  
-  
+
+
+
   public boolean isMusixmatch() {
     return musixmatch;
   }
@@ -202,7 +201,7 @@ public final class Permissions extends AbstractEntity implements Serializable {
   }
 
 
-  
+
   public boolean isSongkick() {
     return this.songkick;
   }
@@ -329,9 +328,9 @@ public final class Permissions extends AbstractEntity implements Serializable {
     }
     return null;
   }
-  
-  
-  
+
+
+
   @Override
   public String getApiPath() {
     return null;
@@ -340,16 +339,18 @@ public final class Permissions extends AbstractEntity implements Serializable {
   @Override
   protected void copy(IEntity entity) { }
 
-  
+
   @Override
   public IConnectionMethod load(boolean sync) throws ServiceException, LoginException {
     return this.load(false, null);
   }
-
+  
+  
+  
   @Override
   public IConnectionMethod load(boolean sync, IResponseHandler responseHandler) throws ServiceException, LoginException {
     throw new ServiceException("method not supported");
   }
-  
-  
+
+
 }

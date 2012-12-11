@@ -53,12 +53,6 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
   public static final String NAMESPACE = "playlists";
   public static final String TAGNAME = NAMESPACE;
 
-  public static final String EMPTY_TRASH_ACTION = "empty_trash";
-  public static final String ADD_TRACKS_ACTION = "add_tracks";
-  public static final String REMOVE_TRACKS_ACTION = "remove_tracks";
-
-
-  
   public static enum Type {
     LocalPlaylist,
     CloudPlaylist,
@@ -176,6 +170,22 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
     return null;
   }
 
+  /**
+   * This method instantiate a new {@link Playlist} and adds it
+   * to {@link Playlists this} collection.
+   * <br/>
+   * <b>
+   * This method doesn't create the playlist remotely.
+   * To do that you should call the {@link Playlist#create()} method
+   * </b>
+   * @return the {@link Playlist} instance
+   */
+  public Playlist createPlaylist() {
+    Playlist pl = (Playlist) getConfiguration().getFactory().getEntity( this.getSubTagName(), getConfiguration() );
+    this.addEntity(pl);
+    return pl;
+  }
+  
 
   @Override
   public String getSubTagName() {

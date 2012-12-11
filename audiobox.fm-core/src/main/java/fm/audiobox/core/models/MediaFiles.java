@@ -39,7 +39,7 @@ import fm.audiobox.interfaces.IEntity;
 
 /**
  * <p>MediaFiles is a {@link ModelsCollection} specialization for {@link MediaFile} collections.</p>
- * 
+ *
  *
  * @author Lucio Regina
  * @version 0.0.1
@@ -59,7 +59,7 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
   
   /**
    *  MediaFiles are grouped by types that are:
-   * <ul> 
+   * <ul>
    *   <li>{@link MediaFilesTypes#AudioFile AudioFile}</li>
    *   <li>{@link MediaFilesTypes#VideoFile VideoFile}</li>
    * </ul>
@@ -68,7 +68,7 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
     AudioFile,
     VideoFile
   }
-  
+
   public enum Actions {
     hashes,
     multidestroy,
@@ -82,7 +82,7 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
   }
 
   @Override
-  public String getNamespace() {    
+  public String getNamespace() {
     return NAMESPACE;
   }
 
@@ -112,62 +112,62 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
     return super.addEntity(entity);
   }
 
-  
-  
+
+
   // DELETE /api/v1/playlists/:playlist_id/media_files/remove
   public boolean removeFromPlaylist(List<MediaFile> mediaFiles) throws ServiceException, LoginException {
-    
+
     if ( mediaFiles == null || mediaFiles.size() == 0 )
       return false;
-    
+
     String action = IConnector.URI_SEPARATOR.concat( Actions.remove.toString() );
-    
+
     List<NameValuePair> params = new ArrayList<NameValuePair>();
     for ( MediaFile m : mediaFiles ){
       params.add(  new BasicNameValuePair(TOKENS_PARAMETER, m.getToken() ) );
     }
-    
+
     Response response = this.getConnector(IConfiguration.Connectors.RAILS).delete(this, action, params).send(false);
-    
+
     return response.isOK();
-    
+
   }
-  
-  
+
+
   public boolean destroy(List<MediaFile> mediaFiles) throws ServiceException, LoginException {
-    
+
     if ( mediaFiles == null || mediaFiles.size() == 0 )
       return false;
-    
+
     String path = IConnector.URI_SEPARATOR.concat( NAMESPACE );
-    
+
     List<NameValuePair> params = new ArrayList<NameValuePair>();
     for ( MediaFile m : mediaFiles ){
       params.add(  new BasicNameValuePair(TOKENS_PARAMETER, m.getToken() ) );
     }
-    
+
     Response response = this.getConnector(IConfiguration.Connectors.RAILS).delete(this, path, Actions.multidestroy.toString(), params).send(false);
-    
+
     boolean result = response.isOK();
-    
+
     if ( result ) {
       for ( MediaFile m : mediaFiles ){
         this.remove( m.getToken() );
       }
     }
-    
+
     return result;
   }
-  
+
   public boolean destroyAll() throws ServiceException, LoginException {
     return this.destroy( this.subList(0, this.size() ) );
   }
-  
+
 
 
   /**
    * Returns a list of {@link MediaFile} that matches the given {@link MediaFilesTypes}
-   * 
+   *
    * @param type the {@link MediaFilesTypes}
    * @return a list of {@link MediaFile} that matches with the given {@link MediaFilesTypes}
    */

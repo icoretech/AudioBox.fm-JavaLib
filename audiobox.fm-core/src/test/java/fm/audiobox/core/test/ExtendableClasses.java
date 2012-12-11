@@ -9,7 +9,7 @@ import fm.audiobox.core.models.Playlists;
 import fm.audiobox.core.test.mocks.models.MediaFile;
 import fm.audiobox.core.test.mocks.models.Playlist;
 
-public class ExtendableClasses extends AudioBoxTestCase {
+public class ExtendableClasses extends AbxTestCase {
   
   
   
@@ -17,8 +17,8 @@ public class ExtendableClasses extends AudioBoxTestCase {
   @Test
   public void testExtendsMediaFiles() {
     
-    abc.getConfiguration().getFactory().setEntity( Playlist.TAGNAME, Playlist.class);
-    abc.getConfiguration().getFactory().setEntity( MediaFile.TAGNAME, MediaFile.class);
+    abx.getConfiguration().getFactory().setEntity( Playlist.TAGNAME, Playlist.class);
+    abx.getConfiguration().getFactory().setEntity( MediaFile.TAGNAME, MediaFile.class);
     
     loginCatched();
     
@@ -27,14 +27,15 @@ public class ExtendableClasses extends AudioBoxTestCase {
     
     try {
       pls.load(false);
-      Playlist pl = (Playlist) pls.getPlaylistByType("DropboxPlaylist");
+      Playlist pl = (Playlist) pls.getPlaylistByType( Playlists.Type.CloudPlaylist );
       
       MediaFiles mfs = (MediaFiles) pl.getMediaFiles();
       mfs.load(false);
       
       MediaFile mf = (MediaFile) mfs.get(0);
       
-      assertEquals( MediaFile.class.getPackage().getName() , mf.getClass().getPackage().getName() );
+      assertSame( MediaFile.class, mf.getClass() );
+      assertSame( Playlist.class, pl.getClass() );
       
       
     } catch (ServiceException e) {

@@ -1,4 +1,3 @@
-
 /***************************************************************************
  *   Copyright (C) 2010 iCoreTech research labs                            *
  *   Contributed code from:                                                *
@@ -32,16 +31,13 @@ import org.slf4j.LoggerFactory;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IEntity;
 
-
-
-
 /**
  * Error class is a specialization for error XML elements.
- * 
+ *
  * <p>
- * 
- * Error XML looks like this: 
- * 
+ *
+ * Error XML looks like this:
+ *
  * <pre>
  * @code
  * <error>
@@ -56,13 +52,13 @@ import fm.audiobox.interfaces.IEntity;
  */
 public class Error implements IEntity, Serializable {
 
-
   private static final long serialVersionUID = 1L;
   
   private static Logger log = LoggerFactory.getLogger(Error.class);
 
   /** The XML tag name for the Error element */
   public static final String NAMESPACE = null;
+
   public static final String TAGNAME = "error";
 
   public static final String MESSAGE = "message";
@@ -71,67 +67,66 @@ public class Error implements IEntity, Serializable {
   protected Map<String, Object> properties;
   
   private IConfiguration configuration;
+
   private int status;
+
   private String message;
 
   @SuppressWarnings("unused")
   private IEntity parent;
-  
-  
-  
+
   /**
    * The {@link Error} entity can be manually instantiated
    * for any general purpose
    */
-  public Error(){
+  public Error() {
 
   }
-  
-  
 
   /**
-   * <p>Constructor for Error.</p>
+   * <p>
+   * Constructor for Error.
+   * </p>
    */
-  public Error(IConfiguration config){
+  public Error(IConfiguration config) {
     this.configuration = config;
   }
-
 
   @Override
   public String getTagName() {
     return TAGNAME;
   }
 
-
   @Override
-  public String getNamespace(){
+  public String getNamespace() {
     return NAMESPACE;
   }
-  
-  
+
   @Override
   public String getToken() {
     return null;
   }
-  
-
 
   /* ------------------- */
   /* Getters and setters */
   /* ------------------- */
 
-
   /**
-   * <p>Setter for the field <code>status</code>.</p>
+   * <p>
+   * Setter for the field <code>status</code>.
+   * </p>
    *
-   * @param status the error status to set
+   * @param status
+   *          the error status to set
    */
   public void setStatus(int status) {
     this.status = status;
   }
 
   /**
-   * <p>Getter for the field <code>status</code>.</p>
+   * <p>
+   * Getter for the field <code>status</code>.
+   * </p>
    *
    * @return the status
    */
@@ -139,19 +134,22 @@ public class Error implements IEntity, Serializable {
     return this.status;
   }
 
-
-
   /**
-   * <p>Setter for the field <code>message</code>.</p>
+   * <p>
+   * Setter for the field <code>message</code>.
+   * </p>
    *
-   * @param message the error message to set.
+   * @param message
+   *          the error message to set.
    */
   public void setMessage(String message) {
     this.message = message;
   }
 
   /**
-   * <p>Getter for the field <code>message</code>.</p>
+   * <p>
+   * Getter for the field <code>message</code>.
+   * </p>
    *
    * @return the message
    */
@@ -159,55 +157,48 @@ public class Error implements IEntity, Serializable {
     return message;
   }
 
-
   @Override
   public Method getSetterMethod(String tagName) {
     try {
-      
-      if ( tagName.equals( MESSAGE ) ){
+      if (tagName.equals(MESSAGE)) {
         return this.getClass().getMethod("setMessage", String.class);
-        
-      } else if ( tagName.equals( STATUS ) ){
+
+      } else if (tagName.equals(STATUS)) {
         return this.getClass().getMethod("setStatus", int.class);
-        
+
       }
-      
     } catch (SecurityException e) {
       log.error("Security error", e);
     } catch (NoSuchMethodException e) {
       log.error("No method found", e);
     }
-    
+
     return null;
   }
 
-
   public void setProperty(String key, Object value) {
-    if ( value == null ) {
-      if ( this.properties.containsKey( key )  ) {
+    if (value == null) {
+      if (this.properties.containsKey(key)) {
         this.properties.remove(key);
       }
     } else {
       this.properties.put(key, value);
     }
   }
-  
+
   public Object getProperty(String key) {
     return this.properties.get(key);
   }
-
 
   @Override
   public IConfiguration getConfiguration() {
     return this.configuration;
   }
 
-
   @Override
   public String getApiPath() {
     return null;
   }
-
 
   @Override
   public void setParent(IEntity parent) {
@@ -215,14 +206,10 @@ public class Error implements IEntity, Serializable {
     // it doesn't need to be set as child
   }
 
-
-
   @Override
   public void startLoading() {
     // nothning to do
   }
-
-
 
   @Override
   public void endLoading() {
@@ -230,4 +217,3 @@ public class Error implements IEntity, Serializable {
   }
 
 }
-

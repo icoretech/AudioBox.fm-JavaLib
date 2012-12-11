@@ -1,19 +1,19 @@
 package fm.audiobox.core.test;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.Observable;
+import java.util.Observer;
+
 import org.junit.Before;
 import org.junit.Test;
 
+import fm.audiobox.configurations.Response;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.models.MediaFile;
-import fm.audiobox.core.models.MediaFiles;
-import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
-import fm.audiobox.core.test.mocks.fixtures.Fixtures;
+import fm.audiobox.core.observables.Event;
+import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 
-public class ThreadedTest extends AudioBoxTestCase {
+public class ThreadedTest extends AbxTestCase {
 
   @Before
   public void setUp() {
@@ -21,105 +21,62 @@ public class ThreadedTest extends AudioBoxTestCase {
   }
 
   @Test
-  public void testThread() throws InterruptedException {
-
-    assertNotNull(abc);
-    assertNotNull(user);
-
-    final Handle h1 = new Handle();
-    final Handle h2 = new Handle();
-
-    Thread t1 = new Thread(new Runnable() {
-
-      @Override
-      public void run() {
-        try {
-
-          Log logger = LogFactory.getLog("Test thread #1");
-          logger.debug("Started thread #1");
-
-          MediaFiles mediaFiles = user.getMediaFilesMap( MediaFile.Source.cloud.toString() );
-          assertNotNull(mediaFiles);
-          assertTrue(mediaFiles.size() > 0);
-          for (int i = 0, l = mediaFiles.size(); i < l; i++){
-            assertNotNull( mediaFiles.get(i).getHash() );
-            assertTrue( mediaFiles.get(i).getHash().length() == 32 );            
-          }
-            
-          h1.setDone(true);
-
-          logger.debug("Ended thread #1");
-
-        } catch (LoginException e) {
-          e.printStackTrace();
-          fail(e.getMessage());
-        } catch (ServiceException e) {
-          e.printStackTrace();
-          fail(e.getMessage());
-        }
-      }
-
-    });
-
-    Thread t2 = new Thread(new Runnable() {
-      @Override
-      public void run() {
-        try {
-
-          Log logger = LogFactory.getLog("Test thread #2");
-          logger.debug("Started thread #2");
-
-          Playlists pls = (Playlists) user.getPlaylists();
-          assertNotNull(pls);
-          pls.load(false);
-
-          Playlist pl = pls.getPlaylistByName(Fixtures.get(Fixtures.SMALL_PLAYLIST_NAME));
-          assertNotNull(pl);
-
-          MediaFiles tracks = (MediaFiles) pl.getMediaFiles();
-          assertNotNull(tracks);
-          tracks.load(false);
-
-          MediaFile tr = tracks.get(0);
-
-          assertNotNull(tr);
-          assertNotNull(tr.getTitle());
-          assertNotNull(tr.getToken());
-
-          h2.setDone(true);
-
-          logger.debug("Ended thread #2");
-
-        } catch (LoginException e) {
-          e.printStackTrace();
-          fail(e.getMessage());
-        } catch (ServiceException e) {
-          e.printStackTrace();
-          fail(e.getMessage());
+  public void asyncPlaylistRequest() {
+    
+    final Playlists pls = user.getPlaylists();
+    
+    assertTrue( pls.size() == 0 );
+    
+    pls.addObserver(new Observer() {
+      public void update(Observable obj, Object evt) {
+        Event event = (Event) evt;
+        if ( event.state == Event.States.END_LOADING ) {
+          // playlists are now correctly populated
+          assertFalse( pls.size() == 0 );
         }
       }
     });
-
-    t1.start();
-    t2.start();
-
-    while (t1.isAlive() || t2.isAlive()) {
-      Thread.sleep(2500);
+    
+    try {
+      pls.load( true );
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
     }
-
-    assertTrue(h1.getDone() && h2.getDone());
+    
+    assertTrue( pls.size() == 0 );
   }
-
-  private class Handle {
-
-    private boolean done = false;
-
-    public void setDone(boolean done) {
-      this.done = done;
+  
+  
+  @Test
+  public void asyncPlaylistRequestAndWait() {
+    
+    final Playlists pls = user.getPlaylists();
+    
+    assertTrue( pls.size() == 0 );
+    IConnectionMethod req = null;
+    try {
+      req = pls.load( true );
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
     }
-
-    public boolean getDone() {
-      return this.done;
+    
+    assertTrue( pls.size() == 0 );
+    
+    Response res =  null;
+    try {
+      res = req.getResponse();
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
     }
+    assertTrue( res.isOK() );
+    
+    assertTrue( pls.size() > 0 );
   }
+  
 }

@@ -10,7 +10,7 @@ import fm.audiobox.core.models.Albums;
 import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
 
-public class AlbumsTest extends AudioBoxTestCase {
+public class AlbumsTest extends AbxTestCase {
 
   @Before
   public void setUp() {
@@ -19,7 +19,6 @@ public class AlbumsTest extends AudioBoxTestCase {
 
   @Test
   public void albumsList() {
-    
     
     Playlists playlists = this.user.getPlaylists();
     
@@ -37,11 +36,9 @@ public class AlbumsTest extends AudioBoxTestCase {
       
     }
     
-    Playlist dropbox = playlists.getPlaylistByType( Playlists.Type.DropboxPlaylist );
+    Playlist cloud = playlists.getPlaylistByType( Playlists.Type.CloudPlaylist );
     
-    assertNotNull( dropbox );
-    
-    Albums covers = dropbox.getAlbums();
+    Albums covers = cloud.getAlbums();
     
     assertNotNull( covers );
     
@@ -56,9 +53,11 @@ public class AlbumsTest extends AudioBoxTestCase {
     int originalSize = covers.size();
     assertFalse( originalSize  == 0 );
     
-    Album mf = covers.get(0);
-    assertNull( mf.getToken() );
+    Album album = covers.get(0);
+    assertNull( album.getToken() );
     
+    assertNotNull( album.getArtist() );
+    assertNotNull( album.getArtwork() );
     
   }
   

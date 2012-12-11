@@ -11,9 +11,13 @@ import org.slf4j.LoggerFactory;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConfiguration;
+import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
+<<<<<<< HEAD
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
+=======
+>>>>>>> ba1ece7... New tests
 
 public class Action extends AbstractEntity implements Serializable {
 
@@ -22,20 +26,29 @@ public class Action extends AbstractEntity implements Serializable {
 
   public static final String TAGNAME = "action";
   public static final String NAMESPACE = Action.TAGNAME;
+<<<<<<< HEAD
   
   
   public static final String NAME = "name";
   public static final String REQUESTID = "requestId";
   public static final String ARGS = "args";
 
+=======
+>>>>>>> ba1ece7... New tests
   
+  
+  public static final String NAME = "name";
+  public static final String REQUESTID = "requestId";
+  public static final String ARGS = "args";
+
+
   public static enum Actions {
     stream,
     disconnect,
     check,
     error
   }
-  
+
   private String name;
   private String id;
   private Args args;
@@ -103,7 +116,7 @@ public class Action extends AbstractEntity implements Serializable {
     return null;
   }
 
-  
+
   public boolean is(Actions type) {
     try {
       return Actions.valueOf( this.getName() ).compareTo( type ) == 0;
@@ -112,7 +125,7 @@ public class Action extends AbstractEntity implements Serializable {
     }
     return false;
   }
-  
+
   @Override
   public String getApiPath() {
     return null;
@@ -121,7 +134,7 @@ public class Action extends AbstractEntity implements Serializable {
   @Override
   public void setParent(IEntity parent) {
     // not needed
-    
+
   }
 
   @Override
@@ -138,6 +151,9 @@ public class Action extends AbstractEntity implements Serializable {
   public IConnectionMethod load(boolean sync, IResponseHandler responseHandler) throws ServiceException, LoginException {
     throw new ServiceException("method not supported");
   }
+<<<<<<< HEAD
   
   
+=======
+>>>>>>> ba1ece7... New tests
 }

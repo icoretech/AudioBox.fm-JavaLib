@@ -8,6 +8,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 
+import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,6 +81,13 @@ public class Response implements Serializable {
     return status;
   }
   
+  /**
+   * Sets the response status
+   */
+  public void setStatus(int st) {
+    this.status = st;
+  }
+  
   
   /**
    * Tests the response status code and returns {@code true} if it is 
@@ -88,7 +96,7 @@ public class Response implements Serializable {
    * @return boolean
    */
   public boolean isOK() {
-    return this.getStatus() >= 200 && this.getStatus() < 400;
+    return this.getStatus() >= HttpStatus.SC_OK && this.getStatus() < HttpStatus.SC_BAD_REQUEST;
   }
   
   /**

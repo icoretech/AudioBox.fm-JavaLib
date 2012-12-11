@@ -9,8 +9,9 @@ import fm.audiobox.core.models.MediaFile;
 import fm.audiobox.core.models.MediaFiles;
 import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
+import fm.audiobox.interfaces.IConfiguration;
 
-public class MediaFilesTest extends AudioBoxTestCase {
+public class MediaFilesTest extends AbxTestCase {
 
   @Before
   public void setUp() {
@@ -18,32 +19,24 @@ public class MediaFilesTest extends AudioBoxTestCase {
   }
 
   @Test
-  public void mediaFilesListForHomeDrive() {
+  public void mediaFilesListForCloud() {
     
-    
-    Playlists playlists = this.user.getPlaylists();
+    Playlists pls = user.getPlaylists();
     
     try {
-      
-      playlists.load(false);
-      
+      pls.load(false);
     } catch (ServiceException e) {
-      
       fail( e.getMessage() );
-      
     } catch (LoginException e) {
-      
       fail( e.getMessage() );
-      
     }
     
-    Playlist local = playlists.getPlaylistByType( Playlists.Type.LocalPlaylist );
+    Playlist pl = pls.getPlaylistByType( Playlists.Type.CloudPlaylist );
     
-    assertNotNull( local );
+    MediaFiles mediaFiles = pl.getMediaFiles();
     
-    MediaFiles mediaFiles = local.getMediaFiles();
-    
-    assertNotNull( mediaFiles );
+    assertFalse( mediaFiles.size() == pl.getMediaFilesCount() );
+    assertFalse( mediaFiles.size() > 0 );
     
     try {
       mediaFiles.load(false);
@@ -53,75 +46,72 @@ public class MediaFilesTest extends AudioBoxTestCase {
       fail( e.getMessage() );
     }
     
-    int originalSize = mediaFiles.size();
-    assertFalse( originalSize  == 0 );
+    assertEquals( mediaFiles.size(), pl.getMediaFilesCount() );
+    assertTrue( mediaFiles.size() > 0 );
     
   }
   
   @Test
-  public void destroyMediaFilesFromHomeDrive() {
-    
-    MediaFiles mediaFiles = this.getMediaFiles(Playlists.Type.LocalPlaylist);
-    
-    int originalSize = mediaFiles.size();
-    
-    MediaFile mediaFile = mediaFiles.get(0);
+  public void allMediaFilesShouldBeCorrectlyPopulated() {
+    Playlists pls = user.getPlaylists();
+    MediaFiles mfs = null;
     
     try {
-      assertTrue( mediaFile.destroy() );
-    } catch (ServiceException e) {
-      e.printStackTrace();
-      fail( e.getMessage() );
-    } catch (LoginException e) {
-      e.printStackTrace();
-      fail( e.getMessage() );
-    }
-    
-    assertTrue( mediaFiles.size() == (originalSize - 1) );
-  }
-  
-  
-  
-  
-  private MediaFiles getMediaFiles(Playlists.Type type) {
-
-    Playlists playlists = this.user.getPlaylists();
-    
-    try {
-      
-      playlists.load(false);
-      
-    } catch (ServiceException e) {
-      
-      fail( e.getMessage() );
-      
-    } catch (LoginException e) {
-      
-      fail( e.getMessage() );
-      
-    }
-    
-    Playlist local = playlists.getPlaylistByType( type );
-    
-    MediaFiles mediaFiles = local.getMediaFiles();
-    
-    try {
-      mediaFiles.load(false);
+      pls.load(false);
+      Playlist pl = pls.getPlaylistByType( Playlists.Type.CloudPlaylist );
+      mfs = pl.getMediaFiles();
+      mfs.load(false);
     } catch (ServiceException e) {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
     }
-
-    return mediaFiles;
+    
+    for( MediaFile mf : mfs ) {
+      assertSame( mf.getType(), MediaFiles.Type.AudioFile );
+      assertNotNull( mf.getToken()  );
+      assertNotNull( mf.getArtist()  );
+      assertNotNull( mf.getAlbum()  );
+      assertNotNull( mf.getGenre()  );
+      assertNotNull( mf.getReleaseYear()  );
+      assertNotNull( mf.getTitle()  );
+      assertNotNull( mf.getLenStr()  );
+      assertNotNull( mf.getLenInt()  );
+      assertNotNull( mf.getPosition()  );
+      assertNotNull( mf.getFilename()  );
+      assertNotNull( mf.isLoved()  );
+      assertNotNull( mf.getDiscNumber()  );
+      assertNotNull( mf.getMime()  );
+      assertEquals( mf.getSource(), MediaFile.Source.cloud.toString() );
+      assertNotNull( mf.getShareToken()  );
+      assertNotNull( mf.getArtwork()  );
+      
+    }
     
   }
-  
   
   @Test
-  public void streamURL() {
+  public void mediaFilesShouldBeFullyPopulated() {
+    Playlists pls = user.getPlaylists();
+    MediaFiles mfs = null;
     
-    MediaFiles mfs = this.getMediaFiles( Playlists.Type.DropboxPlaylist );
+    try {
+      pls.load(false);
+      Playlist pl = pls.getPlaylistByType( Playlists.Type.CloudPlaylist );
+      mfs = pl.getMediaFiles();
+      mfs.load(false);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    String proto = abx.getConfiguration().getProtocol( IConfiguration.Connectors.NODE );
+    String host = abx.getConfiguration().getHost( IConfiguration.Connectors.NODE );
+    int port = abx.getConfiguration().getPort( IConfiguration.Connectors.NODE );
+    String apiPath = abx.getConfiguration().getPath( IConfiguration.Connectors.NODE );
+    
+    String url = proto + "://" + host + ":" + port + apiPath + "/stream/";
     
     MediaFile mf = mfs.get(0);
     
@@ -133,10 +123,39 @@ public class MediaFilesTest extends AudioBoxTestCase {
       fail( e.getMessage() );
     }
     
-    assertEquals( mf.getStreamUrl(), "/stream/" + mf.getFilename() );
-    assertTrue( mf.computeStreamUrl().endsWith("/api/v1/stream/" + mf.getFilename() ) );
-   
+    assertNotNull(       mf.getType()                  );
+    assertNotNull(       mf.getToken()                  );
+    assertNotNull(       mf.getArtist()                  );
+    assertNotNull(       mf.getAlbum()                  );
+    assertNotNull(       mf.getGenre()                  );
+    assertNotNull(       mf.getReleaseYear()                  );
+    assertNotNull(       mf.getTitle()                  );
+    assertNotNull(       mf.getLenStr()                  );
+    assertNotNull(       mf.getLenInt()                  );
+    assertNotNull(       mf.getPosition()                  );
+    assertNotNull(       mf.getFilename()                  );
+    assertNotNull(       mf.isLoved()                  );
+    assertNotNull(       mf.getDiscNumber()                  );
+    assertNotNull(       mf.getMime()                  );
+    assertNotNull(       mf.getSource()                  );
+    assertNotNull(       mf.getShareToken()                  );
+    assertNotNull(       mf.getArtwork()                  );
+    assertNotNull(       mf.getSize()                  );
+    assertNotNull(       mf.getHash()                  );
+    assertNotNull(       mf.getAudioBitrate()                  );
+    assertNotNull(       mf.getAudioSampleRate()                  );
+    assertNotNull(       mf.getPlays()                  );
     
+//  assertNotNull(       mf.getRemotePath()                  );
+//  assertNotNull(       mf.getVideoBitrate()                  );
+//  assertNotNull(       mf.getVideoCodec()                  );
+//  assertNotNull(       mf.getVideoResolution()                  );
+//  assertNotNull(       mf.getVideoFps()                  );
+//  assertNotNull(       mf.getVideoAspect()                  );
+//  assertNotNull(       mf.getVideoContainer()                  );
+//  assertNotNull(       mf.getAudioCodec()                  );
+    
+    assertEquals( url + mf.getFilename(), mf.computeStreamUrl() );
   }
   
 }

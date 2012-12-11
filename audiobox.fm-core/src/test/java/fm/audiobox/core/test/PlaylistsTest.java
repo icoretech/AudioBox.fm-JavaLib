@@ -3,249 +3,160 @@
  */
 package fm.audiobox.core.test;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.models.MediaFile;
-import fm.audiobox.core.models.MediaFiles;
 import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
+import fm.audiobox.core.observables.Event;
 import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 
 /**
  * @author keytwo
  * 
  */
-public class PlaylistsTest extends AudioBoxTestCase {
+public class PlaylistsTest extends AbxTestCase {
 
+  private int number_event = 0;
+  
   @Before
   public void setUp() {
     loginCatched();
   }
 
   @Test
-  public void testPlaylists() {
+  public void allPlaylists() {
     Playlists pls = user.getPlaylists();
     assertNotNull(pls);
+    
+    assertSame( pls.size(), 0);
     
     try {
       pls.load(false);
     } catch (ServiceException e) {
-      assertNull(e);
+      fail( e.getMessage() );
     } catch (LoginException e) {
-      assertNull(e);
+      fail( e.getMessage() );
     }
     
-    Playlist pl = pls.getPlaylistByName(Fixtures.get( Fixtures.SMALL_PLAYLIST_NAME ));
-    assertEquals( pl.getName(), Fixtures.get( Fixtures.SMALL_PLAYLIST_NAME ) );
-    
-    pl = pls.getPlaylistByType( "LocalPlaylist" );
-    assertNotNull( pl.getName() );
-    
-    pl = pls.getPlaylistByType( "CloudPlaylist" );
-    assertNotNull( pl.getName() );
-    
+    assertFalse( pls.size() == 0 );
+    assertEquals( user.getPlaylistsCount(), pls.size() );
   }
   
   @Test
-  public void testPlaylistsShouldBePopulated() throws ServiceException, LoginException {
-    Playlists playlists = user.getPlaylists();
-    assertNotNull(playlists);
-    assertEquals(0, playlists.size());
+  public void playlistShouldBeCorrectlyPopulated() {
+    Playlists pls = user.getPlaylists();
 
-    playlists.load(false);
-    assertTrue(0 < playlists.size());
-    
-    Playlist playlist = null;
-
-    for (Playlist pls : playlists) {
-      assertNotNull(pls);
-      playlist = pls;
+    try {
+      pls.load(false);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
     }
+    
+    for (Playlist pl : pls) {
+      assertNotNull( pl );
+      assertNotNull( pl.getName() );
+      assertNotNull( pl.getToken() );
+      assertNotNull( pl.getType() );
+      assertNotNull( pl.getMediaFilesCount() );
+      assertNotNull( pl.getPosition() );
+    }
+    
+    
+    Playlist playlist = pls.getPlaylistByType( Playlists.Type.CloudPlaylist );
 
-    Playlist p = (Playlist) playlists.get(playlist.getToken());
+    Playlist p = (Playlist) pls.get( playlist.getToken() );
     assertNotNull(p);
     assertSame(p, playlist);
-
+    
+    assertNull( pls.get("fake_token") );
+    
+    assertEquals( p.getType(), Playlists.Type.CloudPlaylist.toString() );
+    
+    Playlist pl = pls.getPlaylistByName( Fixtures.get( Fixtures.CUSTOM_PLAYLIST_NAME ) );
+    assertNotNull( pl );
+    assertTrue( pl.isCustom() );
+    assertFalse( pl.isSmart() );
+    
+    pl = pls.getPlaylistByName( Fixtures.get( Fixtures.SMART_PLAYLIST_NAME ) );
+    assertNotNull( pl );
+    assertTrue( pl.isSmart() );
+    assertFalse( pl.isCustom() );
+    
+    pl = pls.getPlaylistByType( Playlists.Type.LocalPlaylist );
+    assertNotNull( pl );
+    assertEquals( pl.getName(), "AudioBox Desktop" );
+    assertEquals( pl.getSystemName(), "local" );
+    assertTrue( pl.isDrive() );
+    
+    pl = pls.getPlaylistByType( Playlists.Type.CloudPlaylist );
+    assertNotNull( pl );
+    assertEquals( pl.getName(), "AudioBox Cloud" );
+    assertEquals( pl.getSystemName(), "cloud" );
+    assertTrue( pl.getMediaFilesCount() > 0 );
+    assertTrue( pl.isDrive() );
+    
   }
-
+  
+  
   @Test
-  public void testPlaylistShouldBePopulatedAndContainsTracks() throws ServiceException, LoginException {
-
-    Playlists playlists = user.getPlaylists();
-    assertNotNull(playlists);
-    assertEquals(0, playlists.size());
-
-    playlists.load(false);
-    assertTrue(0 < playlists.size());
-    
-    Playlist testPl = null;
-
-    for (Playlist pl : playlists) {
-      assertNotNull(pl);
-      assertNotNull(pl.getName());
-      assertNotNull(pl.getToken());
-      assertNotNull(pl.getType());
-      assertNotNull(pl.getMediaFilesCount());
-      assertNotNull(pl.getPosition());
-      testPl = pl;
-    }
-
-    assertNotNull(testPl);
-
-    MediaFiles trs = (MediaFiles) testPl.getMediaFiles();
-    assertNotNull(trs);
-    assertEquals(0, trs.size());
-
-    trs.load(false);
-    assertTrue(0 < trs.size());
-
-    MediaFile tr = (MediaFile) trs.get(0);
-    assertNotNull(tr);
-    assertNotNull(tr.getTitle());
-    assertNotNull(tr.getToken());
-  }
-
-  @Test
-  public void testPlaylistShouldBeNullIfItDoesNotExists() throws ServiceException, LoginException {
-
-    Playlists playlists = user.getPlaylists();
-    assertNotNull(playlists);
-    assertEquals(0, playlists.size());
-    
-    playlists.load(false);
-    assertTrue(0 < playlists.size());
-    
-    assertNull(playlists.getPlaylistByName("Not existings playlist"));
-
-  }
-
-  @Test
-  public void testPlaylistsTypes() throws ServiceException, LoginException {
-
-    Playlists playlists = user.getPlaylists();
-    assertNotNull(playlists);
-    assertEquals(0, playlists.size());
-    
-    playlists.load(false);
-    assertTrue(0 < playlists.size());
-
-    List<Playlist> pls = playlists.getPlaylistsByType( "LocalPlaylist" );
-    assertEquals(1, pls.size());
-
-    pls = playlists.getPlaylistsByType( "CloudPlaylist" );
-    assertEquals(1, pls.size());
-
-    pls = playlists.getPlaylistsByType( "CustomPlaylist" );
-    assertNotNull(pls);
-  }
-
-  @Test
-  public void testMoveSingleTrackToPlaylist() throws LoginException, ServiceException {
-
-    Playlists playlists = user.getPlaylists();
-    assertNotNull(playlists);
-    playlists.load(false);
-    
-    Playlist smallPlaylist = playlists.getPlaylistByName(Fixtures.get(Fixtures.SMALL_PLAYLIST_NAME));
-    Playlist dev = playlists.getPlaylistByName(Fixtures.get(Fixtures.DEV_PLAYLIST_NAME));
-    
-    smallPlaylist.getMediaFiles().load(false);
-    dev.getMediaFiles().load(false);
-    
-    MediaFile trk = smallPlaylist.getMediaFiles().get(0);
-
-    long previousTracksCount = dev.getMediaFilesCount();
-
-    boolean result = dev.addMediaFile(trk);
-    if (result) {
-      assertEquals(previousTracksCount + 1, dev.getMediaFilesCount());
-      assertNotNull(dev.getMediaFiles().get(trk.getToken()));
-    } else {
-      // Fail and exit
-      fail("Unable to move track to the selected playlist");
-    }
-
-    result = dev.removeMediaFile(trk);
-    if (result) {
-      assertEquals(previousTracksCount, dev.getMediaFilesCount());
-      assertNull(dev.getMediaFiles().get(trk.getToken()));
-    } else {
-      // Fail and exit
-      fail("Unable to move track to the selected playlist");
-    }
-
-  }
-
-  @Test
-  public void testMoveMultipleTracksToPlaylist() throws LoginException, ServiceException {
-
-    Playlists playlists = user.getPlaylists();
-    assertNotNull(playlists);
-    playlists.load(false);
-
-    Playlist smallPlaylist = playlists.getPlaylistByName(Fixtures.get(Fixtures.SMALL_PLAYLIST_NAME));
-    Playlist dev = playlists.getPlaylistByName(Fixtures.get(Fixtures.DEV_PLAYLIST_NAME));
-    
-    smallPlaylist.getMediaFiles().load(false);
-    dev.getMediaFiles().load(false);
-    
-    MediaFiles musicTracks = smallPlaylist.getMediaFiles();
-
-    List<MediaFile> tracks = new ArrayList<MediaFile>();
-    int numberOfTracksToAdd = 10;
-    for (int i = 0; i < numberOfTracksToAdd; i++) {
-      tracks.add(musicTracks.get(i));
-    }
-
-    long previousTracksCount = dev.getMediaFilesCount();
-
-    boolean result = dev.addMediaFiles(tracks);
-    if (result) {
-      assertEquals(previousTracksCount + numberOfTracksToAdd, dev.getMediaFilesCount());
-      for (MediaFile trk : tracks) {
-        assertNotNull(dev.getMediaFiles().get(trk.getToken()));
+  public void playlistsEvents() {
+    number_event = 0;
+    Playlists pls = user.getPlaylists();
+    pls.addObserver(new Observer() {
+      public void update(Observable pls, Object evt) {
+        Event event = (Event) evt;
+        if ( event.state == Event.States.START_LOADING ) {
+          number_event++;
+        } else if ( event.state == Event.States.COLLECTION_CLEARED ) {
+          number_event++;
+        } else if ( event.state == Event.States.END_LOADING ) {
+          number_event++;
+        } else if ( event.state == Event.States.ENTITY_ADDED ) {
+          number_event++;
+        }
       }
-    } else {
-      // Fail and exit
-      fail("Unable to move track to the selected playlist");
+    });
+    
+    try {
+      pls.load(false);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
     }
-
-    result = dev.removeMediaFiles(tracks);
-    if (result) {
-      assertEquals(previousTracksCount , dev.getMediaFilesCount());
-      for (MediaFile trk : tracks) {
-        assertNull(dev.getMediaFiles().get(trk.getToken()));
-      }
-    } else {
-      // Fail and exit
-      fail("Unable to move track to the selected playlist");
-    }
-
+    
+    assertEquals( number_event, pls.size() + 3 );
   }
-
+  
+  
+  
   @Test
-  public void testMoveUnexistingsTrackShouldRiseErrors() throws LoginException, ServiceException {
+  public void createNewCustomPlaylist() {
+    
+    Playlists pls = user.getPlaylists();
 
-    Playlists playlists = user.getPlaylists();
-    assertNotNull(playlists);
-    playlists.load(false);
-
-    Playlist dev = playlists.getPlaylistByName(Fixtures.get(Fixtures.DEV_PLAYLIST_NAME));
-    MediaFile trk = user.newTrack();
-
-    assertNotNull(trk);
-
-    trk.setToken("foo-bar");
-
-    assertFalse(dev.addMediaFile(trk));
-    assertFalse(dev.removeMediaFile(trk));
-
+    try {
+      pls.load(false);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    int plsCount = pls.size();
+    pls.createPlaylist();
+    
+    assertEquals( plsCount + 1, pls.size() );
+    
   }
+
 
 }

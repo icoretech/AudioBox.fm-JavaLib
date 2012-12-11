@@ -54,7 +54,7 @@ import fm.audiobox.interfaces.IResponseHandler;
  * <p>
  *
  * When a login is successfully performed an XML like the following is received and parsed:
- * 
+ *
  * <pre>
  * @code
  * real_name: null
@@ -126,26 +126,26 @@ import fm.audiobox.interfaces.IResponseHandler;
  * <ul>
  *  <li>Playlists</li>
  * </ul>
- * 
+ *
  * using its respective getter method.
- * 
+ *
  * <p>
- * 
- * Once obtained the desired collection you can get the media files collection of each contained element 
+ *
+ * Once obtained the desired collection you can get the media files collection of each contained element
  * by getting its files:
- * 
+ *
  * <pre>
  * Playlists playlists = user.getPlaylists();
  * playlists.load();
  * MediaFiles media = playlists.get(0).getMediaFiles();
  * media.load();
  * </pre>
- * 
+ *
  * @author Valerio Chiodino
  * @author Fabio Tunno
  */
 public final class User extends AbstractEntity implements Serializable {
-  
+
   private static final Logger log = LoggerFactory.getLogger(User.class);
 
   private static final long serialVersionUID = 1L;
@@ -153,7 +153,7 @@ public final class User extends AbstractEntity implements Serializable {
   /** User API namespace */
   public static final String NAMESPACE = "user";
   public static final String TAGNAME = NAMESPACE;
-  
+
   public static final String ID = "id";
   public static final String USERNAME = "username";
   public static final String PASSWORD = "password";
@@ -171,7 +171,7 @@ public final class User extends AbstractEntity implements Serializable {
   public static final String COMET_CHANNEL = "comet_channel";
   public static final String CREATED_AT = "created_at";
   public static final String UPDATED_AT = "updated_at";
-  
+
   public static enum SubscriptionState {
     nothing,
     active,
@@ -244,7 +244,7 @@ public final class User extends AbstractEntity implements Serializable {
     
   }
   
-  
+
 
   /**
    * <p>Constructor for User.</p>
@@ -268,13 +268,11 @@ public final class User extends AbstractEntity implements Serializable {
   /* ------------------- */
   /* Getters and setters */
   /* ------------------- */
-  
-  
+
+
   public String getUsername() {
     return username;
   }
-
-
 
   public void setUsername(String username) {
     this.username = username;
@@ -290,8 +288,8 @@ public final class User extends AbstractEntity implements Serializable {
   public void setId(String id) {
     this.id = id;
   }
-  
-  
+
+
   public String getPassword() {
     return password;
   }
@@ -405,8 +403,8 @@ public final class User extends AbstractEntity implements Serializable {
   public String getCometChannel() {
     return this.comet_channel;
   }
-  
-  
+
+
 
   public int getPlaylistsCount() {
     return playlists_count;
@@ -452,51 +450,51 @@ public final class User extends AbstractEntity implements Serializable {
       log.warn( "no vaild subscription_state given");
     }
   }
-  
+
   public void setSubscriptionState(SubscriptionState state) {
     this.subscription_state = state;
   }
-  
+
   public SubscriptionState getSubscriptionState() {
     return this.subscription_state;
   }
 
 
-  
+
   public void setPermissions(Permissions permissions) {
     this.permissions = permissions;
   }
-  
+
   public Permissions getPermissions() {
     return this.permissions;
   }
-  
+
   public void setAccountStats(AccountStats accountStats) {
     this.accountStats = accountStats;
   }
-  
+
   public AccountStats getAccountStats() {
     return this.accountStats;
   }
-  
-  
+
+
   public void setPreferences(Preferences preferences) {
     this.preferences = preferences;
   }
-  
+
   public Preferences getPreferences() {
     return this.preferences;
   }
-  
-  
+
+
   public void setExternalTokens(ExternalTokens externalTokens) {
     this.externalTokens = externalTokens;
   }
-  
+
   public ExternalTokens getExternalTokens() {
     return this.externalTokens;
   }
-  
+
 
   /**
    * <p>Getter for the auth_token</p>
@@ -510,92 +508,63 @@ public final class User extends AbstractEntity implements Serializable {
   /**
    * <p>Setter for the user auth_token</p>
    *
-   * @param auth_token a String the contains the user authentication 
+   * @param auth_token a String the contains the user authentication
    */
   public void setAuthToken(String auth_token) {
     this.auth_token = auth_token;
     setChanged();
     notifyObservers();
   }
-  
-  
-  
+
+
+
   /* ------------------- */
   /* Collection Browsing */
   /* ------------------- */
 
 
   /**
-   * Given a known track Token this method will requests AudioBox.fm and returns a valid {@link MediaFile} object.
-   *
-   * @param token the token of the track you are asking for.
-   * 
-   * @return the requested track if exists.
-   * 
-   * @throws LoginException if user has not been authenticated
-   * @throws ServiceException if the requested resource doesn't exists or any other ServiceException occur.
-   * @throws ModelException 
-   */
-  public MediaFile newTrackByToken(String token) throws ServiceException, LoginException {
-    MediaFile file = (MediaFile) getConfiguration().getFactory().getEntity( MediaFile.TAGNAME, getConfiguration() );
-    file.setToken(token);
-//    file.load();
-    return file;
-  }
-
-
-  /**
-   * Use this method to get a {@link MediaFiles} instance containing 
+   * Use this method to get a {@link MediaFiles} instance containing
    * all the {@code MD5} and {@code token} for media files owned by this User.
    * You can specify the Source for filtering the results
-   * 
+   *
    * This method is useful for sync tools.
    *
    * @param source a {@link MediaFile.Source}
    *
    * @return a {@link MediaFiles} instance
-   * 
+   *
    * @throws ServiceException if any connection problem to AudioBox.fm services occurs.
    * @throws LoginException if any authentication problem occurs.
    */
   public MediaFiles getMediaFilesMap(String source) throws ServiceException, LoginException {
     MediaFiles mediaFiles = (MediaFiles) getConfiguration().getFactory().getEntity( MediaFiles.TAGNAME, getConfiguration() );
-    
+
     IConnector connector = this.getConnector(IConfiguration.Connectors.RAILS);
-    
+
     String path = IConnector.URI_SEPARATOR.concat( MediaFiles.NAMESPACE );
     String action = MediaFiles.Actions.hashes.toString();
-    
+
     List<NameValuePair> params = null;
     params = new ArrayList<NameValuePair>();
     params.add( new BasicNameValuePair("source", source.toLowerCase() ) );
-    
+
     connector.get(mediaFiles, path, action, params).send(false);
-    
+
     return mediaFiles;
   }
 
 
-
-  public void emptyTrash() throws LoginException, ServiceException {
-    Playlists pls = (Playlists)getConfiguration().getFactory().getEntity( Playlists.NAMESPACE, getConfiguration() );
-    String requestFormat = this.getConfiguration().getRequestFormat().toString().toLowerCase();
-    getConnector().put( pls, Playlists.EMPTY_TRASH_ACTION , requestFormat).send(false);
-  }
-
-
-
   /**
-   * Instantiates a new Track. This method is used to upload a track
-   * 
+   * Instantiates a new {@link MediaFile}.
+   * Use this method to upload a new media file.
+   *
    * @return a new {@link MediaFile} instance
    */
-  public MediaFile newTrack() {
+  public MediaFile newMediaFile() {
     return (MediaFile) getConfiguration().getFactory().getEntity( MediaFile.TAGNAME, getConfiguration() );
   }
-
-
-
+  
 
   public Playlists getPlaylists() {
     if ( this.playlists == null ){
@@ -607,7 +576,7 @@ public final class User extends AbstractEntity implements Serializable {
 
   /**
    * Executes request populating this class
-   * 
+   *
    * @throws ServiceException
    * @throws LoginException
    */
@@ -634,29 +603,27 @@ public final class User extends AbstractEntity implements Serializable {
   public String getApiPath() {
     return IConnector.URI_SEPARATOR + NAMESPACE;
   }
-  
-  
-  @Override
+
   public IConnectionMethod load(boolean async) throws ServiceException, LoginException {
-    return this.load(false, null);
+    return this.load(async, null);
   }
 
-  @Override
+
   public IConnectionMethod load(boolean async, IResponseHandler responseHandler) throws ServiceException, LoginException {
-  //add the object to be observed, the observer 
+  //add the object to be observed, the observer
     IConnectionMethod req = this.getConfiguration().getFactory().getConnector().get(this, null, null);
-    
+
     if ( this.getUsername() != null && this.getPassword() != null ) {
       req.setAuthenticationHandle(new IAuthenticationHandle() {
         public void handle(IConnectionMethod request) {
           UsernamePasswordCredentials mCredentials = new UsernamePasswordCredentials( username, password );
-          request.addHeader( BasicScheme.authenticate(mCredentials,  Consts.UTF_8.name(), false ) );
+          request.addHeader( BasicScheme.authenticate(mCredentials, Consts.UTF_8.name(), false ) );
         }
       });
     }
-    
+
     req.send(async);
-    
+
     return req;
   }
 

@@ -28,32 +28,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.http.Consts;
-import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fm.audiobox.AudioBox;
 import fm.audiobox.configurations.Response;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.observables.Event;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
-import fm.audiobox.interfaces.IResponseHandler;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
+import fm.audiobox.interfaces.IResponseHandler;
 
 /**
- * Playlist class is a {@link ModelItem} specialization for playlists XML
+ * Playlist class is a {@link IEntity} specialization for playlists XML
  * elements.
- * 
- * <p>
- * 
+ *
  * Profile XML looks like this:
- * 
+ *
  * <pre>
  * @code
  * <playlist>
@@ -77,8 +73,11 @@ public class Playlist extends AbstractEntity implements Serializable {
   private static Logger log = LoggerFactory.getLogger(Playlist.class);
 
   /** The XML tag name for the Playlist element */
-  public static final String NAMESPACE = Playlists.NAMESPACE;
-  public static final String TAGNAME = "playlist";
+  public static final String NAMESPACE = "playlist";
+  public static final String TAGNAME = NAMESPACE;
+  
+  public static final String CUSTOM_SYSTEM_NAME = "custom";
+  public static final String SMART_SYSTEM_NAME = "smart";
   
   public static final String NAME = "name";
   public static final String POSITION = "position";
@@ -91,12 +90,9 @@ public class Playlist extends AbstractEntity implements Serializable {
   public static final String EMBEDDABLE = "embeddable";
   public static final String VISIBLE = "visible";
   public static final String SYNCABLE = "syncable";
+
   
-
   /* Parameters */
-  /** Used as HTTP parameters to specify the tracks list */
-  private static final String HTTP_PARAM = "track_tokens[]";
-
   private String name;
   private int position = 0;
   private String type;
@@ -110,8 +106,8 @@ public class Playlist extends AbstractEntity implements Serializable {
   private boolean visible;
   private String system_name;
   private boolean syncable;
-  
-  
+
+
   private static final Map<String, Method> setterMethods = new HashMap<String, Method>();
   static {
     try {
@@ -133,8 +129,9 @@ public class Playlist extends AbstractEntity implements Serializable {
       log.error("No method found", e);
     }
   }
-  
-  
+
+
+
 
   /**
    * <p>
@@ -143,7 +140,24 @@ public class Playlist extends AbstractEntity implements Serializable {
    */
   public Playlist(IConfiguration config) {
     super(config);
+    
+    // By default a playlist is set as 'custom' playlist
+    this.setSystemName( CUSTOM_SYSTEM_NAME );
   }
+  
+  /**
+   * Contructor method
+   * This class can be instantiated always.
+   * We should link the new class to the current {@link AudioBox} instance
+   *
+   * @param config
+   */
+  public Playlist(AudioBox abxClient) {
+    this( abxClient.getConfiguration() );
+  }
+  
+  
+  
 
   @Override
   public String getTagName() {
@@ -157,7 +171,7 @@ public class Playlist extends AbstractEntity implements Serializable {
 
   /**
    * Returns the playlist name
-   * 
+   *
    * @return the playlist name
    */
   public String getName() {
@@ -166,9 +180,8 @@ public class Playlist extends AbstractEntity implements Serializable {
 
   /**
    * Sets the playlists name. Used by the parser
-   * 
-   * @param name
-   *          the playlist name
+   *
+   * @param name the playlist name
    */
   @Deprecated
   public void setName(String name) {
@@ -177,7 +190,7 @@ public class Playlist extends AbstractEntity implements Serializable {
 
   /**
    * Returns the playlist name
-   * 
+   *
    * @return the playlist name
    */
   public String getSystemName() {
@@ -187,19 +200,45 @@ public class Playlist extends AbstractEntity implements Serializable {
   /**
    * Sets the playlists name. Used by the parser
    * 
-   * @param name
-   *          the playlist name
+   * @param name the playlist name
    */
   @Deprecated
   public void setSystemName(String system_name) {
     this.system_name = system_name;
   }
 
+  
+  /**
+   * Use this method to know if {@code playlist} is @{value smart} or not
+   * @return boolean
+   */
+  public boolean isSmart() {
+    return SMART_SYSTEM_NAME.equals( this.getSystemName() );
+  }
+  
+  /**
+   * Use this method to know if {@code playlist} is @{value custom} or not
+   * @return boolean
+   */
+  public boolean isCustom() {
+    return CUSTOM_SYSTEM_NAME.equals( this.getSystemName() );
+  }
+  
+  
+  /**
+   * Use this method to know if {@code playlist} is @{value drive} or not
+   * @return boolean
+   */
+  public boolean isDrive() {
+    return ! ( isCustom() || isSmart() );
+  }
+  
+
   /**
    * This method deletes entirly content of the
    * {@link Playlists.Types.LocalPlaylist} drive. Use this method carefully
    * Note: this action will be asynchronously performed by the server
-   * 
+   *
    * @return {@code true} if everything went ok. {@code false} if not
    */
   public boolean clearContent() throws ServiceException, LoginException {
@@ -214,7 +253,7 @@ public class Playlist extends AbstractEntity implements Serializable {
 
   /**
    * Return the playlist position index
-   * 
+   *
    * @return the playlist position index
    */
   public int getPosition() {
@@ -223,9 +262,8 @@ public class Playlist extends AbstractEntity implements Serializable {
 
   /**
    * Sets the playlist position index. Used by the parser
-   * 
-   * @param position
-   *          the playlist position index
+   *
+   * @param position the playlist position index
    */
   public void setPosition(int position) {
     this.position = position;
@@ -233,7 +271,6 @@ public class Playlist extends AbstractEntity implements Serializable {
 
   /**
    * Returns the playlist type
-   * 
    * @return the playlist type
    */
   public String getType() {
@@ -241,10 +278,9 @@ public class Playlist extends AbstractEntity implements Serializable {
   }
 
   /**
-   * Sets the playlist type. Used by the parser
+   * Sets the playlist type. Used by the parser.
    * 
-   * @param playlistType
-   *          the playlist type
+   * @param playlistType the playlist type
    */
   public void setType(String type) {
 
@@ -254,7 +290,7 @@ public class Playlist extends AbstractEntity implements Serializable {
 
   /**
    * Returns the playlist mediafiles count
-   * 
+   *
    * @return the playlist mediafiles count
    */
   public long getMediaFilesCount() {
@@ -263,9 +299,8 @@ public class Playlist extends AbstractEntity implements Serializable {
 
   /**
    * Sets the playlist mediafile count. Used by the parser
-   * 
-   * @param media_files_count
-   *          the playlist mediafiles count
+   *
+   * @param media_files_count the playlist mediafiles count
    */
   public void setMediaFilesCount(long media_files_count) {
     this.media_files_count = media_files_count;
@@ -318,11 +353,12 @@ public class Playlist extends AbstractEntity implements Serializable {
   public void setLastAccessed(boolean last_accessed) {
     this.last_accessed = last_accessed;
   }
+  
 
   /**
    * Returns a {@link MediaFiles} instance ready to be populated through
    * {@link MediaFiles#load()} method
-   * 
+   *
    * @return a {@link MediaFiles} instance
    */
   public MediaFiles getMediaFiles() {
@@ -347,9 +383,8 @@ public class Playlist extends AbstractEntity implements Serializable {
     }
     return null;
   }
-  
-  
-  @Override
+
+
   protected void copy(IEntity entity) {
 
     Playlist pl = (Playlist) entity;
@@ -365,154 +400,56 @@ public class Playlist extends AbstractEntity implements Serializable {
 
   }
 
-  /* ---------------------------- */
-  /* Playlists management methods */
-  /* ---------------------------- */
-
   /**
-   * Use this method to add a single {@link MediaFile track} to this playlist
+   * This method perform a creation of this playlist remotely
    * 
-   * @param mediafile
-   *          the {@link MediaFile} to add to playlist
-   * @return true if the action succeed false if something goes wrong.
+   * @return {@code true} if everything went ok. {@code false} if not.
+   * <br />
+   * Note: playlist should contains no {@code token} set
    * 
-   * @throws LoginException
-   *           if any authentication problem during the request occurs.
-   * @throws ServiceException
-   *           if any connection problem to AudioBox.fm occurs.
+   * @throws ServiceException something went wrong
+   * @throws LoginException Login error occurs
    */
-  public boolean addMediaFile(MediaFile mediafile) throws LoginException, ServiceException {
-    List<MediaFile> mdfs = new ArrayList<MediaFile>();
-    mdfs.add(mediafile);
-    return this.addMediaFiles(mdfs);
+  public boolean create() throws ServiceException, LoginException {
+    return this.create( new ArrayList<MediaFile>() );
   }
-
+  
   /**
-   * Use this method to add multiple {@link MediaFile tracks} to this playlist
+   * This method perform a creation of this playlist remotely.
+   * Note: this method also adds media files to this {@code custom} playlist
    * 
-   * @param tracks
-   *          the {@link List} of {@link MediaFile Tracks} to add to playlist
-   * @return true if the action succeed false if something goes wrong.
+   * @param mediaFiles list of mediafiles to be added to this playlist.
+   * @return {@code true} if everything went ok. {@code false} if not.
+   * <br />
+   * Note: playlist should contains no {@code token} set
    * 
-   * @throws LoginException
-   *           if any authentication problem during the request occurs.
-   * @throws ServiceException
-   *           if any connection problem to AudioBox.fm occurs.
+   * @throws ServiceException something went wrong
+   * @throws LoginException Login error occurs
    */
-  public boolean addMediaFiles(List<MediaFile> mediafiles) throws LoginException, ServiceException {
-    MediaFiles addedMediaFiles = performAction(mediafiles, Playlists.ADD_TRACKS_ACTION);
-    if (addedMediaFiles == null)
+  public boolean create(List<MediaFile> mediaFiles) throws ServiceException, LoginException {
+    
+    if ( this.getToken() != null && ! "".equals( this.getToken() )  ) {
+      // playlists seems to be already created
       return false;
-    if (this.mediafiles != null) {
-      // MediaFile already loaded, manual management
-      for (MediaFile addedMediaFile : addedMediaFiles) {
-        for (MediaFile mediafile : mediafiles) {
-          if (mediafile.getToken().equals(addedMediaFile.getToken())) {
-            this.mediafiles.add(mediafile);
-            this.media_files_count++;
-          }
-        }
-      }
-      return true;
     }
-    return false;
+    
+    IConnectionMethod request = this.getConnector( IConfiguration.Connectors.RAILS ).post( this, Playlists.NAMESPACE, null );
+    Response response = request.send(false, this.toQueryParameters( true ) );
+    
+    return response.isOK();
   }
-
-  /**
-   * Use this method to remove a single {@link MediaFile} from this playlist
-   * 
-   * @param mediafile
-   *          the {@link MediaFile} to remove from playlist
-   * @return true if the action succeed false if something goes wrong.
-   * 
-   * @throws LoginException
-   *           if any authentication problem during the request occurs.
-   * @throws ServiceException
-   *           if any connection problem to AudioBox.fm occurs.
-   */
-  public boolean removeMediaFile(MediaFile mediafile) throws LoginException, ServiceException {
-    List<MediaFile> mediafiles = new ArrayList<MediaFile>();
-    mediafiles.add(mediafile);
-    return this.removeMediaFiles(mediafiles);
-  }
-
-  /**
-   * Use this method to remove multiple {@link MediaFile tracks} from this
-   * playlist
-   * 
-   * @param tracks
-   *          the {@link List} of {@link MediaFile Tracks} to remove from
-   *          playlist
-   * @return true if the action succeed false if something goes wrong.
-   * 
-   * @throws LoginException
-   *           if any authentication problem during the request occurs.
-   * @throws ServiceException
-   *           if any connection problem to AudioBox.fm occurs.
-   */
-  public boolean removeMediaFiles(List<MediaFile> mediafiles) throws LoginException, ServiceException {
-    MediaFiles removedMediaFiles = performAction(mediafiles, Playlists.REMOVE_TRACKS_ACTION);
-    if (removedMediaFiles == null)
-      return false;
-    if (this.mediafiles != null) {
-      // Mediafiles already loaded, manual management
-      for (MediaFile removedTrack : removedMediaFiles) {
-        for (MediaFile track : mediafiles) {
-          if (track.getToken().equals(removedTrack.getToken())) {
-            if (this.mediafiles.remove(track.getToken()))
-              this.media_files_count--; // remove correctly
-          }
-        }
-      }
-      return true;
-    }
-    return false;
-  }
-
-  /* --------------- */
-  /* Private methods */
-  /* --------------- */
-
-  /**
-   * Use this method to add or remove multiple {@link MediaFile mediafiles} from
-   * this playlist
-   * 
-   * @param mediafiles
-   *          the {@link List} of {@link MediaFile MediaFiles} to remove/add
-   * @param action
-   *          the action to perform. Should be one of
-   *          {@link Playlists#ADD_TRACKS_ACTION} or
-   *          {@link Playlists#REMOVE_TRACKS_ACTION}
-   * 
-   * @return {@link MediaFiles} instance that contains all added/removed tracks
-   *         tokens
-   * 
-   * @throws LoginException
-   *           if any authentication problem during the request occurs.
-   * @throws ServiceException
-   *           if any connection problem to AudioBox.fm occurs.
-   */
-  private MediaFiles performAction(List<MediaFile> mediafiles, String action) throws ServiceException, LoginException {
-
-    log.info("Performing action " + action + " on " + mediafiles.size() + " mediafiles");
-
+  
+  
+  
+  private List<NameValuePair> toQueryParameters(boolean withPrefix) {
+    String prefix = withPrefix ? NAMESPACE + "[" : "";
+    String suffix = withPrefix ? "]" : "";
+    
     List<NameValuePair> params = new ArrayList<NameValuePair>();
-    for (MediaFile track : mediafiles) {
-      params.add(new BasicNameValuePair(HTTP_PARAM, track.getToken()));
-    }
-
-    MediaFiles _mediafiles = (MediaFiles) this.getConfiguration().getFactory().getEntity(MediaFiles.TAGNAME, this.getConfiguration());
-
-    IConnectionMethod method = this.getConnector().put(this, action);
-
-    HttpEntity entity = new UrlEncodedFormEntity(params, Consts.UTF_8);
-    method.send(false, entity);
-
-    return _mediafiles;
-  }
-
-  public String getApiPath() {
-    return this.getParent().getApiPath() + IConnector.URI_SEPARATOR + this.getToken();
+    
+    params.add(  new BasicNameValuePair( prefix + NAME + suffix,  this.name ) );
+    
+    return params;
   }
 
   @Override
@@ -525,6 +462,11 @@ public class Playlist extends AbstractEntity implements Serializable {
     IConnectionMethod request = getConnector(IConfiguration.Connectors.RAILS).get(this, null, null);
     request.send(async, null, responseHandler);
     return request;
+  }
+
+  
+  public String getApiPath() {
+    return this.getParent().getApiPath() + IConnector.URI_SEPARATOR + this.getToken();
   }
 
 }

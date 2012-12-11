@@ -11,10 +11,9 @@ import org.slf4j.LoggerFactory;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConfiguration;
+import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
-import fm.audiobox.interfaces.IConnector.IConnectionMethod;
-
 
 /**
  * dropbox: false,
@@ -29,13 +28,14 @@ import fm.audiobox.interfaces.IConnector.IConnectionMethod;
  * twitter: false
  */
 
-public final class ExternalTokens extends AbstractEntity implements Serializable {
+public final class ExternalTokens extends AbstractEntity implements
+    Serializable {
 
   private static final long serialVersionUID = 1L;
-  
   private static Logger log = LoggerFactory.getLogger(ExternalTokens.class);
-  
+
   public static final String NAMESPACE = "external_tokens";
+
   public static final String TAGNAME = NAMESPACE;
   
   public static final String DROPBOX = "dropbox";
@@ -62,8 +62,6 @@ public final class ExternalTokens extends AbstractEntity implements Serializable
   private boolean twitter = false;
   
   
-  
-  
   private static final Map<String, Method> setterMethods = new HashMap<String, Method>();
   static {
     try {
@@ -83,12 +81,10 @@ public final class ExternalTokens extends AbstractEntity implements Serializable
       log.error("No method found", e);
     }
   }
-  
-  
+
   public ExternalTokens(IConfiguration config) {
     super(config);
   }
-
 
   @Override
   public String getNamespace() {
@@ -99,102 +95,82 @@ public final class ExternalTokens extends AbstractEntity implements Serializable
   public String getTagName() {
     return TAGNAME;
   }
-  
-  
+
   public boolean isDropbox() {
     return dropbox;
   }
-
 
   public void setDropbox(boolean dropbox) {
     this.dropbox = dropbox;
   }
 
-
   public boolean isGdrive() {
     return gdrive;
   }
-
 
   public void setGdrive(boolean gdrive) {
     this.gdrive = gdrive;
   }
 
-
   public boolean isSkydrive() {
     return skydrive;
   }
-
 
   public void setSkydrive(boolean skydrive) {
     this.skydrive = skydrive;
   }
 
-
   public boolean isSoundcloud() {
     return soundcloud;
   }
-
 
   public void setSoundcloud(boolean soundcloud) {
     this.soundcloud = soundcloud;
   }
 
-
   public boolean isYoutube() {
     return youtube;
   }
-
 
   public void setYoutube(boolean youtube) {
     this.youtube = youtube;
   }
 
-
   public boolean isBox() {
     return box;
   }
-
 
   public void setBox(boolean box) {
     this.box = box;
   }
 
-
   public boolean isLastfm() {
     return lastfm;
   }
-
 
   public void setLastfm(boolean lastfm) {
     this.lastfm = lastfm;
   }
 
-
   public boolean isTwitchtv() {
     return twitchtv;
   }
-
 
   public void setTwitchtv(boolean twitchtv) {
     this.twitchtv = twitchtv;
   }
 
-
   public boolean isFacebook() {
     return facebook;
   }
-
 
   public void setFacebook(boolean facebook) {
     this.facebook = facebook;
   }
 
-
   public boolean isTwitter() {
     return twitter;
   }
-
 
   public void setTwitter(boolean twitter) {
     this.twitter = twitter;
@@ -207,8 +183,7 @@ public final class ExternalTokens extends AbstractEntity implements Serializable
     }
     return null;
   }
-  
-  
+
   @Override
   public String getApiPath() {
     return null;
@@ -227,5 +202,5 @@ public final class ExternalTokens extends AbstractEntity implements Serializable
   public IConnectionMethod load(boolean sync, IResponseHandler responseHandler) throws ServiceException, LoginException {
     throw new ServiceException("method not supported");
   }
-  
+
 }
