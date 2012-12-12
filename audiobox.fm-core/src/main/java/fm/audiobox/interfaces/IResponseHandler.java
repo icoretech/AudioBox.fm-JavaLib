@@ -5,6 +5,12 @@ import java.io.InputStream;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConfiguration.ContentFormat;
 
+
+/**
+ * This is a simple interface used as Response interceptor.
+ * <br/>
+ * It deserializes the response body and populates given {@link IEntity}
+ */
 public interface IResponseHandler {
 
   /**
@@ -14,7 +20,7 @@ public interface IResponseHandler {
    * @param destEntity  the {@link IEntity} to populate
    * @throws ServiceException
    */
-  public void parseAsXml(InputStream inputStream, IEntity destEntity) throws ServiceException;
+  public void deserializeXml(InputStream inputStream, IEntity destEntity) throws ServiceException;
   
   /**
    * This method parses the {@link InputStream} associated with this response and populates given {@link IEntity}
@@ -23,7 +29,7 @@ public interface IResponseHandler {
    * @param destEntity  the {@link IEntity} to populate
    * @throws ServiceException
    */
-  public void parseAsJson(InputStream inputStream, IEntity destEntity) throws ServiceException;
+  public void deserializeJson(InputStream inputStream, IEntity destEntity) throws ServiceException;
   
   /**
    * This method parses the {@link InputStream} associated with this response and populates given {@link IEntity}
@@ -33,7 +39,7 @@ public interface IResponseHandler {
    * @return {@link String} that represents the response content
    * @throws ServiceException
    */
-  public String parseAsText(InputStream inputStream, IEntity destEntity) throws ServiceException;
+  public String deserializeText(InputStream inputStream, IEntity destEntity) throws ServiceException;
   
   /**
    * This method parses the {@link InputStream} associated with this response and populates given {@link IEntity}
@@ -42,7 +48,7 @@ public interface IResponseHandler {
    * @param destEntity  the {@link IEntity} to populate
    * @throws ServiceException
    */
-  public void parseAsBinary(InputStream inputStream, IEntity destEntity) throws ServiceException;
+  public void deserializeBinary(InputStream inputStream, IEntity destEntity) throws ServiceException;
   
   
   /**
@@ -54,7 +60,7 @@ public interface IResponseHandler {
    * @return {@link String} that represents the response content
    * @throws ServiceException
    */ 
-  public String parse(InputStream inputStream, IEntity destEntity, ContentFormat format) throws ServiceException;
+  public String deserialize(InputStream inputStream, IEntity destEntity, ContentFormat format) throws ServiceException;
   
   
 }

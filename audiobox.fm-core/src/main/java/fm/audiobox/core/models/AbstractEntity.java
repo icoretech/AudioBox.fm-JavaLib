@@ -1,9 +1,11 @@
 package fm.audiobox.core.models;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.http.NameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -124,4 +126,32 @@ public abstract class AbstractEntity extends Observable implements IEntity {
     event.state = Event.States.END_LOADING;
     this.notifyObservers(event);
   }
+  
+  
+  
+  protected abstract List<NameValuePair> toQueryParameters(boolean all);
+  
+  public String serialize(IConfiguration.ContentFormat format) {
+    return this.getNamespace();
+  }
+  
+  public String toString() {
+    StringBuffer buf = new StringBuffer();
+    buf.append( this.getTagName() );
+    if ( this.token != null && !this.token.equals("") ) {
+      buf.append( "(" + this.token + ")" );
+    }
+    buf.append( "{" );
+    List<NameValuePair> params = this.toQueryParameters(false);
+    for (int i = 0; i < params.size(); i++ ){
+      NameValuePair k = params.get(i);
+      buf.append( k.getName() + ": " + k.getValue() );
+      if ( i < params.size() -1 ){
+        buf.append(", ");
+      }
+    }
+    buf.append( "}");
+    return buf.toString();
+  }
+  
 }

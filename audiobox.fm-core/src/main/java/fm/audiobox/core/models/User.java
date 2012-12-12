@@ -626,6 +626,31 @@ public final class User extends AbstractEntity implements Serializable {
 
     return req;
   }
+  
+  protected List<NameValuePair> toQueryParameters(boolean all) {
+    String prefix = TAGNAME + "[";
+    String suffix = "]";
+    
+    List<NameValuePair> params = new ArrayList<NameValuePair>();
+    
+    params.add(new BasicNameValuePair(prefix + ID + suffix, this.id )  );
+    params.add(new BasicNameValuePair(prefix + USERNAME + suffix, this.username )  );
+    params.add(new BasicNameValuePair(prefix + PASSWORD + suffix, this.password )  );
+    params.add(new BasicNameValuePair(prefix + REAL_NAME + suffix, this.real_name )  );
+    params.add(new BasicNameValuePair(prefix + EMAIL + suffix, this.email )  );
+    params.add(new BasicNameValuePair(prefix + AUTH_TOKEN + suffix, this.auth_token )  );
+    params.add(new BasicNameValuePair(prefix + TIME_ZONE + suffix, this.time_zone )  );
+    params.add(new BasicNameValuePair(prefix + ACCEPTED_EXTENSIONS + suffix, this.accepted_extensions )  );
+    params.add(new BasicNameValuePair(prefix + ACCEPTED_FORMATS + suffix, this.accepted_formats )  );
+    params.add(new BasicNameValuePair(prefix + COUNTRY + suffix, this.country )  );
+    params.add(new BasicNameValuePair(prefix + PLAYLISTS_COUNT + suffix, String.valueOf( this.playlists_count ) )  );
+    params.add(new BasicNameValuePair(prefix + TOTAL_PLAY_COUNT + suffix, String.valueOf( this.total_play_count ) )  );
+    params.add(new BasicNameValuePair(prefix + MEDIA_FILES_COUNT + suffix, String.valueOf( this.media_files_count ) )  );
+    params.add(new BasicNameValuePair(prefix + SUBSCRIPTION_STATE + suffix, String.valueOf( this.subscription_state ) )  );
+    params.add(new BasicNameValuePair(prefix + COMET_CHANNEL + suffix, this.comet_channel )  );
+    
+    return params;
+  }
 
 
 }

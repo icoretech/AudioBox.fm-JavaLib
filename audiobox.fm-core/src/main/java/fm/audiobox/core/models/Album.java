@@ -21,9 +21,13 @@ package fm.audiobox.core.models;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +78,7 @@ public class Album extends AbstractEntity implements Serializable {
     try {
       setterMethods.put( ARTIST, Album.class.getMethod( "setArtist", String.class ) );
       setterMethods.put( ALBUM, Album.class.getMethod( "setAlbum", String.class ) );
-      setterMethods.put( ALBUM, Album.class.getMethod( "setArtwork", String.class ) );
+      setterMethods.put( ARTWORK, Album.class.getMethod( "setArtwork", String.class ) );
     } catch (SecurityException e) {
       log.error("Security error", e);
     } catch (NoSuchMethodException e) {
@@ -153,6 +157,17 @@ public class Album extends AbstractEntity implements Serializable {
     throw new ServiceException("method not supported");
   }
   
-  
+  protected List<NameValuePair> toQueryParameters(boolean all) {
+    String prefix = TAGNAME + "[";
+    String suffix = "]";
+    
+    List<NameValuePair> params = new ArrayList<NameValuePair>();
+
+    params.add(new BasicNameValuePair(prefix + ARTIST + suffix,  this.artist )  );
+    params.add(new BasicNameValuePair(prefix + ALBUM + suffix,  this.album )  );
+    params.add(new BasicNameValuePair(prefix + ARTWORK + suffix,  this.artwork )  );
+    
+    return params;
+  }
 
 }

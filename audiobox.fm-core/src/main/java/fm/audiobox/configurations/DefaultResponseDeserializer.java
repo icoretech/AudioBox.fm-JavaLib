@@ -21,29 +21,29 @@ import fm.audiobox.interfaces.IConfiguration.ContentFormat;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
 
-public class DefaultResponseParser implements IResponseHandler  {
+public class DefaultResponseDeserializer implements IResponseHandler  {
 
-  private static Logger log = LoggerFactory.getLogger(DefaultResponseParser.class);
+  private static Logger log = LoggerFactory.getLogger(DefaultResponseDeserializer.class);
   
-  public String parse(InputStream in, IEntity destEntity, ContentFormat format ) throws ServiceException {
+  public String deserialize(InputStream in, IEntity destEntity, ContentFormat format ) throws ServiceException {
     
     destEntity.startLoading();
     
     if ( format == ContentFormat.XML ) {
         
-      this.parseAsXml(in, destEntity );
+      this.deserializeXml(in, destEntity );
     
     } else if ( format == ContentFormat.JSON ) {
       
-      this.parseAsJson(in, destEntity );
+      this.deserializeJson(in, destEntity );
       
     } else if ( format == ContentFormat.TXT ) {
       
-      return this.parseAsText(in, destEntity );
+      return this.deserializeText(in, destEntity );
       
     } else if ( format == ContentFormat.BINARY ) {
       
-      this.parseAsBinary(in, destEntity );
+      this.deserializeBinary(in, destEntity );
       
     }
     
@@ -55,7 +55,7 @@ public class DefaultResponseParser implements IResponseHandler  {
   
 
   @Override
-  public void parseAsXml(InputStream inputStream, IEntity destEntity) throws ServiceException {
+  public void deserializeXml(InputStream inputStream, IEntity destEntity) throws ServiceException {
     try {
 
       SAXParserFactory spf = SAXParserFactory.newInstance();
@@ -80,14 +80,14 @@ public class DefaultResponseParser implements IResponseHandler  {
   }
 
   @Override
-  public void parseAsJson(InputStream inputStream, IEntity destEntity) throws ServiceException {
+  public void deserializeJson(InputStream inputStream, IEntity destEntity) throws ServiceException {
   
     JParser parser = new JParser(destEntity);
     parser.parse(new InputStreamReader(inputStream));
   }
 
   @Override
-  public String parseAsText(InputStream inputStream, IEntity destEntity) throws ServiceException {
+  public String deserializeText(InputStream inputStream, IEntity destEntity) throws ServiceException {
     try {
       return Response.streamToString(inputStream);
     } catch (IOException e) {
@@ -97,7 +97,7 @@ public class DefaultResponseParser implements IResponseHandler  {
   }
 
   @Override
-  public void parseAsBinary(InputStream inputStream, IEntity destEntity) throws ServiceException {
+  public void deserializeBinary(InputStream inputStream, IEntity destEntity) throws ServiceException {
     throw new ServiceException("Json parser is not implemented yet");
   }
   

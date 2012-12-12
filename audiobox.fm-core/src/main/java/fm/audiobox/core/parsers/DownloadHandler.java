@@ -9,12 +9,12 @@ import java.io.InputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fm.audiobox.configurations.DefaultResponseParser;
+import fm.audiobox.configurations.DefaultResponseDeserializer;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IEntity;
 
-public class DownloadHandler extends DefaultResponseParser {
+public class DownloadHandler extends DefaultResponseDeserializer {
 
   private static final Logger log = LoggerFactory.getLogger( DownloadHandler.class );
   
@@ -37,7 +37,7 @@ public class DownloadHandler extends DefaultResponseParser {
   }
   
   
-  public void parseAsBinary(InputStream inputStream, IEntity destEntity) throws ServiceException {
+  public void deserializeBinary(InputStream inputStream, IEntity destEntity) throws ServiceException {
     
     if ( this.fileOutput == null ) {
       throw new ServiceException("No output file found, maybe doesn't exist");

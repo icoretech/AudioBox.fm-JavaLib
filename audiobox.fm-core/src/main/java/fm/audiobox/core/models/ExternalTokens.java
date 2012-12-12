@@ -2,9 +2,13 @@ package fm.audiobox.core.models;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -201,6 +205,27 @@ public final class ExternalTokens extends AbstractEntity implements
   @Override
   public IConnectionMethod load(boolean sync, IResponseHandler responseHandler) throws ServiceException, LoginException {
     throw new ServiceException("method not supported");
+  }
+  
+  
+  protected List<NameValuePair> toQueryParameters(boolean all) {
+    String prefix = TAGNAME + "[";
+    String suffix = "]";
+    
+    List<NameValuePair> params = new ArrayList<NameValuePair>();
+
+    params.add(new BasicNameValuePair(prefix + DROPBOX + suffix, String.valueOf( this.dropbox ) )  );
+    params.add(new BasicNameValuePair(prefix + GDRIVE + suffix, String.valueOf( this.gdrive ) )  );
+    params.add(new BasicNameValuePair(prefix + SKYDRIVE + suffix, String.valueOf( this.skydrive ) )  );
+    params.add(new BasicNameValuePair(prefix + SOUNDCLOUD + suffix, String.valueOf( this.soundcloud ) )  );
+    params.add(new BasicNameValuePair(prefix + YOUTUBE + suffix, String.valueOf( this.youtube ) )  );
+    params.add(new BasicNameValuePair(prefix + BOX + suffix, String.valueOf( this.box ) )  );
+    params.add(new BasicNameValuePair(prefix + LASTFM + suffix, String.valueOf( this.lastfm ) )  );
+    params.add(new BasicNameValuePair(prefix + TWITCHTV + suffix, String.valueOf( this.twitchtv ) )  );
+    params.add(new BasicNameValuePair(prefix + FACEBOOK + suffix, String.valueOf( this.facebook ) )  );
+    params.add(new BasicNameValuePair(prefix + TWITTER + suffix, String.valueOf( this.twitter ) )  );
+    
+    return params;
   }
 
 }

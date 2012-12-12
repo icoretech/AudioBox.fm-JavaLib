@@ -17,7 +17,7 @@ import fm.audiobox.core.models.AbstractCollectionEntity;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IEntity;
 
-public class JParser{
+public class JParser {
 
   private static Logger log = LoggerFactory.getLogger(JParser.class);
 

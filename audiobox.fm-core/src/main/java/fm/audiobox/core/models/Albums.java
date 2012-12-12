@@ -2,7 +2,10 @@ package fm.audiobox.core.models;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.http.NameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +63,10 @@ public class Albums extends AbstractCollectionEntity<Album> implements Serializa
 
   protected void copy(IEntity entity) {
     
+  }
+  
+  protected List<NameValuePair> toQueryParameters(boolean all) {
+    return new ArrayList<NameValuePair>();
   }
   
 }

@@ -46,7 +46,7 @@ public class ResponseParser implements ResponseHandler<Response> {
     this.method = method;
     this.destEntity = this.method.getDestinationEntity();
     this.configuration = config;
-    this.responseHandler = responseHandler != null ? responseHandler : this.getResponseParser( config.getResponseParser() );
+    this.responseHandler = responseHandler != null ? responseHandler : this.getResponseParser( config.getResponseDeserializer() );
     this.ecode = ecode;
 
     if (log.isTraceEnabled()) {
@@ -99,7 +99,7 @@ public class ResponseParser implements ResponseHandler<Response> {
       case HttpStatus.SC_OK:
       case HttpStatus.SC_ACCEPTED:
         // Try to parse response body
-        this.responseHandler.parse(response.getStream(), destEntity, response.getFormat());
+        this.responseHandler.deserialize(response.getStream(), destEntity, response.getFormat());
         
         if ( responseCode != HttpStatus.SC_NOT_MODIFIED && this.method.isGET() && this.configuration.isCacheEnabled() ) {
           this.configuration.getCacheManager().store(this.destEntity, this.ecode, url, response, httpResponse);
@@ -132,9 +132,9 @@ public class ResponseParser implements ResponseHandler<Response> {
         if (response.getFormat() == ContentFormat.XML || response.getFormat() == ContentFormat.JSON) {
           Error error = new Error(this.configuration);
           if (response.getFormat() == ContentFormat.XML) {
-            this.responseHandler.parseAsXml(response.getStream(), error);
+            this.responseHandler.deserializeXml(response.getStream(), error);
           } else {
-            this.responseHandler.parseAsJson(response.getStream(), error);
+            this.responseHandler.deserializeJson(response.getStream(), error);
           }
           response = new Response(response.getFormat(), response.getStatus(), error.getMessage());
   

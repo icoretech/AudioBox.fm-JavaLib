@@ -9,12 +9,13 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fm.audiobox.interfaces.IAuthenticationHandle;
 import fm.audiobox.interfaces.ICacheManager;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
-import fm.audiobox.interfaces.IAuthenticationHandle;
 import fm.audiobox.interfaces.IFactory;
 import fm.audiobox.interfaces.ILoginExceptionHandler;
+import fm.audiobox.interfaces.IRequestHandler;
 import fm.audiobox.interfaces.IResponseHandler;
 import fm.audiobox.interfaces.IServiceExceptionHandler;
 
@@ -53,7 +54,8 @@ public class DefaultConfiguration implements IConfiguration {
   private String appName = APPLICATION_NAME;
   private String version = VERSION;
   private Class<? extends IConnectionMethod> connMethodClass = DefaultRequestMethod.class;
-  private Class<? extends IResponseHandler> responseParserClass = DefaultResponseParser.class;
+  private Class<? extends IResponseHandler> responseParserClass = DefaultResponseDeserializer.class;
+  private Class<? extends IRequestHandler> requestParserClass = DefaultRequestSerializer.class;
   private ExecutorService executor;
   private ICacheManager cacheManager;
   private IAuthenticationHandle authenticationHandle = new DefaultAuthenticationHandle();
@@ -114,14 +116,22 @@ public class DefaultConfiguration implements IConfiguration {
   }
 
   
-  @Override
-  public Class<? extends IResponseHandler> getResponseParser() {
+  public Class<? extends IResponseHandler> getResponseDeserializer() {
     return responseParserClass;
   }
   
-  public void setResponseParser(Class<? extends IResponseHandler> responseParser){
+  public void setResponseDeserializer(Class<? extends IResponseHandler> responseParser){
     this.responseParserClass = responseParser;
   }
+  
+  public Class<? extends IRequestHandler> getRequestSerializer() {
+    return requestParserClass;
+  }
+  
+  public void setRequestSerializer(Class<? extends IRequestHandler> responseParser){
+    this.requestParserClass = responseParser;
+  }
+  
   
   
   public IAuthenticationHandle getAuthenticationHandle(){

@@ -2,9 +2,13 @@ package fm.audiobox.core.models;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +33,7 @@ import fm.audiobox.interfaces.IResponseHandler;
 public class Preferences extends AbstractEntity implements Serializable {
   
   
-  private static final long serialVersionUID = -4286453333519508598L;
+  private static final long serialVersionUID = 1L;
   private static Logger log = LoggerFactory.getLogger(Preferences.class);
   
   
@@ -199,5 +203,23 @@ public class Preferences extends AbstractEntity implements Serializable {
     throw new ServiceException("method not supported");
   }
   
+  
+  protected List<NameValuePair> toQueryParameters(boolean all) {
+    String prefix = TAGNAME + "[";
+    String suffix = "]";
+    
+    List<NameValuePair> params = new ArrayList<NameValuePair>();
+
+    params.add(new BasicNameValuePair(prefix + ACCEPT_EMAILS + suffix, String.valueOf( this.accept_emails ) )  );
+    params.add(new BasicNameValuePair(prefix + AUTOPLAY + suffix, String.valueOf( this.autoplay ) )  );
+    params.add(new BasicNameValuePair(prefix + VOLUME_LEVEL + suffix, String.valueOf( this.volume_level ) )  );
+    params.add(new BasicNameValuePair(prefix + COLOR + suffix, this.color)  );
+    params.add(new BasicNameValuePair(prefix + TOP_BAR_BG + suffix, this.top_bar_bg)  );
+    params.add(new BasicNameValuePair(prefix + PREBUFFER + suffix, String.valueOf( this.prebuffer ) )  );
+    params.add(new BasicNameValuePair(prefix + REPEAT + suffix, String.valueOf( this.repeat ) )  );
+    params.add(new BasicNameValuePair(prefix + SHUFFLE + suffix, String.valueOf( this.shuffle ) )  );
+    
+    return params;
+  }
   
 }

@@ -2,9 +2,13 @@ package fm.audiobox.core.models;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -280,6 +284,34 @@ public final class AccountStats extends AbstractEntity implements Serializable {
   @Override
   public IConnectionMethod load(boolean sync, IResponseHandler responseHandler) throws ServiceException, LoginException {
     throw new ServiceException("method not supported");
+  }
+  
+  protected List<NameValuePair> toQueryParameters(boolean all) {
+    String prefix = TAGNAME + "[";
+    String suffix = "]";
+    
+    List<NameValuePair> params = new ArrayList<NameValuePair>();
+
+    params.add(new BasicNameValuePair(prefix + DATA_SERVED_THIS_MONTH + suffix, String.valueOf( this.data_served_this_month ) )  );
+    params.add(new BasicNameValuePair(prefix + DATA_SERVED_OVERALL + suffix, String.valueOf( this.data_served_overall ) )  );
+    params.add(new BasicNameValuePair(prefix + CLOUD_DATA_STORED_OVERALL + suffix, String.valueOf( this.cloud_data_stored_overall ) )  );
+    params.add(new BasicNameValuePair(prefix + CLOUD_DATA_STORED_THIS_MONTH + suffix, String.valueOf( this.cloud_data_stored_this_month ) )  );
+    params.add(new BasicNameValuePair(prefix + LOCAL_DATA_STORED_OVERALL + suffix, String.valueOf( this.local_data_stored_overall ) )  );
+    params.add(new BasicNameValuePair(prefix + LOCAL_DATA_STORED_THIS_MONTH + suffix, String.valueOf( this.local_data_stored_this_month ) )  );
+    params.add(new BasicNameValuePair(prefix + DROPBOX_DATA_STORED_OVERALL + suffix, String.valueOf( this.dropbox_data_stored_overall ) )  );
+    params.add(new BasicNameValuePair(prefix + DROPBOX_DATA_STORED_THIS_MONTH + suffix, String.valueOf( this.dropbox_data_stored_this_month ) )  );
+    params.add(new BasicNameValuePair(prefix + GDRIVE_DATA_STORED_THIS_MONTH + suffix, String.valueOf( this.gdrive_data_stored_this_month ) )  );
+    params.add(new BasicNameValuePair(prefix + GDRIVE_DATA_STORED_OVERALL + suffix, String.valueOf( this.gdrive_data_stored_overall ) )  );
+    params.add(new BasicNameValuePair(prefix + SKYDRIVE_DATA_STORED_THIS_MONTH + suffix, String.valueOf( this.skydrive_data_stored_this_month ) )  );
+    params.add(new BasicNameValuePair(prefix + SKYDRIVE_DATA_STORED_OVERALL + suffix, String.valueOf( this.skydrive_data_stored_overall ) )  );
+    params.add(new BasicNameValuePair(prefix + BOX_DATA_STORED_THIS_MONTH + suffix, String.valueOf( this.box_data_stored_this_month ) )  );
+    params.add(new BasicNameValuePair(prefix + BOX_DATA_STORED_OVERALL + suffix, String.valueOf( this.box_data_stored_overall ) )  );
+    params.add(new BasicNameValuePair(prefix + PARTNER_DATA_STORED_THIS_MONTH + suffix, String.valueOf( this.partner_data_stored_this_month ) )  );
+    params.add(new BasicNameValuePair(prefix + PARTNER_DATA_STORED_OVERALL + suffix, String.valueOf( this.partner_data_stored_overall ) )  );
+    params.add(new BasicNameValuePair(prefix + SOUNDCLOUD_DATA_STORED_THIS_MONTH + suffix, String.valueOf( this.soundcloud_data_stored_this_month ) )  );
+    params.add(new BasicNameValuePair(prefix + SOUNDCLOUD_DATA_STORED_OVERALL + suffix, String.valueOf( this.soundcloud_data_stored_overall ) )  );
+    
+    return params;
   }
   
 }

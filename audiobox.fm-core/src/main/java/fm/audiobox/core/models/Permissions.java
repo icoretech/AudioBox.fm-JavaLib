@@ -2,9 +2,12 @@ package fm.audiobox.core.models;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.http.NameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -352,5 +355,8 @@ public final class Permissions extends AbstractEntity implements Serializable {
     throw new ServiceException("method not supported");
   }
 
+  protected List<NameValuePair> toQueryParameters(boolean all) {
+    return new ArrayList<NameValuePair>();
+  }
 
 }

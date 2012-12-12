@@ -73,8 +73,8 @@ public class Playlist extends AbstractEntity implements Serializable {
   private static Logger log = LoggerFactory.getLogger(Playlist.class);
 
   /** The XML tag name for the Playlist element */
-  public static final String NAMESPACE = "playlist";
-  public static final String TAGNAME = NAMESPACE;
+  public static final String NAMESPACE = Playlists.TAGNAME;
+  public static final String TAGNAME = "playlist";
   
   public static final String CUSTOM_SYSTEM_NAME = "custom";
   public static final String SMART_SYSTEM_NAME = "smart";
@@ -434,16 +434,16 @@ public class Playlist extends AbstractEntity implements Serializable {
     }
     
     IConnectionMethod request = this.getConnector( IConfiguration.Connectors.RAILS ).post( this, Playlists.NAMESPACE, null );
-    Response response = request.send(false, this.toQueryParameters( true ) );
+    Response response = request.send(false, this.toQueryParameters() );
     
     return response.isOK();
   }
   
   
   
-  private List<NameValuePair> toQueryParameters(boolean withPrefix) {
-    String prefix = withPrefix ? NAMESPACE + "[" : "";
-    String suffix = withPrefix ? "]" : "";
+  private List<NameValuePair> toQueryParameters() {
+    String prefix = TAGNAME + "[";
+    String suffix = "]";
     
     List<NameValuePair> params = new ArrayList<NameValuePair>();
     
@@ -467,6 +467,29 @@ public class Playlist extends AbstractEntity implements Serializable {
   
   public String getApiPath() {
     return this.getParent().getApiPath() + IConnector.URI_SEPARATOR + this.getToken();
+  }
+  
+  
+  protected List<NameValuePair> toQueryParameters(boolean all) {
+    String prefix = TAGNAME + "[";
+    String suffix = "]";
+    
+    List<NameValuePair> params = new ArrayList<NameValuePair>();
+    
+    params.add(new BasicNameValuePair(prefix + NAME + suffix, this.name )  );
+    params.add(new BasicNameValuePair(prefix + POSITION + suffix, String.valueOf( this.position ) )  );
+    params.add(new BasicNameValuePair(prefix + TYPE + suffix, this.type )  );
+    params.add(new BasicNameValuePair(prefix + MEDIA_FILES_COUNT + suffix, String.valueOf( this.media_files_count ) ) );
+    params.add(new BasicNameValuePair(prefix + UPDATED_AT + suffix, this.updated_at )  );
+    params.add(new BasicNameValuePair(prefix + LAST_ACCESSED + suffix, String.valueOf( this.last_accessed ) )  );
+    params.add(new BasicNameValuePair(prefix + SYSTEM_NAME + suffix, this.system_name )  );
+    params.add(new BasicNameValuePair(prefix + OFFLINE + suffix, String.valueOf( this.offline ) )  );
+    params.add(new BasicNameValuePair(prefix + EMBEDDABLE + suffix, String.valueOf( this.embeddable ) )  );
+    params.add(new BasicNameValuePair(prefix + VISIBLE + suffix, String.valueOf( this.visible ) )  );
+    params.add(new BasicNameValuePair(prefix + SYNCABLE + suffix, String.valueOf( this.syncable ) )  );
+    
+    
+    return params;
   }
 
 }

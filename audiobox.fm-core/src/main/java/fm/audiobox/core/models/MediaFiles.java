@@ -197,4 +197,9 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
   public String getApiPath() {
     return this.getParent().getApiPath() + IConnector.URI_SEPARATOR + NAMESPACE;
   }
+  
+  protected List<NameValuePair> toQueryParameters(boolean all) {
+    return new ArrayList<NameValuePair>();
+  }
+  
 }

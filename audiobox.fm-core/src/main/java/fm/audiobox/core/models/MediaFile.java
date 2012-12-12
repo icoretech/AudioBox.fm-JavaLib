@@ -103,8 +103,9 @@ public class MediaFile extends AbstractEntity implements Serializable {
 
   private static Logger log = LoggerFactory.getLogger(MediaFile.class);
 
+  public static final String NAMESPACE = MediaFiles.TAGNAME;
   public static final String TAGNAME = "media_file";
-  public static final String NAMESPACE = MediaFile.TAGNAME;
+  
   
   public static final String TYPE = "type";
   public static final String ARTIST = "artist";
@@ -584,7 +585,7 @@ public class MediaFile extends AbstractEntity implements Serializable {
 
     if (customFields) {
 
-      List<NameValuePair> fields = this.toQueryParametersCustomFields(false);
+      List<NameValuePair> fields = this.toQueryParameters(false);
       for (NameValuePair field : fields) {
         try {
           entity.addPart(field.getName(), new StringBody(field.getValue(), "text/plain", Charset.forName("UTF-8")));
@@ -647,54 +648,45 @@ public class MediaFile extends AbstractEntity implements Serializable {
     String path = IConnector.URI_SEPARATOR.concat(Actions.local.toString());
     String action = Actions.upload.toString();
 
-    List<NameValuePair> params = this.toQueryParameters(false);
+    List<NameValuePair> params = this.toQueryParameters( true );
 
     Response response = this.getConnector(IConfiguration.Connectors.NODE).post(this, path, action, null).send(false, params);
     return response.isOK();
   }
 
-  private List<NameValuePair> toQueryParameters(boolean withPrefix) {
-    String prefix = withPrefix ? NAMESPACE + "[" : "";
-    String suffix = withPrefix ? "]" : "";
+  protected List<NameValuePair> toQueryParameters(boolean all) {
+    String prefix = TAGNAME + "[";
+    String suffix = "]";
     
     List<NameValuePair> params = new ArrayList<NameValuePair>();
 
-    params.add(new BasicNameValuePair(prefix + TITLE + suffix, this.title));
-    params.add(new BasicNameValuePair(prefix + ARTIST + suffix, this.artist));
-    params.add(new BasicNameValuePair(prefix + ALBUM + suffix, this.album));
-    params.add(new BasicNameValuePair(prefix + GENRE + suffix, this.genre));
-    params.add(new BasicNameValuePair(prefix + LEN_STR + suffix, this.len_str));
-    params.add(new BasicNameValuePair(prefix + MIME + suffix, this.mime));
-    params.add(new BasicNameValuePair(prefix + RELEASE_YEAR + suffix, String.valueOf(this.release_year )));
-    params.add(new BasicNameValuePair(prefix + LEN_INT + suffix, String.valueOf(this.len_int)));
-    params.add(new BasicNameValuePair(prefix + POSITION + suffix, String.valueOf(this.position)));
-    params.add(new BasicNameValuePair(prefix + PLAYS + suffix, String.valueOf(this.plays)));
-    params.add(new BasicNameValuePair(prefix + DISC_NUMBER + suffix, String.valueOf(this.disc_number)));
-    params.add(new BasicNameValuePair(prefix + SIZE + suffix, String.valueOf(this.size)));
-    params.add(new BasicNameValuePair(prefix + TYPE + suffix, this.type.toString()));
-    params.add(new BasicNameValuePair(prefix + SOURCE + suffix, this.source != null ? this.source.toString() : null));
-    params.add(new BasicNameValuePair(prefix + AUDIO_SAMPLE_RATE + suffix, this.audio_sample_rate));
-    params.add(new BasicNameValuePair(prefix + AUDIO_BITRATE + suffix, this.audio_bitrate));
-    params.add(new BasicNameValuePair(prefix + HASH + suffix, this.hash));
+    params.add(new BasicNameValuePair(prefix + ARTIST + suffix,  this.artist )  );
+    params.add(new BasicNameValuePair(prefix + ALBUM + suffix,  this.album )  );
+    params.add(new BasicNameValuePair(prefix + GENRE + suffix,  this.genre )  );
+    params.add(new BasicNameValuePair(prefix + RELEASE_YEAR + suffix, String.valueOf( this.release_year )  )  );
+    params.add(new BasicNameValuePair(prefix + TITLE + suffix,  this.title )  );
+    params.add(new BasicNameValuePair(prefix + POSITION + suffix,  String.valueOf( this.position )  )  );
+    params.add(new BasicNameValuePair(prefix + LOVED + suffix,  String.valueOf( this.loved ) )  );
+    params.add(new BasicNameValuePair(prefix + DISC_NUMBER + suffix,  String.valueOf( this.disc_number ) )  );
+    
+    if ( all ) {
+      params.add(new BasicNameValuePair(prefix + LEN_INT + suffix, String.valueOf( this.len_int ) )  );
+      params.add(new BasicNameValuePair(prefix + FILENAME + suffix, this.filename )  );
+      params.add(new BasicNameValuePair(prefix + SIZE + suffix, String.valueOf( this.size ) )  );
+      params.add(new BasicNameValuePair(prefix + HASH + suffix, this.hash )  );
+      params.add(new BasicNameValuePair(prefix + VIDEO_BITRATE + suffix, this.video_bitrate )  );
+      params.add(new BasicNameValuePair(prefix + VIDEO_CODEC + suffix, this.video_codec )  );
+      params.add(new BasicNameValuePair(prefix + VIDEO_RESOLUTION + suffix, this.video_resolution )  );
+      params.add(new BasicNameValuePair(prefix + VIDEO_FPS + suffix, this.video_fps )  );
+      params.add(new BasicNameValuePair(prefix + VIDEO_ASPECT + suffix, this.video_aspect )  );
+      params.add(new BasicNameValuePair(prefix + VIDEO_CONTAINER + suffix, this.video_container )  );
+      params.add(new BasicNameValuePair(prefix + AUDIO_BITRATE + suffix, this.audio_bitrate )  );
+      params.add(new BasicNameValuePair(prefix + AUDIO_CODEC + suffix, this.audio_codec )  );
+      params.add(new BasicNameValuePair(prefix + AUDIO_SAMPLE_RATE + suffix, this.audio_sample_rate )  );
+    }
+    
 
     return params;
   }
-
-  private List<NameValuePair> toQueryParametersCustomFields(boolean withPrefix) {
-    String prefix = withPrefix ? NAMESPACE + "." : "";
-
-    List<NameValuePair> params = new ArrayList<NameValuePair>();
-
-    params.add(new BasicNameValuePair(prefix + TITLE, this.title));
-    params.add(new BasicNameValuePair(prefix + ARTIST, this.artist));
-    params.add(new BasicNameValuePair(prefix + ALBUM, this.album));
-    params.add(new BasicNameValuePair(prefix + GENRE, this.genre));
-    params.add(new BasicNameValuePair(prefix + RELEASE_YEAR, String.valueOf(this.release_year)));
-    params.add(new BasicNameValuePair(prefix + POSITION, String.valueOf(this.position)));
-    params.add(new BasicNameValuePair(prefix + PLAYS, String.valueOf(this.plays)));
-    params.add(new BasicNameValuePair(prefix + HASH, this.hash));
-
-    return params;
-  }
-
+  
 }

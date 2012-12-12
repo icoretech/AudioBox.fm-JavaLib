@@ -81,12 +81,25 @@ public interface IConfiguration {
   /**
    * @return the global {@link IResponseHandler} used for parsing the response
    */
-  public Class<? extends IResponseHandler> getResponseParser();
+  public Class<? extends IResponseHandler> getResponseDeserializer();
   
   /**
    * Sets the global {@link IResponseHandler} used for parsing the response
    */
-  public void setResponseParser(Class<? extends IResponseHandler> responseParser);
+  public void setResponseDeserializer(Class<? extends IResponseHandler> responseParser);
+  
+  
+  /**
+   * @return the global {@link IResponseHandler} used for parsing the response
+   */
+  public Class<? extends IRequestHandler> getRequestSerializer();
+  
+  /**
+   * Sets the global {@link IResponseHandler} used for parsing the response
+   */
+  public void setRequestSerializer(Class<? extends IRequestHandler> responseParser);
+  
+  
 
   /**
    * @return current {@link IFactory} associated with this configuration

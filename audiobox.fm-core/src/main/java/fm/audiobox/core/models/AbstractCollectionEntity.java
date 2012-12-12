@@ -324,4 +324,10 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
    * @return
    */
   public abstract String getSubTagName();
+  
+  
+  public String serialize(IConfiguration.ContentFormat format) {
+    return this.getNamespace();
+  }
+  
 }
