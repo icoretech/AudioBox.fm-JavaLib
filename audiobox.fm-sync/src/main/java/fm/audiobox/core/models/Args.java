@@ -2,9 +2,13 @@ package fm.audiobox.core.models;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -152,5 +156,22 @@ public class Args extends AbstractEntity implements Serializable{
   public IConnectionMethod load(boolean sync, IResponseHandler responseHandler) throws ServiceException, LoginException {
     throw new ServiceException("method not supported");
   }
+  
+  protected List<NameValuePair> toQueryParameters(boolean all) {
+    String prefix = TAGNAME + "[";
+    String suffix = "]";
+    
+    List<NameValuePair> params = new ArrayList<NameValuePair>();
+    
+    params.add(new BasicNameValuePair(prefix + FILENAME + suffix, this.filename )  );
+    params.add(new BasicNameValuePair(prefix + RANGEMIN + suffix, String.valueOf( this.rangeMin ) )  );
+    params.add(new BasicNameValuePair(prefix + RANGEMAX + suffix, String.valueOf( this.rangeMax ) )  );
+    params.add(new BasicNameValuePair(prefix + ETAG + suffix, this.etag )  );
+    params.add(new BasicNameValuePair(prefix + SERVER_IP + suffix, this.serverIp )  );
+    params.add(new BasicNameValuePair(prefix + SERVER_PORT + suffix, this.serverPort )  );
+    
+    return params;
+  }
+        
 
 }
