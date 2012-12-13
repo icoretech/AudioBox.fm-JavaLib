@@ -588,7 +588,9 @@ public class MediaFile extends AbstractEntity implements Serializable {
       List<NameValuePair> fields = this.toQueryParameters(false);
       for (NameValuePair field : fields) {
         try {
-          entity.addPart(field.getName(), new StringBody(field.getValue(), "text/plain", Charset.forName("UTF-8")));
+          if ( field.getValue() != null ) {
+            entity.addPart(field.getName(), new StringBody(field.getValue(), "text/plain", Charset.forName("UTF-8")));
+          }
         } catch (UnsupportedEncodingException e) {
           log.warn("Entity " + field.getName() + " cannot be added due to: " + e.getMessage());
         }

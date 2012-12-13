@@ -47,7 +47,8 @@ public class MediaFileUploaderTest extends AbxTestCase {
     File file = new File( Fixtures.class.getResource( Fixtures.get( Fixtures.FILE_TO_UPLOAD ) ).getFile() );
     
     try {
-      mf.upload( false, new UploadHandler(file) );
+      mf.setTitle("My Custom Title");
+      mf.upload( false, new UploadHandler(file), true );
       assertNotNull( mf.getToken() );
       lastTokenMedia = mf.getToken();
     } catch (ServiceException e) {
@@ -66,6 +67,23 @@ public class MediaFileUploaderTest extends AbxTestCase {
       fail(e.getMessage());
     }
     
+  }
+  
+  
+  @Test
+  public void mediaFileShouldHaveCustomTitle() {
+    MediaFile mf = user.newMediaFile();
+    mf.setToken( lastTokenMedia );
+    
+    try {
+      mf.load(false);
+    } catch (ServiceException e) {
+      fail(e.getMessage());
+    } catch (LoginException e) {
+      fail(e.getMessage());
+    }
+    
+    assertEquals( mf.getTitle(), "My Custom Title");
   }
   
   
