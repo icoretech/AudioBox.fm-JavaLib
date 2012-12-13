@@ -38,11 +38,7 @@ import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IEntity;
 
 /**
- * <p>MediaFiles is a {@link ModelsCollection} specialization for {@link MediaFile} collections.</p>
- *
- *
- * @author Lucio Regina
- * @version 0.0.1
+ * <p>MediaFiles is a {@link AbstractCollectionEntity<MediaFile>} specialization for {@link MediaFile} collections.</p>
  */
 public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements Serializable {
 

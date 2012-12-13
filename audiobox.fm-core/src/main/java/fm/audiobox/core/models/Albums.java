@@ -52,7 +52,8 @@ public class Albums extends AbstractCollectionEntity<Album> implements Serializa
     
     return null;
   }
-
+  
+  
   public boolean add(Album entity) {
     return super.addEntity(entity);
   }

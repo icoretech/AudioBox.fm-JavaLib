@@ -330,4 +330,13 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
     return this.getNamespace();
   }
   
+  public String toString(){
+    StringBuffer buf = new StringBuffer();
+    buf.append( this.getTagName() );
+    buf.append( "{" );
+    buf.append( this.getSubTagName() + ": " + this.collection.size() );
+    buf.append( "}" );
+    return buf.toString();
+  }
+  
 }

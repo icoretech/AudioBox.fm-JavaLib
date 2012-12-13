@@ -59,6 +59,8 @@ public class AlbumsTest extends AbxTestCase {
     assertNotNull( album.getArtist() );
     assertNotNull( album.getArtwork() );
     
+    assertTrue( album.getMediaFiles().size() > 0 );
+    
   }
   
   

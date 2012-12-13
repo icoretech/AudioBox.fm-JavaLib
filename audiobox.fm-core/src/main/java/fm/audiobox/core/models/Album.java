@@ -72,6 +72,8 @@ public class Album extends AbstractEntity implements Serializable {
   private String album;
   private String artwork;
   
+  private MediaFiles mediafiles;
+  
   
   private static final Map<String, Method> setterMethods = new HashMap<String, Method>();
   static {
@@ -79,6 +81,7 @@ public class Album extends AbstractEntity implements Serializable {
       setterMethods.put( ARTIST, Album.class.getMethod( "setArtist", String.class ) );
       setterMethods.put( ALBUM, Album.class.getMethod( "setAlbum", String.class ) );
       setterMethods.put( ARTWORK, Album.class.getMethod( "setArtwork", String.class ) );
+      setterMethods.put( MediaFiles.TAGNAME, Album.class.getMethod( "setMediaFiles", MediaFiles.class )  );
     } catch (SecurityException e) {
       log.error("Security error", e);
     } catch (NoSuchMethodException e) {
@@ -135,6 +138,29 @@ public class Album extends AbstractEntity implements Serializable {
   }
   
   
+  /**
+   * Returns a {@link MediaFiles} instance ready to be populated through
+   * {@link MediaFiles#load()} method
+   *
+   * @return a {@link MediaFiles} instance
+   */
+  public MediaFiles getMediaFiles() {
+    if (this.mediafiles == null) {
+      this.mediafiles = (MediaFiles) getConfiguration().getFactory().getEntity( MediaFiles.TAGNAME, getConfiguration());
+      this.mediafiles.setParent(this);
+    }
+    return this.mediafiles;
+  }
+  
+  
+  /**
+   * Sets the {@link MediaFiles} associated with this Album
+   * @param {@link MediaFiles mfs} associated with this Album
+   */
+  @Deprecated
+  public void setMediaFiles(MediaFiles mfs) {
+    this.mediafiles = mfs;
+  }
   
 
   @Override
