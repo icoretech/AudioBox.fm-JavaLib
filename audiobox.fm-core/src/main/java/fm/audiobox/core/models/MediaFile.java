@@ -106,6 +106,8 @@ public class MediaFile extends AbstractEntity implements Serializable {
   public static final String NAMESPACE = MediaFiles.TAGNAME;
   public static final String TAGNAME = "media_file";
   
+  protected static final String ORIGINAL_FILE_NAME = "original_file_name";
+  protected static final String MEDIA_FILE_NAME = "media_file_name";
   
   public static final String TYPE = "type";
   public static final String ARTIST = "artist";
@@ -646,12 +648,19 @@ public class MediaFile extends AbstractEntity implements Serializable {
    * {@link MediaFile} is a local file which can be used through AudioBox.fm -
    * PC feauture
    */
-  public boolean notifyAsLocal() throws ServiceException, LoginException {
+  public boolean notifyAsLocal(File file) throws ServiceException, LoginException {
     String path = IConnector.URI_SEPARATOR.concat(Actions.local.toString());
     String action = Actions.upload.toString();
+    
+    if ( ! file.exists() ) {
+      log.warn("File doesn't exist");
+      return false;
+    }
 
     List<NameValuePair> params = this.toQueryParameters( true );
-
+    params.add( new BasicNameValuePair(TAGNAME + "[" + ORIGINAL_FILE_NAME + "]",  file.getAbsolutePath() ) );
+    params.add( new BasicNameValuePair(TAGNAME + "[" + MEDIA_FILE_NAME + "]",  file.getName() ) );
+    
     Response response = this.getConnector(IConfiguration.Connectors.NODE).post(this, path, action, null).send(false, params);
     return response.isOK();
   }
