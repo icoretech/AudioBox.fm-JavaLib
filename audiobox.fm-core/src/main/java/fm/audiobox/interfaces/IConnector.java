@@ -127,6 +127,8 @@ public interface IConnector {
   public void destroy();
   
   
+  public void setTimeout(int timeout);
+  public int getTimeout();
   
   /**
    * The {@link IConnectionMethod} interface is used to build a specific request using

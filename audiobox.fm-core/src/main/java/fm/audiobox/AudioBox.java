@@ -64,14 +64,13 @@ import org.apache.http.protocol.HttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fm.audiobox.configurations.DefaultFactory;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.AbstractCollectionEntity;
-import fm.audiobox.core.models.AbstractEntity;
 import fm.audiobox.core.models.User;
 import fm.audiobox.core.observables.Event;
 import fm.audiobox.interfaces.IConfiguration;
+import fm.audiobox.interfaces.IConfiguration.Connectors;
 import fm.audiobox.interfaces.IConfiguration.ContentFormat;
 import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IEntity;
@@ -79,23 +78,16 @@ import fm.audiobox.interfaces.IFactory;
 
 
 /**
- * AudioBox is the main library class. Every request to AudioBox.fm should pass through this object.
- * To populate and get informations about user library use the {@link User} (or an extended User) model instead.
+ * AudioBox is the main class.<br />
+ * It uses a {@link IConfiguration} class.
+ * To get information about {@link User user} use the {@link AudioBox#getUser()} method.
  * <p>
  *
  * Keep in mind that this library provides only the common browsing actions and some other few feature.<br/>
  * AudioBox does not streams, nor play or provide a BitmapFactory for albums covers.
  *
  * <p>
- *
- * As many other libraries out there AudioBox.fm-JavaLib allows you to extends default models and use them in place
- * of default ones.
- *
- * <p>
- *
- * In order to make AudioBox load your extended models you will need to provide your {@link AbstractEntity} extension
- * through an {@link IFactory#setEntity(String, Class)} implementation. If you don't want to implement one you can use
- * the {@link DefaultFactory}.<br/>
+ * You can extend default extendable models setting them into {@link IFactory#setEntity(String, Class)} class through {@link IConfiguration#getFactory()} method 
  *
  * <p>
  *
@@ -103,62 +95,6 @@ import fm.audiobox.interfaces.IFactory;
  * asynchronously.<br/>
  * To keep track of the collection building process you can use {@link Observer Observers}.
  *
- * <p>
- *
- * The usual execution flow can be demonstrated by the code snippet below:
- *
- * <pre>
- * @code
- * // With this object you can configure many aspects of the libs
- * IConfiguration configuration = new DefaultConfiguration("My test application");
- *
- * // Creating the new AudioBox instance
- * abc = new AudioBox(configuration);
- *
- * // If you extended the {@link User} model AudioBox should
- * // be informed before the login take place.
- * abc.getConfiguration().getFactory().setEntity(User.TAGNAME, MyUser.class);
- *
- * // Now we can try to perform a login...
- * try {
- *
- *    // Should perform a login before anything else is done with
- *    // the AudioBox object
- *    MyUser user = (MyUser) abc.login( "user@email.com" , "password" );
- *
- *    // To browse user library we have some nice utils methods
- *    // We can get the user's playlists...
- *    Playlists pls = user.getPlaylists();
- *    // This object is still empty because you may want to add some observer to it or do
- *    // something else with it.
- *
- *    // To populate the playlists call load method:
- *    pls.load(false);
- *
- *    // ...and get more details on a specific one
- *    Playlist pl = playlists.get(0);
- *
- *    // Get playlist's tracks
- *    MediaFiles trs = pl.getTracks();
- *    trs.load(false);
- *
- *    // Track informations
- *    MediaFile tr = trs.get(0);
- *
- * } catch (LoginException e) {
- *    // Handle {@link LoginException}
- * } catch (ServiceException e) {
- *    // Handle {@link ServiceException}
- * }
- * @endcode
- * </pre>
- *
- * This is briefly the navigation loop. Moreover each model offer some action that can be performed. To know what a model
- * can do consult the specific model documentation.
- *
- * @author Valerio Chiodino
- * @author Fabio Tunno
- * @version 1.0.0
  */
 public class AudioBox extends Observable {
 
@@ -173,10 +109,8 @@ public class AudioBox extends Observable {
 
 
   /**
-   * <p>Constructor for AudioBox.</p>
-   *
-   * When is created it instantiate an {@link Connector} too.
-   *
+   * Creates a new {@code AudioBox} instance ready to be used
+   * @param config the {@link IConfiguration} used by this instance
    */
   public AudioBox(IConfiguration config) {
     log.trace("New AudioBox is going to be instantiated");
@@ -198,9 +132,10 @@ public class AudioBox extends Observable {
 
 
   /**
-   * <p>Getter method for the {@link User user} Object<p>
+   * Getter method for the {@link User user} Object
+   * <p>Note: it can be {@code null} if {@code user} is not logged in<p>
    *
-   * @return the logged in {@link User} instance
+   * @return current {@link User} instance
    */
   public User getUser(){
     return this.user;
@@ -208,17 +143,20 @@ public class AudioBox extends Observable {
 
 
   /**
-   * This method should be called before any other call to AudioBox.fm.<br/>
-   * It tries to perform a login. If succeeds a {@link User} object is returned otherwise a
-   * {@link LoginException} is thrown.<br/>
-   *
+   * This is the main method returns the {@link User} instance.
    * <p>
-   *
-   * @param username the username to login to AudioBox.fm in form of an e-mail
-   * @param password the password to use for authentication
+   * It performs a login on AudioBox.fm and returns the logged in User.
+   * </p>
+   * 
+   * <p>
+   * It fires the {@link Event.States.CONNECTED} event passing the  {@link User}.
+   * </p>
+   * 
+   * @param username is the {@code email} of the user
+   * @param password of the User
    * @param async make this request asynchronously. <b>{@code async} should be always {@code false}</b>
    * 
-   * @return {@link User} object
+   * @return the {@link User} instance if everything went ok
    * 
    * @throws LoginException identifies invalid credentials or user cannot be logged in due to subscription error.
    * @throws ServiceException if any connection problem occurs.
@@ -246,12 +184,32 @@ public class AudioBox extends Observable {
     return this.user;
   }
 
-
+ 
+  /**
+   * It calls the {@link AudioBox#login(String, String, boolean)} passing {@code false} as {@code async}
+   * switch
+   * @param username is the {@code email} of the user
+   * @param password of the User
+   * 
+   * @return the {@link User} instance if everything went ok
+   */
   public User login(String username, String password) throws LoginException, ServiceException {
     return this.login( username, password, false);
   }
 
 
+  /**
+   * Logouts the current logged in {@link User}.
+   * <p>
+   * This method clear the {@link User} instance and 
+   * fires the {@link Event.States.DISCONNECTED} passing no arguments
+   * </p>
+   * <p>
+   * <b>Note: this method set User to {@code null}</b>
+   * </p>
+   * 
+   * @return boolean: {@code true} if User has been logged out. {@code false} if no logged in user found
+   */
   public boolean logout() {
 
     if ( this.user != null ) {
@@ -271,6 +229,10 @@ public class AudioBox extends Observable {
   }
 
 
+  /**
+   * Gets current {@link IConfiguration} related to this instance
+   * @return current {@link IConfiguration}
+   */
   public IConfiguration getConfiguration(){
     return this.configuration;
   }
@@ -280,15 +242,15 @@ public class AudioBox extends Observable {
 
   /**
    * Connector is the AudioBox http request wrapper.
-   *
+   * 
    * <p>
-   *
-   * Every HTTP request to AudioBox.fm is done through this object and
-   * responses are handled from {@link Model} objects.
-   *
+   * This class intantiates a {@link IConnectionMethod} used for
+   * invoking AudioBox.fm server through HTTP requests
+   * </p>
    * <p>
-   *
-   * Actually the only configurable parameter is the timeout through the {@link Connector#setTimeout(long)}.
+   * Note: you can use your own {@code IConnection} class
+   * using {@link IFactory#addConnector(Connectors, IConnector)} method
+   * </p>
    */
   public class Connector implements Serializable, IConnector {
 
@@ -313,7 +275,7 @@ public class AudioBox extends Observable {
 
 
     /** Default constructor builds http connector */
-    private Connector(IConfiguration.Connectors server) {
+    protected Connector(IConfiguration.Connectors server) {
 
       log.debug("New Connector is going to be instantiated, server: " + server.toString() );
 
@@ -330,19 +292,11 @@ public class AudioBox extends Observable {
     }
 
 
-    /**
-     * This method is used to close all connections and reinstantiate the HttpClient.
-     */
-    @Override
     public void abort() {
       this.destroy();
       buildClient();
     }
 
-    /**
-     * This method is used to destroy all connections
-     */
-    @Override
     public void destroy() {
       log.warn("All older requests will be aborted");
       this.mCm.shutdown();
@@ -361,17 +315,9 @@ public class AudioBox extends Observable {
     }
 
 
-    /**
-     * Returns the requests timeout limit.
-     *
-     * @return timeout limit
-     */
     public int getTimeout() {
       return HttpConnectionParams.getConnectionTimeout( mClient.getParams() );
     }
-
-
-
 
 
     /**
@@ -385,7 +331,7 @@ public class AudioBox extends Observable {
      *
      * @return the HttpRequestBase
      */
-    public HttpRequestBase createConnectionMethod(String httpVerb, String path, String action, ContentFormat format, List<NameValuePair> params) {
+    private HttpRequestBase createConnectionMethod(String httpVerb, String path, String action, ContentFormat format, List<NameValuePair> params) {
 
       if ( httpVerb == null ) {
         httpVerb = IConnectionMethod.METHOD_GET;
@@ -425,18 +371,15 @@ public class AudioBox extends Observable {
 
 
 
-    @Override
     public IConnectionMethod get(IEntity destEntity, String action, List<NameValuePair> params) {
      return get(destEntity, destEntity.getApiPath(), action, params);
     }
 
 
-    @Override
     public IConnectionMethod get(IEntity destEntity, String path, String action, List<NameValuePair> params) {
      return get(destEntity, path, action, getConfiguration().getRequestFormat(), params);
     }
 
-    @Override
     public IConnectionMethod get(IEntity destEntity, String path, String action, ContentFormat format, List<NameValuePair> params) {
       IConnectionMethod method = getConnectionMethod();
 
@@ -451,17 +394,14 @@ public class AudioBox extends Observable {
 
 
 
-    @Override
     public IConnectionMethod put(IEntity destEntity, String action) {
       return put(destEntity, destEntity.getApiPath(), action, getConfiguration().getRequestFormat() );
     }
 
-    @Override
     public IConnectionMethod put(IEntity destEntity, String path, String action) {
       return put(destEntity, path, action, getConfiguration().getRequestFormat() );
     }
 
-    @Override
     public IConnectionMethod put(IEntity destEntity, String path, String action, ContentFormat format) {
       IConnectionMethod method = getConnectionMethod();
 
@@ -476,17 +416,14 @@ public class AudioBox extends Observable {
 
 
 
-    @Override
     public IConnectionMethod post(IEntity destEntity, String action) {
       return this.post(destEntity, destEntity.getApiPath(), action);
     }
 
-    @Override
     public IConnectionMethod post(IEntity destEntity, String path, String action) {
       return this.post(destEntity, path, action, getConfiguration().getRequestFormat());
     }
 
-    @Override
     public IConnectionMethod post(IEntity destEntity, String path, String action, ContentFormat format) {
       IConnectionMethod method = getConnectionMethod();
 
@@ -500,17 +437,14 @@ public class AudioBox extends Observable {
     }
 
 
-    @Override
     public IConnectionMethod delete(IEntity destEntity, String action, List<NameValuePair> params) {
      return delete(destEntity, destEntity.getApiPath(), action, params);
     }
 
-    @Override
     public IConnectionMethod delete(IEntity destEntity, String path, String action, List<NameValuePair> params) {
      return delete(destEntity, path, action, getConfiguration().getRequestFormat(), params);
     }
 
-    @Override
     public IConnectionMethod delete(IEntity destEntity, String path, String action, ContentFormat format, List<NameValuePair> params) {
       IConnectionMethod method = getConnectionMethod();
 
@@ -523,13 +457,16 @@ public class AudioBox extends Observable {
       return method;
     }
 
+    
+    
+    
     /* --------------- */
     /* Private methods */
     /* --------------- */
 
 
     /**
-     * This method is used to build the HttpClient to use for connections
+     * This method is used to build the HttpClient used for connections
      */
     private void buildClient() {
 
@@ -549,25 +486,14 @@ public class AudioBox extends Observable {
 
       this.mCm.setMaxPerRoute(mAudioBoxRoute, 50);
       
-      // Increase max total connection to 200
-//      ConnManagerParams.setMaxTotalConnections(params, 200);
-
-      // Increase default max connection per route to 20
-//      ConnPerRouteBean connPerRoute = new ConnPerRouteBean(20);
-
-      // Increase max connections for audiobox.fm:443 to 50
       
-//      ConnManagerParams.setMaxConnectionsPerRoute(params, connPerRoute);
-
-
-      /*
-       * This interceptor must be added in order to set the Base64 credentials
-       */
-      this.mClient.addRequestInterceptor(new HttpRequestInterceptor() {
-        public void process( final HttpRequest request,  final HttpContext context) throws HttpException, IOException {
-          log.debug("New request detected");
-        }
-      });
+      if ( log.isDebugEnabled() ) {
+        this.mClient.addRequestInterceptor(new HttpRequestInterceptor() {
+          public void process( final HttpRequest request,  final HttpContext context) throws HttpException, IOException {
+            log.debug("New request detected");
+          }
+        });
+      }
 
 
 
@@ -609,10 +535,14 @@ public class AudioBox extends Observable {
 
 
     /**
-     *
-     * @return
+     * This method creates a {@link IConnectionMethod} class
+     * that will be used for invoking AudioBox.fm servers
+     * <p>
+     * Note: you can use your own {@code IConnectionMethod} class using {@link IConfiguration#setHttpMethodType(Class)} method
+     * </p> 
+     * @return the {@link IConnectionMethod} associated with this {@link AudioBox} class
      */
-    private IConnectionMethod getConnectionMethod(){
+    protected IConnectionMethod getConnectionMethod(){
 
       Class<? extends IConnectionMethod> klass = getConfiguration().getHttpMethodType();
 
@@ -634,14 +564,14 @@ public class AudioBox extends Observable {
     /**
      * Creates the correct url starting from parameters
      *
-     * @param path the partial url to call. Typically this is a Model end point ({@link Model#getEndPoint()})
-     * @param token the token of the Model if any, may be null or empty ({@link Model#getToken()})
-     * @param action the remote action to execute on the model that executes the action (ex. "scrobble")
-     * @param httpVerb the HTTP method to use for the request (ie: GET, PUT, POST and DELETE)
-     *
+     * @param entityPath the partial url to call. Typically this is the {@link IEntity#getApiPath()} 
+     * @param action the {@code namespace} of the {@link IEntity} your are invoking. Typically this is the {@link IEntity#getNamespace()}
+     * @param httpVerb one of {@link IConnectionMethod#METHOD_GET GET} {@link IConnectionMethod#METHOD_POST POST} {@link IConnectionMethod#METHOD_PUT PUT} {@link IConnectionMethod#METHOD_DELETE DELETE}
+     * @param format the {@link ContentFormat} for this request
+     * @param params the query string parameters used for this request. <b>Used in case of {@link IConnectionMethod#METHOD_GET GET} {@link IConnectionMethod#METHOD_DELETE DELETE} only</b>
      * @return the URL string
      */
-    private String buildRequestUrl(String entityPath, String action, String httpVerb, ContentFormat format, List<NameValuePair> params) {
+    protected String buildRequestUrl(String entityPath, String action, String httpVerb, ContentFormat format, List<NameValuePair> params) {
 
       if ( params == null ){
         params = new ArrayList<NameValuePair>();
@@ -667,7 +597,6 @@ public class AudioBox extends Observable {
 
       return url;
     }
-
 
   }
 

@@ -18,7 +18,7 @@ import fm.audiobox.interfaces.IConfiguration.ContentFormat;
 /**
  * This class is an abstract representation of a response content
  */
-public class Response implements Serializable {
+public final class Response implements Serializable {
 
   private static Logger log = LoggerFactory.getLogger(Response.class);
   private static final long serialVersionUID = 1L;
@@ -49,9 +49,10 @@ public class Response implements Serializable {
   private String body;
   
   /**
-   * Contains the {@link AudioBoxException} that is thrown.
+   * Contains the {@link AudioBoxException} that has been thrown.
    */
   private AudioBoxException exception;
+  
   
   public Response(ContentFormat format, int status, InputStream stream){
     super();
@@ -59,6 +60,7 @@ public class Response implements Serializable {
     this.status = status;
     this.stream = stream;
   }
+  
   
   public Response(ContentFormat format, int status, String body){
     this(format, status, new ByteArrayInputStream( body == null ? ("no response body").getBytes() : body.getBytes() ) );
@@ -113,7 +115,7 @@ public class Response implements Serializable {
   
   /**
    * Sets the exception that is thrown
-   * @param exception the {@link AudioBoxException} that is thrown
+   * @param exception the {@link AudioBoxException} that has been thrown
    */
   public void setException(AudioBoxException exception){
     this.exception = exception;

@@ -3,8 +3,16 @@ package fm.audiobox.core.exceptions;
 import java.io.IOException;
 
 import fm.audiobox.interfaces.IConfiguration;
+import fm.audiobox.interfaces.ILoginExceptionHandler;
+import fm.audiobox.interfaces.IServiceExceptionHandler;
 
-
+/**
+ * This is the abstract main Exception class.
+ * 
+ * <p>
+ * {@link LoginException} and {@link SerciceException} extend this class
+ * <p>
+ */
 public abstract class AudioBoxException extends IOException {
 
   private static final long serialVersionUID = 1L;
@@ -56,6 +64,11 @@ public abstract class AudioBoxException extends IOException {
     this.configuration = config;
   }
   
+  /**
+   * Globally throws this exception in order to
+   * invoke {@link ILoginExceptionHandler} or {@link IServiceExceptionHandler}
+   * depending on the type of the exception
+   */
   public abstract void fireGlobally();
   
 }

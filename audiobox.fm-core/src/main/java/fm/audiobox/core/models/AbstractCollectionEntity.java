@@ -1,25 +1,3 @@
-/***************************************************************************
- *   Copyright (C) 2010 iCoreTech research labs                            *
- *   Contributed code from:                                                *
- *   - Valerio Chiodino - keytwo at keytwo dot net                         *
- *   - Fabio Tunno      - fat at fatshotty dot net                         *
- *                                                                         *
- *   This program is free software: you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation, either version 3 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- *   This program is distributed in the hope that it will be useful,       *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
- *   GNU General Public License for more details.                          *
- *                                                                         *
- *   You should have received a copy of the GNU General Public License     *
- *   along with this program. If not, see http://www.gnu.org/licenses/     *
- *                                                                         *
- ***************************************************************************/
-
-
 package fm.audiobox.core.models;
 
 import java.util.ArrayList;
@@ -27,6 +5,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Observable;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
@@ -36,11 +15,25 @@ import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
 
+/**
+ * This class represents a Collection of {@link IEntity}
+ * <p>
+ * It extends {@link Observable} to allow you to add event observer.
+ * <br/>
+ * Actually it is used for collections such as:
+ * <ul>
+ *   <li>{@link Albums}</li>
+ *   <li>{@link Playlists}</li>
+ *   <li>{@link MediaFiles}</li>
+ * </ul>
+ * </p>
+ * @param <E> 
+ */
 @SuppressWarnings("unchecked")
 public abstract class AbstractCollectionEntity<E> extends AbstractEntity implements List<E> {
 
   /**
-   * {@link IEntity} collection. Used to store all {@IEntity} children
+   * {@link IEntity} collection. Used to store all {@link IEntity} children
    */
   private List<IEntity> collection = new ArrayList<IEntity>();
 
@@ -52,6 +45,9 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
 
   /**
    * Empties collection. You may have to call the {@link AbstractCollectionEntity#load} method again
+   * <p>
+   * Note: it fires the {@link Event.States.COLLECTION_CLEARED}
+   * </p>
    */
   public void clear() {
     this.collection.clear();
@@ -60,14 +56,12 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
     this.notifyObservers(event);
   }
 
-  @Override
   public boolean contains(Object entity) {
     return this.collection.contains( entity );
   }
 
 
 
-  @Override
   public E get(int index) {
     return (E)this.collection.get(index);
   }
@@ -88,17 +82,14 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
   }
 
 
-  @Override
   public int indexOf(Object entity) {
     return this.collection.indexOf(entity);
   }
 
-  @Override
   public boolean isEmpty() {
     return this.size() == 0;
   }
 
-  @Override
   public Iterator<E> iterator() {
     return (Iterator<E>)this.collection.iterator();
   }
@@ -110,26 +101,20 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
    * @param entity the {@link IEntity} to search
    * @return int the last index of given {@link IEntity}
    */
-  @Override
+  @Deprecated
   public int lastIndexOf(Object entity) {
     return this.collection.lastIndexOf(entity);
   }
 
-  @Override
   public ListIterator<E> listIterator() {
     return (ListIterator<E>)this.collection.listIterator();
   }
 
-  
-  @Override
   public ListIterator<E> listIterator(int index) {
     return (ListIterator<E>)this.collection.listIterator(index);
   }
 
   
-  
-
-  @Override
   public E remove(int index) {
     IEntity entity = this.collection.get(index);
     this.remove(entity);
@@ -138,9 +123,9 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
 
   
   /**
-   * Removes an {@link IEntity} associated with given token
+   * Removes an {@link IEntity} associated to this collection
    * 
-   * @param token the {@link IEntity} token
+   * @param token the {@link IEntity} token to be removed
    * @return true if everything went right
    */
   public boolean remove(String token){
@@ -150,11 +135,17 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
     return false;
   }
 
-  
-  @Override
+  /**
+   * This method must be override by each {@link AbstractCollectionEntity} class implementation
+   * in order to {@code add} given {@link IEntity} to the collection.
+   * <br/>
+   * This method should invoke the {@link AbstractCollectionEntity#addEntity(IEntity)}
+   * 
+   * @param entity the {@link IEntity} to add
+   * @return {@code true} if everything went ok. {@code false} if not
+   */
   public abstract boolean add(E entity);
   
-  @Override
   public boolean remove(Object entity){
     boolean result = this.collection.remove( entity );
     if ( result ){
@@ -167,10 +158,10 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
   
 
   /**
-   * Adds an {@link IEntity} to collection
+   * Adds an {@link IEntity} to the collection
    * 
    * @param entity the {@link IEntity} to add
-   * @return true if everything's ok
+   * @return {@code true} if everything went ok. {@code false} if not
    */
   protected boolean addEntity(IEntity entity) {
     boolean result = this.collection.add( entity );
@@ -186,28 +177,11 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
   
 
   
-  /**
-   * Executes request populating this class
-   * 
-   * @return a String array containing the response code and the response body ( used in {@link User#getUploadedTracks()}
-   * 
-   * @throws ServiceException
-   * @throws LoginException
-   */
   public IConnectionMethod load(boolean async) throws ServiceException, LoginException {
     return this.load(async, null);
   }
   
   
-  /**
-   * Executes request populating this class.
-   * <b>Note: this method invokes {@link AbstractCollectionEntity#clear()} before executing any request</b>
-   * 
-   * @param responseHandler the {@link IResponseHandler} used as response content parser
-   * @return a String array containing the response code and the response body ( used in {@link User#getUploadedTracks()}
-   * @throws ServiceException
-   * @throws LoginException
-   */
   public IConnectionMethod load(boolean async, IResponseHandler responseHandler) throws ServiceException, LoginException {
     this.clear();
     IConnectionMethod request = getConnector(IConfiguration.Connectors.RAILS).get(this, null, null);
@@ -216,22 +190,18 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
   }
   
   
-  @Override
   public int size() {
     return this.collection.size();
   }
 
-  @Override
   public List<E> subList(int fromIndex, int toIndex) {
     return (List<E>)this.collection.subList(fromIndex, toIndex);
   }
 
-  @Override
   public Object[] toArray() {
     return this.collection.toArray();
   }
 
-  @Override
   public <T> T[] toArray(T[] a) {
     return this.collection.toArray(a);
   }
@@ -239,11 +209,7 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
 
   /**
    * This method is not implemented. Use {@link AbstractCollectionEntity#add(IEntity)} instead.
-   * 
-   * @param index
-   * @param entity
    */
-  @Override
   @Deprecated
   public void add(int index, E entity) {
   }
@@ -251,11 +217,7 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
 
   /**
    * This method is not implemented. Use {@link AbstractCollectionEntity#add(IEntity)} instead.
-   * 
-   * @param index
-   * @param entity
    */
-  @Override
   @Deprecated
   public boolean addAll(Collection<? extends E> c) {
     return false;
@@ -263,11 +225,7 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
 
   /**
    * This method is not implemented. Use {@link AbstractCollectionEntity#add(IEntity)} instead.
-   * 
-   * @param index
-   * @param entity
    */
-  @Override
   @Deprecated
   public boolean addAll(int index, Collection<? extends E> c) {
     return false;
@@ -276,10 +234,7 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
 
   /**
    * This method is not implemented. Use {@link AbstractCollectionEntity#contains(Object)} instead.
-   * 
-   * @param Collection
    */
-  @Override
   @Deprecated
   public boolean containsAll(Collection<?> c) {
     return false;
@@ -287,10 +242,7 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
 
   /**
    * This method is not implemented. Use {@link AbstractCollectionEntity#remove(Object)} instead.
-   * 
-   * @param Collection
    */
-  @Override
   @Deprecated
   public boolean removeAll(Collection<?> c) {
     return false;
@@ -298,10 +250,7 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
 
   /**
    * This method is not implemented.
-   * 
-   * @param Collection
    */
-  @Override
   @Deprecated
   public boolean retainAll(Collection<?> c) {
     return false;
@@ -309,22 +258,20 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
 
   /**
    * This method is not implemented. Use {@link AbstractCollectionEntity#add(Object)} instead.
-   * 
-   * @param Collection
    */
-  @Override
   @Deprecated
   public E set(int index, E element) {
     return null;
   }
 
   /**
-   * Returns the tag name associated with the Entity content in this list
-   * <b>This method is used by parser</b>
-   * @return
+   * Returns the {@link IEntity#getTagName()} of the entity which can be contained in this collection.
+   * <p>
+   *  <b>This method is usually used by the response parser</b>
+   * </p>
+   * @return the {@link IEntity#getTagName()}
    */
   public abstract String getSubTagName();
-  
   
   public String serialize(IConfiguration.ContentFormat format) {
     return this.getNamespace();

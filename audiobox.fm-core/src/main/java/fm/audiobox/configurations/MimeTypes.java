@@ -7,14 +7,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * This is a utility class.
+ * 
+ * <p>
+ * It is used while uploading file in order to check the {@code mimetype} of the file
+ * you are trying to upload.
+ * </p>
+ */
 public final class MimeTypes implements Serializable {
   
   
   private static final long serialVersionUID = 34533700701918745L;
   
   private static Map<String, String[]> mimeTypes = new HashMap<String, String[]>();
-  
-  
   
   static {
     mimeTypes.put( "audio/aac", new String[]{"aac"} );
@@ -39,7 +45,10 @@ public final class MimeTypes implements Serializable {
   
   /**
    * Returns the correct mime type given a file extension
+   * <p>
    * This method can return null if no extensions matched
+   * </p>
+   * 
    * @param ext the extension of the file
    */
   public static String getMime(String ext){
@@ -58,7 +67,8 @@ public final class MimeTypes implements Serializable {
   
   /**
    * This method returns {@code true} if given {@code mime} is
-   * an AudioBox compatible mime
+   * an AudioBox compatible mimetype
+   * 
    * @param mime the MimeType you want to test
    * @return {@code true} if the mime type is correct. {@code false} if not
    */
@@ -69,7 +79,10 @@ public final class MimeTypes implements Serializable {
   
   /**
    * Returns the correct mime type given a file
-   * This method can return null if no extensions matched
+   * <p>
+   * Note: This method can return null if no extensions matched
+   * </p>
+   * 
    * @param file the file you want to test
    */
   public static String getMime(File file){

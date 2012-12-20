@@ -18,6 +18,26 @@ import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
 
+
+/**
+ * This class represents the single {@link IEntity} abstract implementation
+ * <p>
+ * It extends {@link Observable} to allow you to add event observer.
+ * <br/>
+ * Actually it is used for each collection item such as:
+ * <ul>
+ *  <li>{@link User}</li>
+ *  <li>{@link Permissions}</li>
+ *  <li>{@link AccountStats}</li>
+ *  <li>{@link Preferences}</li>
+ *  <li>{@link ExternalTokens}</li>
+ *  <li>{@link Album}</li>
+ *  <li>{@link Playlist}</li>
+ *  <li>{@link MediaFile}</li>
+ *  <li>{@link Error}</li>
+ * </ul> 
+ * </p>
+ */
 public abstract class AbstractEntity extends Observable implements IEntity {
 
   private static Logger log = LoggerFactory.getLogger(AbstractEntity.class);
@@ -25,11 +45,24 @@ public abstract class AbstractEntity extends Observable implements IEntity {
   public static final String TOKEN = "token";
   public static final String TOKEN_SHORT = "tk";
   
-  private IConfiguration configuration; 
+  private IConfiguration configuration;
+  
+  /**
+   * Dynamic properties associated with this instance
+   */
   protected Map<String, Object> properties;
 
+  /**
+   * {@code Token} of this {@link IEntity} instance
+   * <p>
+   *  <b>Note: not all {@link IEntity} has a token</b>
+   * </p>
+   */
   protected String token;
-
+  
+  /**
+   * Parent {@link IEntity} which this instance is linked to
+   */
   private IEntity parent;
 
   public AbstractEntity(IConfiguration config) {
@@ -40,7 +73,6 @@ public abstract class AbstractEntity extends Observable implements IEntity {
     }
   }
 
-  @Override
   public String getToken() {
     return this.token;
   }
@@ -67,12 +99,20 @@ public abstract class AbstractEntity extends Observable implements IEntity {
     return this.properties.get(key);
   }
 
+  
+  /**
+   * Sets the token associated with this {@link IEntity} class.
+   * <p>
+   *  This method should be used by the response parser only
+   * </p>
+   * @param tk the {@code token} of the class
+   */
   public final void setToken(String tk) {
     this.token = tk;
   }
 
   /**
-   * Returns the default {@link IConnector} associated with this {@link IEntity}
+   * Returns the default {@link IConnector} associated with this {@link IConfiguration}
    *
    * @return the {@link IConnector}
    */
@@ -81,8 +121,10 @@ public abstract class AbstractEntity extends Observable implements IEntity {
   }
 
   /**
-   * Returns the {@link IConnector} associated with this {@link IEntity}
+   * Returns the specified {@link IConnector} associated with this {@link IConfiguration}
+   * by given {@link Connectors}
    *
+   * @param the specified {@link Connectors connector}
    * @return the {@link IConnector}
    */
   protected IConnector getConnector(IConfiguration.Connectors server) {
@@ -99,19 +141,45 @@ public abstract class AbstractEntity extends Observable implements IEntity {
   }
 
   /**
-   * Copies data from an {@link IEntity}
-   *
-   * @param entity
-   *          the {@link IEntity} where copy data from
+   * Copies data from an {@link IEntity} to another one
+   * <p>
+   *  <b>Note: this method is not implemented yet</b>
+   * </p>
+   * @param entity the {@link IEntity} where copy data from
    */
+  @Deprecated
   protected abstract void copy(IEntity entity);
   
   
+  /**
+   * This method invokes {@link AbstractEntity#load(boolean, IResponseHandler)}
+   * passing {@code false} as {@code async} switch
+   */
   public abstract IConnectionMethod load(boolean async)  throws ServiceException, LoginException;
+  
+  /**
+   * Executes request populating this class.
+   * 
+   * <p>
+   * You can use the returned {@link IConnectionMethod} for adding observers.
+   * <p>
+   * Note: this method invokes the {@link AbstractCollectionEntity#clear()} before performing the request
+   * </p>
+   * <p>
+   *  <b>Valid {@link IConnectionMethod} is returned if {@code async} is passed to {@code true}</b>
+   * </p>
+   * 
+   * @param async enables or disable asynchronized request
+   * @param responseHandler the {@link IResponseHandler} as custom interceptor for this response
+   * 
+   * @return {@link IConnectionMethod} instance.
+   * 
+   * @throws ServiceException if any connection error occurrs
+   * @throws LoginException if any login error occurrs
+   */
   public abstract IConnectionMethod load(boolean async, IResponseHandler responseHandler)  throws ServiceException, LoginException;
   
   
-  @Override
   public void startLoading() {
     this.setChanged();
     Event event = new Event(this);
@@ -119,7 +187,6 @@ public abstract class AbstractEntity extends Observable implements IEntity {
     this.notifyObservers(event);
   }
 
-  @Override
   public void endLoading() {
     this.setChanged();
     Event event = new Event(this);
@@ -128,12 +195,25 @@ public abstract class AbstractEntity extends Observable implements IEntity {
   }
   
   
+  /**
+   * Returns a {@link List<NameValuePair>} representing the parameters used
+   * as query string associated with this {@link IEntity}
+   * 
+   * @param full this {@link IEntity} will be fully serialized if {code full} is {@code true}
+   * @return {@link List<NameValuePair>} representing the parameters
+   */
+  protected abstract List<NameValuePair> toQueryParameters(boolean full);
   
-  protected abstract List<NameValuePair> toQueryParameters(boolean all);
   
+  /**
+   * Serialization of the collection depending to given {@link ContentFormat}
+   * @param format the {@link ContentFormat} used for serialization
+   * @return the String representation
+   */
   public String serialize(IConfiguration.ContentFormat format) {
     return this.getNamespace();
   }
+  
   
   public String toString() {
     StringBuffer buf = new StringBuffer();
