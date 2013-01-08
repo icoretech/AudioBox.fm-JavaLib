@@ -33,20 +33,19 @@ import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 
 /**
  * This interface describes how a cache manager should behave.
- *
- * @author Fabio Tunno
  */
 public interface ICacheManager extends Serializable {
 
   
   /**
    * Sets the current configuration environment
+   * 
    * @param config the {@link IConfiguration current configuration}
    */
   public void setConfiguration(IConfiguration config);
   
   /**
-   * This method must return the content of the original response
+   * Returns the content of the original {@link Response} object
    * 
    * @param destEntity the {@link IEntity} to be populated
    * @param ecode the String representing the {@code unique indentify} of the cache data
@@ -55,7 +54,7 @@ public interface ICacheManager extends Serializable {
   public Response getResponse(IEntity destEntity, String ecode);
   
   /**
-   * This method must save the response content represented by {@link InputStream}
+   * This method saves the response content represented by {@link InputStream}
    * 
    * @param destEntity the unique {@link IEntity} to store
    * @param ecode the unique string linked to the {@link IEntity destEntity}
@@ -65,7 +64,7 @@ public interface ICacheManager extends Serializable {
   
   
   /**
-   * This method must return the {@code unique identify} used while invoking server
+   * This method returns the {@code unique identify} used while invoking server
    * 
    * @param destEntity the {@link IEntity}
    * @param url the request url
@@ -74,8 +73,8 @@ public interface ICacheManager extends Serializable {
   public String setup(IEntity destEntity, String url, IConnectionMethod request);
   
   /**
-   * This method must clear the whole cache
-   * @throws IOException
+   * This method clears the whole cache
+   * @throws IOException if any error occurs
    */
   public void clear() throws IOException;
     

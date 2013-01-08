@@ -40,19 +40,7 @@ import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
 
 /**
- * The JSON response looks like this:
- *
- * <pre>
- * @code
- *  {
- *    artist: 'Artist',
- *    album: 'Album',
- *    artwork: 'http://assets.development.audiobox.fm/a/l.jpg'
- *  }
- * @endcode
- * </pre>
- *
- * @version 0.0.1
+ * This class represents the {@code Album} implementation
  */
 public class Album extends AbstractEntity implements Serializable {
 
@@ -94,44 +82,65 @@ public class Album extends AbstractEntity implements Serializable {
     super(config);
   }
 
-  @Override
   public String getNamespace() {
     return NAMESPACE;
   }
 
-  @Override
   public String getTagName() {
     return TAGNAME;
   }
 
+  /**
+   * @return the {@code artist} name
+   */
   public String getArtist() {
     return artist;
   }
 
+  
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setArtist(String artist) {
     this.artist = artist;
   }
 
+  /**
+   * @return the {@code album} name
+   */
   public String getAlbum() {
     return album;
   }
 
+  
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setAlbum(String album) {
     this.album = album;
   }
 
   
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setArtwork(String artwork){
     this.artwork = artwork;
   }
   
+  /**
+   * @return the {@code artwork} associated with this album
+   */
   public String getArtwork(){
     return this.artwork;
   }
   
 
   public Method getSetterMethod(String tagName) {
-    if ( setterMethods.containsKey( tagName) ) {
+    if ( setterMethods.containsKey( tagName ) ) {
       return setterMethods.get( tagName );
     }
     return null;
@@ -139,10 +148,10 @@ public class Album extends AbstractEntity implements Serializable {
   
   
   /**
-   * Returns a {@link MediaFiles} instance ready to be populated through
-   * {@link MediaFiles#load()} method
-   *
-   * @return a {@link MediaFiles} instance
+   * @return a {@link MediaFiles} related to this almbums
+   * <p>
+   *  <b>Note: each {@link MediaFile} contains {@code token} only</b>
+   * </p>
    */
   public MediaFiles getMediaFiles() {
     if (this.mediafiles == null) {
@@ -154,8 +163,7 @@ public class Album extends AbstractEntity implements Serializable {
   
   
   /**
-   * Sets the {@link MediaFiles} associated with this Album
-   * @param {@link MediaFiles mfs} associated with this Album
+   * This method is used by response parser
    */
   @Deprecated
   public void setMediaFiles(MediaFiles mfs) {
@@ -163,22 +171,18 @@ public class Album extends AbstractEntity implements Serializable {
   }
   
 
-  @Override
   protected void copy(IEntity entity) {
     log.warn("Not implemented yet");
   }
   
-  @Override
   public String getApiPath() {
     return this.getParent().getApiPath() + IConnector.URI_SEPARATOR + this.getToken();
   }
 
-  @Override
   public IConnectionMethod load(boolean async) throws ServiceException, LoginException {
-    return null;
+    return this.load(async, null);
   }
 
-  @Override
   public IConnectionMethod load(boolean async, IResponseHandler responseHandler) throws ServiceException, LoginException {
     throw new ServiceException("method not supported");
   }

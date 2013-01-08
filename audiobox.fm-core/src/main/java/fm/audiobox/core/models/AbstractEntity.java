@@ -141,7 +141,7 @@ public abstract class AbstractEntity extends Observable implements IEntity {
   }
 
   /**
-   * Copies data from an {@link IEntity} to another one
+   * Copies data from a given {@link IEntity} to the this one
    * <p>
    *  <b>Note: this method is not implemented yet</b>
    * </p>

@@ -19,19 +19,10 @@ import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
 
 /**
- * player: true,
- * local: true,
- * cloud: true,
- * dropbox: true,
- * gdrive: true,
- * skydrive: true,
- * soundcloud: true,
- * youtube: true,
- * box: true,
- * lastfm: true,
- * twitchtv: true,
- * facebook: true,
- * twitter: true
+ * This class identifies all {@code permissions} related to this {@link User} instance.
+ * <p>
+ *  Each flag identifies single permission which user has been enabled to
+ * </p>
  */
 public final class Permissions extends AbstractEntity implements Serializable {
 
@@ -108,217 +99,288 @@ public final class Permissions extends AbstractEntity implements Serializable {
 
 
 
-  @Override
   public String getNamespace() {
     return NAMESPACE;
   }
 
-  @Override
   public String getTagName() {
     return TAGNAME;
   }
 
 
-
-
-
-
+  /**
+   * @return {@code true} when {@link User} is able to use the Cloud Web Player. {@code false} if not
+   */
   public boolean isPlayer() {
     return player;
   }
 
 
 
-
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setPlayer(boolean player) {
     this.player = player;
   }
 
 
-
-
+  /**
+   * @return {@code true} when {@link User} is able to use the AudioBox.fm Desktop drive. {@code false} if not
+   */
   public boolean isLocal() {
     return local;
   }
 
 
 
-
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setLocal(boolean local) {
     this.local = local;
   }
 
 
 
-
+  /**
+   * @return {@code true} when {@link User} is able to use the AudioBox.fm Cloud drive. {@code false} if not
+   */
   public boolean isCloud() {
     return cloud;
   }
 
 
 
-
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setCloud(boolean cloud) {
     this.cloud = cloud;
   }
 
 
 
-
+  /**
+   * @return {@code true} when {@link User} is able to use the Dropbox drive. {@code false} if not
+   */
   public boolean isDropbox() {
     return dropbox;
   }
 
 
 
-
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setDropbox(boolean dropbox) {
     this.dropbox = dropbox;
   }
 
 
 
-
+  /**
+   * @return {@code true} when {@link User} is able to use the GDrive drive. {@code false} if not
+   */
   public boolean isGdrive() {
     return gdrive;
   }
 
 
 
-
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setGdrive(boolean gdrive) {
     this.gdrive = gdrive;
   }
 
 
-
+  /**
+   * @return {@code true} when {@link User} is able to use the MusixMatch feature. {@code false} if not
+   */
   public boolean isMusixmatch() {
     return musixmatch;
   }
 
 
 
-
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setMusixmatch(boolean musixmatch) {
     this.musixmatch = musixmatch;
   }
 
 
-
+  /**
+   * @return {@code true} when {@link User} is able to use the Songkick feature. {@code false} if not
+   */
   public boolean isSongkick() {
     return this.songkick;
   }
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setSongkick(boolean songkick) {
     this.songkick = songkick;
   }
 
 
+  /**
+   * @return {@code true} when {@link User} is able to use the Skydrive drive. {@code false} if not
+   */
   public boolean isSkydrive() {
     return skydrive;
   }
 
 
 
-
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setSkydrive(boolean skydrive) {
     this.skydrive = skydrive;
   }
 
 
 
-
+  /**
+   * @return {@code true} when {@link User} is able to use the Soundcloud drive. {@code false} if not
+   */
   public boolean isSoundcloud() {
     return soundcloud;
   }
 
 
 
-
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setSoundcloud(boolean soundcloud) {
     this.soundcloud = soundcloud;
   }
 
 
 
-
+  /**
+   * @return {@code true} when {@link User} is able to use the Youtube drive. {@code false} if not
+   */
   public boolean isYoutube() {
     return youtube;
   }
 
 
 
-
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setYoutube(boolean youtube) {
     this.youtube = youtube;
   }
 
 
 
-
+  /**
+   * @return {@code true} when {@link User} is able to use the Box.net drive. {@code false} if not
+   */
   public boolean isBox() {
     return box;
   }
 
 
 
-
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setBox(boolean box) {
     this.box = box;
   }
 
 
 
-
+  /**
+   * @return {@code true} when {@link User} is able to use the Last.fm feature. {@code false} if not
+   */
   public boolean isLastfm() {
     return lastfm;
   }
 
 
 
-
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setLastfm(boolean lastfm) {
     this.lastfm = lastfm;
   }
 
 
 
-
+  /**
+   * @return {@code true} when {@link User} is able to use the TwitchTv feature. {@code false} if not
+   */
   public boolean isTwitchtv() {
     return twitchtv;
   }
 
 
 
-
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setTwitchtv(boolean twitchtv) {
     this.twitchtv = twitchtv;
   }
 
 
 
-
+  /**
+   * @return {@code true} when {@link User} is able to use the Facebook feature. {@code false} if not
+   */
   public boolean isFacebook() {
     return facebook;
   }
 
 
 
-
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setFacebook(boolean facebook) {
     this.facebook = facebook;
   }
 
 
 
-
+  /**
+   * @return {@code true} when {@link User} is able to use the Twitter feature. {@code false} if not
+   */
   public boolean isTwitter() {
     return twitter;
   }
 
 
 
-
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setTwitter(boolean twitter) {
     this.twitter = twitter;
   }
@@ -334,23 +396,19 @@ public final class Permissions extends AbstractEntity implements Serializable {
 
 
 
-  @Override
   public String getApiPath() {
     return null;
   }
 
-  @Override
   protected void copy(IEntity entity) { }
 
 
-  @Override
   public IConnectionMethod load(boolean sync) throws ServiceException, LoginException {
     return this.load(false, null);
   }
   
   
   
-  @Override
   public IConnectionMethod load(boolean sync, IResponseHandler responseHandler) throws ServiceException, LoginException {
     throw new ServiceException("method not supported");
   }

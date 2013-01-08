@@ -45,26 +45,10 @@ import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
 
 /**
- * Playlist class is a {@link IEntity} specialization for playlists XML
- * elements.
- *
- * Profile XML looks like this:
- *
- * <pre>
- * @code
- * <playlist>
- *   <token>as89d7h4sa</token>
- *   <name>Music</name>
- *   <position>1</position>
- *   <playlist_type>audio</playlist_type>
- *   <playlist_tracks_count>12312</playlist_tracks_count>
- * </playlist>
- * @endcode
- * </pre>
- * 
- * @author Valerio Chiodino
- * @author Fabio Tunno
- * @version 0.0.1
+ * This class represents the main class of the Playlist and Drive entity.
+ * <p>
+ *  If you instance an arbitrary {@code Playlist} class, it will be identified as {@code Custom playlist} by default
+ * </p>
  */
 public class Playlist extends AbstractEntity implements Serializable {
 
@@ -72,7 +56,6 @@ public class Playlist extends AbstractEntity implements Serializable {
 
   private static Logger log = LoggerFactory.getLogger(Playlist.class);
 
-  /** The XML tag name for the Playlist element */
   public static final String NAMESPACE = Playlists.TAGNAME;
   public static final String TAGNAME = "playlist";
   
@@ -92,7 +75,6 @@ public class Playlist extends AbstractEntity implements Serializable {
   public static final String SYNCABLE = "syncable";
 
   
-  /* Parameters */
   private String name;
   private int position = 0;
   private String type;
@@ -133,11 +115,6 @@ public class Playlist extends AbstractEntity implements Serializable {
 
 
 
-  /**
-   * <p>
-   * Constructor for Playlist.
-   * </p>
-   */
   public Playlist(IConfiguration config) {
     super(config);
     
@@ -145,62 +122,45 @@ public class Playlist extends AbstractEntity implements Serializable {
     this.setSystemName( CUSTOM_SYSTEM_NAME );
   }
   
-  /**
-   * Contructor method
-   * This class can be instantiated always.
-   * We should link the new class to the current {@link AudioBox} instance
-   *
-   * @param config
-   */
+  
   public Playlist(AudioBox abxClient) {
     this( abxClient.getConfiguration() );
   }
   
-  
-  
 
-  @Override
   public String getTagName() {
     return TAGNAME;
   }
 
-  @Override
   public String getNamespace() {
     return NAMESPACE;
   }
 
   /**
-   * Returns the playlist name
-   *
    * @return the playlist name
    */
   public String getName() {
     return name;
   }
 
+  
   /**
-   * Sets the playlists name. Used by the parser
-   *
-   * @param name the playlist name
+   * Sets the playlist name
+   * @param name of the Playlist
    */
-  @Deprecated
   public void setName(String name) {
     this.name = name;
   }
 
   /**
-   * Returns the playlist name
-   *
-   * @return the playlist name
+   * @return the playlist AudioBox.fm system name
    */
   public String getSystemName() {
     return this.system_name;
   }
 
   /**
-   * Sets the playlists name. Used by the parser
-   * 
-   * @param name the playlist name
+   * This method is used by response parser
    */
   @Deprecated
   public void setSystemName(String system_name) {
@@ -226,7 +186,7 @@ public class Playlist extends AbstractEntity implements Serializable {
   
   
   /**
-   * Use this method to know if {@code playlist} is @{value drive} or not
+   * Use this method to know if {@code playlist} is a @{value drive} or not
    * @return boolean
    */
   public boolean isDrive() {
@@ -237,7 +197,9 @@ public class Playlist extends AbstractEntity implements Serializable {
   /**
    * This method deletes entirly content of the
    * {@link Playlists.Types.LocalPlaylist} drive. Use this method carefully
-   * Note: this action will be asynchronously performed by the server
+   * <p>
+   *  Note: this action will be asynchronously performed by the server
+   * </p>
    *
    * @return {@code true} if everything went ok. {@code false} if not
    */
@@ -252,8 +214,6 @@ public class Playlist extends AbstractEntity implements Serializable {
   }
 
   /**
-   * Return the playlist position index
-   *
    * @return the playlist position index
    */
   public int getPosition() {
@@ -261,16 +221,14 @@ public class Playlist extends AbstractEntity implements Serializable {
   }
 
   /**
-   * Sets the playlist position index. Used by the parser
-   *
-   * @param position the playlist position index
+   * This method is used by response parser
    */
+  @Deprecated
   public void setPosition(int position) {
     this.position = position;
   }
 
   /**
-   * Returns the playlist type
    * @return the playlist type
    */
   public String getType() {
@@ -278,19 +236,14 @@ public class Playlist extends AbstractEntity implements Serializable {
   }
 
   /**
-   * Sets the playlist type. Used by the parser.
-   * 
-   * @param playlistType the playlist type
+   * This method is used by response parser
    */
+  @Deprecated
   public void setType(String type) {
-
     this.type = type;
-
   }
 
   /**
-   * Returns the playlist mediafiles count
-   *
    * @return the playlist mediafiles count
    */
   public long getMediaFilesCount() {
@@ -298,58 +251,102 @@ public class Playlist extends AbstractEntity implements Serializable {
   }
 
   /**
-   * Sets the playlist mediafile count. Used by the parser
-   *
-   * @param media_files_count the playlist mediafiles count
+   * This method is used by response parser
    */
+  @Deprecated
   public void setMediaFilesCount(long media_files_count) {
     this.media_files_count = media_files_count;
   }
 
+  
+  /**
+   * @return {@code true} if Playlist has been marked as {@code offline}. {@code false} if not
+   */
   public boolean isOffline() {
     return offline;
   }
 
+  /**
+   * Marks this Playlist as offline
+   * @param boolean
+   */
   public void setOffline(boolean offline) {
     this.offline = offline;
   }
 
+  /**
+   * @return {@code true} if Playlist can be synced. {@code false} or not
+   */
   public boolean isSyncable() {
     return this.syncable;
   }
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setSyncable(boolean syncable) {
     this.syncable = syncable;
   }
 
+  
+  /**
+   * @return {@code true} if Playlist can be embedded on another site. {@code false} or not
+   */
   public boolean isEmbeddable() {
     return embeddable;
   }
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setEmbeddable(boolean embeddable) {
     this.embeddable = embeddable;
   }
 
+  /**
+   * @return {@code true} if Playlist is visible on the Cloud Web Player. {@code false} or not
+   */
   public boolean isVisible() {
     return visible;
   }
 
+  /**
+   * Enables or disables the visibility of this Playlist 
+   * @param boolean
+   */
   public void setVisible(boolean visible) {
     this.visible = visible;
   }
 
+  /**
+   * @return the last update time of this Playlist
+   */
   public String getUpdatedAt() {
     return updated_at;
   }
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setUpdatedAt(String updated_at) {
     this.updated_at = updated_at;
   }
 
+  
+  /**
+   * @return {@code true} if this Playlist is the last accessed playlist on the Cloud Web Player. {@code false} if not
+   */
   public boolean isLastAccessed() {
     return last_accessed;
   }
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setLastAccessed(boolean last_accessed) {
     this.last_accessed = last_accessed;
   }
@@ -369,6 +366,12 @@ public class Playlist extends AbstractEntity implements Serializable {
     return this.mediafiles;
   }
 
+  /**
+   * Returns a {@link Albums} instance ready to be populated through
+   * {@link Albums#load()} method
+   *
+   * @return a {@link Albums} instance
+   */
   public Albums getAlbums() {
     if (this.albums == null) {
       this.albums = (Albums) getConfiguration().getFactory().getEntity( Albums.TAGNAME, getConfiguration());
@@ -385,6 +388,9 @@ public class Playlist extends AbstractEntity implements Serializable {
   }
 
 
+  /**
+   * Copies data from given {@link Playlist} passed as {@link IEntity}
+   */
   protected void copy(IEntity entity) {
 
     Playlist pl = (Playlist) entity;
@@ -393,7 +399,14 @@ public class Playlist extends AbstractEntity implements Serializable {
     this.position = pl.getPosition();
     this.type = pl.getType();
     this.media_files_count = pl.getMediaFilesCount();
-
+    this.updated_at = pl.getUpdatedAt();
+    this.last_accessed = pl.isLastAccessed();
+    this.offline = pl.isOffline();
+    this.embeddable = pl.isEmbeddable();
+    this.visible = pl.isVisible();
+    this.system_name = pl.getSystemName();
+    this.syncable = pl.isSyncable();
+    
     this.setChanged();
     Event event = new Event(this, Event.States.ENTITY_REFRESHED);
     this.notifyObservers(event);
@@ -405,10 +418,10 @@ public class Playlist extends AbstractEntity implements Serializable {
    * 
    * @return {@code true} if everything went ok. {@code false} if not.
    * <br />
-   * Note: playlist should contains no {@code token} set
+   * <b>Playlist must not have any {@code token} set</b>
    * 
-   * @throws ServiceException something went wrong
-   * @throws LoginException Login error occurs
+   * @throws ServiceException if any connection error occurrs
+   * @throws LoginException if any login error occurrs
    */
   public boolean create() throws ServiceException, LoginException {
     return this.create( new ArrayList<MediaFile>() );
@@ -416,15 +429,16 @@ public class Playlist extends AbstractEntity implements Serializable {
   
   /**
    * This method perform a creation of this playlist remotely.
+   * <br />
    * Note: this method also adds media files to this {@code custom} playlist
    * 
    * @param mediaFiles list of mediafiles to be added to this playlist.
    * @return {@code true} if everything went ok. {@code false} if not.
    * <br />
-   * Note: playlist should contains no {@code token} set
+   * <b>Playlist must not have any {@code token} set</b>
    * 
-   * @throws ServiceException something went wrong
-   * @throws LoginException Login error occurs
+   * @throws ServiceException if any connection error occurrs
+   * @throws LoginException if any login error occurrs
    */
   public boolean create(List<MediaFile> mediaFiles) throws ServiceException, LoginException {
     
@@ -452,12 +466,10 @@ public class Playlist extends AbstractEntity implements Serializable {
     return params;
   }
 
-  @Override
   public IConnectionMethod load(boolean async) throws ServiceException, LoginException {
     return this.load(false, null);
   }
 
-  @Override
   public IConnectionMethod load(boolean async, IResponseHandler responseHandler) throws ServiceException, LoginException {
     IConnectionMethod request = getConnector(IConfiguration.Connectors.RAILS).get(this, null, null);
     request.send(async, null, responseHandler);

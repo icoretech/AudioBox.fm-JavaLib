@@ -51,51 +51,7 @@ import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
 
 /**
- * File is the main subject of the scope of these libraries.
- *
- * <p>
- *
- * Once browsed till arriving to a File, many operations can be done with it.
- *
- * <p>
- *
- * The JSON response looks like this:
- *
- * <pre>
- * @code
- *  { type: 'AudioFile',
- *    token: 'ce4c51285e3e6a087434a0',
- *    artist: 'Artist',
- *    album: 'Album',
- *    genre: 'Genre',
- *    year: 2012,
- *    title: 'Title',
- *    len_str: '5:05',
- *    len_int: 305,
- *    position: 6,
- *    plays: 0,
- *    filename: '{token}.mp3',
- *    loved: false,
- *    disc: 1,
- *    mime: 'audio/mpeg',
- *    size: 7309853,
- *    md5: 'a6e89bd8a081f0736cf89961d66884d4',
- *    video_bitrate: null,
- *    video_codec: null,
- *    video_resolution: null,
- *    video_fps: null,
- *    video_aspect: null,
- *    video_container: null,
- *    audio_bitrate: '192',
- *    audio_codec: null,
- *    audio_sample_rate: '44100',
- *    artworks: 'http://assets.development.audiobox.fm/a/l.jpg'
- *  }
- * @endcode
- * </pre>
- *
- * @author Lucio Regina
- * @version 0.0.1
+ * This class represents the main class of the MediaFile entity.
  */
 public class MediaFile extends AbstractEntity implements Serializable {
 
@@ -171,10 +127,17 @@ public class MediaFile extends AbstractEntity implements Serializable {
   private int plays;
   
 
+  /**
+   * Use to invoke the correct remote action
+   */
   private enum Actions {
     stream, upload, local, download
   }
+  
 
+  /**
+   * This is a public enum for identifing all sources of the MediaFile 
+   */
   public static enum Source {
     local, cloud, dropbox, youtube, soundcloud, gdrive, skydrive
   }
@@ -227,138 +190,243 @@ public class MediaFile extends AbstractEntity implements Serializable {
   }
 
   /**
-   * Contructor method
    * This class can be instantiated always.
-   * We should link the new class to the current {@link AudioBox} instance
    *
-   * @param config
+   * @param abxClient the {@link AudioBox} current instance which this MediaFile should be linked to
    */
   public MediaFile(AudioBox abxClient) {
     super(abxClient.getConfiguration());
   }
 
-  @Override
   public String getNamespace() {
     return NAMESPACE;
   }
 
-  @Override
   public String getTagName() {
     return TAGNAME;
   }
 
+  
+  /**
+   * @return the {@code artist} of the MediaFile
+   */
   public String getArtist() {
     return artist;
   }
 
+  /**
+   * Sets the {@code artist} of this media file
+   */
   public void setArtist(String artist) {
     this.artist = artist;
   }
 
+  /**
+   * @return the {@code ablum} of the MediaFile
+   */
   public String getAlbum() {
     return album;
   }
 
+  /**
+   * Sets the {@code album} of this media file
+   */
   public void setAlbum(String album) {
     this.album = album;
   }
 
+  
+  /**
+   * @return the {@code genre} of the MediaFile
+   */
   public String getGenre() {
     return genre;
   }
 
+  /**
+   * Sets the {@code genre} of this media file
+   */
   public void setGenre(String genre) {
     this.genre = genre;
   }
 
+  
+  /**
+   * @return the {@code filename} of the MediaFile
+   */
   public String getFilename() {
     return this.filename;
   }
 
+  /**
+   * Sets the {@code filename} of this media file
+   * <br/>
+   * <b>This is method should be used for uploading media file</b>
+   */
   public void setFilename(String filename) {
     this.filename = filename;
   }
 
+  
+  /**
+   * @return the {@code release year} of the MediaFile
+   */
   public int getReleaseYear() {
     return this.release_year;
   }
 
+  /**
+   * Sets the {@code release year} of this media file
+   */
   public void setReleaseYear(int year) {
     this.release_year = year;
   }
 
+  
+  /**
+   * @return the {@code true} if {@link User} has marked this MediaFile as {@code favorite}
+   */
   public boolean isLoved() {
     return this.loved;
   }
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setLoved(boolean loved) {
     this.loved = loved;
   }
 
+  
+  /**
+   * @return the {@code title} of the MediaFile
+   */
   public String getTitle() {
     return title;
   }
 
+  /**
+   * Sets the {@code title} of this media file
+   */
   public void setTitle(String title) {
     this.title = title;
   }
 
+  
+  /**
+   * @return the String representation of the {@code length} of the MediaFile
+   */
   public String getLenStr() {
     return len_str;
   }
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setLenStr(String len_str) {
     this.len_str = len_str;
   }
 
+  
+  /**
+   * @return the Integer of the {@code length} in seconds of the MediaFile 
+   */
   public int getLenInt() {
     return this.len_int;
   }
 
+  /**
+   * Sets the {@code length} in seconds of this media file
+   */
   public void setLenInt(int len_int) {
     this.len_int = len_int;
   }
 
+  
+  /**
+   * @return the {@code track number} of the MediaFile
+   */
   public int getPosition() {
     return position;
   }
 
+  /**
+   * Sets the {@code track number} of this media file
+   */
+  @Deprecated
   public void setPosition(int position) {
     this.position = position;
   }
 
+  
+  /**
+   * @return the {@code size} in bytes of the MediaFile
+   */
   public long getSize() {
     return this.size;
   }
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setSize(long size) {
     this.size = size;
   }
 
+  
+  /**
+   * @return the {@code play count} of the MediaFile
+   */
   public int getPlays() {
     return plays;
   }
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setPlays(int plays) {
     this.plays = plays;
   }
 
+  
+  /**
+   * @return the {@code disc number} of the MediaFile
+   */
   public int getDiscNumber() {
     return disc_number;
   }
 
+  /**
+   * Sets the {@code disc number} of this media file
+   */
   public void setDiscNumber(int disc) {
     this.disc_number = disc;
   }
 
+  
+  /**
+   * @return {@link MediaFiles.Type} based on the MediaFile
+   */
   public Type getType() {
     return type;
   }
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setType(Type t) {
     this.type = t;
   }
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setType(String type) {
 
     if (Type.AudioFile.toString().equals(type)) {
@@ -368,125 +436,225 @@ public class MediaFile extends AbstractEntity implements Serializable {
     }
   }
 
+  
+  /**
+   * @return the String representation of the {@link MediaFile.Source} of the MediaFile
+   */
   public String getSource() {
     return this.source;
   }
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setSource(String s) {
     this.source = s;
   }
 
+  /**
+   * @return the {@code remote file path} of the MediaFile
+   */
   public String getRemotePath() {
     return remote_path;
   }
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setRemotePath(String remotePath) {
     this.remote_path = remotePath;
   }
 
+  
+  /**
+   * @return the {@code unique token} of the MediaFile used for sharing information
+   */
   public String getShareToken() {
     return share_token;
   }
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setShareToken(String shareToken) {
     this.share_token = shareToken;
   }
 
 
+  /**
+   * @return the {@code mime type} of the MediaFile
+   */
   public String getMime() {
     return mime;
   }
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setMime(String mime) {
     this.mime = mime;
   }
 
+  /**
+   * @return the {@code audio sample rate} of the MediaFile
+   */
   public String getAudioSampleRate() {
     return audio_sample_rate;
   }
 
+  /**
+   * Sets the {@code sample rate} of this media file
+   */
   public void setAudioSampleRate(String audioSampleRate) {
     this.audio_sample_rate = audioSampleRate;
   }
 
+  
+  /**
+   * @return the {@code audio bit rate} of the MediaFile
+   */
   public String getAudioBitrate() {
     return audio_bitrate;
   }
 
+  /**
+   * Sets the {@code bit rate} of this media file
+   */
   public void setAudioBitrate(String audioBitRate) {
     this.audio_bitrate = audioBitRate;
   }
 
+  
+  /**
+   * @return the {@code unique hash} of the MediaFile
+   */
   public String getHash() {
     return this.hash;
   }
 
+  /**
+   * Sets the {@code hash} of this media file
+   * <br/>
+   * <b>This method is used for uploading media file</b>
+   */
   public void setHash(String hash) {
     this.hash = hash;
   }
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setArtwork(String artwork) {
     this.artwork = artwork;
   }
 
+  
+  /**
+   * @return the {@code artwork url} of the MediaFile
+   */
   public String getArtwork() {
     return this.artwork;
   }
   
-  
-
+  /**
+   * @return the {@code video bit rate} of the MediaFile
+   */
   public String getVideoBitrate() {
     return video_bitrate;
   }
 
+  /**
+   * Sets the {@code bit rate} of this media file
+   */
   public void setVideoBitrate(String video_bitrate) {
     this.video_bitrate = video_bitrate;
   }
 
+  /**
+   * @return the {@code video codec} of the MediaFile
+   */
   public String getVideoCodec() {
     return video_codec;
   }
 
+  /**
+   * Sets the {@code codec} of this media file
+   */
   public void setVideoCodec(String video_codec) {
     this.video_codec = video_codec;
   }
 
+  /**
+   * @return the {@code video resolution} of the MediaFile
+   */
   public String getVideoResolution() {
     return video_resolution;
   }
 
+  /**
+   * Sets the {@code resolution} of this media file
+   */
   public void setVideoResolution(String video_resolution) {
     this.video_resolution = video_resolution;
   }
 
+  /**
+   * @return the {@code video fps} of the MediaFile
+   */
   public String getVideoFps() {
     return video_fps;
   }
 
+  /**
+   * Sets the {@code fps} of this media file
+   */
   public void setVideoFps(String video_fps) {
     this.video_fps = video_fps;
   }
 
+  /**
+   * @return the {@code video aspect} of the MediaFile
+   */
   public String getVideoAspect() {
     return video_aspect;
   }
 
+  /**
+   * Sets the {@code aspect} of this media file
+   */
   public void setVideoAspect(String video_aspect) {
     this.video_aspect = video_aspect;
   }
 
+  /**
+   * @return the {@code video container} of the MediaFile
+   */
   public String getVideoContainer() {
     return video_container;
   }
 
+  /**
+   * Sets the {@code container} of this media file
+   */
   public void setVideoContainer(String video_container) {
     this.video_container = video_container;
   }
 
+  /**
+   * @return the {@code audio codec} of the MediaFile
+   */
   public String getAudioCodec() {
     return audio_codec;
   }
 
+  /**
+   * Sets the {@code codec} of this media file
+   */
   public void setAudioCodec(String audio_codec) {
     this.audio_codec = audio_codec;
   }
@@ -498,15 +666,25 @@ public class MediaFile extends AbstractEntity implements Serializable {
     return null;
   }
 
-  @Override
+
   protected void copy(IEntity entity) {
     log.warn("Not implemented yet");
   }
 
+  
+  /**
+   * @return the last part of the url for the stream
+   */
   public String getStreamUrl() {
     return IConnector.URI_SEPARATOR + Actions.stream + IConnector.URI_SEPARATOR + this.getFilename();
   }
 
+  /**
+   * @return the full string representing the stream url containing also {@code protocol}, {@code domain} and {@code port}
+   * <p>
+   * NOTE: this method doesn't return the authentication method
+   * </p>
+   */
   public String computeStreamUrl() {
     String path = IConnector.URI_SEPARATOR.concat(Actions.stream.toString());
     String action = this.getFilename();
@@ -515,24 +693,30 @@ public class MediaFile extends AbstractEntity implements Serializable {
     return request.getHttpMethod().getURI().toString();
   }
 
-  @Override
   public String getApiPath() {
     return this.getParent().getApiPath() + IConnector.URI_SEPARATOR + this.getToken();
   }
 
-  @Override
   public IConnectionMethod load(boolean async) throws ServiceException, LoginException {
     return this.load(false, null);
   }
 
-  @Override
   public IConnectionMethod load(boolean async, IResponseHandler responseHandler) throws ServiceException, LoginException {
     IConnectionMethod request = getConnector(IConfiguration.Connectors.RAILS).get(this, IConnector.URI_SEPARATOR + MediaFiles.NAMESPACE, this.getToken(), null);
     request.send(async, null, responseHandler);
     return request;
   }
 
-  // DELETE /api/v1/media_files/destroy_multiple.json?tokens[]=
+
+  /**
+   * Complete destroy MediaFile from AudioBox.fm
+   * <p>
+   *  <b>This method cannot be reverted</b>
+   * </p>
+   * @return {@code true} if everything went ok. {@code false} if not.
+   * @throws ServiceException if any connection error occurrs
+   * @throws LoginException if any login error occurrs
+   */
   public boolean destroy() throws ServiceException, LoginException {
 
     if (this.getParent() == null) {
@@ -558,7 +742,13 @@ public class MediaFile extends AbstractEntity implements Serializable {
     return response.isOK();
   }
 
-  // PUT /api/v1/media_files/:token.json
+  /**
+   * Updates current {@link MediaFile} information
+   * 
+   * @return {@code true} if everything went ok. {@code false} if not
+   * @throws ServiceException if any connection error occurrs
+   * @throws LoginException if any login error occurrs
+   */
   public boolean update() throws ServiceException, LoginException {
     String namespace = IConnector.URI_SEPARATOR + MediaFiles.NAMESPACE;
     String action = this.getToken();
@@ -569,10 +759,24 @@ public class MediaFile extends AbstractEntity implements Serializable {
     return response.isOK();
   }
 
+  /**
+   * See {@link MediaFile#upload(boolean, UploadHandler, boolean)}
+   */
   public IConnectionMethod upload(boolean async, UploadHandler uploadHandler) throws ServiceException, LoginException {
     return this.upload(async, uploadHandler, false);
   }
 
+  
+  /**
+   * Uploads media file to {@code AudioBox.fm Cloud} drive
+   * 
+   * @param async when {@code true} the upload request will be processed asynchronously
+   * @param uploadHandler the {@link UploadHandler} used to upload file
+   * @param customFields when {@code true} it will upload also {@code title artist album ...} fields
+   * @return the {@link IConnectionMethod} instance used for this upload
+   * @throws ServiceException if any connection error occurrs
+   * @throws LoginException if any login error occurrs
+   */
   public IConnectionMethod upload(boolean async, UploadHandler uploadHandler, boolean customFields) throws ServiceException, LoginException {
     String path = IConnector.URI_SEPARATOR.concat(Actions.upload.toString());
 
@@ -580,7 +784,7 @@ public class MediaFile extends AbstractEntity implements Serializable {
 
     String mime = MimeTypes.getMime(uploadHandler.getFile());
     if (mime == null) {
-      throw new ServiceException("mime type error: file is not supported by AudioBox2");
+      throw new ServiceException("mime type error: file is not supported by AudioBox.fm");
     }
 
     entity.addPart("files[]", uploadHandler);
@@ -605,30 +809,30 @@ public class MediaFile extends AbstractEntity implements Serializable {
   }
 
   /**
-   * Downloads this current {@link MediaFile} file and store it into given
-   * {@link File} file
-   *
-   * @param file
-   *          which store media file into
-   *
-   * @throws ServiceException
-   *           generic error
-   * @throws LoginException
-   *           generic LoginException
+   * See {@link MediaFile#download(DownloadHandler)}
    */
   public void download(final File file) throws ServiceException, LoginException {
     if (file != null) {
 
-      download(file, new DownloadHandler(file, IConnector.DEFAULT_CHUNK));
+      download(new DownloadHandler(file, IConnector.DEFAULT_CHUNK));
 
     } else {
       throw new ServiceException("No file found for downloading media");
     }
   }
 
-  public IConnectionMethod download(final File file, DownloadHandler downloadHandler) throws ServiceException, LoginException {
+  
+  /**
+   * Downloads current {@link MediaFile} into {@code File} specified in the given {@link DownloadHandler} parameter
+   *  
+   * @param downloadHandler the {@link DownloadHandler} used for downloading the file
+   * @return the {@link IConnectionMethod} used for this request
+   * @throws ServiceException if any connection error occurrs
+   * @throws LoginException if any login error occurrs
+   */
+  public IConnectionMethod download(DownloadHandler downloadHandler) throws ServiceException, LoginException {
 
-    if (file != null) {
+    if (downloadHandler != null) {
       // In this case we are using 'path' for the action
       // and 'action' for the filename
       String path = IConnector.URI_SEPARATOR.concat(Actions.download.toString());
@@ -644,9 +848,14 @@ public class MediaFile extends AbstractEntity implements Serializable {
   }
 
   /**
-   * This method makes a POST request for notifying AudioBox.fm this
-   * {@link MediaFile} is a local file which can be used through AudioBox.fm -
-   * PC feauture
+   * This method creates a MediaFile entity on AudioBox.fm Desktop drive.
+   * <p>
+   *  It posts all MediaFile fields such as {@code title artist album ...}
+   * </p>
+   * @param file local File will be used for retrieving information ({@code mimetype, path ...})
+   * @return {@code true} if everything went ok. {@code false} if not.
+   * @throws ServiceException if any connection error occurrs
+   * @throws LoginException if any login error occurrs
    */
   public boolean notifyAsLocal(File file) throws ServiceException, LoginException {
     String path = IConnector.URI_SEPARATOR.concat(Actions.local.toString());
@@ -654,7 +863,12 @@ public class MediaFile extends AbstractEntity implements Serializable {
     
     if ( ! file.exists() ) {
       log.warn("File doesn't exist");
-      return false;
+      throw new ServiceException("File doesn't exist");
+    }
+    
+    String mime = MimeTypes.getMime(file);
+    if (mime == null) {
+      throw new ServiceException("mime type error: file is not supported by AudioBox.fm");
     }
 
     List<NameValuePair> params = this.toQueryParameters( true );

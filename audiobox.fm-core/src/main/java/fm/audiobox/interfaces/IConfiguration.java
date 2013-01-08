@@ -29,10 +29,9 @@ import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 
 /**
- * This interface describes how an implementation of the AudioBox configuration should behave.<br/>
+ * This interface describes how an implementation of the AudioBox configuration should behave.
+ * <br />
  * An implementing class is mainly used to configure every aspect of the library itself.
- * 
- * @author Fabio Tunno
  */
 public interface IConfiguration {
 
@@ -58,6 +57,10 @@ public interface IConfiguration {
     DAEMON
   }
   
+  
+  /**
+   * The log level used by internal logger
+   */
   public static enum LogLevel {
     DEBUG,
     INFO,
@@ -68,7 +71,8 @@ public interface IConfiguration {
   
   /**
    * Sets the default extension for each request
-   * @param requestFormat
+   * 
+   * @param requestFormat the {@link ContentFormat} used by each request
    */
   public void setRequestFormat(ContentFormat requestFormat);
 
@@ -131,9 +135,9 @@ public interface IConfiguration {
    * Sets the version sent to server as "User-Agent" request header.
    * Default should be 1.0.0
    * 
-   * @param major
-   * @param minor
-   * @param revision
+   * @param major the number indentifing the major version
+   * @param minor the number indentifing the minor version
+   * @param revision the number indentifing the revision version
    */
   public void setVersion(int major, int minor, int revision);
 
@@ -195,13 +199,13 @@ public interface IConfiguration {
 
   /**
    * Sets the default handler for {@link LoginException}
-   * @param handler
+   * @param handler the {@link ILoginExceptionHandler} instance
    */
   public void setDefaultLoginExceptionHandler(ILoginExceptionHandler handler);
 
   /**
    * Returns the default handler for {@link LoginException}
-   * @return
+   * @return the {@link ILoginExceptionHandler}
    */
   public ILoginExceptionHandler getDefaultLoginExceptionHandler();
 
@@ -209,25 +213,25 @@ public interface IConfiguration {
 
   /**
    * Sets the default handler for {@link ServiceException}
-   * @param handler
+   * @param handler the {@link IServiceExceptionHandler} instance
    */
   public void setDefaultServiceExceptionHandler(IServiceExceptionHandler handler);
 
   /**
    * Returns the default handler for {@link ServiceException}
-   * @return
+   * @return the {@link IServiceExceptionHandler}
    */
   public IServiceExceptionHandler getDefaultServiceExceptionHandler();
 
   /**
    * Sets the connection method class used for connection
-   * @param method
+   * @param method the {@link IConnectionMethod}
    */
   public void setHttpMethodType(Class<? extends IConnectionMethod> method);
 
   /**
    * Returns the connection method class used for connection
-   * @return
+   * @return the {@link IConnectionMethod}
    */
   public Class<? extends IConnectionMethod> getHttpMethodType();
 

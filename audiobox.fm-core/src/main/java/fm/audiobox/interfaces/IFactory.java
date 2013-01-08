@@ -30,16 +30,17 @@ public interface IFactory {
   public void setEntity(String tagName, Class<? extends IEntity> entityClass);
   
   /**
-   * Returns true if an {@link IEntity} has been set
+   * Returns {@code true} if an {@link IEntity} has been set
    * 
    * @param tagName the {@link IEntity} tag name
    * 
-   * @return true if an {@link IEntity} has been set
+   * @return {@code true} if an {@link IEntity} has been set
    */
   public boolean containsEntity(String tagName);
   
   /**
    * Adds a global {@link IConnector} associated with the {@link AudioBox} instance
+   * <br />
    * <b>NOTE: do not use this method for general purpose</b>
    * 
    * @param server the name of the server. See the configuration file
@@ -49,15 +50,13 @@ public interface IFactory {
  
   
   /**
-   * Returns the general global {@link IConnector connector} associated with the {@link AudioBox} instance
-   * @return the general {@link IConnector connector} 
+   * @return the default {@link IConnector connector} associated with the {@link AudioBox} instance
    */
   public IConnector getConnector();
   
   
   /**
-   * Returns the global {@link IConnector connector} associated with given {@link IConfiguration.Connectors}
-   * @return the general {@link IConnector connector} 
+   * @return the global {@link IConnector connector} associated with given {@link IConfiguration.Connectors}
    */
   public IConnector getConnector(IConfiguration.Connectors server);
   

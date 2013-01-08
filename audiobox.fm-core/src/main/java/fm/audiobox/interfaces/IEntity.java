@@ -13,34 +13,39 @@ public interface IEntity {
 
   /**
    * Returns the namespace path associated with this Entity.
+   * <br />
    * <b>This method is used by connector</b>
-   * @return {@link String} the namespace
+   * @return the namespace
    */
   public String getNamespace();
 
   /**
    * Returns the tag name associated with this Entity
+   * <br />
    * <b>This method is used by parser</b>
-   * @return
+   * @return the entity tag name
    */
   public String getTagName();
 
 
   /**
    * Returns the unique token associated with this entity
-   * @return {@link String} the token
+   * @return the entity token
    */
   public String getToken();
 
 
   /**
    * Returns the method name associated with given {@code tagName}
-   * <p>This method is normally used by parser</p>
-   * <p><b>Do not use this method for general purpose</b></p>
+   * <br />
+   * <b>This method is used by parser</b>
+   * <br />
+   * <b>Do not use this method for general purpose</b>
    *
    * @param tagName the field tagName found while parsing response content
    * @return the method to invoke
    */
+  @Deprecated
   public Method getSetterMethod(String tagName);
 
   
@@ -62,20 +67,17 @@ public interface IEntity {
   public Object getProperty(String key);
 
   /**
-   * Returns the {@link IConfiguration} associated with this {@link IEntity}
    * @return the {@link IConfiguration} associated with this {@link IEntity}
    */
   public IConfiguration getConfiguration();
 
   /**
-   * Returns the path to identify this {@link IEntity}
-   * @return path {@link IEntity}
+   * @return path to identify this {@link IEntity}
    */
   public String getApiPath();
 
   /**
-   * Sets the parent {@link IEntity}
-   * @param parent the {@link IEntity} parent object
+   * @param the {@link IEntity} parent object
    */
   public void setParent(IEntity parent);
 

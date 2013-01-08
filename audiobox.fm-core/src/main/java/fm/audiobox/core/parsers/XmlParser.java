@@ -13,6 +13,13 @@ import org.xml.sax.helpers.DefaultHandler;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IEntity;
 
+
+/**
+ * This is an utility class used for parsing a XML string.
+ * <br />
+ * It also populates the {@link IEntity} associated with this instance
+ */
+@Deprecated
 public class XmlParser extends DefaultHandler {
 
   private static Logger log = LoggerFactory.getLogger(XmlParser.class);
@@ -32,14 +39,12 @@ public class XmlParser extends DefaultHandler {
     this.config = entity.getConfiguration();
   }
 
-  @Override
   public void characters(char[] ch, int start, int length) throws SAXException {
     if (this.bodyContent != null)
       this.bodyContent.append(new String(ch, start, length));
     super.characters(ch, start, length);
   }
 
-  @Override
   public void startDocument() throws SAXException {
     this.stack = new Stack<IEntity>();
     this.stack.push(this.entity);
@@ -49,7 +54,6 @@ public class XmlParser extends DefaultHandler {
     super.startDocument();
   }
 
-  @Override
   public void endDocument() throws SAXException {
     this.stack.clear();
     this.stack = null;
@@ -60,7 +64,6 @@ public class XmlParser extends DefaultHandler {
     super.endDocument();
   }
 
-  @Override
   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
     if ("".equals(localName.trim())) {
@@ -89,7 +92,6 @@ public class XmlParser extends DefaultHandler {
 
   }
 
-  @Override
   public void endElement(String uri, String localName, String qName) throws SAXException {
 
     if ("".equals(localName.trim())) {

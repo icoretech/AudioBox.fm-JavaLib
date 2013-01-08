@@ -14,6 +14,10 @@ import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IEntity;
 
+
+/**
+ * This class is used while downloading a {@link MediaFile}
+ */
 public class DownloadHandler extends DefaultResponseDeserializer {
 
   private static final Logger log = LoggerFactory.getLogger( DownloadHandler.class );
@@ -37,6 +41,12 @@ public class DownloadHandler extends DefaultResponseDeserializer {
   }
   
   
+  /**
+   * This method is used for downloading a binary {@code InputStream} and store it into
+   * a {@link FileOutputStream}
+   * 
+   * @throws ServiceException is any error occurs
+   */
   public void deserializeBinary(InputStream inputStream, IEntity destEntity) throws ServiceException {
     
     if ( this.fileOutput == null ) {
@@ -75,6 +85,19 @@ public class DownloadHandler extends DefaultResponseDeserializer {
   }
   
   
+  /**
+   * This method writes given buffer to {@link FileOutputStream}
+   * <br />
+   * You can overwrite this method in order to simply manage the {@code download} by yourself.
+   * 
+   * @param buffer the {@code byte array} to be write
+   * @param length the {@code number of bytes} will be write
+   * @param destEntity the {@link IEntity} associated with this request
+   * 
+   * @return {@code boolean}. Returning {@code false} <b>it stops the download</b>
+   * 
+   * @throws IOException if any operation error occurs
+   */
   public synchronized boolean write( byte[] buffer, int length, IEntity destEntity ) throws IOException {
     this.fileOutput.write( buffer, 0, length );
     return true;
