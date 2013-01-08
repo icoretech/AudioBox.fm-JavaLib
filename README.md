@@ -1,3 +1,5 @@
+# Start working with eclipse
+
 Prerequisites:
 - an eclipse version (3.5 up)
 - a maven installation (2.2.1 up)
@@ -13,7 +15,7 @@ Now open a terminal and move to the workspace and verify that .metadata folder i
 
     cd /home/john/java/audiobox
     ls -al
-    
+
     [84 ~/java/audiobox]
     [keytwo@kahlan $] > ls -al
 
@@ -23,12 +25,17 @@ Now open a terminal and move to the workspace and verify that .metadata folder i
 It's now time to clone the repos:
 
     git clone git@github.com:audiobox/AudioBox.fm-JavaLib.git .
-    
-    
+
+
 If everything goes fine you have now a copy of the master branch, you are ready to start:
 
 
     mvn install eclipse:eclipse
-    
-    
-Once done, you can now get back to eclipse and import the newly configured maven projects. 
+
+
+Once done, you can now get back to eclipse and import the newly configured maven projects.
+
+
+# Generate JavaDoc site pages
+
+    mvn javadoc:javadoc -Denv=production
