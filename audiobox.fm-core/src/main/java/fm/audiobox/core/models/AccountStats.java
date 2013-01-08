@@ -19,6 +19,14 @@ import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
 
+/**
+ * This class contains all streaming data amount related to all AudioBox.fm drives.
+ * <p>
+ * It is meant for {@code read-only} use only
+ * <p>
+ * Data are related to {@link User}
+ * </p>
+ */
 public final class AccountStats extends AbstractEntity implements Serializable {
   
   private static final long serialVersionUID = 1L;
@@ -103,157 +111,285 @@ public final class AccountStats extends AbstractEntity implements Serializable {
     super(config);
   }
 
-  @Override
   public String getNamespace() {
     return NAMESPACE;
   }
 
-  @Override
   public String getTagName() {
     return TAGNAME;
   }
 
-  
+  /**
+   * @return the streaming data amount <b>in the last month</b> related to <b>all {@code AudioBox.fm} drives</b>
+   */
   public long getDataServedThisMonth() {
     return data_served_this_month;
   }
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setDataServedThisMonth(long data_served_this_month) {
     this.data_served_this_month = data_served_this_month;
   }
+  
 
+  /**
+   * @return the <b>total</b> streaming data amount related to <b>all {@code AudioBox.fm} drives</b>
+   */
   public long getDataServedOverall() {
     return data_served_overall;
   }
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setDataServedOverall(long data_served_overall) {
     this.data_served_overall = data_served_overall;
   }
 
+  /**
+   * @return the <b>total</b> streaming data amount related to <b>{@code AudioBox.fm Cloud}</b> drive
+   */
   public long getCloudDataStoredOverall() {
     return cloud_data_stored_overall;
   }
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setCloudDataStoredOverall(long cloud_data_stored_overall) {
     this.cloud_data_stored_overall = cloud_data_stored_overall;
   }
 
+  /**
+   * @return the streaming data amount <b>in the last month</b> related to <b>{@code AudioBox.fm Cloud}</b> drive
+   */
   public long getCloudDataStoredThisMonth() {
     return cloud_data_stored_this_month;
   }
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setCloudDataStoredThisMonth(long cloud_data_stored_this_month) {
     this.cloud_data_stored_this_month = cloud_data_stored_this_month;
   }
 
+  /**
+   * @return the <b>total</b> streaming data amount related to <b>{@code AudioBox.fm Desktop}</b> drive
+   */
   public long getLocalDataStoredOverall() {
     return local_data_stored_overall;
   }
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setLocalDataStoredOverall(long local_data_stored_overall) {
     this.local_data_stored_overall = local_data_stored_overall;
   }
 
+  /**
+   * @return the streaming data amount <b>in the last month</b> related to <b>{@code AudioBox.fm Desktop}</b> drive
+   */
   public long getLocalDataStoredThisMonth() {
     return local_data_stored_this_month;
   }
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setLocalDataStoredThisMonth(long local_data_stored_this_month) {
     this.local_data_stored_this_month = local_data_stored_this_month;
   }
 
+  /**
+   * @return the <b>total</b> streaming data amount related to <b>{@code Dropbox}</b> drive
+   */
   public long getDropboxDataStoredOverall() {
     return dropbox_data_stored_overall;
   }
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setDropboxDataStoredOverall(long dropbox_data_stored_overall) {
     this.dropbox_data_stored_overall = dropbox_data_stored_overall;
   }
 
+  /**
+   * @return the streaming data amount <b>in the last month</b> related to <b>{@code AudioBox.fm Dropbox}</b> drive
+   */
   public long getDropboxDataStoredThisMonth() {
     return dropbox_data_stored_this_month;
   }
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setDropboxDataStoredThisMonth(long dropbox_data_stored_this_month) {
     this.dropbox_data_stored_this_month = dropbox_data_stored_this_month;
   }
 
+  /**
+   * @return the streaming data amount <b>in the last month</b> related to <b>{@code AudioBox.fm GDrive}</b> drive
+   */
   public long getGdriveDataStoredThisMonth() {
     return gdrive_data_stored_this_month;
   }
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setGdriveDataStoredThisMonth(long gdrive_data_stored_this_month) {
     this.gdrive_data_stored_this_month = gdrive_data_stored_this_month;
   }
 
+  /**
+   * @return the <b>total</b> streaming data amount related to <b>{@code GDrive}</b> drive
+   */
   public long getGdriveDataStoredOverall() {
     return gdrive_data_stored_overall;
   }
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setGdriveDataStoredOverall(long gdrive_data_stored_overall) {
     this.gdrive_data_stored_overall = gdrive_data_stored_overall;
   }
 
+  
+  /**
+   * @return the streaming data amount <b>in the last month</b> related to <b>{@code AudioBox.fm Skydrive}</b> drive
+   */
   public long getSkydriveDataStoredThisMonth() {
     return skydrive_data_stored_this_month;
   }
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setSkydriveDataStoredThisMonth(long skydrive_data_stored_this_month) {
     this.skydrive_data_stored_this_month = skydrive_data_stored_this_month;
   }
 
+  /**
+   * @return the <b>total</b> streaming data amount related to <b>{@code Skydrive}</b> drive
+   */
   public long getSkydriveDataStoredOverall() {
     return skydrive_data_stored_overall;
   }
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setSkydriveDataStoredOverall(long skydrive_data_stored_overall) {
     this.skydrive_data_stored_overall = skydrive_data_stored_overall;
   }
 
+  
+  /**
+   * @return the streaming data amount <b>in the last month</b> related to <b>{@code AudioBox.fm Box.net}</b> drive
+   */
   public long getBoxDataStoredThisMonth() {
     return box_data_stored_this_month;
   }
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setBoxDataStoredThisMonth(long box_data_stored_this_month) {
     this.box_data_stored_this_month = box_data_stored_this_month;
   }
 
+  /**
+   * @return the <b>total</b> streaming data amount related to <b>{@code Box.net}</b> drive
+   */
   public long getBoxDataStoredOverall() {
     return box_data_stored_overall;
   }
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setBoxDataStoredOverall(long box_data_stored_overall) {
     this.box_data_stored_overall = box_data_stored_overall;
   }
 
+  /**
+   * @return the streaming data amount <b>in the last month</b> related to <b>{@code Partners'}</b> drives
+   */
   public long getPartnerDataStoredThisMonth() {
     return partner_data_stored_this_month;
   }
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setPartnerDataStoredThisMonth(long partner_data_stored_this_month) {
     this.partner_data_stored_this_month = partner_data_stored_this_month;
   }
 
+  
+  /**
+   * @return the <b>total</b> streaming data amount related to <b>{@code Partners'}</b> drives
+   */
   public long getPartnerDataStoredOverall() {
     return partner_data_stored_overall;
   }
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setPartnerDataStoredOverall(long partner_data_stored_overall) {
     this.partner_data_stored_overall = partner_data_stored_overall;
   }
   
+  /**
+   * @return the streaming data amount <b>in the last month</b> related to <b>{@code AudioBox.fm Soundcloud}</b> drive
+   */
   public long getSoundcloudDataStoredThisMonth() {
     return soundcloud_data_stored_this_month;
   }
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setSoundcloudDataStoredThisMonth(long soundcloud_data_stored_this_month) {
     this.soundcloud_data_stored_this_month = soundcloud_data_stored_this_month;
   }
   
+  
+  /**
+   * @return the <b>total</b> streaming data amount related to <b>{@code Soundcloud}</b> drive
+   */
   public long getSoundcloudDataStoredOverall() {
     return soundcloud_data_stored_overall;
   }
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setSoundcloudDataStoredOverall(long soundcloud_data_stored_overall) {
     this.soundcloud_data_stored_overall = soundcloud_data_stored_overall;
   }
@@ -267,21 +403,16 @@ public final class AccountStats extends AbstractEntity implements Serializable {
   }
   
   
-  
-  @Override
   public String getApiPath() {
     return null;
   }
 
-  @Override
   protected void copy(IEntity entity) { }
 
-  @Override
   public IConnectionMethod load(boolean sync) throws ServiceException, LoginException {
     return this.load(false, null);
   }
 
-  @Override
   public IConnectionMethod load(boolean sync, IResponseHandler responseHandler) throws ServiceException, LoginException {
     throw new ServiceException("method not supported");
   }

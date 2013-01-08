@@ -14,6 +14,11 @@ import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
 
+/**
+ * This is the default cache manager
+ * <br/>
+ * <b>It stores each data into memory using {@link HashMap}s</b>
+ */
 public class DefaultCacheManager implements ICacheManager {
 
   private static final long serialVersionUID = 1L;

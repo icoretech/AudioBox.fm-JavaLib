@@ -37,6 +37,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fm.audiobox.AudioBox;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IAuthenticationHandle;
@@ -48,101 +49,7 @@ import fm.audiobox.interfaces.IResponseHandler;
 
 
 /**
- * User model is a special {@link Model} just because almost every library browse action is performed through this
- * object.
- *
- * <p>
- *
- * When a login is successfully performed an XML like the following is received and parsed:
- *
- * <pre>
- * @code
- * real_name: null
- * email: 'fat@fatshotty.net'
- * auth_token: 'g88eu2f....'
- * media_files_count: 33
- * playlists_count: 13
- * total_play_count: 3
- * country: null
- * time_zone: 'UTC'
- * accepted_extensions: 'mp3,m4a,m4b,m4r,mp4,flv,webm'
- * accepted_formats: 'audio/mpeg,audio/mp4,video/mp4,video/x-flv,video/webm'
- * created_at: '',
- * updated_at: '',
- * permissions:
- *   player: true
- *   local: true
- *   cloud: true
- *   dropbox: true
- *   gdrive: true
- *   skydrive: true
- *   soundcloud: true
- *   youtube: true
- *   box: true
- *   lastfm: true
- *   twitchtv: true
- *   facebook: true
- *   twitter: true
- * external_tokens:
- *   dropbox: false
- *   gdrive: true
- *   skydrive: false
- *   soundcloud: false
- *   youtube: true
- *   box: false
- *   lastfm: false
- *   twitchtv: false
- *   facebook: false
- *   twitter: false
- * comet_channel: 'private-e03...'
- * subscription_state: 'active'
- * stats:
- *   data_served_this_month: 2737914
- *   data_served_overall: 2737914
- *   cloud_data_stored_overall: 56684036
- *   cloud_data_stored_this_month: 101905396
- *   local_data_stored_overall: 0
- *   local_data_stored_this_month: 40356240
- *   dropbox_data_stored_overall: 0
- *   dropbox_data_stored_this_month: 0
- *   gdrive_data_stored_this_month: 38403869
- *   gdrive_data_stored_overall: 38403869
- *   skydrive_data_stored_this_month: 0
- *   skydrive_data_stored_overall: 0
- *   box_data_stored_this_month: 0
- *   box_data_stored_overall: 0
- *   soundcloud_data_stored_this_month: 0
- *   soundcloud_data_stored_overall: 0
- * preferences:
- *   accept_emails: true
- *   autoplay: false
- *   volume_level: 85
- *   color: 'audiobox-fm-blue'
- *   top_bar_bg: 'default'
- * @endcode
- * </pre>
- *
- * Through the User object you have access to its library that can be browsed by:
- * <ul>
- *  <li>Playlists</li>
- * </ul>
- *
- * using its respective getter method.
- *
- * <p>
- *
- * Once obtained the desired collection you can get the media files collection of each contained element
- * by getting its files:
- *
- * <pre>
- * Playlists playlists = user.getPlaylists();
- * playlists.load();
- * MediaFiles media = playlists.get(0).getMediaFiles();
- * media.load();
- * </pre>
- *
- * @author Valerio Chiodino
- * @author Fabio Tunno
+ * This is the main class representing the AudioBox.fm User entity
  */
 public final class User extends AbstractEntity implements Serializable {
 
@@ -150,7 +57,6 @@ public final class User extends AbstractEntity implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  /** User API namespace */
   public static final String NAMESPACE = "user";
   public static final String TAGNAME = NAMESPACE;
 
@@ -181,7 +87,6 @@ public final class User extends AbstractEntity implements Serializable {
     unpaid
   }
 
-  /** Separator used to split the allowed formats string */
   public static final String ALLOWED_EXTENSIONS_SEPARATOR = ",";
 
   private String id;
@@ -202,7 +107,6 @@ public final class User extends AbstractEntity implements Serializable {
   private String createdAt;
   private String updatedAt;
 
-  // User's collection relations
   private Playlists playlists;
   private Permissions permissions;
   private AccountStats accountStats;
@@ -246,201 +150,287 @@ public final class User extends AbstractEntity implements Serializable {
   
 
 
-  /**
-   * <p>Constructor for User.</p>
-   */
   public User(IConfiguration config) {
     super(config);
   }
-
-
 
   public String getTagName(){
     return TAGNAME;
   }
 
-  @Override
   public String getNamespace(){
     return NAMESPACE;
   }
 
 
-  /* ------------------- */
-  /* Getters and setters */
-  /* ------------------- */
-
-
+  /**
+   * @return the {@code email} used for logging in
+   */
   public String getUsername() {
     return username;
   }
 
+  /**
+   * Sets the {@code email} used for logging in
+   */
+  @Deprecated
   public void setUsername(String username) {
     this.username = username;
   }
 
-
+  /**
+   * @return the {@code id} of the User
+   */
   public String getId() {
     return id;
   }
 
-
-
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setId(String id) {
     this.id = id;
   }
 
 
+  /**
+   * This method should not be used.
+   * <br />
+   * It returns the password manually set to User while logging in
+   */
+  @Deprecated
   public String getPassword() {
     return password;
   }
 
 
 
+  /**
+   * Sets the password used for logging in
+   * @param password the User's password used for logging in
+   */
+  @Deprecated
   public void setPassword(String password) {
     this.password = password;
   }
 
 
 
+  /**
+   * @return the User's real name
+   */
   public String getRealName() {
     return real_name;
   }
 
 
-
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setRealName(String real_name) {
     this.real_name = real_name;
   }
 
 
-
+  /**
+   * @return the User's email (also used as {@code username})
+   */
   public String getEmail() {
     return email;
   }
 
 
-
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setEmail(String email) {
     this.email = email;
   }
 
   
-
+  /**
+   * @return the User's creation date
+   */
   public String getCreatedAt() {
     return createdAt;
   }
 
 
-
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setCreatedAt(String createdAt) {
     this.createdAt = createdAt;
   }
 
 
 
+  /**
+   * @return last User's modification date 
+   */
   public String getUpdatedAt() {
     return updatedAt;
   }
 
 
-
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setUpdatedAt(String updatedAt) {
     this.updatedAt = updatedAt;
   }
 
 
 
+  /**
+   * @return the User's country
+   */
   public String getCountry() {
     return country;
   }
 
 
-
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setCountry(String country) {
     this.country = country;
   }
 
 
-
+  /**
+   * @return the User's time zone
+   */
   public String getTimeZone() {
     return time_zone;
   }
 
 
-
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setTimeZone(String time_zone) {
     this.time_zone = time_zone;
   }
 
 
 
+  /**
+   * Use this method for knowing which kind of media files are allowed for this user
+   * 
+   * @return the User's accepted file extensions
+   */
   public String getAcceptedExtensions() {
     return accepted_extensions;
   }
 
 
-
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setAcceptedExtensions(String accepted_extensions) {
     this.accepted_extensions = accepted_extensions;
   }
 
 
+  /**
+   * Use this method for knowing which {@code MimeType} of media files are allowed for this user
+   * @return the User's accepted mime types
+   */
   public String getAcceptedFormats() {
     return accepted_formats;
   }
 
-
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setAcceptedFormats(String accepted_formats) {
     this.accepted_formats = accepted_formats;
   }
 
-
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setCometChannel(String cometChl) {
     this.comet_channel = cometChl;
   }
 
-
+  
+  /**
+   * Use this method for connecting to Cloud Web Player {@code Push Server} channel
+   * 
+   * @return the User's {@code push server channel}
+   */
   public String getCometChannel() {
     return this.comet_channel;
   }
 
 
-
+  /**
+   * @return the number of playlists User has in his collection
+   */
   public int getPlaylistsCount() {
     return playlists_count;
   }
 
 
-
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setPlaylistsCount(int playlists_count) {
     this.playlists_count = playlists_count;
   }
 
 
-
+  /**
+   * @return the number of media files User has in his collection
+   */
   public long getMediaFilesCount() {
     return media_files_count;
   }
 
 
-
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setMediaFilesCount(long media_files_count) {
     this.media_files_count = media_files_count;
   }
 
 
-
+  /**
+   * @return the total play count amount
+   */
   public long getTotalPlayCount() {
     return total_play_count;
   }
 
 
-
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setTotalPlayCount(long total_play_count) {
     this.total_play_count = total_play_count;
   }
 
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setSubscriptionState(String flag) {
     log.warn("subscription_state is not implemented yet");
     SubscriptionState state = SubscriptionState.valueOf( flag );
@@ -451,90 +441,114 @@ public final class User extends AbstractEntity implements Serializable {
     }
   }
 
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setSubscriptionState(SubscriptionState state) {
     this.subscription_state = state;
   }
 
+  
+  /**
+   * @return the state of the subscription of the User
+   */
   public SubscriptionState getSubscriptionState() {
     return this.subscription_state;
   }
 
 
-
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setPermissions(Permissions permissions) {
     this.permissions = permissions;
   }
 
+  
+  /**
+   * @return the {@link Permissions} associated with this User
+   */
   public Permissions getPermissions() {
     return this.permissions;
   }
 
+  
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setAccountStats(AccountStats accountStats) {
     this.accountStats = accountStats;
   }
 
+  /**
+   * @return the {@link AccountStats} associated with this User
+   */
   public AccountStats getAccountStats() {
     return this.accountStats;
   }
 
-
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setPreferences(Preferences preferences) {
     this.preferences = preferences;
   }
 
+  
+  /**
+   * @return the {@link Preferences} associated with this User
+   */
   public Preferences getPreferences() {
     return this.preferences;
   }
 
-
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setExternalTokens(ExternalTokens externalTokens) {
     this.externalTokens = externalTokens;
   }
 
+  
+  /**
+   * @return the {@link ExternalTokens} associated with this User
+   */
   public ExternalTokens getExternalTokens() {
     return this.externalTokens;
   }
 
 
   /**
-   * <p>Getter for the auth_token</p>
-   *
-   * @return String[] the auth_token
+   * @return the {@code authentication token} of this User
    */
   public String getAuthToken() {
     return auth_token;
   }
 
-  /**
-   * <p>Setter for the user auth_token</p>
-   *
-   * @param auth_token a String the contains the user authentication
-   */
+  
   public void setAuthToken(String auth_token) {
     this.auth_token = auth_token;
-    setChanged();
-    notifyObservers();
   }
 
-
-
-  /* ------------------- */
-  /* Collection Browsing */
-  /* ------------------- */
 
 
   /**
    * Use this method to get a {@link MediaFiles} instance containing
    * all the {@code MD5} and {@code token} for media files owned by this User.
    * You can specify the Source for filtering the results
-   *
+   * <br />
    * This method is useful for sync tools.
    *
    * @param source a {@link MediaFile.Source}
    *
    * @return a {@link MediaFiles} instance
    *
-   * @throws ServiceException if any connection problem to AudioBox.fm services occurs.
+   * @throws ServiceException if any connection problem occurs.
    * @throws LoginException if any authentication problem occurs.
    */
   public MediaFiles getMediaFilesMap(String source) throws ServiceException, LoginException {
@@ -557,7 +571,8 @@ public final class User extends AbstractEntity implements Serializable {
 
   /**
    * Instantiates a new {@link MediaFile}.
-   * Use this method to upload a new media file.
+   * <br />
+   * This method can help while uploading media file
    *
    * @return a new {@link MediaFile} instance
    */
@@ -566,6 +581,9 @@ public final class User extends AbstractEntity implements Serializable {
   }
   
 
+  /**
+   * @return a {@code Playlists} object associated with this User
+   */
   public Playlists getPlaylists() {
     if ( this.playlists == null ){
       this.playlists = (Playlists) getConfiguration().getFactory().getEntity(Playlists.TAGNAME, getConfiguration());
@@ -575,10 +593,7 @@ public final class User extends AbstractEntity implements Serializable {
 
 
   /**
-   * Executes request populating this class
-   *
-   * @throws ServiceException
-   * @throws LoginException
+   * This method invokes {@link User#load(boolean)}
    */
   public void load() throws ServiceException, LoginException {
     this.load(false);
@@ -586,10 +601,7 @@ public final class User extends AbstractEntity implements Serializable {
 
 
 
-  @Override
-  protected void copy(IEntity entity) {
-    // default: do nothing
-  }
+  protected void copy(IEntity entity) { }
 
 
   public Method getSetterMethod(String tagName) {
@@ -599,18 +611,25 @@ public final class User extends AbstractEntity implements Serializable {
     return null;
   }
 
-  @Override
   public String getApiPath() {
     return IConnector.URI_SEPARATOR + NAMESPACE;
   }
 
+  
   public IConnectionMethod load(boolean async) throws ServiceException, LoginException {
     return this.load(async, null);
   }
 
 
+  /**
+   * Use this method for manually logging in the User to AudioBox.fm
+   * <br />
+   * Before invoking this method, you should set {@code username} and {@code password}
+   * <br />
+   * <b><i>Use {@link AudioBox#login(String, String)} method instead</i></b>
+   */
+  @Deprecated
   public IConnectionMethod load(boolean async, IResponseHandler responseHandler) throws ServiceException, LoginException {
-  //add the object to be observed, the observer
     IConnectionMethod req = this.getConfiguration().getFactory().getConnector().get(this, null, null);
 
     if ( this.getUsername() != null && this.getPassword() != null ) {
@@ -651,6 +670,5 @@ public final class User extends AbstractEntity implements Serializable {
     
     return params;
   }
-
 
 }

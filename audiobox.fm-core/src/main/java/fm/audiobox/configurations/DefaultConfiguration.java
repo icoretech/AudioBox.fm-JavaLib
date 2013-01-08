@@ -19,6 +19,10 @@ import fm.audiobox.interfaces.IRequestHandler;
 import fm.audiobox.interfaces.IResponseHandler;
 import fm.audiobox.interfaces.IServiceExceptionHandler;
 
+
+/**
+ * This is the standard configuration used for general purpose
+ */
 public class DefaultConfiguration implements IConfiguration {
 
   private static Logger log = LoggerFactory.getLogger(DefaultConfiguration.class);
@@ -147,31 +151,26 @@ public class DefaultConfiguration implements IConfiguration {
     return this.factory;
   }
 
-  @Override
   public void setApplicationName(String appName) {
     this.appName = appName;
     log.info("Application name: " + appName);
   }
 
-  @Override
   public String getApplicationName() {
     return this.appName;
   }
   
 
-  @Override
   public void setVersion(int major, int minor, int revision) {
     this.version = major + "." + minor + "." + revision;
     log.info("Application version: " + this.version );
   }
 
 
-  @Override
   public String getVersion() {
     return this.version;
   }
 
-  @Override
   public String getUserAgent(){
     mUserAgent = mUserAgent
         .replace(APP_NAME_PLACEHOLDER, getApplicationName() )

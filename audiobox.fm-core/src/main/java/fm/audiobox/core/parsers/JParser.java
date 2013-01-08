@@ -17,6 +17,12 @@ import fm.audiobox.core.models.AbstractCollectionEntity;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IEntity;
 
+
+/**
+ * This is an utility class used for parsing a JSON string.
+ * <br />
+ * It also populates the {@link IEntity} associated with this instance
+ */
 public class JParser {
 
   private static Logger log = LoggerFactory.getLogger(JParser.class);
@@ -32,6 +38,12 @@ public class JParser {
     this.config = entity.getConfiguration();
   }
 
+  /**
+   * Parses given string and returns the associated entity
+   * 
+   * @param jstr the JSON string
+   * @return the {@link IEntity} associated with this instance
+   */
   public IEntity parse ( String jstr ){
     startParse = System.currentTimeMillis();
     JsonObject jobj = new JsonParser().parse( jstr ).getAsJsonObject();
@@ -44,6 +56,13 @@ public class JParser {
     return entity;
   }
   
+  
+  /**
+   * Parses given string and returns the associated entity
+   * 
+   * @param jstr the InputStreamReader representing a JSON string
+   * @return the {@link IEntity} associated with this instance
+   */
   public IEntity parse ( InputStreamReader isr ){
     startParse = System.currentTimeMillis();
 
@@ -57,6 +76,13 @@ public class JParser {
     return entity;
   }
   
+  
+  /**
+   * Parses given JsonObject and returns the associated entity
+   * 
+   * @param jstr the JsonObject
+   * @return the {@link IEntity} associated with this instance
+   */
   @SuppressWarnings("unchecked")
   public IEntity parse ( JsonObject jobj ){
     
@@ -78,6 +104,9 @@ public class JParser {
     }
     return entity;
   }
+  
+  
+  
   @SuppressWarnings("unchecked")
   private IEntity fillJsonArray (JsonArray jarr,AbstractCollectionEntity<IEntity> entity){
 
@@ -106,6 +135,7 @@ public class JParser {
     return entity;
   }
 
+  
   @SuppressWarnings("unchecked")
   private IEntity fillJsonObject (JsonObject jobj,IEntity entity) {
 
@@ -135,6 +165,7 @@ public class JParser {
     return entity;
   }
 
+  @SuppressWarnings("deprecation")
   private void invokemethod(IEntity entity,String _method , Object value){
     Method method = null;
     try{

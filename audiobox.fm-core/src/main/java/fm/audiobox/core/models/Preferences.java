@@ -19,17 +19,9 @@ import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
 
-
-
 /**
- * accept_emails: true,
- * autoplay: false,
- * volume_level: 85,
- * color: 'audiobox-fm-blue',
- * top_bar_bg: 'default'
+ * This class contains all user's preferences
  */
-
-
 public class Preferences extends AbstractEntity implements Serializable {
   
   
@@ -63,11 +55,11 @@ public class Preferences extends AbstractEntity implements Serializable {
   private static final Map<String, Method> setterMethods = new HashMap<String, Method>();
   static {
     try {
-      setterMethods.put( ACCEPT_EMAILS, Preferences.class.getMethod( "setAccept_emails", boolean.class )  );
+      setterMethods.put( ACCEPT_EMAILS, Preferences.class.getMethod( "setAcceptEmails", boolean.class )  );
       setterMethods.put( AUTOPLAY, Preferences.class.getMethod( "setAutoplay", boolean.class )  );
-      setterMethods.put( VOLUME_LEVEL, Preferences.class.getMethod( "setVolume_level", int.class )  );
+      setterMethods.put( VOLUME_LEVEL, Preferences.class.getMethod( "setVolumeLevel", int.class )  );
       setterMethods.put( COLOR, Preferences.class.getMethod( "setColor", String.class )  );
-      setterMethods.put( TOP_BAR_BG, Preferences.class.getMethod( "setTop_bar_bg", String.class )  );
+      setterMethods.put( TOP_BAR_BG, Preferences.class.getMethod( "setTopBarBg", String.class )  );
       setterMethods.put( PREBUFFER, Preferences.class.getMethod( "setPrebuffer", boolean.class )  );
       setterMethods.put( REPEAT, Preferences.class.getMethod( "setRepeat", boolean.class )  );
       setterMethods.put( SHUFFLE, Preferences.class.getMethod( "setShuffle", boolean.class )  );
@@ -93,84 +85,128 @@ public class Preferences extends AbstractEntity implements Serializable {
   }
   
   
-  
+  /**
+   * @return {@code true} when {@link User} wants to receive emails. {@code false} if not
+   */
   public boolean isAcceptEmails() {
     return accept_emails;
   }
 
-
-  public void setAccept_emails(boolean accept_emails) {
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
+  public void setAcceptEmails(boolean accept_emails) {
     this.accept_emails = accept_emails;
   }
 
 
+  /**
+   * @return {@code true} if {@link User} has enabled the autoplay feature in Cloud Web Player. {@code false} if not
+   */
   public boolean isAutoplay() {
     return autoplay;
   }
 
-
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setAutoplay(boolean autoplay) {
     this.autoplay = autoplay;
   }
 
 
+  /**
+   * @return last {@code volume level} set in Cloud Web Player
+   */
   public int getVolumeLevel() {
     return volume_level;
   }
 
-
-  public void setVolume_level(int volume_level) {
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
+  public void setVolumeLevel(int volume_level) {
     this.volume_level = volume_level;
   }
 
 
+  /**
+   * @return the Cloud Web Player {@code color} theme set
+   */
   public String getColor() {
     return color;
   }
 
-
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setColor(String color) {
     this.color = color;
   }
 
 
-  public String getTop_bar_bg() {
+  /**
+   * @return the Cloud Web Player top bar {@code background image} set
+   */
+  public String getTopBarBg() {
     return top_bar_bg;
   }
 
-
-  public void setTop_bar_bg(String top_bar_bg) {
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
+  public void setTopBarBg(String top_bar_bg) {
     this.top_bar_bg = top_bar_bg;
   }
   
   
-
-
+  /**
+   * @return {@code true} if {@link User} has enabled the {@code prebuffer} feature in Cloud Web Player
+   */
   public boolean isPrebuffer() {
     return prebuffer;
   }
 
-
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setPrebuffer(boolean prebuffer) {
     this.prebuffer = prebuffer;
   }
 
-
+  /**
+   * @return {@code true} if {@link User} has enabled the {@code repeat} feature in Cloud Web Player
+   */
   public boolean isRepeat() {
     return repeat;
   }
 
-
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setRepeat(boolean repeat) {
     this.repeat = repeat;
   }
 
 
+  /**
+   * @return {@code true} if {@link User} has enabled the {@code shuffle} feature in Cloud Web Player
+   */
   public boolean isShuffle() {
     return shuffle;
   }
 
-
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
   public void setShuffle(boolean shuffle) {
     this.shuffle = shuffle;
   }
@@ -184,21 +220,17 @@ public class Preferences extends AbstractEntity implements Serializable {
   }  
   
   
-  @Override
   public String getApiPath() {
     return null;
   }
 
-  @Override
   protected void copy(IEntity entity) { }
   
   
-  @Override
   public IConnectionMethod load(boolean async) throws ServiceException, LoginException {
     return this.load(false, null);
   }
 
-  @Override
   public IConnectionMethod load(boolean async, IResponseHandler responseHandler) throws ServiceException, LoginException {
     throw new ServiceException("method not supported");
   }

@@ -8,6 +8,10 @@ import fm.audiobox.interfaces.IAuthenticationHandle;
 import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 
+
+/**
+ * This is the default authentication handler
+ */
 public class DefaultAuthenticationHandle implements IAuthenticationHandle {
   
   private static final Logger log = LoggerFactory.getLogger( DefaultAuthenticationHandle.class );

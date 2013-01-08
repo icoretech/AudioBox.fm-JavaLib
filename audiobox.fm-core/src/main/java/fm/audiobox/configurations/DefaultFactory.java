@@ -27,6 +27,10 @@ import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IFactory;
 
+
+/**
+ * This is the default factory class used for instantiating each {@link IEntity}
+ */
 public class DefaultFactory implements IFactory {
 
   private static final Logger log = LoggerFactory.getLogger(DefaultFactory.class);

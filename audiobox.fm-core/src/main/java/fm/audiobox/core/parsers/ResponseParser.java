@@ -21,6 +21,12 @@ import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
 
+
+/**
+ * This class handles all AudioBox.fm response.
+ * <br />
+ * It works as Response interceptor
+ */
 public class ResponseParser implements ResponseHandler<Response> {
 
   private static Logger log = LoggerFactory.getLogger(ResponseParser.class);
@@ -42,6 +48,14 @@ public class ResponseParser implements ResponseHandler<Response> {
     this(config, method, responseHandler, null);
   }
 
+  /**
+   * Constructor method
+   * 
+   * @param config the {@link IConfiguration} associated with this class
+   * @param method the {@link IConnectionMethod} associated with this request
+   * @param responseHandler a {@link IResponseHandler} will be use for handling the response body
+   * @param ecode the {@code ETag code} used for retrieving response body in case of {@code 304} status code
+   */
   public ResponseParser(IConfiguration config, IConnectionMethod method, IResponseHandler responseHandler, String ecode) {
     this.method = method;
     this.destEntity = this.method.getDestinationEntity();
@@ -54,7 +68,6 @@ public class ResponseParser implements ResponseHandler<Response> {
     }
   }
 
-  @Override
   public Response handleResponse(HttpResponse httpResponse) throws ClientProtocolException, IOException {
 
     int responseCode = httpResponse.getStatusLine().getStatusCode();
