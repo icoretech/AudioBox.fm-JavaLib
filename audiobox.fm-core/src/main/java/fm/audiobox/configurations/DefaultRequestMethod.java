@@ -38,6 +38,10 @@ import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
 
+
+/**
+ * This is the default connection method used for perfoming each request to AudioBox.fm server
+ */
 public class DefaultRequestMethod extends Observable implements IConnectionMethod {
 
   private static Logger log = LoggerFactory.getLogger(DefaultRequestMethod.class);
@@ -76,17 +80,10 @@ public class DefaultRequestMethod extends Observable implements IConnectionMetho
     return this.user;
   }
   
-  /**
-   * Sets the {@link IAuthenticationHandle} for handling the authentication method
-   * @param handle
-   */
   public void setAuthenticationHandle(IAuthenticationHandle handle){
     this.authenticationHandle = handle;
   }
   
-  /**
-   * Returns the {@link IAuthenticationHandle}
-   */
   public IAuthenticationHandle getAuthenticationHandle() {
     return this.authenticationHandle != null ? this.authenticationHandle : this.configuration.getAuthenticationHandle();
   }
@@ -102,15 +99,11 @@ public class DefaultRequestMethod extends Observable implements IConnectionMetho
   public void addHeader(Header header) {
     this.addHeader( header.getName(), header.getValue() );
   }
-  
 
-  @Override
   public Response send(boolean async) throws ServiceException, LoginException {
     return send(async, null,null);
   }
 
-
-  @Override
   public Response send(boolean async, List<NameValuePair> params) throws ServiceException, LoginException {
     HttpEntity entity = null;
     if (  (! isGET() && ! isDELETE() )  && params != null ){
@@ -129,13 +122,11 @@ public class DefaultRequestMethod extends Observable implements IConnectionMetho
   }
 
 
-  @Override
   public Response send(boolean async, HttpEntity params) throws ServiceException, LoginException {
     return send(async, params, null);
   }
 
 
-  @Override
   public synchronized Response send(boolean async, HttpEntity params, final IResponseHandler responseHandler) throws ServiceException, LoginException {
     if (   ( ! isGET() && ! isDELETE() )  && params != null ){
       ((HttpEntityEnclosingRequestBase) getHttpMethod() ).setEntity( params );
@@ -145,7 +136,6 @@ public class DefaultRequestMethod extends Observable implements IConnectionMetho
     
     Callable<Response> start = new Callable<Response>() {
 
-      @Override
       public Response call() throws ServiceException, LoginException {
         Response response = null;
         try {
@@ -259,7 +249,6 @@ public class DefaultRequestMethod extends Observable implements IConnectionMetho
     throw new ServiceException(HttpStatus.SC_PRECONDITION_FAILED, "No response");
   }
 
-  @Override
   public void abort() {
     futureResponse.cancel(true);
     getHttpMethod().abort();
@@ -268,12 +257,10 @@ public class DefaultRequestMethod extends Observable implements IConnectionMetho
   }
 
 
-  @Override
   public HttpRequestBase getHttpMethod() {
     return this.method;
   }
 
-  @Override
   public IEntity getDestinationEntity() {
     return this.destEntity;
   }
@@ -288,27 +275,22 @@ public class DefaultRequestMethod extends Observable implements IConnectionMetho
   }
   
   
-  @Override
   public boolean isGET() {
     return getHttpMethod().getMethod().equals( HttpGet.METHOD_NAME );
   }
 
-  @Override
   public boolean isPOST() {
     return getHttpMethod().getMethod().equals( HttpPost.METHOD_NAME );
   }
 
-  @Override
   public boolean isPUT() {
     return getHttpMethod().getMethod().equals( HttpPut.METHOD_NAME );
   }
 
-  @Override
   public boolean isDELETE() {
     return getHttpMethod().getMethod().equals( HttpDelete.METHOD_NAME );
   }
 
-  @Override
   public void setFollowRedirect(boolean followRedirect) {
     getHttpMethod().getParams().setBooleanParameter( ClientPNames.HANDLE_REDIRECTS, true );
   }
