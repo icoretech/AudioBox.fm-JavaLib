@@ -13,8 +13,11 @@ import fm.audiobox.configurations.MimeTypes;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConnector;
 
+
+/**
+ * This class is used for uploading media file to AudioBox.fm Cloud
+ */
 public class UploadHandler extends FileBody {
-  
   
   private static final Logger log = LoggerFactory.getLogger( UploadHandler.class );
   private int chunk = IConnector.DEFAULT_CHUNK;
@@ -28,7 +31,6 @@ public class UploadHandler extends FileBody {
     this(file);
     this.chunk = chunk;
   }
-  
   
   
   public void writeTo(OutputStream out) throws IOException {
@@ -59,7 +61,19 @@ public class UploadHandler extends FileBody {
   }
 
   
-  
+  /**
+   * This method writes given buffer to {@link OutputStream}
+   * <br />
+   * You can overwrite this method in order to simply manage the {@code upload} by yourself.
+   * 
+   * @param out the {@link OutputStream} which write data to
+   * @param buffer the {@code byte array} to be write
+   * @param length the {@code number of bytes} will be write
+   * 
+   * @return {@code boolean}. Returning {@code false} <b>it stops the upload</b>
+   * 
+   * @throws IOException if any operation error occurs
+   */
   public synchronized boolean write(OutputStream out, byte[] buffer, int length) throws IOException {
     out.write( buffer, 0, length );
     return true;

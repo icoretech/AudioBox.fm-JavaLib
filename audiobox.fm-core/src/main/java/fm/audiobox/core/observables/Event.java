@@ -7,6 +7,12 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+/**
+ * This class is used while emitting events
+ * <br />
+ * It will contain all event preperties you will need
+ */
 public class Event extends EventObject {
 
   @SuppressWarnings("unused")
@@ -17,7 +23,6 @@ public class Event extends EventObject {
   
   private Map<String, Object> properties = new HashMap<String, Object>();
 
-  // It could be used for indexing the entity into collection
   public int detail = -1;
 
   public static enum States {
@@ -45,11 +50,22 @@ public class Event extends EventObject {
     this.state = state;
   }
   
-  
+  /**
+   * Use this special method for setting arbitrary property
+   * 
+   * @param key the {@code key} of the property
+   * @param value the {@code value} of the property
+   */
   public void addProperty(String key, Object value){
     this.properties.put( key, value );
   }
   
+  /**
+   * Gets the property
+   * 
+   * @param key the {@code key} of the property you want to get
+   * @return the {@code value} of the property
+   */
   public Object getProperty(String key){
     
     if ( this.properties.containsKey( key ) ){

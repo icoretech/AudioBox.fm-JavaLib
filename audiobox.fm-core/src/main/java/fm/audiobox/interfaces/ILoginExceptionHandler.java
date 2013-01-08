@@ -7,7 +7,7 @@ public interface ILoginExceptionHandler {
 
   /**
    * Method invoked while throwing a {@link LoginException}
-   * @param loginException
+   * @param loginException the {@link LoginException} that throws the error
    */
   public void handle(LoginException loginException);
   

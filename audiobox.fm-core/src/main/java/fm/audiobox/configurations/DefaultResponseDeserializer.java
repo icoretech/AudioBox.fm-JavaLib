@@ -15,12 +15,14 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import fm.audiobox.core.exceptions.ServiceException;
+import fm.audiobox.core.parsers.DownloadHandler;
 import fm.audiobox.core.parsers.JParser;
 import fm.audiobox.core.parsers.XmlParser;
 import fm.audiobox.interfaces.IConfiguration.ContentFormat;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
 
+@SuppressWarnings("deprecation")
 public class DefaultResponseDeserializer implements IResponseHandler  {
 
   private static Logger log = LoggerFactory.getLogger(DefaultResponseDeserializer.class);
@@ -54,7 +56,6 @@ public class DefaultResponseDeserializer implements IResponseHandler  {
   }
   
 
-  @Override
   public void deserializeXml(InputStream inputStream, IEntity destEntity) throws ServiceException {
     try {
 
@@ -79,14 +80,12 @@ public class DefaultResponseDeserializer implements IResponseHandler  {
     }
   }
 
-  @Override
   public void deserializeJson(InputStream inputStream, IEntity destEntity) throws ServiceException {
   
     JParser parser = new JParser(destEntity);
     parser.parse(new InputStreamReader(inputStream));
   }
 
-  @Override
   public String deserializeText(InputStream inputStream, IEntity destEntity) throws ServiceException {
     try {
       return Response.streamToString(inputStream);
@@ -96,9 +95,14 @@ public class DefaultResponseDeserializer implements IResponseHandler  {
     }
   }
 
-  @Override
+  /**
+   * This method is not implemented by this class
+   * <br />
+   * <b>Use {@link DownloadHandler} instead</b>
+   */
+  @Deprecated
   public void deserializeBinary(InputStream inputStream, IEntity destEntity) throws ServiceException {
-    throw new ServiceException("Json parser is not implemented yet");
+    throw new ServiceException("Binary parser is not implemented yet");
   }
   
 }

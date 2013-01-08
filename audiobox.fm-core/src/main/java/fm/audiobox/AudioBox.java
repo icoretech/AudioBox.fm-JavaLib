@@ -161,6 +161,7 @@ public class AudioBox extends Observable {
    * @throws LoginException identifies invalid credentials or user cannot be logged in due to subscription error.
    * @throws ServiceException if any connection problem occurs.
    */
+  @SuppressWarnings("deprecation")
   public User login(final String username, final String password, boolean async) throws LoginException, ServiceException {
     log.info("Executing login for user: " + username);
 
