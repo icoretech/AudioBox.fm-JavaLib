@@ -31,24 +31,9 @@ import org.slf4j.LoggerFactory;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IEntity;
 
+
 /**
- * Error class is a specialization for error XML elements.
- *
- * <p>
- *
- * Error XML looks like this:
- *
- * <pre>
- * @code
- * <error>
- *   <status>500</name>
- *   <message>This is an error message</token>
- * </error>
- * @endcode
- * </pre>
- *
- * @author Valerio Chiodino
- * @author Fabio Tunno
+ * This class is a representation of the {@code Error} entity
  */
 public class Error implements IEntity, Serializable {
 
@@ -56,7 +41,6 @@ public class Error implements IEntity, Serializable {
   
   private static Logger log = LoggerFactory.getLogger(Error.class);
 
-  /** The XML tag name for the Error element */
   public static final String NAMESPACE = null;
 
   public static final String TAGNAME = "error";
@@ -83,81 +67,55 @@ public class Error implements IEntity, Serializable {
 
   }
 
-  /**
-   * <p>
-   * Constructor for Error.
-   * </p>
-   */
   public Error(IConfiguration config) {
     this.configuration = config;
   }
 
-  @Override
   public String getTagName() {
     return TAGNAME;
   }
 
-  @Override
   public String getNamespace() {
     return NAMESPACE;
   }
 
-  @Override
+  /**
+   * This class has no token
+   */
   public String getToken() {
     return null;
   }
 
-  /* ------------------- */
-  /* Getters and setters */
-  /* ------------------- */
-
   /**
-   * <p>
-   * Setter for the field <code>status</code>.
-   * </p>
-   *
-   * @param status
-   *          the error status to set
+   * Sets the response status code
+   * @param status the response status code
    */
   public void setStatus(int status) {
     this.status = status;
   }
 
   /**
-   * <p>
-   * Getter for the field <code>status</code>.
-   * </p>
-   *
-   * @return the status
+   * @return the response status
    */
   public int getStatus() {
     return this.status;
   }
 
   /**
-   * <p>
-   * Setter for the field <code>message</code>.
-   * </p>
-   *
-   * @param message
-   *          the error message to set.
+   * Sets the response body message
+   * @param message the response body message
    */
   public void setMessage(String message) {
     this.message = message;
   }
 
   /**
-   * <p>
-   * Getter for the field <code>message</code>.
-   * </p>
-   *
-   * @return the message
+   * @return the response body message
    */
   public String getMessage() {
     return message;
   }
 
-  @Override
   public Method getSetterMethod(String tagName) {
     try {
       if (tagName.equals(MESSAGE)) {
@@ -190,28 +148,24 @@ public class Error implements IEntity, Serializable {
     return this.properties.get(key);
   }
 
-  @Override
   public IConfiguration getConfiguration() {
     return this.configuration;
   }
 
-  @Override
   public String getApiPath() {
     return null;
   }
 
-  @Override
+  /**
+   * This class has not any parent entity
+   */
   public void setParent(IEntity parent) {
-    // TODO: check
-    // it doesn't need to be set as child
   }
 
-  @Override
   public void startLoading() {
     // nothning to do
   }
 
-  @Override
   public void endLoading() {
     // nothing to do
   }
