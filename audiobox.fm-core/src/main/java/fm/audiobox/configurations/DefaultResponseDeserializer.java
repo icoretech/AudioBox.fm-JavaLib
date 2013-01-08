@@ -22,6 +22,11 @@ import fm.audiobox.interfaces.IConfiguration.ContentFormat;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
 
+
+
+/**
+ * This is the default response deserializer used for parsing the AudioBox.fm response body
+ */
 @SuppressWarnings("deprecation")
 public class DefaultResponseDeserializer implements IResponseHandler  {
 

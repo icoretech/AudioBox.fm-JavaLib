@@ -93,7 +93,7 @@ import fm.audiobox.interfaces.IFactory;
  *
  * Note that some of the requests, such as the {@link AbstractCollectionEntity} population requests, can be done
  * asynchronously.<br/>
- * To keep track of the collection building process you can use {@link Observer Observers}.
+ * To keep track of the collection building process you can use {@link Observer}.
  *
  */
 public class AudioBox extends Observable {
