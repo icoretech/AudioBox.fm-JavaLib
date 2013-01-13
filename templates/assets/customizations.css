@@ -1,0 +1,17 @@
+a {
+  color: #08C;
+}
+
+#header {
+  border-bottom: 3px solid #444751;
+  height: 54px;
+}
+
+#search_filtered .jd-selected {
+  background-color: #444751;
+}
+
+#headerLeft {
+  left: 220px;
+  bottom: 5px;
+}
