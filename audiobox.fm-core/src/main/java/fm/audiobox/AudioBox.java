@@ -509,14 +509,19 @@ public class AudioBox extends Observable {
               HeaderElement[] codecs = ceheader.getElements();
               for (int i = 0; i < codecs.length; i++) {
                 if (codecs[i].getName().equalsIgnoreCase("gzip")) {
-                  log.trace("Response is gzipped");
+                  log.info("Response is gzipped");
 
-                  response.setEntity( new HttpEntityWrapper(entity){
+                  response.setEntity(new HttpEntityWrapper(entity){
+                    private GZIPInputStream stream = null;
+                    
                     @Override
                     public InputStream getContent() throws IOException, IllegalStateException {
                       // the wrapped entity's getContent() decides about repeatability
-                      InputStream wrappedin = wrappedEntity.getContent();
-                      return new GZIPInputStream(wrappedin);
+                      if ( stream == null ) {
+                        InputStream wrappedin = wrappedEntity.getContent();
+                        stream = new GZIPInputStream(wrappedin);
+                      }
+                      return stream;
                     }
 
                     @Override
