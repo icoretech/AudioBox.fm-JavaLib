@@ -167,6 +167,7 @@ public class MediaFile extends AbstractEntity implements Serializable {
       setterMethods.put( ARTWORK, MediaFile.class.getMethod("setArtwork", String.class));
       setterMethods.put( HASH, MediaFile.class.getMethod("setHash", String.class));
       setterMethods.put( FILENAME, MediaFile.class.getMethod("setFilename", String.class));
+      setterMethods.put( MEDIA_FILE_NAME, MediaFile.class.getMethod("setMediaFileName", String.class));
       setterMethods.put( LOVED, MediaFile.class.getMethod("setLoved", boolean.class));
       setterMethods.put( REMOTE_PATH, MediaFile.class.getMethod("setRemotePath", String.class));
       setterMethods.put( SHARE_TOKEN, MediaFile.class.getMethod("setShareToken", String.class));
