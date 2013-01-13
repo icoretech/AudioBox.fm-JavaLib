@@ -106,6 +106,7 @@ public class MediaFile extends AbstractEntity implements Serializable {
   private int len_int;
   private int position;
   private String filename;
+  private String media_file_name;
   private boolean loved = false;
   private int disc_number;
   private String mime;
@@ -265,6 +266,22 @@ public class MediaFile extends AbstractEntity implements Serializable {
    */
   public void setFilename(String filename) {
     this.filename = filename;
+  }
+  
+  
+  /**
+   * @return the {@code media_file_name} of the MediaFile
+   */
+  public String getMediaFileName() {
+    return this.media_file_name;
+  }
+
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
+  public void setMediaFileName(String media_file_name) {
+    this.media_file_name = media_file_name;
   }
 
   
