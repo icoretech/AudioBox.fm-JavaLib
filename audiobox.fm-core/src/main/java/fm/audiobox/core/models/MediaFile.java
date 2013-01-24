@@ -890,8 +890,9 @@ public class MediaFile extends AbstractEntity implements Serializable {
     }
 
     List<NameValuePair> params = this.toQueryParameters( true );
-    params.add( new BasicNameValuePair(TAGNAME + "[" + ORIGINAL_FILE_NAME + "]",  file.getAbsolutePath() ) );
-    params.add( new BasicNameValuePair(TAGNAME + "[" + MEDIA_FILE_NAME + "]",  file.getName() ) );
+    params.add( new BasicNameValuePair(TAGNAME + "[" + REMOTE_PATH + "]", file.getAbsolutePath() ) );
+    params.add( new BasicNameValuePair(TAGNAME + "[" + ORIGINAL_FILE_NAME + "]", file.getName() ) );
+    params.add( new BasicNameValuePair(TAGNAME + "[" + MEDIA_FILE_NAME + "]", file.getName() ) );
     
     Response response = this.getConnector(IConfiguration.Connectors.NODE).post(this, path, action, null).send(false, params);
     return response.isOK();
