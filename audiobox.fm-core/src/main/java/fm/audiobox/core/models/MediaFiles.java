@@ -36,6 +36,8 @@ import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IEntity;
+import fm.audiobox.interfaces.IResponseHandler;
+import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 
 /**
  * <p>MediaFiles is a {@link AbstractCollectionEntity<MediaFile>} specialization for {@link MediaFile} collections.</p>
@@ -108,7 +110,14 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
     return super.addEntity(entity);
   }
 
-
+  
+  public IConnectionMethod load(boolean async, IResponseHandler responseHandler) throws ServiceException, LoginException {
+    this.clear();
+    IConnectionMethod request = getConnector(IConfiguration.Connectors.RAILS).get(this, this.getParent().getApiPath(), NAMESPACE, null);
+    request.send(async, null, responseHandler);
+    return request;
+  }
+  
 
   // DELETE /api/v1/playlists/:playlist_id/media_files/remove
   public boolean removeFromPlaylist(List<MediaFile> mediaFiles) throws ServiceException, LoginException {
@@ -191,7 +200,7 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
 
   @Override
   public String getApiPath() {
-    return this.getParent().getApiPath() + IConnector.URI_SEPARATOR + NAMESPACE;
+    return IConnector.URI_SEPARATOR + NAMESPACE;
   }
   
   protected List<NameValuePair> toQueryParameters(boolean all) {

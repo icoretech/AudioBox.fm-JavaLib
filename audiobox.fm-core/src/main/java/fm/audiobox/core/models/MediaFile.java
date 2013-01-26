@@ -63,8 +63,7 @@ public class MediaFile extends AbstractEntity implements Serializable {
   public static final String TAGNAME = "media_file";
   
   protected static final String ORIGINAL_FILE_NAME = "original_file_name";
-  protected static final String MEDIA_FILE_NAME = "media_file_name";
-  
+
   public static final String TYPE = "type";
   public static final String ARTIST = "artist";
   public static final String ALBUM = "album";
@@ -94,6 +93,7 @@ public class MediaFile extends AbstractEntity implements Serializable {
   public static final String AUDIO_CODEC = "audio_codec";
   public static final String AUDIO_SAMPLE_RATE = "audio_sample_rate";
   public static final String PLAYS = "plays";
+  public static final String LYRICS = "lyrics";
 
 
   private MediaFiles.Type type;
@@ -106,7 +106,6 @@ public class MediaFile extends AbstractEntity implements Serializable {
   private int len_int;
   private int position;
   private String filename;
-  private String media_file_name;
   private boolean loved = false;
   private int disc_number;
   private String mime;
@@ -126,13 +125,14 @@ public class MediaFile extends AbstractEntity implements Serializable {
   private String audio_codec;
   private String audio_sample_rate;
   private int plays;
+  private String lyrics = ""; // Default empty string
   
 
   /**
    * Use to invoke the correct remote action
    */
   private enum Actions {
-    stream, upload, local, download
+    stream, upload, local, download, lyrics, scrobble
   }
   
 
@@ -167,7 +167,6 @@ public class MediaFile extends AbstractEntity implements Serializable {
       setterMethods.put( ARTWORK, MediaFile.class.getMethod("setArtwork", String.class));
       setterMethods.put( HASH, MediaFile.class.getMethod("setHash", String.class));
       setterMethods.put( FILENAME, MediaFile.class.getMethod("setFilename", String.class));
-      setterMethods.put( MEDIA_FILE_NAME, MediaFile.class.getMethod("setMediaFileName", String.class));
       setterMethods.put( LOVED, MediaFile.class.getMethod("setLoved", boolean.class));
       setterMethods.put( REMOTE_PATH, MediaFile.class.getMethod("setRemotePath", String.class));
       setterMethods.put( SHARE_TOKEN, MediaFile.class.getMethod("setShareToken", String.class));
@@ -178,6 +177,7 @@ public class MediaFile extends AbstractEntity implements Serializable {
       setterMethods.put( VIDEO_ASPECT,  MediaFile.class.getMethod( "setVideoAspect", String.class )  );
       setterMethods.put( VIDEO_CONTAINER,  MediaFile.class.getMethod( "setVideoContainer", String.class )  );
       setterMethods.put( AUDIO_CODEC,  MediaFile.class.getMethod( "setAudioCodec", String.class )  );
+      setterMethods.put( LYRICS,  MediaFile.class.getMethod( "setLyrics", String.class )  );
     } catch (SecurityException e) {
       log.error("Security error", e);
     } catch (NoSuchMethodException e) {
@@ -269,22 +269,6 @@ public class MediaFile extends AbstractEntity implements Serializable {
     this.filename = filename;
   }
   
-  
-  /**
-   * @return the {@code media_file_name} of the MediaFile
-   */
-  public String getMediaFileName() {
-    return this.media_file_name;
-  }
-
-  /**
-   * This method is used by response parser
-   */
-  @Deprecated
-  public void setMediaFileName(String media_file_name) {
-    this.media_file_name = media_file_name;
-  }
-
   
   /**
    * @return the {@code release year} of the MediaFile
@@ -676,6 +660,24 @@ public class MediaFile extends AbstractEntity implements Serializable {
   public void setAudioCodec(String audio_codec) {
     this.audio_codec = audio_codec;
   }
+  
+
+  /**
+   * @return the {@code lyrics} of the MediaFile
+   */
+  public String getLyrics() {
+    return this.lyrics;
+  }
+  
+  
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
+  public void setLyrics(String lyrics) {
+    this.lyrics = lyrics != null ? lyrics : "";
+  }
+  
 
   public Method getSetterMethod(String tagName) {
     if (setterMethods.containsKey(tagName)) {
@@ -724,16 +726,49 @@ public class MediaFile extends AbstractEntity implements Serializable {
     request.send(async, null, responseHandler);
     return request;
   }
-
-
+  
+  
+  /**
+   * Use this method for getting {@code lyrics} from AudioBox.fm
+   * 
+   * @return {@code lyrics} of the MediaFile
+   * @throws ServiceException if any connection error occurs
+   * @throws LoginException if any login error occurs
+   */
+  public String lyrics(boolean async) throws ServiceException, LoginException {
+    IConnectionMethod request = getConnector(IConfiguration.Connectors.RAILS).get(this, Actions.lyrics.toString(), null);
+    request.send(async);
+    return this.getLyrics();
+  }
+  
+  
+  /**
+   * This method executes {@code scrobble} to AudioBox.fm
+   * 
+   * @return {@code true} if everything went fine. {@code false} if not.
+   * @throws ServiceException if any connection error occurs
+   * @throws LoginException if any login error occurs
+   */
+  public boolean scrobble() throws ServiceException, LoginException {
+    IConnectionMethod request = getConnector(IConfiguration.Connectors.RAILS).post(this, Actions.scrobble.toString());
+    request.send(false);
+    boolean result = request.getResponse().isOK();
+    if ( result ) {
+      this.plays += 1;
+    }
+    return result;
+  }
+  
+  
+  
   /**
    * Complete destroy MediaFile from AudioBox.fm
    * <p>
    *  <b>This method cannot be reverted</b>
    * </p>
    * @return {@code true} if everything went ok. {@code false} if not.
-   * @throws ServiceException if any connection error occurrs
-   * @throws LoginException if any login error occurrs
+   * @throws ServiceException if any connection error occurs
+   * @throws LoginException if any login error occurs
    */
   public boolean destroy() throws ServiceException, LoginException {
 
@@ -864,6 +899,10 @@ public class MediaFile extends AbstractEntity implements Serializable {
       throw new ServiceException("No file found for downloading media");
     }
   }
+  
+  
+  
+  
 
   /**
    * This method creates a MediaFile entity on AudioBox.fm Desktop drive.
@@ -892,7 +931,6 @@ public class MediaFile extends AbstractEntity implements Serializable {
     List<NameValuePair> params = this.toQueryParameters( true );
     params.add( new BasicNameValuePair(TAGNAME + "[" + REMOTE_PATH + "]", file.getAbsolutePath() ) );
     params.add( new BasicNameValuePair(TAGNAME + "[" + ORIGINAL_FILE_NAME + "]", file.getName() ) );
-    params.add( new BasicNameValuePair(TAGNAME + "[" + MEDIA_FILE_NAME + "]", file.getName() ) );
     
     Response response = this.getConnector(IConfiguration.Connectors.NODE).post(this, path, action, null).send(false, params);
     return response.isOK();

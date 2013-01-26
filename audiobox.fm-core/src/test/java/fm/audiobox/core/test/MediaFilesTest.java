@@ -9,6 +9,7 @@ import fm.audiobox.core.models.MediaFile;
 import fm.audiobox.core.models.MediaFiles;
 import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
+import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 import fm.audiobox.interfaces.IConfiguration;
 
 public class MediaFilesTest extends AbxTestCase {
@@ -17,7 +18,23 @@ public class MediaFilesTest extends AbxTestCase {
   public void setUp() {
     loginCatched();
   }
-
+  
+  
+  
+  @Test
+  public void mediaFileHashesCloud() {
+    
+    try {
+      user.getMediaFilesMap( MediaFile.Source.cloud.toString() );
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+  }
+  
+  
   @Test
   public void mediaFilesListForCloud() {
     
@@ -157,5 +174,99 @@ public class MediaFilesTest extends AbxTestCase {
     
     assertEquals( url + mf.getFilename(), mf.computeStreamUrl() );
   }
+  
+  
+  
+  @Test
+  public void mediaFileLyrics() {
+    Playlists pls = user.getPlaylists();
+    
+    try {
+      pls.load(false);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    Playlist pl = pls.getPlaylistByType( Playlists.Type.CloudPlaylist );
+    
+    MediaFiles mediaFiles = pl.getMediaFiles();
+    
+    try {
+      mediaFiles.load(false);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    
+    MediaFile mf = mediaFiles.get( Fixtures.get( Fixtures.TOKEN_LYRICS ) );
+    assertNotNull( mf );
+    
+    try {
+      assertNotNull( mf.getLyrics() );
+      String lyrics = mf.lyrics(false);
+      assertNotNull( lyrics );
+      
+      assertTrue( lyrics.length() > 10 );
+      
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    
+  }
+  
+  
+  @Test
+  public void mediaFileScrobble() {
+    Playlists pls = user.getPlaylists();
+    
+    try {
+      pls.load(false);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    Playlist pl = pls.getPlaylistByType( Playlists.Type.CloudPlaylist );
+    
+    MediaFiles mediaFiles = pl.getMediaFiles();
+    
+    try {
+      mediaFiles.load(false);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    
+    MediaFile mf = mediaFiles.get( Fixtures.get( Fixtures.TOKEN_LYRICS ) );
+    assertNotNull( mf );
+    
+    int playCount = 0;
+    try {
+      mf.load(false);
+      playCount = mf.getPlays();
+      mf.scrobble();
+      assertTrue( mf.getPlays() == (playCount + 1));
+      mf.load(false);
+      
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    assertTrue( mf.getPlays() == (playCount + 1));
+    
+  }
+  
   
 }

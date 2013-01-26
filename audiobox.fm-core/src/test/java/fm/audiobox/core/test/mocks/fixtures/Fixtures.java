@@ -23,6 +23,7 @@ public class Fixtures {
   public static final String TRACK_TITLE = "track_title";
   public static final String GENRE_NAME = "genre_name";
   public static final String ALBUM_NAME = "album_name";
+  public static final String TOKEN_LYRICS = "token_lyrics";
   
   private static Properties ps = new Properties();
 
