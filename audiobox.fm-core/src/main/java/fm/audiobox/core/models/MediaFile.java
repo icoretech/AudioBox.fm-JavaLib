@@ -132,7 +132,7 @@ public class MediaFile extends AbstractEntity implements Serializable {
    * Use to invoke the correct remote action
    */
   private enum Actions {
-    stream, upload, local, download, lyrics, scrobble
+    stream, upload, local, download, lyrics, scrobble, love, unlove
   }
   
 
@@ -739,6 +739,48 @@ public class MediaFile extends AbstractEntity implements Serializable {
     IConnectionMethod request = getConnector(IConfiguration.Connectors.RAILS).get(this, Actions.lyrics.toString(), null);
     request.send(async);
     return this.getLyrics();
+  }
+  
+  
+  /**
+   * Use this method for marking media file as {@code loved}
+   * <br />
+   * <b>This method is always executed synchronously</b>
+   * 
+   * @return {@code true} if everything went ok. {@code false} if not
+   * 
+   * @throws ServiceException if any connection error occurs
+   * @throws LoginException if any login error occurs
+   */
+  public boolean love() throws ServiceException, LoginException {
+    IConnectionMethod request = getConnector(IConfiguration.Connectors.RAILS).post(this, Actions.love.toString());
+    request.send(false);
+    boolean result = request.getResponse().isOK();
+    if ( result ) {
+      this.loved = true;
+    }
+    return result;
+  }
+  
+  
+  /**
+   * Use this method for marking media file as {@code not loved}
+   * <br />
+   * <b>This method is always executed synchronously</b>
+   * 
+   * @return {@code true} if everything went ok. {@code false} if not
+   * 
+   * @throws ServiceException if any connection error occurs
+   * @throws LoginException if any login error occurs
+   */
+  public boolean unlove() throws ServiceException, LoginException {
+    IConnectionMethod request = getConnector(IConfiguration.Connectors.RAILS).post(this, Actions.unlove.toString());
+    request.send(false);
+    boolean result = request.getResponse().isOK();
+    if ( result ) {
+      this.loved = false;
+    }
+    return result;
   }
   
   

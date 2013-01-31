@@ -222,6 +222,92 @@ public class MediaFilesTest extends AbxTestCase {
   }
   
   
+  
+  @Test
+  public void mediaFileLove() {
+    Playlists pls = user.getPlaylists();
+    
+    try {
+      pls.load(false);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    Playlist pl = pls.getPlaylistByType( Playlists.Type.CloudPlaylist );
+    
+    MediaFiles mediaFiles = pl.getMediaFiles();
+    
+    try {
+      mediaFiles.load(false);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    MediaFile mf = mediaFiles.get( Fixtures.get( Fixtures.TOKEN_LYRICS ) );
+    assertNotNull( mf );
+    
+    assertFalse( mf.isLoved() );
+    
+    try {
+      mf.love();
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    assertTrue( mf.isLoved() );
+    
+  }
+  
+  
+  @Test
+  public void mediaFileUnlove() {
+    Playlists pls = user.getPlaylists();
+    
+    try {
+      pls.load(false);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    Playlist pl = pls.getPlaylistByType( Playlists.Type.CloudPlaylist );
+    
+    MediaFiles mediaFiles = pl.getMediaFiles();
+    
+    try {
+      mediaFiles.load(false);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    MediaFile mf = mediaFiles.get( Fixtures.get( Fixtures.TOKEN_LYRICS ) );
+    assertNotNull( mf );
+    
+    assertTrue( mf.isLoved() );
+    
+    try {
+      mf.unlove();
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    assertFalse( mf.isLoved() );
+    
+  }
+  
+  
+  
   @Test
   public void mediaFileScrobble() {
     Playlists pls = user.getPlaylists();
