@@ -978,7 +978,8 @@ public class MediaFile extends AbstractEntity implements Serializable {
     return response.isOK();
   }
 
-  protected List<NameValuePair> toQueryParameters(boolean all) {
+  
+  public List<NameValuePair> toQueryParameters(boolean all) {
     String prefix = TAGNAME + "[";
     String suffix = "]";
     
