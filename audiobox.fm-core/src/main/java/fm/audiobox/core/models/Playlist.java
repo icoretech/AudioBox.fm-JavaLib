@@ -212,6 +212,39 @@ public class Playlist extends AbstractEntity implements Serializable {
 
     return response.isOK();
   }
+  
+  
+  
+  
+  /**
+   * Use this method to get a {@link MediaFiles} instance containing
+   * all the {@code MD5} and {@code token} for media files owned by this User.
+   * <br />
+   * This method is useful for sync tools.
+   *
+   * @return a {@link MediaFiles} instance
+   *
+   * @throws ServiceException if any connection problem occurs.
+   * @throws LoginException if any authentication problem occurs.
+   */
+  public MediaFiles getMediaFilesHashesMap(boolean async) throws ServiceException, LoginException {
+    if ( MediaFile.Source.cloud.toString().equals( this.getSystemName() ) || MediaFile.Source.local.toString().equals( this.getSystemName() )  ){
+      
+      MediaFiles mediaFiles = (MediaFiles) getConfiguration().getFactory().getEntity( MediaFiles.TAGNAME, getConfiguration() );
+  
+      IConnector connector = this.getConnector(IConfiguration.Connectors.RAILS);
+  
+      IConnectionMethod request = connector.get(mediaFiles, this.getApiPath() + IConnector.URI_SEPARATOR + MediaFiles.NAMESPACE, "hashes", null);
+      request.send( async );
+      
+      return mediaFiles;
+    } else {
+      throw new ServiceException("Only Cloud and Local playlists support this action: '" + this.getSystemName() + "'");
+    }
+  }
+  
+  
+  
 
   /**
    * @return the playlist position index

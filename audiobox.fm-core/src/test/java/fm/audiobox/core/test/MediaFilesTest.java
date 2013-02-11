@@ -24,14 +24,28 @@ public class MediaFilesTest extends AbxTestCase {
   @Test
   public void mediaFileHashesCloud() {
     
+    Playlists pls = user.getPlaylists();
+    
     try {
-      user.getMediaFilesMap( MediaFile.Source.cloud.toString() );
+      pls.load(false);
     } catch (ServiceException e) {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
     }
     
+    Playlist pl = pls.getPlaylistByType( Playlists.Type.CloudPlaylist );
+    MediaFiles mfs = null;
+    try {
+      mfs = pl.getMediaFilesHashesMap( false );
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    assertNotNull( mfs );
+    assertTrue( mfs.size() > 0 );
   }
   
   

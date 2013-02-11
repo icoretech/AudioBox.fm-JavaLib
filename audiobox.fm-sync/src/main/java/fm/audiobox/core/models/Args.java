@@ -35,6 +35,7 @@ public class Args extends AbstractEntity implements Serializable{
   public static final String ETAG = "etag";
   public static final String SERVER_IP = "server_ip";
   public static final String SERVER_PORT = "server_port";
+  public static final String REMOTE_PATH = "remote_path";
 
   private String filename;
   private String etag;
@@ -42,6 +43,7 @@ public class Args extends AbstractEntity implements Serializable{
   private long rangeMax;
   private String serverIp;
   private String serverPort;
+  private String remotePath;
 
 
 
@@ -54,6 +56,7 @@ public class Args extends AbstractEntity implements Serializable{
       setterMethods.put( ETAG, Args.class.getMethod("setEtag", String.class) );
       setterMethods.put( SERVER_IP, Args.class.getMethod("setServerIp", String.class) );
       setterMethods.put( SERVER_PORT, Args.class.getMethod("setServerPort", String.class) );
+      setterMethods.put( REMOTE_PATH, Args.class.getMethod("setRemotePath", String.class) );
     } catch (SecurityException e) {
       log.error("Security error", e);
     } catch (NoSuchMethodException e) {
@@ -117,6 +120,14 @@ public class Args extends AbstractEntity implements Serializable{
     this.rangeMax = rangeMax;
   }
 
+  
+  public String getRemotePath() {
+    return remotePath;
+  }
+
+  public void setRemotePath(String remotePath) {
+    this.remotePath = remotePath;
+  }
 
   public Method getSetterMethod(String tagName) {
     if ( setterMethods.containsKey( tagName) ) {

@@ -538,38 +538,6 @@ public final class User extends AbstractEntity implements Serializable {
 
 
   /**
-   * Use this method to get a {@link MediaFiles} instance containing
-   * all the {@code MD5} and {@code token} for media files owned by this User.
-   * You can specify the Source for filtering the results
-   * <br />
-   * This method is useful for sync tools.
-   *
-   * @param source a {@link MediaFile.Source}
-   *
-   * @return a {@link MediaFiles} instance
-   *
-   * @throws ServiceException if any connection problem occurs.
-   * @throws LoginException if any authentication problem occurs.
-   */
-  public MediaFiles getMediaFilesMap(String source) throws ServiceException, LoginException {
-    MediaFiles mediaFiles = (MediaFiles) getConfiguration().getFactory().getEntity( MediaFiles.TAGNAME, getConfiguration() );
-
-    IConnector connector = this.getConnector(IConfiguration.Connectors.RAILS);
-
-    String path = IConnector.URI_SEPARATOR.concat( MediaFiles.NAMESPACE );
-    String action = MediaFiles.Actions.hashes.toString();
-
-    List<NameValuePair> params = null;
-    params = new ArrayList<NameValuePair>();
-    params.add( new BasicNameValuePair("source", source.toLowerCase() ) );
-
-    connector.get(mediaFiles, path, action, params).send(false);
-
-    return mediaFiles;
-  }
-
-
-  /**
    * Instantiates a new {@link MediaFile}.
    * <br />
    * This method can help while uploading media file

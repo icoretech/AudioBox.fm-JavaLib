@@ -137,8 +137,9 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
     return response.isOK();
 
   }
-
-
+  
+  
+  
   public boolean destroy(List<MediaFile> mediaFiles) throws ServiceException, LoginException {
 
     if ( mediaFiles == null || mediaFiles.size() == 0 )
