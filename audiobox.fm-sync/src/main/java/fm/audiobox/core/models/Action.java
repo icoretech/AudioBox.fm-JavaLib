@@ -37,7 +37,8 @@ public class Action extends AbstractEntity implements Serializable {
     stream,
     disconnect,
     check,
-    error
+    error,
+    message
   }
 
   private String name;
