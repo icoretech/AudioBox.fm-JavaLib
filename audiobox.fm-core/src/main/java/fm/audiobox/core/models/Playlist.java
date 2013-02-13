@@ -234,7 +234,7 @@ public class Playlist extends AbstractEntity implements Serializable {
   
       IConnector connector = this.getConnector(IConfiguration.Connectors.RAILS);
   
-      IConnectionMethod request = connector.get(mediaFiles, this.getApiPath() + IConnector.URI_SEPARATOR + MediaFiles.NAMESPACE, "hashes", null);
+      IConnectionMethod request = connector.get(mediaFiles, this.getApiPath() + IConnector.URI_SEPARATOR + MediaFiles.NAMESPACE, "fingerprints", null);
       request.send( async );
       
       return mediaFiles;
