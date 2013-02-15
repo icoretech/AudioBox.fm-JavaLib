@@ -36,8 +36,11 @@ import io.socket.SocketIOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +60,8 @@ public class SocketClient extends Observable implements IOCallback {
   private AudioBox audiobox;
   private IConfiguration configuration;
   private SocketIO socket;
+  
+  private Map<String, String> headers = new HashMap<String, String>();
   
   /** for knowing if we were connected, in case of logout and re-login */
   private boolean wasConnected = false;
@@ -115,6 +120,11 @@ public class SocketClient extends Observable implements IOCallback {
   }
 
 
+  public void addHeader(String key, String value) {
+    this.headers.put(key, value);
+  }
+  
+  
   /**
    * Connects to Socket server and returns {@code true} it everithing went ok
    * @return boolean
@@ -147,6 +157,12 @@ public class SocketClient extends Observable implements IOCallback {
       
       this.socket = new SocketIO( url );
       this.socket.addHeader(IConnector.X_AUTH_TOKEN_HEADER, this.audiobox.getUser().getAuthToken() );
+      
+      Set<String> keys = this.headers.keySet();
+      for( String k : keys ){
+        this.socket.addHeader( k, this.headers.get(k) );
+      }
+      
       this.socket.connect(this);
     } else {
       // User is not logged in.
