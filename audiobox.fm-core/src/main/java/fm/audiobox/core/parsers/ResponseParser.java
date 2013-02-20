@@ -154,8 +154,12 @@ public class ResponseParser implements ResponseHandler<Response> {
         } else {
           // default: do nothing
         }
-        log.warn("Server has returned error: " + response.getBody() );
-        throw new ServiceException(response.getStatus(), response.getBody());
+        String body = response.getBody();
+        if ( body.length() > 50 ) {
+          body = body.substring(0, 49);
+        }
+        log.warn("Server has returned error: " + body );
+        throw new ServiceException(response.getStatus(), body);
     }
 
     return response;
