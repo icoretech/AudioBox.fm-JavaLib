@@ -156,7 +156,7 @@ public class SocketClient extends Observable implements IOCallback {
       }
       
       this.socket = new SocketIO( url );
-      this.socket.addHeader(IConnector.X_AUTH_TOKEN_HEADER, this.audiobox.getUser().getAuthToken() );
+      this.socket.addHeader( IConnector.X_AUTH_TOKEN_HEADER, this.audiobox.getUser().getAuthToken() );
       
       Set<String> keys = this.headers.keySet();
       for( String k : keys ){
