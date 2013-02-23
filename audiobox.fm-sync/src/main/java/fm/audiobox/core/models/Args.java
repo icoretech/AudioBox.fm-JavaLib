@@ -38,6 +38,7 @@ public class Args extends AbstractEntity implements Serializable{
   public static final String REMOTE_PATH = "remote_path";
   public static final String MESSAGE = "message";
   public static final String CRITICAL = "critical";
+  public static final String DESTINATION_HOST = "destination_hash";
 
   private String filename;
   private String etag;
@@ -46,6 +47,7 @@ public class Args extends AbstractEntity implements Serializable{
   private String serverIp;
   private String serverPort;
   private String remotePath;
+  private String destinationHash;
   
   private String message;
   private boolean critical;
@@ -64,6 +66,7 @@ public class Args extends AbstractEntity implements Serializable{
       setterMethods.put( REMOTE_PATH, Args.class.getMethod("setRemotePath", String.class) );
       setterMethods.put( MESSAGE, Args.class.getMethod("setMessage", String.class) );
       setterMethods.put( CRITICAL, Args.class.getMethod("setCritical", boolean.class) );
+      setterMethods.put( DESTINATION_HOST, Args.class.getMethod("setDestinationHash", String.class) );
     } catch (SecurityException e) {
       log.error("Security error", e);
     } catch (NoSuchMethodException e) {
@@ -151,6 +154,16 @@ public class Args extends AbstractEntity implements Serializable{
 
   public void setCritical(boolean critical) {
     this.critical = critical;
+  }
+  
+  
+  
+  public String getDestinationHash() {
+    return destinationHash;
+  }
+
+  public void setDestinationHash(String destinationHash) {
+    this.destinationHash = destinationHash;
   }
 
   public Method getSetterMethod(String tagName) {
