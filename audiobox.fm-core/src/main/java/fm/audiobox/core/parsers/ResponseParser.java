@@ -109,20 +109,18 @@ public class ResponseParser implements ResponseHandler<Response> {
         response = this.configuration.getCacheManager().getResponse(destEntity, this.ecode);
         response.setStatus( HttpStatus.SC_NOT_MODIFIED );
 
+      case HttpStatus.SC_CREATED:
       case HttpStatus.SC_OK:
       case HttpStatus.SC_ACCEPTED:
+      
         // Try to parse response body
-        this.responseHandler.deserialize(response.getStream(), destEntity, response.getFormat());
+        if ( destEntity != null ) {
+          this.responseHandler.deserialize( response.getStream(), destEntity, response.getFormat() );
+        }
         
         if ( responseCode != HttpStatus.SC_NOT_MODIFIED && this.method.isGET() && this.configuration.isCacheEnabled() ) {
           this.configuration.getCacheManager().store(this.destEntity, this.ecode, url, response, httpResponse);
         }
-        break;
-        
-      // In all other cases new response will be instantiated and returned
-      case HttpStatus.SC_CREATED:
-  
-        response = new Response(response.getFormat(), responseCode, "Created");
         break;
   
       case HttpStatus.SC_NO_CONTENT:
