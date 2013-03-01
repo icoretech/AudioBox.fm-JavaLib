@@ -175,7 +175,6 @@ public class MediaFilesTest extends AbxTestCase {
     assertNotNull(       mf.getHash()                  );
     assertNotNull(       mf.getAudioBitrate()                  );
     assertNotNull(       mf.getAudioSampleRate()                  );
-    assertNotNull(       mf.getPlays()                  );
     
 //  assertNotNull(       mf.getRemotePath()                  );
 //  assertNotNull(       mf.getVideoBitrate()                  );
@@ -350,12 +349,9 @@ public class MediaFilesTest extends AbxTestCase {
     MediaFile mf = mediaFiles.get( Fixtures.get( Fixtures.TOKEN_LYRICS ) );
     assertNotNull( mf );
     
-    int playCount = 0;
     try {
       mf.load(false);
-      playCount = mf.getPlays();
       mf.scrobble();
-      assertTrue( mf.getPlays() == (playCount + 1));
       mf.load(false);
       
     } catch (ServiceException e) {
@@ -363,8 +359,6 @@ public class MediaFilesTest extends AbxTestCase {
     } catch (LoginException e) {
       fail( e.getMessage() );
     }
-    
-    assertTrue( mf.getPlays() == (playCount + 1));
     
   }
   

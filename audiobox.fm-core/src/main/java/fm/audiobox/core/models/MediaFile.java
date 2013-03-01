@@ -92,7 +92,6 @@ public class MediaFile extends AbstractEntity implements Serializable {
   public static final String AUDIO_BITRATE = "audio_bitrate";
   public static final String AUDIO_CODEC = "audio_codec";
   public static final String AUDIO_SAMPLE_RATE = "audio_sample_rate";
-  public static final String PLAYS = "plays";
   public static final String LYRICS = "lyrics";
 
 
@@ -124,7 +123,6 @@ public class MediaFile extends AbstractEntity implements Serializable {
   private String audio_bitrate;
   private String audio_codec;
   private String audio_sample_rate;
-  private int plays;
   private String lyrics = ""; // Default empty string
   
 
@@ -156,7 +154,6 @@ public class MediaFile extends AbstractEntity implements Serializable {
       setterMethods.put( LEN_STR, MediaFile.class.getMethod("setLenStr", String.class));
       setterMethods.put( LEN_INT, MediaFile.class.getMethod("setLenInt", int.class));
       setterMethods.put( POSITION, MediaFile.class.getMethod("setPosition", int.class));
-      setterMethods.put( PLAYS, MediaFile.class.getMethod("setPlays", int.class));
       setterMethods.put( DISC_NUMBER, MediaFile.class.getMethod("setDiscNumber", int.class));
       setterMethods.put( MIME, MediaFile.class.getMethod("setMime", String.class));
       setterMethods.put( TYPE, MediaFile.class.getMethod("setType", String.class));
@@ -376,22 +373,6 @@ public class MediaFile extends AbstractEntity implements Serializable {
   @Deprecated
   public void setSize(long size) {
     this.size = size;
-  }
-
-  
-  /**
-   * @return the {@code play count} of the MediaFile
-   */
-  public int getPlays() {
-    return plays;
-  }
-
-  /**
-   * This method is used by response parser
-   */
-  @Deprecated
-  public void setPlays(int plays) {
-    this.plays = plays;
   }
 
   
@@ -794,11 +775,7 @@ public class MediaFile extends AbstractEntity implements Serializable {
   public boolean scrobble() throws ServiceException, LoginException {
     IConnectionMethod request = getConnector(IConfiguration.Connectors.RAILS).post(this, Actions.scrobble.toString());
     request.send(false);
-    boolean result = request.getResponse().isOK();
-    if ( result ) {
-      this.plays += 1;
-    }
-    return result;
+    return request.getResponse().isOK();
   }
   
   
