@@ -175,6 +175,7 @@ public class JParser {
       return;
     }
     if (method == null) {
+      entity.setProperty(_method, ((JsonElement)value).getAsString());
       log.warn(entity.getClass().getName() + " doesn't contain the requested method for tag: " + _method);
       return;
     }
