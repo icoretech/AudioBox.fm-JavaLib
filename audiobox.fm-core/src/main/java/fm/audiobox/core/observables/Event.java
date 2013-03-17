@@ -3,6 +3,7 @@ package fm.audiobox.core.observables;
 import java.util.EventObject;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Observable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,6 +74,13 @@ public class Event extends EventObject {
     }
     return null;
     
+  }
+  
+  
+  public static void fireEvent(Observable observable, Event.States state, Object obj) {
+    Object source = obj != null ? obj : observable;
+    Event e = new Event(source, state);
+    observable.notifyObservers(e);
   }
   
 }

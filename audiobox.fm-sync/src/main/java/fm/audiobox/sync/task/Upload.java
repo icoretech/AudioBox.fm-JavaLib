@@ -23,12 +23,14 @@
 package fm.audiobox.sync.task;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.MediaFile;
 import fm.audiobox.core.parsers.UploadHandler;
-import fm.audiobox.sync.util.AsyncTask;
+import fm.audiobox.sync.util.JobTask;
 
 /**
  * 
@@ -36,89 +38,49 @@ import fm.audiobox.sync.util.AsyncTask;
  * @author Fabio Tunno
  * @version 0.0.1
  */
-public class Upload extends AsyncTask {
+public class Upload extends JobTask {
 
-    private MediaFile media;
-    private File mFile;
+  private MediaFile media;
+  private File mFile;
 
-    public Upload(MediaFile media, File file){
-        this.media = media;
-        this.mFile = file;
+  public Upload(String name, MediaFile media, File file){
+    super(name);
+    this.media = media;
+    this.mFile = file;
+  }
+
+
+  public synchronized Object doTask() {
+
+    try {
+      this.media.upload( false, new UploadHandler(this.mFile) {
+        public synchronized boolean write(OutputStream out, byte[] buffer, int length) throws IOException {
+          out.write( buffer, 0, length );
+          return ! Upload.this.isCancelled();
+        }
+      });
+    } catch (LoginException e) {
+      this.log.error("Login error", e);
+    } catch (ServiceException e) {
+      this.log.error("Error occurred while uploading", e);
     }
+    
+    return null;
+
+  }
+
+  public void upload(){
+    this.execute();
+  }
+
+  public boolean start() {
+    return true;
+  }
 
 
-    @Override
-    protected synchronized void doTask() {
-
-      try {
-        this.media.upload( false, new UploadHandler(this.mFile) );
-      } catch (LoginException e) {
-          e.printStackTrace();
-      } catch (ServiceException e) {
-          e.printStackTrace();
-      }
-
-    }
-
-    public String upload(){
-        this.start();
-        this.doTask();
-        return this.end();
-    }
-
-
-    @Override
-    protected synchronized String end() {
-        return this.media.getToken();
-    }
-
-    @Override
-    protected synchronized boolean start() {
-      return true;
-
-//        final Upload me = this;
-//        final ThreadListener tl = this.getThreadListener();
-//        final long total = this.mFile.length();
-//
-//        FileBody mFileBody = new FileBody( this.mFile, new MimetypesFileTypeMap().getContentType(this.mFile) ) {
-//
-//            @Override
-//            public void writeTo(final OutputStream outstream) throws IOException {
-//
-//                if (outstream == null) {
-//                    throw new IllegalArgumentException("Output stream may not be null");
-//                }
-//
-//                long completed = 0;
-//
-//                InputStream in = new FileInputStream(mFile);
-//                try {
-//                    byte[] tmp = new byte[4096];
-//                    int l;
-//                    while ((l = in.read(tmp)) != -1) {
-//                    	if ( me.isStopped() ){
-//                    		mTrack.getConnectionMethod().abort();
-//                    		break;
-//                    	}
-//                        outstream.write(tmp, 0, l);
-//                        completed += l;
-//                        tl.onProgress(me, total, completed, (total - completed), mFile);
-//                    }
-//                    outstream.flush();
-//                } finally {
-//                    in.close();
-//                }
-//
-//            }
-//
-//        }; 
-//
-//        this.mTrack.setFileBody( mFileBody );
-
-    }
+  public void end(Object result) {
+    
+  }
 
 
 }
-
-
-

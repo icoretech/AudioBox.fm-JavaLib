@@ -364,7 +364,9 @@ public class AudioBox extends Observable {
         log.debug("-> User-Agent: " + getConfiguration().getUserAgent() );
       }
 
-      method.addHeader("Accept-Encoding", "gzip");
+      if ( getConfiguration().getEnvProperty().equals("production") ){
+        method.addHeader("Accept-Encoding", "gzip");
+      }
       method.addHeader("User-Agent",  getConfiguration().getUserAgent());
 
       return method;

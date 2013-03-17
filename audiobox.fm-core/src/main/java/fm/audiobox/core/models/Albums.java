@@ -27,7 +27,8 @@ public class Albums extends AbstractCollectionEntity<Album> implements Serializa
   }
 
   public String getApiPath() {
-    return this.getParent().getApiPath() + IConnector.URI_SEPARATOR + NAMESPACE;
+    // use playlists/:token/media_files/albums.json as per 2.0.8 change log
+    return this.getParent().getApiPath() + IConnector.URI_SEPARATOR + MediaFiles.NAMESPACE + IConnector.URI_SEPARATOR + NAMESPACE;
   }
 
   public String getNamespace() {

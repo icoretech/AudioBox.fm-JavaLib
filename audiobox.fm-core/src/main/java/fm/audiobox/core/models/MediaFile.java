@@ -93,6 +93,9 @@ public class MediaFile extends AbstractEntity implements Serializable {
   public static final String AUDIO_CODEC = "audio_codec";
   public static final String AUDIO_SAMPLE_RATE = "audio_sample_rate";
   public static final String LYRICS = "lyrics";
+  public static final String ALBUM_ARTIST = "album_artist";
+  public static final String COMPOSER = "composer";
+  
 
 
   private MediaFiles.Type type;
@@ -124,6 +127,8 @@ public class MediaFile extends AbstractEntity implements Serializable {
   private String audio_codec;
   private String audio_sample_rate;
   private String lyrics = ""; // Default empty string
+  private String album_artist;
+  private String composer;
   
 
   /**
@@ -175,6 +180,8 @@ public class MediaFile extends AbstractEntity implements Serializable {
       setterMethods.put( VIDEO_CONTAINER,  MediaFile.class.getMethod( "setVideoContainer", String.class )  );
       setterMethods.put( AUDIO_CODEC,  MediaFile.class.getMethod( "setAudioCodec", String.class )  );
       setterMethods.put( LYRICS,  MediaFile.class.getMethod( "setLyrics", String.class )  );
+      setterMethods.put( ALBUM_ARTIST,  MediaFile.class.getMethod( "setAlbumArtist", String.class )  );
+      setterMethods.put( COMPOSER, MediaFile.class.getMethod( "setComposer", String.class )  );
     } catch (SecurityException e) {
       log.error("Security error", e);
     } catch (NoSuchMethodException e) {
@@ -651,6 +658,37 @@ public class MediaFile extends AbstractEntity implements Serializable {
   }
   
   
+  /**
+   * @return the {@code album_artist} of the MediaFile
+   */
+  public String getAlbumArtist() {
+    return album_artist;
+  }
+
+  
+  /**
+   * Sets the {@code album_artist} of this media file
+   */
+  public void setAlbumArtist(String album_artist) {
+    this.album_artist = album_artist;
+  }
+  
+
+  /**
+   * @return the {@code composer} of the MediaFile
+   */
+  public String getComposer() {
+    return composer;
+  }
+
+  
+  /**
+   * Sets the {@code composer} of this media file
+   */
+  public void setComposer(String composer) {
+    this.composer = composer;
+  }
+
   /**
    * This method is used by response parser
    */

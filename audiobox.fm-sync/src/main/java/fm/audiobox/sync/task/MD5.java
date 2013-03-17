@@ -29,48 +29,48 @@ import java.io.IOException;
 
 import com.twmacinta.util.MD5InputStream;
 
-import fm.audiobox.sync.util.AsyncTask;
+import fm.audiobox.core.observables.Event;
+import fm.audiobox.sync.util.JobTask;
 
-/**
- * 
- * 
- * @author Fabio Tunno
- * @version 0.0.1
- */
-public class MD5 extends AsyncTask {
+public class MD5 extends JobTask {
 
-    private File _file = null;
-    private String result = "";
+  private File _file = null;
+  private String result = "";
 
 
-    public MD5(File file){
-        this._file = file;
-    }
+  public MD5(String name, File file){
+    super(name);
+    this._file = file;
+  }
 
 
-    @Override
-    protected synchronized void doTask() {
+  public synchronized Object doTask() {
 
-    byte[] buf = new byte[65536];
-        int num_read = -1;
+    byte[] buf = new byte[1024 * 1024];
+    int num_read = -1;
     
     com.twmacinta.util.MD5.initNativeLibrary(true);
-        MD5InputStream in = null;
+    MD5InputStream in = null;
+    
     try {
       in = new MD5InputStream(new BufferedInputStream(new FileInputStream(this._file)));
       
       long file_length = this._file.length(),
-        completed = 0;
+      completed = 0;
       
-      while ((num_read = in.read(buf)) != -1){
-        completed+=num_read;
-        this.getThreadListener().onProgress( this , file_length , completed, file_length - completed, this._file );
+      while (  ( (num_read = in.read(buf)) != -1 ) && !this.isCancelled() ){
+        completed += num_read;
+        this.fireEvent(Event.States.ENTITY_REFRESHED, ((file_length - completed) * 100) / file_length );
+      }
+      
+      if ( this.isCancelled() ){
+        return "";
       }
       
       this.result = com.twmacinta.util.MD5.asHex( in.hash() );
       
     } catch (IOException e) {
-      e.printStackTrace();
+      this.fireEvent(Event.States.ERROR, e.getMessage() );
     } finally {
       try {
         in.close();
@@ -79,26 +79,22 @@ public class MD5 extends AsyncTask {
       }
     }
     
-
-    }
-
-
-    public synchronized String digest(){
-        this.start();
-        this.doTask();
-        return this.end();
-    }
+    return this.result;
+  }
 
 
-    @Override
-    protected synchronized String end() {
-        return this.result.toLowerCase();
-    }
+  public synchronized String digest(){
+    this.execute();
+    return this.result;
+  }
 
-    @Override
-    protected synchronized boolean start() {
-      return true;
-    }
 
+  public synchronized void end(Object result) {
+    
+  }
+
+  public boolean start() {
+    return true;
+  }
 
 }

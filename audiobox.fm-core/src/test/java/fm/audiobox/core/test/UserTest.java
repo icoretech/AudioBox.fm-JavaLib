@@ -63,6 +63,21 @@ public class UserTest extends AbxTestCase {
   }
   
   
+  @Test
+  public void userHasDaemonRunning() {
+    loginCatched();
+    boolean result = false;
+    try {
+      result = user.isDaemonRunning();
+    } catch (LoginException e) {
+      fail(e.getMessage());
+    }
+    
+    log.info("Daemon is running: ***  " + result + " ***");
+    assertTrue(true);
+    
+  }
+  
   
   @Test
   public void userHasAllPermissions() {
