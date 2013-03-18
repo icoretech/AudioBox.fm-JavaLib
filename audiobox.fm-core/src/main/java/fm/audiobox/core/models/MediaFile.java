@@ -755,7 +755,8 @@ public class MediaFile extends AbstractEntity implements Serializable {
    * @throws LoginException if any login error occurs
    */
   public String lyrics(boolean async) throws ServiceException, LoginException {
-    IConnectionMethod request = getConnector(IConfiguration.Connectors.RAILS).get(this, Actions.lyrics.toString(), null);
+    String path = IConnector.URI_SEPARATOR + MediaFiles.NAMESPACE + IConnector.URI_SEPARATOR  + this.getToken();
+    IConnectionMethod request = getConnector(IConfiguration.Connectors.RAILS).get(this, path, Actions.lyrics.toString(), null);
     request.send(async);
     return this.getLyrics();
   }
@@ -772,7 +773,8 @@ public class MediaFile extends AbstractEntity implements Serializable {
    * @throws LoginException if any login error occurs
    */
   public boolean love() throws ServiceException, LoginException {
-    IConnectionMethod request = getConnector(IConfiguration.Connectors.RAILS).post(this, Actions.love.toString());
+    String path = IConnector.URI_SEPARATOR + MediaFiles.NAMESPACE + IConnector.URI_SEPARATOR  + this.getToken();
+    IConnectionMethod request = getConnector(IConfiguration.Connectors.RAILS).post(this, path, Actions.love.toString());
     request.send(false);
     boolean result = request.getResponse().isOK();
     if ( result ) {
@@ -811,7 +813,8 @@ public class MediaFile extends AbstractEntity implements Serializable {
    * @throws LoginException if any login error occurs
    */
   public boolean scrobble() throws ServiceException, LoginException {
-    IConnectionMethod request = getConnector(IConfiguration.Connectors.RAILS).post(this, Actions.scrobble.toString());
+    String path = IConnector.URI_SEPARATOR + MediaFiles.NAMESPACE + IConnector.URI_SEPARATOR  + this.getToken();
+    IConnectionMethod request = getConnector(IConfiguration.Connectors.RAILS).post(this, path, Actions.scrobble.toString());
     request.send(false);
     return request.getResponse().isOK();
   }
