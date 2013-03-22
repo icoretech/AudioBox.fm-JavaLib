@@ -185,7 +185,8 @@ public class MediaFilesTest extends AbxTestCase {
 //  assertNotNull(       mf.getVideoContainer()                  );
 //  assertNotNull(       mf.getAudioCodec()                  );
     
-    assertEquals( url + mf.getFilename(), mf.computeStreamUrl() );
+    assertEquals( url + mf.getFilename(), mf.computeStreamUrl(false) );
+    assertEquals( url + mf.getFilename() + "?flash=true", mf.computeStreamUrl(true) );
   }
   
   
