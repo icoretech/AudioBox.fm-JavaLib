@@ -724,11 +724,16 @@ public class MediaFile extends AbstractEntity implements Serializable {
    * NOTE: this method doesn't return the authentication method
    * </p>
    */
-  public String computeStreamUrl() {
+  public String computeStreamUrl(boolean direct) {
     String path = IConnector.URI_SEPARATOR.concat(Actions.stream.toString());
     String action = this.getFilename();
 
-    IConnectionMethod request = this.getConnector(IConfiguration.Connectors.NODE).get(this, path, action, null, null);
+    List<NameValuePair> params = new ArrayList<NameValuePair>();
+    if ( direct ) {
+      params.add(new BasicNameValuePair("flash", String.valueOf( Boolean.TRUE ) ) );
+    }
+    IConnectionMethod request = this.getConnector(IConfiguration.Connectors.NODE).get(this, path, action, null, params);
+    
     return request.getHttpMethod().getURI().toString();
   }
 
