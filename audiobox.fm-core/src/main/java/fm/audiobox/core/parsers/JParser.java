@@ -65,9 +65,8 @@ public class JParser {
    */
   public IEntity parse ( InputStreamReader isr ){
     startParse = System.currentTimeMillis();
-
+    
     JsonObject jobj = new JsonParser().parse(isr).getAsJsonObject();
-
     parse(jobj);
     
     if (log.isDebugEnabled()) {
@@ -75,6 +74,7 @@ public class JParser {
     }
     return entity;
   }
+  
   
   
   /**
@@ -222,7 +222,7 @@ public class JParser {
 
         }
       }
-    }catch (IllegalArgumentException e) {
+    } catch (IllegalArgumentException e) {
       log.error("An error while invoking method '" + method + "' for tag: " + _method, e);
     } catch (IllegalAccessException e) {
       log.error("An error while invoking method '" + method + "' for tag: " + _method, e);
