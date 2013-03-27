@@ -16,7 +16,6 @@ import org.xml.sax.XMLReader;
 
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.parsers.DownloadHandler;
-import fm.audiobox.core.parsers.JParser;
 import fm.audiobox.core.parsers.JParserStreaming;
 import fm.audiobox.core.parsers.XmlParser;
 import fm.audiobox.interfaces.IConfiguration.ContentFormat;
