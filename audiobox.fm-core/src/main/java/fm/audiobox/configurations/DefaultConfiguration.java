@@ -100,7 +100,7 @@ public class DefaultConfiguration implements IConfiguration {
 
 
   public DefaultConfiguration(String appName, int major, int minor, int revision){
-    this(appName, major, minor, revision, ContentFormat.XML);
+    this(appName, major, minor, revision, ContentFormat.JSON);
   }
 
   public DefaultConfiguration(String appName){
