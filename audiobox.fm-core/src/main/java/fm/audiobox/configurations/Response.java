@@ -55,6 +55,7 @@ public final class Response implements Serializable {
   private AudioBoxException exception;
   
   
+  
   public Response(ContentFormat format, int status, InputStream stream){
     super();
     this.format = format;
@@ -285,6 +286,21 @@ public final class Response implements Serializable {
       }
       return "";
     }
+    
+    protected void switchInputStream() {
+      log.info("Force to switch input stream");
+      
+    }
+
+
+    @Override
+    public void close() throws IOException {
+      super.close();
+      this.in = new ByteArrayInputStream( this.rowBody.toString().getBytes() );
+      this.in.close();
+      this.isEndedParsing = true;
+    }
+    
     
     
   }
