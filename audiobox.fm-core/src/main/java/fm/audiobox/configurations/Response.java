@@ -112,9 +112,8 @@ public final class Response implements Serializable {
    * @return the {@code InputStream} containing the body of the response
    */
   public InputStream getStream(){
-    try {
-      this.stream.reset();
-    } catch (IOException e) {
+    if ( this.stream.isEndedParsing ){
+      this.stream.switchInputStream();
     }
     return this.stream;
   }
@@ -289,18 +288,16 @@ public final class Response implements Serializable {
     
     protected void switchInputStream() {
       log.info("Force to switch input stream");
-      
+      this.in = new ByteArrayInputStream( this.rowBody.toString().getBytes() );
     }
 
 
     @Override
     public void close() throws IOException {
       super.close();
-      this.in = new ByteArrayInputStream( this.rowBody.toString().getBytes() );
-      this.in.close();
+      buf = new byte[ CHUNK ];
       this.isEndedParsing = true;
     }
-    
     
     
   }
