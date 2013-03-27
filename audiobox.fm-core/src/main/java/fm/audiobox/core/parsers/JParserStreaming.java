@@ -75,6 +75,7 @@ public class JParserStreaming {
         } else {
           log.error("No valid entity has been passed");
           reader.skipValue();
+          reader.close();
           return null;
         }
         
