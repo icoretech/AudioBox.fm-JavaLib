@@ -40,6 +40,7 @@ public class Preferences extends AbstractEntity implements Serializable {
   public static final String PREBUFFER = "prebuffer";
   public static final String REPEAT = "repeat";
   public static final String SHUFFLE = "shuffle";
+  public static final String DEMUXER = "js_demuxer";
   
   
   private boolean accept_emails = false;
@@ -50,6 +51,7 @@ public class Preferences extends AbstractEntity implements Serializable {
   private boolean prebuffer;
   private boolean repeat;
   private boolean shuffle;
+  private boolean js_demuxer;
   
   
   private static final Map<String, Method> setterMethods = new HashMap<String, Method>();
@@ -63,6 +65,7 @@ public class Preferences extends AbstractEntity implements Serializable {
       setterMethods.put( PREBUFFER, Preferences.class.getMethod( "setPrebuffer", boolean.class )  );
       setterMethods.put( REPEAT, Preferences.class.getMethod( "setRepeat", boolean.class )  );
       setterMethods.put( SHUFFLE, Preferences.class.getMethod( "setShuffle", boolean.class )  );
+      setterMethods.put( DEMUXER, Preferences.class.getMethod( "setDemuxer", boolean.class )  );
     } catch (SecurityException e) {
       log.error("Security error", e);
     } catch (NoSuchMethodException e) {
@@ -212,6 +215,24 @@ public class Preferences extends AbstractEntity implements Serializable {
   }
 
   
+  
+  /**
+   * @return {@code true} if {@link User} has enabled the {@code demuxer} feature in Cloud Web Player
+   */
+  public boolean isDemuxer() {
+    return js_demuxer;
+  }
+
+
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
+  public void setDemuxer(boolean js_demuxer) {
+    this.js_demuxer = js_demuxer;
+  }
+
+
   public Method getSetterMethod(String tagName) {
     if ( setterMethods.containsKey( tagName) ) {
       return setterMethods.get( tagName );
