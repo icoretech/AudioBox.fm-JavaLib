@@ -1,8 +1,8 @@
 package fm.audiobox.core.models;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Observable;
@@ -35,7 +35,7 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
   /**
    * {@link IEntity} collection. Used to store all {@link IEntity} children
    */
-  private List<IEntity> collection = new ArrayList<IEntity>();
+  private List<IEntity> collection = new LinkedList<IEntity>();
 
 
   public AbstractCollectionEntity(IConfiguration config) {
