@@ -1,5 +1,6 @@
 package fm.audiobox.configurations;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,7 +42,7 @@ public final class Response implements Serializable {
   /**
    * Contains the {@link InputStream} which read data from
    */
-  private InputStream stream;
+  private InternalInputStream stream;
   
   /**
    * Contains the {@link InputStream} represented as String
@@ -58,7 +59,11 @@ public final class Response implements Serializable {
     super();
     this.format = format;
     this.status = status;
-    this.stream = stream;
+    if ( stream == null ) {
+      stream = new ByteArrayInputStream( ("no response body").getBytes() );
+      log.info("No response body, it's empty");
+    }
+    this.stream = new InternalInputStream( stream );
   }
   
   
@@ -214,14 +219,75 @@ public final class Response implements Serializable {
    * @return the String representing the parsed {@code InputStream}
    * @throws IOException the InputStream default exception
    */
-  public static String streamToString(InputStream stream, int chunk) throws IOException{
+  public static String streamToString(InputStream stream, int chunk) throws IOException {
+    
+    if ( stream instanceof InternalInputStream ) {
+      if ( ((InternalInputStream) stream).hasString() ) {
+        return ((InternalInputStream) stream).getString();
+      }
+    }
+    
     byte[] bytes = new byte[ chunk ];
     int read = -1;
     StringBuffer sb = new StringBuffer();
     while(  (read = stream.read(bytes) ) != -1 ){
-      sb.append( new String(bytes,0,read) );
+      sb.append( new String(bytes, 0, read) );
     }
     return sb.toString();
   }
+  
+  
+  
+  private class InternalInputStream extends BufferedInputStream {
+
+    private boolean isEndedParsing = false;
+    private StringBuffer rowBody = new StringBuffer();
+    
+    public InternalInputStream(InputStream is) {
+      super(is, CHUNK);
+    }
+
+ 
+    public int read(byte[] cbuf, int offset, int length) throws IOException {
+      
+      if ( this.isEndedParsing ) {
+        this.isEndedParsing = false;
+        this.rowBody = new StringBuffer();
+        try {
+          this.in.reset();
+        } catch(IOException e) {
+          // silently fail
+        }
+      }
+      
+      int read = super.read(cbuf, offset, length);
+      this.isEndedParsing = read == -1;
+      
+      if ( !this.isEndedParsing ) {
+        this.rowBody.append( new String(cbuf, offset, read) );
+        
+      } else if ( ! (this.in instanceof ByteArrayInputStream) ) {
+        log.debug("Response stream is terminated, convert it into ByteArrayStream");
+        this.in = new ByteArrayInputStream( this.rowBody.toString().getBytes() );
+      }
+      
+      return read;
+    }
+    
+    
+    public boolean hasString() {
+      return (this.in instanceof ByteArrayInputStream) && this.rowBody.length() > 0;
+    }
+    
+    public String getString() {
+      if ( this.hasString() ){
+        return this.rowBody.toString();
+      }
+      return "";
+    }
+    
+    
+  }
+  
   
 }
