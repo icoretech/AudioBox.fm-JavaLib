@@ -17,6 +17,7 @@ import org.xml.sax.XMLReader;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.parsers.DownloadHandler;
 import fm.audiobox.core.parsers.JParser;
+import fm.audiobox.core.parsers.JParserStreaming;
 import fm.audiobox.core.parsers.XmlParser;
 import fm.audiobox.interfaces.IConfiguration.ContentFormat;
 import fm.audiobox.interfaces.IEntity;
@@ -87,7 +88,8 @@ public class DefaultResponseDeserializer implements IResponseHandler  {
 
   public void deserializeJson(InputStream inputStream, IEntity destEntity) throws ServiceException {
   
-    JParser parser = new JParser(destEntity);
+    JParserStreaming parser = new JParserStreaming(destEntity);
+//    JParser parser = new JParser(destEntity);
     parser.parse(new InputStreamReader(inputStream));
   }
 
