@@ -60,7 +60,7 @@ public class JParserStreaming {
             String subtagname = ((AbstractCollectionEntity<?>) this.entity).getSubTagName();
             while( reader.hasNext() ) {
               if ( ! setDynamicProperty(subtagname, this.entity, reader) ) {
-                log.warn("Property has been skipped by the parser: " + subtagname);
+                log.warn("Sub-entity has been skipped by the parser: " + subtagname);
                 reader.skipValue();
               }
               
@@ -105,7 +105,11 @@ public class JParserStreaming {
       String prop = reader.nextName();
       try {
         if ( ! setDynamicProperty( prop, _entity, reader ) ){
-          log.warn("Property has been skipped by the parser: " + prop);
+          if ( reader.peek() != JsonToken.NULL ) {
+            log.warn("Property has been skipped by the parser: " + prop);
+          } else {
+            log.debug("Property " + prop + " is null, so not set");
+          }
           reader.skipValue();
         }
       } catch ( java.lang.IllegalStateException e ){
@@ -139,13 +143,14 @@ public class JParserStreaming {
         return false;
       }
       
-      if ( nextToken == JsonToken.NULL ) {
-        log.info("null value for " + prop);
-        return false;
-      }
       
       if (method.getParameterTypes().length == 1) {
         Class<?> paramType = method.getParameterTypes()[0];
+        
+        if ( nextToken == JsonToken.NULL ) {
+          method.invoke(dest, (Object) null);
+          return false;
+        }
         
         if ( isPrimitive ) {
           
