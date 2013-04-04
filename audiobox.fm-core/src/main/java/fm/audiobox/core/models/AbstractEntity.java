@@ -47,6 +47,8 @@ public abstract class AbstractEntity extends Observable implements IEntity {
   
   private IConfiguration configuration;
   
+  protected boolean loaded = false;
+  
   /**
    * Dynamic properties associated with this instance
    */
@@ -99,6 +101,10 @@ public abstract class AbstractEntity extends Observable implements IEntity {
     return this.properties.get(key);
   }
 
+  
+  public boolean isLoaded() {
+    return this.loaded;
+  }
   
   /**
    * Sets the token associated with this {@link IEntity} class.
@@ -181,6 +187,7 @@ public abstract class AbstractEntity extends Observable implements IEntity {
   
   
   public void startLoading() {
+    this.loaded = false;
     this.setChanged();
     Event event = new Event(this);
     event.state = Event.States.START_LOADING;
@@ -188,6 +195,7 @@ public abstract class AbstractEntity extends Observable implements IEntity {
   }
 
   public void endLoading() {
+    this.loaded = true;
     this.setChanged();
     Event event = new Event(this);
     event.state = Event.States.END_LOADING;

@@ -1,6 +1,8 @@
 package fm.audiobox.core.test;
 
 import java.io.File;
+import java.util.Observable;
+import java.util.Observer;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -8,8 +10,10 @@ import org.junit.Test;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.MediaFile;
+import fm.audiobox.core.models.MediaFiles;
 import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
+import fm.audiobox.core.observables.Event;
 import fm.audiobox.core.parsers.UploadHandler;
 import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 
@@ -17,6 +21,7 @@ public class MediaFileUploaderTest extends AbxTestCase {
 
   
   private static String lastTokenMedia = "";
+  boolean event_fired = false;
   
   @Before
   public void setUp() {
@@ -89,9 +94,31 @@ public class MediaFileUploaderTest extends AbxTestCase {
   
   @Test
   public void destroyMediaFiles() {
+    Playlists pls = user.getPlaylists();
+    Playlist pl = pls.getPlaylistByType( Playlists.Type.CloudPlaylist );
+    if ( pl == null ) {
+      try {
+        pls.load(false);
+        pl = pls.getPlaylistByType( Playlists.Type.CloudPlaylist );
+      } catch (ServiceException e) {
+        fail(e.getMessage());
+      } catch (LoginException e) {
+        fail(e.getMessage());
+      }
+    }
+    MediaFiles mfs = pl.getMediaFiles();
+    try {
+      mfs.load(false);
+    } catch (ServiceException e) {
+      fail(e.getMessage());
+    } catch (LoginException e) {
+      fail(e.getMessage());
+    }
     
-    MediaFile mf = user.newMediaFile();
-    mf.setToken( lastTokenMedia );
+    
+    MediaFile mf = mfs.get( lastTokenMedia );
+    
+    assertNotNull( mf );
     
     try {
       mf.load(false);
@@ -101,8 +128,18 @@ public class MediaFileUploaderTest extends AbxTestCase {
       fail(e.getMessage() );
     }
     
+    mfs.addObserver(new Observer() {
+      public void update(Observable _mfs, Object evt) {
+        Event event = (Event) evt;
+        if ( event.state == Event.States.ENTITY_REMOVED ) {
+          event_fired = true;
+        }
+      }
+    });
+
     try {
       assertTrue( mf.destroy() );
+      assertTrue( event_fired );
     } catch (ServiceException e) {
       fail(e.getMessage() );
     } catch (LoginException e) {

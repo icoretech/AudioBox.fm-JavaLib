@@ -119,7 +119,6 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
   }
   
 
-  // DELETE /api/v1/playlists/:playlist_id/media_files/remove
   public boolean removeFromPlaylist(List<MediaFile> mediaFiles) throws ServiceException, LoginException {
 
     if ( mediaFiles == null || mediaFiles.size() == 0 )

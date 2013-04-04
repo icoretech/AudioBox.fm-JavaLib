@@ -837,26 +837,17 @@ public class MediaFile extends AbstractEntity implements Serializable {
    */
   public boolean destroy() throws ServiceException, LoginException {
 
-    if (this.getParent() == null) {
-      // We can delete an arbitrary MediaFile
-      return this._destroy();
+    if ( this.getToken() == null || "".equals(this.getToken()) ) {
+      return false;
     }
+    
+    Response response = this.getConnector(IConfiguration.Connectors.RAILS).delete(this, IConnector.URI_SEPARATOR + MediaFiles.NAMESPACE, this.getToken(), null).send(false);
 
-    List<MediaFile> toRemove = new ArrayList<MediaFile>();
-    toRemove.add(this);
-
-    return ((MediaFiles) this.getParent()).destroy(toRemove);
-  }
-
-  private boolean _destroy() throws ServiceException, LoginException {
-
-    String path = IConnector.URI_SEPARATOR.concat(MediaFiles.NAMESPACE);
-
-    List<NameValuePair> params = new ArrayList<NameValuePair>();
-    params.add(new BasicNameValuePair(MediaFiles.TOKENS_PARAMETER, this.getToken()));
-
-    Response response = this.getConnector(IConfiguration.Connectors.RAILS).delete(this, path, MediaFiles.Actions.multidestroy.toString(), params).send(false);
-
+    boolean result = response.isOK();
+    if ( result && this.getParent() != null ) {
+      ((MediaFiles)this.getParent()).remove( this );
+    }
+    
     return response.isOK();
   }
 

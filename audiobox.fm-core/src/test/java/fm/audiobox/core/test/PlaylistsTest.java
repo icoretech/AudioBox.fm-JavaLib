@@ -3,6 +3,7 @@
  */
 package fm.audiobox.core.test;
 
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -11,6 +12,7 @@ import org.junit.Test;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
+import fm.audiobox.core.models.MediaFile;
 import fm.audiobox.core.models.Playlist;
 import fm.audiobox.core.models.Playlists;
 import fm.audiobox.core.observables.Event;
@@ -23,6 +25,7 @@ import fm.audiobox.core.test.mocks.fixtures.Fixtures;
 public class PlaylistsTest extends AbxTestCase {
 
   private int number_event = 0;
+  private boolean event_fired = false;
   
   @Before
   public void setUp() {
@@ -80,17 +83,7 @@ public class PlaylistsTest extends AbxTestCase {
     
     assertEquals( p.getType(), Playlists.Type.CloudPlaylist.toString() );
     
-    Playlist pl = pls.getPlaylistByName( Fixtures.get( Fixtures.CUSTOM_PLAYLIST_NAME ) );
-    assertNotNull( pl );
-    assertTrue( pl.isCustom() );
-    assertFalse( pl.isSmart() );
-    
-    pl = pls.getPlaylistByName( Fixtures.get( Fixtures.SMART_PLAYLIST_NAME ) );
-    assertNotNull( pl );
-    assertTrue( pl.isSmart() );
-    assertFalse( pl.isCustom() );
-    
-    pl = pls.getPlaylistByType( Playlists.Type.LocalPlaylist );
+    Playlist pl = pls.getPlaylistByType( Playlists.Type.LocalPlaylist );
     assertNotNull( pl );
     assertEquals( pl.getName(), "AudioBox Desktop" );
     assertEquals( pl.getSystemName(), "local" );
@@ -152,11 +145,198 @@ public class PlaylistsTest extends AbxTestCase {
     }
     
     int plsCount = pls.size();
-    pls.createPlaylist();
+    
+    
+    try {
+      Playlist pl = user.createPlaylist( Fixtures.get( Fixtures.CUSTOM_PLAYLIST_NAME ) );
+      assertNotNull( pl );
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    try {
+      pls.load(false);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    Playlist pl = pls.getPlaylistByName( Fixtures.get( Fixtures.CUSTOM_PLAYLIST_NAME ) );
+    assertNotNull( pl );
+    assertTrue( pl.isCustom() );
+    assertFalse( pl.isSmart() );
     
     assertEquals( plsCount + 1, pls.size() );
     
   }
 
 
+  @Test
+  public void addMediaFilesInToCustomPlaylist() {
+    
+    Playlists pls = user.getPlaylists();
+
+    try {
+      pls.load(false);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    Playlist pl = pls.getPlaylistByName( Fixtures.get( Fixtures.CUSTOM_PLAYLIST_NAME ) );
+    Playlist cloud = pls.getPlaylistByType( Playlists.Type.CloudPlaylist );
+    
+    assertNotNull( pl );
+    assertNotNull( cloud );
+    
+    try {
+      pl.getMediaFiles().load(false);
+      cloud.getMediaFiles().load(false);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    long original_size = pl.getMediaFilesCount();
+    List<MediaFile> sublist = cloud.getMediaFiles().subList(0, 2);
+    
+    try {
+      pl.addMediaFiles(sublist);
+      pl.load(false);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    
+    assertEquals( original_size + sublist.size(), pl.getMediaFilesCount());
+    
+    try {
+      pl.getMediaFiles().load(false);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    assertEquals( original_size + sublist.size(), pl.getMediaFiles().size() );
+    
+  }
+  
+  
+  
+  
+  
+  @Test
+  public void removeMediaFilesFromCustomPlaylist() {
+    
+    Playlists pls = user.getPlaylists();
+
+    try {
+      pls.load(false);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    Playlist pl = pls.getPlaylistByName( Fixtures.get( Fixtures.CUSTOM_PLAYLIST_NAME ) );
+    
+    assertNotNull( pl );
+    
+    try {
+      pl.getMediaFiles().load(false);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    number_event = 0;
+    pl.getMediaFiles().addObserver(new Observer() {
+      public void update(Observable obj, Object evt) {
+        Event event = (Event) evt;
+        if ( event.state == Event.States.ENTITY_REMOVED ) {
+          event_fired = true;
+        }
+        number_event++;
+      }
+    });
+    
+    long original_size = pl.getMediaFilesCount();
+    List<MediaFile> sublist = pl.getMediaFiles().subList(0, pl.getMediaFiles().size() );
+    int sublist_size = sublist.size();
+    try {
+      pl.removeMediaFiles(sublist);
+      pl.load(false);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    
+    assertEquals( original_size - sublist_size, pl.getMediaFilesCount());
+    
+    assertTrue( event_fired );
+    assertEquals( number_event, sublist_size);
+    
+    try {
+      pl.getMediaFiles().load(false);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    assertEquals( original_size - sublist_size, pl.getMediaFiles().size() );
+    
+  }
+  
+  @Test
+  public void destroyCustomPlaylist() {
+    
+    Playlists pls = user.getPlaylists();
+
+    try {
+      pls.load(false);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    Playlist pl = pls.getPlaylistByName( Fixtures.get( Fixtures.CUSTOM_PLAYLIST_NAME ) );
+    assertNotNull( pl );
+    
+    event_fired = false; number_event = 0;
+    pls.addObserver(new Observer() {
+      public void update(Observable obj, Object evt) {
+        Event event = (Event) evt;
+        if ( event.state == Event.States.ENTITY_REMOVED ) {
+          event_fired = true;
+        }
+        number_event++;
+      }
+    });
+    
+    try {
+      assertTrue( pl.destroy() );
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    assertTrue( event_fired );
+    assertEquals( number_event, 1 );
+    
+  }
+  
 }

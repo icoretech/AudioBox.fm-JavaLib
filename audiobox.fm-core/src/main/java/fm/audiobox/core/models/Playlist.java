@@ -239,7 +239,7 @@ public class Playlist extends AbstractEntity implements Serializable {
       
       return mediaFiles;
     } else {
-      throw new ServiceException("Only Cloud and Local playlists support this action: '" + this.getSystemName() + "'");
+      throw new ServiceException("Only Cloud and Local playlists support this action: '" + this.getSystemName() + "' doesn't");
     }
   }
   
@@ -447,58 +447,130 @@ public class Playlist extends AbstractEntity implements Serializable {
   }
 
   /**
-   * This method perform a creation of this playlist remotely
+   * This method delete this {@link Playlist}
+   * <br/>
+   * <b>This method cannot be reverted</b>
    * 
    * @return {@code true} if everything went ok. {@code false} if not.
-   * <br />
-   * <b>Playlist must not have any {@code token} set</b>
    * 
    * @throws ServiceException if any connection error occurrs
    * @throws LoginException if any login error occurrs
    */
-  public boolean create() throws ServiceException, LoginException {
-    return this.create( new ArrayList<MediaFile>() );
-  }
-  
-  /**
-   * This method perform a creation of this playlist remotely.
-   * <br />
-   * Note: this method also adds media files to this {@code custom} playlist
-   * 
-   * @param mediaFiles list of mediafiles to be added to this playlist.
-   * @return {@code true} if everything went ok. {@code false} if not.
-   * <br />
-   * <b>Playlist must not have any {@code token} set</b>
-   * 
-   * @throws ServiceException if any connection error occurrs
-   * @throws LoginException if any login error occurrs
-   */
-  public boolean create(List<MediaFile> mediaFiles) throws ServiceException, LoginException {
-    
-    if ( this.getToken() != null && ! "".equals( this.getToken() )  ) {
-      // playlists seems to be already created
+  public boolean destroy() throws ServiceException, LoginException {
+    if ( this.getToken() == null || "".equals( this.getToken() )  ) {
+      // playlists has not token
       return false;
     }
     
-    IConnectionMethod request = this.getConnector( IConfiguration.Connectors.RAILS ).post( this, Playlists.NAMESPACE, null );
-    Response response = request.send(false, this.toQueryParameters() );
+    if ( this.isDrive() ) {
+      throw new ServiceException("Drive cannot be destroyed");
+    }
     
+    String path = IConnector.URI_SEPARATOR + Playlists.NAMESPACE;
+    String action = IConnector.URI_SEPARATOR + this.getToken();
+    
+    IConnectionMethod request = this.getConnector( IConfiguration.Connectors.RAILS ).delete( this, path, action, null );
+    Response response = request.send(false);
+    
+    boolean result = response.isOK();
+    
+    if ( result && this.getParent() != null ) {
+      ((Playlists) this.getParent()).remove( this );
+    }
+    
+    return result;
+  }
+  
+  
+  /**
+   * This method adds given media files to this playlist
+   * <br/>
+   * Playlist should be an already existing playlist with a valid {@code token}
+   * 
+   * @param mediaFiles list of mediafiles to be added to this playlist.
+   * @return {@code true} if everything went ok. {@code false} if not.
+   * 
+   * @throws ServiceException if any connection error occurrs
+   * @throws LoginException if any login error occurrs
+   */
+  public boolean addMediaFiles(List<MediaFile> mediaFiles) throws ServiceException, LoginException {
+    
+    if ( this.getToken() == null || "".equals( this.getToken() )  ) {
+      // playlists has not token
+      return false;
+    }
+    
+    if ( ! this.isCustom() ) {
+      throw new ServiceException("You can add MediaFiles in CustomPlaylist only");
+    }
+    
+    String path = IConnector.URI_SEPARATOR + Playlists.NAMESPACE + IConnector.URI_SEPARATOR + this.getToken();
+    String action = MediaFiles.NAMESPACE + IConnector.URI_SEPARATOR + "add";
+    
+    IConnectionMethod request = this.getConnector( IConfiguration.Connectors.RAILS ).post( this, path, action );
+    
+    List<NameValuePair> tokens = new ArrayList<NameValuePair>();
+    for( MediaFile mf : mediaFiles ) {
+      if ( mf.getToken() != null ) {
+        tokens.add( new BasicNameValuePair( MediaFiles.TOKENS_PARAMETER, mf.getToken() ) );
+      }
+    }
+    
+    Response response = request.send( false, tokens );
     return response.isOK();
   }
   
   
-  
-  private List<NameValuePair> toQueryParameters() {
-    String prefix = TAGNAME + "[";
-    String suffix = "]";
+  /**
+   * This method removes given media files from this playlist
+   * <br/>
+   * Playlist should be an already existing playlist with a valid {@code token}
+   * <br />
+   * <i>Note: this method also remove MediaFiles from the {@link Playlist#mediafiles} collection</i>
+   * <br />
+   * <b>Do not pass a large {@code mediaFiles} collection</b>
+   * 
+   * @param mediaFiles list of mediafiles to be removed from this playlist.
+   * @return {@code true} if everything went ok. {@code false} if not.
+   * 
+   * @throws ServiceException if any connection error occurrs
+   * @throws LoginException if any login error occurrs
+   */
+  public boolean removeMediaFiles(List<MediaFile> mediaFiles) throws ServiceException, LoginException {
     
-    List<NameValuePair> params = new ArrayList<NameValuePair>();
+    if ( this.getToken() == null || "".equals( this.getToken() )  ) {
+      // playlists has not token
+      return false;
+    }
     
-    params.add(  new BasicNameValuePair( prefix + NAME + suffix,  this.name ) );
+    if ( ! this.isCustom() ) {
+      throw new ServiceException("You can remove MediaFiles from CustomPlaylist only");
+    }
     
-    return params;
+    String path = IConnector.URI_SEPARATOR + Playlists.NAMESPACE + IConnector.URI_SEPARATOR + this.getToken();
+    String action = MediaFiles.NAMESPACE + IConnector.URI_SEPARATOR + "remove";
+    
+    List<String> str_tokens = new ArrayList<String>();
+    List<NameValuePair> tokens = new ArrayList<NameValuePair>();
+    for( MediaFile mf : mediaFiles ) {
+      if ( mf.getToken() != null ) {
+        tokens.add( new BasicNameValuePair( MediaFiles.TOKENS_PARAMETER, mf.getToken() ) );
+        str_tokens.add( mf.getToken() );
+      }
+    }
+    IConnectionMethod request = this.getConnector( IConfiguration.Connectors.RAILS ).delete( this, path, action, tokens);
+    Response response = request.send( false );
+    boolean result = response.isOK();
+    
+    if ( result && this.getMediaFiles().isLoaded() ) {
+      for( String token : str_tokens ) {
+        this.getMediaFiles().remove( token );
+      }
+    }
+    return response.isOK();
   }
-
+  
+  
   public IConnectionMethod load(boolean async) throws ServiceException, LoginException {
     return this.load(false, null);
   }
@@ -522,17 +594,18 @@ public class Playlist extends AbstractEntity implements Serializable {
     List<NameValuePair> params = new ArrayList<NameValuePair>();
     
     params.add(new BasicNameValuePair(prefix + NAME + suffix, this.name )  );
-    params.add(new BasicNameValuePair(prefix + POSITION + suffix, String.valueOf( this.position ) )  );
-    params.add(new BasicNameValuePair(prefix + TYPE + suffix, this.type )  );
-    params.add(new BasicNameValuePair(prefix + MEDIA_FILES_COUNT + suffix, String.valueOf( this.media_files_count ) ) );
-    params.add(new BasicNameValuePair(prefix + UPDATED_AT + suffix, this.updated_at )  );
-    params.add(new BasicNameValuePair(prefix + LAST_ACCESSED + suffix, String.valueOf( this.last_accessed ) )  );
-    params.add(new BasicNameValuePair(prefix + SYSTEM_NAME + suffix, this.system_name )  );
-    params.add(new BasicNameValuePair(prefix + OFFLINE + suffix, String.valueOf( this.offline ) )  );
-    params.add(new BasicNameValuePair(prefix + EMBEDDABLE + suffix, String.valueOf( this.embeddable ) )  );
-    params.add(new BasicNameValuePair(prefix + VISIBLE + suffix, String.valueOf( this.visible ) )  );
-    params.add(new BasicNameValuePair(prefix + SYNCABLE + suffix, String.valueOf( this.syncable ) )  );
-    
+    if ( all ) {
+      params.add(new BasicNameValuePair(prefix + POSITION + suffix, String.valueOf( this.position ) )  );
+      params.add(new BasicNameValuePair(prefix + TYPE + suffix, this.type )  );
+      params.add(new BasicNameValuePair(prefix + MEDIA_FILES_COUNT + suffix, String.valueOf( this.media_files_count ) ) );
+      params.add(new BasicNameValuePair(prefix + UPDATED_AT + suffix, this.updated_at )  );
+      params.add(new BasicNameValuePair(prefix + LAST_ACCESSED + suffix, String.valueOf( this.last_accessed ) )  );
+      params.add(new BasicNameValuePair(prefix + SYSTEM_NAME + suffix, this.system_name )  );
+      params.add(new BasicNameValuePair(prefix + OFFLINE + suffix, String.valueOf( this.offline ) )  );
+      params.add(new BasicNameValuePair(prefix + EMBEDDABLE + suffix, String.valueOf( this.embeddable ) )  );
+      params.add(new BasicNameValuePair(prefix + VISIBLE + suffix, String.valueOf( this.visible ) )  );
+      params.add(new BasicNameValuePair(prefix + SYNCABLE + suffix, String.valueOf( this.syncable ) )  );
+    }
     
     return params;
   }

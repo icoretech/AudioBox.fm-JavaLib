@@ -548,6 +548,34 @@ public final class User extends AbstractEntity implements Serializable {
     return (MediaFile) getConfiguration().getFactory().getEntity( MediaFile.TAGNAME, getConfiguration() );
   }
   
+  
+  /**
+   * Creates a new {@code CustomPlaylist} with the specified name
+   * 
+   * @param name the name of the {@code Playlist}
+   * @return the created {@link Playlist}. {@code null} if an error occurrs
+   * @throws ServiceException if any connection error occurrs
+   * @throws LoginException if any login error occurrs
+   */
+  public Playlist createPlaylist(String name)  throws ServiceException, LoginException {
+    Playlist playlist = (Playlist) getConfiguration().getFactory().getEntity( Playlist.TAGNAME, getConfiguration() );
+    String action = IConnector.URI_SEPARATOR + Playlists.NAMESPACE;
+
+    List<NameValuePair> params = new ArrayList<NameValuePair>();
+    params.add(new BasicNameValuePair("playlist[name]", name) );
+    
+    IConnectionMethod req = this.getConfiguration().getFactory().getConnector().post(playlist, action, null);
+    Response res = req.send(false, params);
+    
+    if ( ! res.isOK() ) {
+      // Server has returned an error response code. Playlist has not been created
+      playlist = null;
+    } else {
+      this.getPlaylists().addEntity( playlist );
+    }
+    
+    return playlist;
+  }
 
   
   

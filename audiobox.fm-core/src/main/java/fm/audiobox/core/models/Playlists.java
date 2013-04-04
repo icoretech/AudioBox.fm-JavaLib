@@ -171,23 +171,6 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
     return null;
   }
 
-  /**
-   * This method instantiate a new {@link Playlist} and adds it
-   * to {@link Playlists this} collection.
-   * <br/>
-   * <b>
-   * This method doesn't create the playlist remotely.
-   * To do that you should call the {@link Playlist#create()} method
-   * </b>
-   * @return the {@link Playlist} instance
-   */
-  public Playlist createPlaylist() {
-    Playlist pl = (Playlist) getConfiguration().getFactory().getEntity( this.getSubTagName(), getConfiguration() );
-    this.addEntity(pl);
-    return pl;
-  }
-  
-
   @Override
   public String getSubTagName() {
     return Playlist.TAGNAME;

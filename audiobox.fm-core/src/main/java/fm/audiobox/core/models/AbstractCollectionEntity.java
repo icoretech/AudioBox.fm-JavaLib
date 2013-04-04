@@ -52,6 +52,7 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
   public void clear() {
     this.collection.clear();
     this.setChanged();
+    this.loaded = false;
     Event event = new Event(this, Event.States.COLLECTION_CLEARED);
     this.notifyObservers(event);
   }
@@ -165,8 +166,8 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
    */
   protected boolean addEntity(IEntity entity) {
     boolean result = this.collection.add( entity );
-    entity.setParent( this );
     if ( result ){
+      entity.setParent( this );
       this.setChanged();
       Event event = new Event(entity, Event.States.ENTITY_ADDED);
       event.detail = this.collection.size();
