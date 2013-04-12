@@ -113,7 +113,7 @@ public class JParserStreaming {
           reader.skipValue();
         }
       } catch ( java.lang.IllegalStateException e ){
-        log.error("Skipping value for + " + _entity.getTagName() + "." + prop + " while parsing" );
+        log.error("Skipping value for " + _entity.getTagName() + "." + prop + " while parsing" );
         reader.skipValue();
       }
     }

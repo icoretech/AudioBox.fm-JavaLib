@@ -55,6 +55,8 @@ public final class AccountStats extends AbstractEntity implements Serializable {
   public static final String PARTNER_DATA_STORED_OVERALL = "partner_data_stored_overall";
   public static final String SOUNDCLOUD_DATA_STORED_THIS_MONTH = "soundcloud_data_stored_this_month";
   public static final String SOUNDCLOUD_DATA_STORED_OVERALL = "soundcloud_data_stored_overall";
+  public static final String YOUTUBE_DATA_STORED_THIS_MONTH = "youtube_data_stored_this_month";
+  public static final String YOUTUBE_DATA_STORED_OVERALL = "youtube_data_stored_overall";
   
   
   private long data_served_this_month;
@@ -75,6 +77,8 @@ public final class AccountStats extends AbstractEntity implements Serializable {
   private long partner_data_stored_overall;
   private long soundcloud_data_stored_this_month;
   private long soundcloud_data_stored_overall;
+  private long youtube_data_stored_this_month;
+  private long youtube_data_stored_overall;
   
   
   private static final Map<String, Method> setterMethods = new HashMap<String, Method>();
@@ -98,6 +102,8 @@ public final class AccountStats extends AbstractEntity implements Serializable {
       setterMethods.put( PARTNER_DATA_STORED_OVERALL, AccountStats.class.getMethod( "setPartnerDataStoredOverall", long.class ) );
       setterMethods.put( SOUNDCLOUD_DATA_STORED_THIS_MONTH, AccountStats.class.getMethod( "setSoundcloudDataStoredThisMonth", long.class ) );
       setterMethods.put( SOUNDCLOUD_DATA_STORED_OVERALL, AccountStats.class.getMethod( "setSoundcloudDataStoredOverall", long.class ) );
+      setterMethods.put( YOUTUBE_DATA_STORED_THIS_MONTH, AccountStats.class.getMethod( "setYoutubeDataStoredThisMonth", long.class ) );
+      setterMethods.put( YOUTUBE_DATA_STORED_OVERALL, AccountStats.class.getMethod( "setYoutubeDataStoredOverall", long.class ) );
     } catch (SecurityException e) {
       log.error("Security error", e);
     } catch (NoSuchMethodException e) {
@@ -392,6 +398,37 @@ public final class AccountStats extends AbstractEntity implements Serializable {
   @Deprecated
   public void setSoundcloudDataStoredOverall(long soundcloud_data_stored_overall) {
     this.soundcloud_data_stored_overall = soundcloud_data_stored_overall;
+  }
+  
+  
+  /**
+   * @return the streaming data amount <b>in the last month</b> related to <b>{@code AudioBox.fm Youtube}</b> drive
+   */
+  public long getYoutubeDataStoredThisMonth() {
+    return youtube_data_stored_this_month;
+  }
+
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
+  public void setYoutubeDataStoredThisMonth(long youtube_data_stored_this_month) {
+    this.youtube_data_stored_this_month = youtube_data_stored_this_month;
+  }
+
+  /**
+   * @return the <b>total</b> streaming data amount related to <b>{@code Youtube}</b> drive
+   */
+  public long getYoutubeDataStoredOverall() {
+    return youtube_data_stored_overall;
+  }
+
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
+  public void setYoutubeDataStoredOverall(long youtube_data_stored_overall) {
+    this.youtube_data_stored_overall = youtube_data_stored_overall;
   }
   
   

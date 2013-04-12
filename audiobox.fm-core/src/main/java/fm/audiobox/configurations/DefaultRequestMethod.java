@@ -155,7 +155,7 @@ public class DefaultRequestMethod extends Observable implements IConnectionMetho
 
         } catch (ClientProtocolException e) {
           
-          response = new Response( DefaultRequestMethod.this.format, AudioBoxException.GENERIC_ERROR, e.getMessage() );
+          response = new Response( DefaultRequestMethod.this.format, AudioBoxException.GENERIC_ERROR, e.getMessage(), false );
           log.error("ClientProtocolException thrown while executing request method", e);
           response.setException( new ServiceException(e) );
 
@@ -166,14 +166,14 @@ public class DefaultRequestMethod extends Observable implements IConnectionMetho
            * we have to catch the exception and cast it to a known custom exception object
            */
           
-          response = new Response( DefaultRequestMethod.this.format, AudioBoxException.GENERIC_ERROR, e.getMessage() );
+          response = new Response( DefaultRequestMethod.this.format, AudioBoxException.GENERIC_ERROR, e.getMessage(), false );
           AudioBoxException responseException = null;
           
           if ( e instanceof LoginException ) {
             // A login error occurred
             
             LoginException le = (LoginException) e;
-            response = new Response( DefaultRequestMethod.this.format, le.getErrorCode(), le.getMessage() );
+            response = new Response( DefaultRequestMethod.this.format, le.getErrorCode(), le.getMessage(), false );
             responseException =  le;
             
           } else {
@@ -183,14 +183,14 @@ public class DefaultRequestMethod extends Observable implements IConnectionMetho
             if ( e instanceof ServiceException ) {
               
               ServiceException se = (ServiceException) e;
-              response = new Response( DefaultRequestMethod.this.format, se.getErrorCode(), se.getMessage() );
+              response = new Response( DefaultRequestMethod.this.format, se.getErrorCode(), se.getMessage(), false );
               responseException =  se;
               
             } else {
               // This is a generic exception
               
               ServiceException se = new ServiceException( e );
-              response = new Response( DefaultRequestMethod.this.format, se.getErrorCode(), se.getMessage() );
+              response = new Response( DefaultRequestMethod.this.format, se.getErrorCode(), se.getMessage(), false );
               responseException =  se;
               
             }

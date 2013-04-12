@@ -55,8 +55,6 @@ public abstract class AbxTestCase extends junit.framework.Assert {
   protected IConfiguration setConfig() {
     IConfiguration configuration = new DefaultConfiguration( APPLICATION_NAME );
 
-    configuration.setVersion(1, 0, 0);
-    configuration.setRequestFormat( IConfiguration.ContentFormat.JSON );
     configuration.setUseCache(false);
     
     return configuration;

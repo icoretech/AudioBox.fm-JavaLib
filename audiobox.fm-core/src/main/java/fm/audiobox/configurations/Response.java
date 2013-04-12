@@ -24,6 +24,9 @@ public final class Response implements Serializable {
   private static Logger log = LoggerFactory.getLogger(Response.class);
   private static final long serialVersionUID = 1L;
 
+  
+  private boolean useCache;
+  
   /**
    * The default byte array length used while parsing a stream
    */
@@ -42,7 +45,7 @@ public final class Response implements Serializable {
   /**
    * Contains the {@link InputStream} which read data from
    */
-  private InternalInputStream stream;
+  private BufferedInputStream stream;
   
   /**
    * Contains the {@link InputStream} represented as String
@@ -56,20 +59,26 @@ public final class Response implements Serializable {
   
   
   
-  public Response(ContentFormat format, int status, InputStream stream){
+  public Response(ContentFormat format, int status, InputStream stream, boolean useCache){
     super();
+    this.useCache = useCache;
     this.format = format;
     this.status = status;
     if ( stream == null ) {
       stream = new ByteArrayInputStream( ("no response body").getBytes() );
       log.info("No response body, it's empty");
     }
-    this.stream = new InternalInputStream( stream );
+    if ( this.useCache ) {
+      this.stream = new InternalInputStream( stream );
+    } else {
+      this.stream = new BufferedInputStream( stream );
+    }
+    
   }
   
   
-  public Response(ContentFormat format, int status, String body){
-    this(format, status, new ByteArrayInputStream( body == null ? ("no response body").getBytes() : body.getBytes() ) );
+  public Response(ContentFormat format, int status, String body, boolean useCache) {
+    this(format, status, new ByteArrayInputStream( body == null ? ("no response body").getBytes() : body.getBytes() ), useCache );
   }
 
   
@@ -98,13 +107,12 @@ public final class Response implements Serializable {
   
   
   /**
-   * Tests the response status code and returns {@code true} if it is 
-   * 2xx and 3xx 
+   * Tests the response status code and returns {@code true} if it is between 200 and 304 
    * 
    * @return boolean
    */
   public boolean isOK() {
-    return this.getStatus() >= HttpStatus.SC_OK && this.getStatus() < HttpStatus.SC_BAD_REQUEST;
+    return this.getStatus() >= HttpStatus.SC_OK && this.getStatus() <= HttpStatus.SC_NOT_MODIFIED;
   }
   
   /**
@@ -112,8 +120,10 @@ public final class Response implements Serializable {
    * @return the {@code InputStream} containing the body of the response
    */
   public InputStream getStream(){
-    if ( this.stream.isEndedParsing ){
-      this.stream.switchInputStream();
+    if ( this.stream instanceof InternalInputStream ) {
+      if ( ((InternalInputStream)this.stream).isEndedParsing ){
+        ((InternalInputStream)this.stream).switchInputStream();
+      }
     }
     return this.stream;
   }
@@ -192,7 +202,7 @@ public final class Response implements Serializable {
     }
     in.close();
     
-    return new Response( format, status, stream );
+    return new Response( format, status, stream, false );
     
   }
   

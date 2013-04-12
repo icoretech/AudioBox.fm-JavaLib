@@ -91,7 +91,8 @@ public class ResponseParser implements ResponseHandler<Response> {
       isXml = false, 
       isJson = false,
       // Default value is TEXT
-      isText = true;
+      isText = true,
+      cacheEnabled = this.configuration.isCacheEnabled();
     
     if (contentType != null){
       isXml = contentType.getValue().contains(ContentFormat.XML.toString().toLowerCase());
@@ -102,7 +103,7 @@ public class ResponseParser implements ResponseHandler<Response> {
     ContentFormat format = isXml ? ContentFormat.XML : isJson ? ContentFormat.JSON : isText ? ContentFormat.TXT : ContentFormat.BINARY;
 
     // Build a new Response
-    Response response = new Response(format, responseCode, (InputStream) (entity != null ? entity.getContent() : null) );
+    Response response = new Response(format, responseCode, (InputStream) (entity != null ? entity.getContent() : null), cacheEnabled );
 
     switch ( responseCode ) {
     
@@ -125,11 +126,11 @@ public class ResponseParser implements ResponseHandler<Response> {
         break;
   
       case HttpStatus.SC_NO_CONTENT:
-        response = new Response(response.getFormat(), responseCode, "Ok, no content");
+        response = new Response(response.getFormat(), responseCode, "Ok, no content", cacheEnabled);
         break;
   
       case HttpStatus.SC_SEE_OTHER:
-        response = new Response(response.getFormat(), responseCode, httpResponse.getFirstHeader("Location").getValue());
+        response = new Response(response.getFormat(), responseCode, httpResponse.getFirstHeader("Location").getValue(), cacheEnabled);
         break;
   
       case HttpStatus.SC_PAYMENT_REQUIRED:
@@ -148,7 +149,7 @@ public class ResponseParser implements ResponseHandler<Response> {
           } else {
             this.responseHandler.deserializeJson(response.getStream(), error);
           }
-          response = new Response(response.getFormat(), response.getStatus(), error.getMessage());
+          response = new Response(response.getFormat(), response.getStatus(), error.getMessage(), false);
   
         } else {
           // default: do nothing
