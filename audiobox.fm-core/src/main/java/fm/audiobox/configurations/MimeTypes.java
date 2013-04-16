@@ -91,14 +91,13 @@ public final class MimeTypes implements Serializable {
       return null;
     }
     
-    String ext = fileName.substring( fileName.length() - 4 );
-    if ( ext.indexOf(".") != 0 ){
-      // We"re expecting the extension starts with "."
-      return null;
-    }
+    String[] split = fileName.split("\\.");
     
     
-    return getMime( ext.substring(1) );
+    String ext = split[ split.length - 1]; 
+    
+    
+    return getMime( ext );
   }
   
 

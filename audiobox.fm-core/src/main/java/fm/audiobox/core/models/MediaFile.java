@@ -983,6 +983,8 @@ public class MediaFile extends AbstractEntity implements Serializable {
     if (mime == null) {
       throw new ServiceException("mime type error: file is not supported by AudioBox.fm");
     }
+    
+    this.setMime( mime );
 
     List<NameValuePair> params = this.toQueryParameters( true );
     params.add( new BasicNameValuePair(TAGNAME + "[" + REMOTE_PATH + "]", file.getAbsolutePath() ) );
