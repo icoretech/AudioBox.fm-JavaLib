@@ -1,5 +1,6 @@
 package fm.audiobox.sync.util;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -86,7 +87,7 @@ public class JobManager extends Observable implements Observer {
   
   public boolean stop() {
     log.warn("JobManager is going to be stopped");
-    List<?> list = this.executor.shutdownNow();
+    List<?> list = this.executor != null ? this.executor.shutdownNow() : new ArrayList<Object>();
     log.info( list.size() + " will not be executed");
     this.jobsRunning -= list.size();
     return true;
