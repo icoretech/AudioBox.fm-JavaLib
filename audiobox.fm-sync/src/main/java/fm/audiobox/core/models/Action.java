@@ -38,7 +38,8 @@ public class Action extends AbstractEntity implements Serializable {
     disconnect,
     check,
     error,
-    message
+    message,
+    uploadToCloud
   }
 
   private String name;
