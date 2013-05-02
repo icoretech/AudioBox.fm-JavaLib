@@ -920,10 +920,10 @@ public class MediaFile extends AbstractEntity implements Serializable {
   /**
    * See {@link MediaFile#download(DownloadHandler)}
    */
-  public void download(final File file) throws ServiceException, LoginException {
+  public IConnectionMethod download(boolean async, File file) throws ServiceException, LoginException {
     if (file != null) {
 
-      download(new DownloadHandler(file, IConnector.DEFAULT_CHUNK));
+      return download(async, new DownloadHandler(file, IConnector.DEFAULT_CHUNK));
 
     } else {
       throw new ServiceException("No file found for downloading media");
@@ -939,7 +939,7 @@ public class MediaFile extends AbstractEntity implements Serializable {
    * @throws ServiceException if any connection error occurrs
    * @throws LoginException if any login error occurrs
    */
-  public IConnectionMethod download(DownloadHandler downloadHandler) throws ServiceException, LoginException {
+  public IConnectionMethod download(boolean async, DownloadHandler downloadHandler) throws ServiceException, LoginException {
 
     if (downloadHandler != null) {
       // In this case we are using 'path' for the action
@@ -948,7 +948,7 @@ public class MediaFile extends AbstractEntity implements Serializable {
       String action = this.getFilename();
 
       IConnectionMethod request = this.getConnector(IConfiguration.Connectors.NODE).get(this, path, action, null, null);
-      request.send(false, null, downloadHandler);
+      request.send(async, null, downloadHandler);
       return request;
 
     } else {
