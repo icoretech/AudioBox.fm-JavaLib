@@ -433,11 +433,12 @@ public final class User extends AbstractEntity implements Serializable {
    */
   @Deprecated
   public void setSubscriptionState(String flag) {
-    SubscriptionState state = SubscriptionState.valueOf( flag );
-    if ( state != null ) {
+    SubscriptionState state = null;
+    if ( flag != null && ( ( state = SubscriptionState.valueOf( flag ) ) != null )  ) {
       this.subscription_state = state;
     } else {
-      log.warn( "no vaild subscription_state is given");
+      this.subscription_state = SubscriptionState.nothing;
+      log.info( "no subscription_state is given, use 'nothing'");
     }
   }
 
