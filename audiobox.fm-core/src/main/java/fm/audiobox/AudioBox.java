@@ -55,6 +55,7 @@ import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.entity.HttpEntityWrapper;
+import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.params.BasicHttpParams;
@@ -486,6 +487,19 @@ public class AudioBox extends Observable {
 
       this.mCm = new PoolingClientConnectionManager(schemeRegistry);
       this.mClient = new DefaultHttpClient( this.mCm, params );
+      
+      this.mClient.setKeepAliveStrategy(new DefaultConnectionKeepAliveStrategy() {
+        public long getKeepAliveDuration(HttpResponse response, HttpContext context) {
+          long keepAlive = super.getKeepAliveDuration(response, context);
+          if (keepAlive == -1) {
+              // Keep connections alive 5 seconds if a keep-alive value 
+              // has not be explicitly set by the server
+              keepAlive = 5000;
+          }
+          return keepAlive;
+        }
+      });
+      
 
       this.mCm.setMaxPerRoute(mAudioBoxRoute, 50);
       
