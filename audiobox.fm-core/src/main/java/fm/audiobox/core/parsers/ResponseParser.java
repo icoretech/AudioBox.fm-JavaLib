@@ -69,6 +69,7 @@ public class ResponseParser implements ResponseHandler<Response> {
     }
   }
 
+  @SuppressWarnings("deprecation")
   public Response handleResponse(HttpResponse httpResponse) throws ClientProtocolException, IOException {
 
     int responseCode = httpResponse.getStatusLine().getStatusCode();
@@ -117,7 +118,10 @@ public class ResponseParser implements ResponseHandler<Response> {
       
         // Try to parse response body
         if ( destEntity != null ) {
-          this.responseHandler.deserialize( response.getStream(), destEntity, response.getFormat() );
+          String text = this.responseHandler.deserialize( response.getStream(), destEntity, response.getFormat() );
+          if ( ContentFormat.TXT == format && text != null ) {
+            response.setBody( text );
+          }
         }
         
         if ( responseCode != HttpStatus.SC_NOT_MODIFIED && this.method.isGET() && this.configuration.isCacheEnabled() ) {

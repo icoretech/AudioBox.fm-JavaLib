@@ -73,6 +73,13 @@ public class UserTest extends AbxTestCase {
       fail(e.getMessage());
     }
     
+    try {
+      String ip = user.remoteDaemonIp();
+      assertSame( ip == null, !result );
+    } catch (LoginException e) {
+      fail(e.getMessage());
+    }
+    
     log.info("Daemon is running: ***  " + result + " ***");
     assertTrue(true);
     

@@ -579,8 +579,25 @@ public final class User extends AbstractEntity implements Serializable {
   }
 
   
-  
+  /**
+   * This method returns {@code true} if AudioBox Desktop application is active on any computer
+   * 
+   * @return {@code true} if AudioBox Desktop application is active on any computer. {@code false} if not
+   * @throws LoginException if any login error occurrs
+   */
   public boolean isDaemonRunning() throws LoginException {
+    String remoteIp = this.remoteDaemonIp();
+    return remoteIp != null && ! "".equals(remoteIp);
+  }
+  
+  
+  /**
+   * This methods returns the {@code remote ip address} of AudioBox Desktop application
+   *  
+   * @return the {@code remote ip address}
+   * @throws LoginException if any login error occurrs
+   */
+  public String remoteDaemonIp() throws LoginException {
     IConnectionMethod req = this.getConfiguration().getFactory().getConnector().get(this, IConnector.URI_SEPARATOR.concat("daemon"), "keepalive", null);
     
     Response res;
@@ -588,13 +605,11 @@ public final class User extends AbstractEntity implements Serializable {
       res = req.send(false);
     } catch (ServiceException e) {
       log.warn("Daemon is not running and returned error: " + e.getMessage() );
-      return false;
+      return null;
     }
     
-    return res.isOK();
+    return res.getBody();
   }
-  
-  
   
   /**
    * @return a {@code Playlists} object associated with this User

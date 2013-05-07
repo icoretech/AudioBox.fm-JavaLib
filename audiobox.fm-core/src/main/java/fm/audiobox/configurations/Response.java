@@ -107,6 +107,15 @@ public final class Response implements Serializable {
   
   
   /**
+   * This method is used by the {@code reponse handler}
+   * @param b the response body
+   */
+  @Deprecated
+  public void setBody(String b) {
+    this.body = b;
+  }
+  
+  /**
    * Tests the response status code and returns {@code true} if it is between 200 and 304 
    * 
    * @return boolean
