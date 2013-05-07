@@ -190,6 +190,35 @@ public class MediaFilesTest extends AbxTestCase {
   }
   
   
+  @Test
+  public void mediaFileLocalStreamUrl() {
+    Playlists pls = user.getPlaylists();
+    MediaFiles mfs = null;
+    
+    try {
+      pls.load(false);
+      Playlist pl = pls.getPlaylistByType( Playlists.Type.LocalPlaylist );
+      mfs = pl.getMediaFiles();
+      mfs.load(false);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    MediaFile mf = mfs.get(0);
+    
+    try {
+      String url = mf.computeStreamUrlForAudioBoxDesktop( abx.getUser() );
+      log.info("Stream url for daemon: " + url);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+  }
+  
   
   @Test
   public void mediaFileLyrics() {
