@@ -737,17 +737,8 @@ public class MediaFile extends AbstractEntity implements Serializable {
     return request.getHttpMethod().getURI().toString();
   }
   
-  public String computeStreamUrlForAudioBoxDesktop(User user) throws ServiceException, LoginException {
-    if ( user.getConfiguration() == this.getConfiguration() ) {
-      String ip = user.remoteDaemonIp();
-      if ( ip == null ) {
-        throw new ServiceException( 502, "Daemon is not running");
-      }
-      String auth = user.getAuthToken();
-      return "http://" + ip + ":44331/" + auth + "/stream/" + this.getToken() + "?f=" + this.getRemotePath();
-    } else {
-      throw new LoginException( 403, "User has not been authorized");
-    }
+  public String computeStreamUrlForAudioBoxDesktop(String ip, String auth) {
+    return "http://" + ip + ":44331/" + auth + "/stream/" + this.getToken() + "?f=" + this.getRemotePath();
   }
 
   public String getApiPath() {

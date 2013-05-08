@@ -208,15 +208,15 @@ public class MediaFilesTest extends AbxTestCase {
     
     MediaFile mf = mfs.get(0);
     
+    String ip;
     try {
-      String url = mf.computeStreamUrlForAudioBoxDesktop( abx.getUser() );
+      ip = abx.getUser().remoteDaemonIp();
+      String auth = abx.getUser().getAuthToken();
+      String url = mf.computeStreamUrlForAudioBoxDesktop( ip, auth );
       log.info("Stream url for daemon: " + url);
-    } catch (ServiceException e) {
-      fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
     }
-    
   }
   
   
