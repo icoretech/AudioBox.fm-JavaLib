@@ -2,6 +2,8 @@ package fm.audiobox.configurations;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -65,6 +67,89 @@ public class DefaultConfiguration implements IConfiguration {
   private IAuthenticationHandle authenticationHandle = new DefaultAuthenticationHandle();
 
   private String mUserAgent;
+  private IConfiguration.Environments environment = IConfiguration.Environments.live;
+  
+  private static Map<IConfiguration.Environments, Map<IConfiguration.Connectors, Map<String, String>>> envProperties = new HashMap<IConfiguration.Environments, Map<IConfiguration.Connectors, Map<String, String>>>();
+  
+  static {
+    
+    // Production
+    {
+      Map<String, String> railsValues = new HashMap<String, String>();
+      railsValues.put("protocol", "http");
+      railsValues.put("host", "audiobox.fm");
+      railsValues.put("port", "80");
+      railsValues.put("apiPath", "/api/v1");
+      Map<String, String> nodeValues = new HashMap<String, String>();
+      nodeValues.put("protocol", "http");
+      nodeValues.put("host", "audiobox.fm");
+      nodeValues.put("port", "80");
+      nodeValues.put("apiPath", "/api/v1");
+      Map<String, String> daemonValues = new HashMap<String, String>();
+      daemonValues.put("protocol", "http");
+      daemonValues.put("host", "audiobox.fm");
+      daemonValues.put("port", "8082");
+      daemonValues.put("apiPath", "/api/v1");
+      
+      Map<IConfiguration.Connectors, Map<String, String>> prodConnectors = new HashMap<IConfiguration.Connectors, Map<String, String>>();
+      prodConnectors.put(IConfiguration.Connectors.RAILS, railsValues);
+      prodConnectors.put(IConfiguration.Connectors.NODE, nodeValues);
+      prodConnectors.put(IConfiguration.Connectors.DAEMON, daemonValues);
+      
+      envProperties.put(IConfiguration.Environments.live, prodConnectors);
+      
+    }
+    
+    {
+      Map<String, String> railsValues = new HashMap<String, String>();
+      railsValues.put("protocol", "http");
+      railsValues.put("host", "staging.audiobox.fm");
+      railsValues.put("port", "80");
+      railsValues.put("apiPath", "/api/v1");
+      Map<String, String> nodeValues = new HashMap<String, String>();
+      nodeValues.put("protocol", "http");
+      nodeValues.put("host", "staging.audiobox.fm");
+      nodeValues.put("port", "80");
+      nodeValues.put("apiPath", "/api/v1");
+      Map<String, String> daemonValues = new HashMap<String, String>();
+      daemonValues.put("protocol", "http");
+      daemonValues.put("host", "audiobox.fm");
+      daemonValues.put("port", "8082");
+      daemonValues.put("apiPath", "/api/v1");
+      
+      Map<IConfiguration.Connectors, Map<String, String>> testConnectors = new HashMap<IConfiguration.Connectors, Map<String, String>>();
+      testConnectors.put(IConfiguration.Connectors.RAILS, railsValues);
+      testConnectors.put(IConfiguration.Connectors.NODE, nodeValues);
+      testConnectors.put(IConfiguration.Connectors.DAEMON, daemonValues);
+      
+      envProperties.put(IConfiguration.Environments.test, testConnectors);
+    }
+    
+    {
+      Map<String, String> railsValues = new HashMap<String, String>();
+      railsValues.put("protocol", "http");
+      railsValues.put("host", "dev.audiobox.fm");
+      railsValues.put("port", "5000");
+      railsValues.put("apiPath", "/api/v1");
+      Map<String, String> nodeValues = new HashMap<String, String>();
+      nodeValues.put("protocol", "http");
+      nodeValues.put("host", "dev.audiobox.fm");
+      nodeValues.put("port", "3000");
+      nodeValues.put("apiPath", "/api/v1");
+      Map<String, String> daemonValues = new HashMap<String, String>();
+      daemonValues.put("protocol", "http");
+      daemonValues.put("host", "dev.audiobox.fm");
+      daemonValues.put("port", "3000");
+      daemonValues.put("apiPath", "/api/v1");
+      
+      Map<IConfiguration.Connectors, Map<String, String>> devConnectors = new HashMap<IConfiguration.Connectors, Map<String, String>>();
+      devConnectors.put(IConfiguration.Connectors.RAILS, railsValues);
+      devConnectors.put(IConfiguration.Connectors.NODE, nodeValues);
+      devConnectors.put(IConfiguration.Connectors.DAEMON, daemonValues);
+      envProperties.put(IConfiguration.Environments.development, devConnectors);
+    }
+    
+  }
 
   public DefaultConfiguration(String appName, int major, int minor, int revision, ContentFormat requestFormat){
     this.setApplicationName(appName);
@@ -95,6 +180,8 @@ public class DefaultConfiguration implements IConfiguration {
         System.getProperty("java.vm.version") + 
         " " + APP_NAME_PLACEHOLDER + "/" + VERSION_PLACEHOLDER;
    
+    this.setEnvironment( this.environment );
+    
     log.info("Configuration loaded");
   }
 
@@ -181,29 +268,27 @@ public class DefaultConfiguration implements IConfiguration {
 
   @Override
   public String getProtocol(IConfiguration.Connectors server) {
-    String prop = safelyGetProperty(server, "protocol");
-    return prop != null ? prop : PROTOCOL;
+    return envProperties.get( this.environment ).get(server).get("protocol"); 
   }
 
   @Override
   public String getHost(IConfiguration.Connectors server) {
-    String prop = safelyGetProperty(server, "host");
-    return prop != null ? prop : HOST;
+    return envProperties.get( this.environment ).get(server).get("host");
   }
 
   
   @Override
   public int getPort(IConfiguration.Connectors server){
-    String prop = safelyGetProperty(server, "port");
-    return prop != null ? Integer.parseInt(prop, 10) : PORT;
+    String port = envProperties.get( this.environment ).get(server).get("port");
+    return port != null ? Integer.parseInt( port ) : PORT;
   }
 
   @Override
   public String getPath(IConfiguration.Connectors server) {
-    String prop = safelyGetProperty(server, "apiPath");
-    return prop != null ? prop : PATH;
+    return envProperties.get( this.environment ).get(server).get("apiPath");
   }
 
+  
   
   @Override
   public void setUseCache(boolean useCache) {
@@ -276,9 +361,13 @@ public class DefaultConfiguration implements IConfiguration {
 
 
 
-  public String getEnvProperty(){
-    String env = safelyGetProperty("env");
-    return env != null ? env : "default";
+  public IConfiguration.Environments getEnvironment(){
+    return this.environment;
+  }
+  
+  public void setEnvironment(IConfiguration.Environments env) {
+    this.environment = env;
+    log.info("Environment set to: " + env);
   }
 
 
@@ -309,57 +398,4 @@ public class DefaultConfiguration implements IConfiguration {
     return sProperties.getProperty(key);
   }
   
-  
-  /**
-   * This method returns the AudioBox.fm properties file reader.
-   * 
-   * @param server the server scope of the property
-   * @param key the property you are looking for
-   * 
-   * @return the value of the property
-   * @throws IOException if property files is not accessible or does not exists
-   */
-  private static String getProperty(IConfiguration.Connectors server, String key) throws IOException {
-    if (sProperties == null || sProperties.isEmpty()) {
-      sProperties.load(DefaultConfiguration.class.getResourceAsStream("/fm/audiobox/core/config/env.properties"));
-    }
-
-    return getProperty(PROP_PREFIX + server.toString().toLowerCase() + "." + key);
-  }
-
-
-  /**
-   * Use this method to get the property in a safe way.<br/>
-   * This method will return null if the property file is not accessible for any reason.
-   * 
-   * @param key the property you are looking for
-   * 
-   * @return the value of the property
-   */
-  private static String safelyGetProperty(IConfiguration.Connectors server, String key) {
-    try {
-      return getProperty(server, key);
-    } catch (IOException e) {
-      log.warn("Error accessing environment properties file. Default values will be used");
-    }
-    return null;
-  }
-  
-  /**
-   * Use this method to get the property in a safe way.<br/>
-   * This method will return null if the property file is not accessible for any reason.
-   * 
-   * @param key the property you are looking for
-   * 
-   * @return the value of the property
-   */
-  private static String safelyGetProperty(String key) {
-    try {
-      return getProperty(PROP_PREFIX + key);
-    } catch (IOException e) {
-      log.warn("Error accessing environment properties file. Default values will be used");
-    }
-    return null;
-  }
-
 }

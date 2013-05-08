@@ -37,6 +37,15 @@ public interface IConfiguration {
 
 
   /**
+   * Identifies each managed environments
+   */
+  public static enum Environments {
+    development,
+    test,
+    live
+  }
+  
+  /**
    * Identifies each request and response format type 
    */
   public static enum ContentFormat {
@@ -156,7 +165,13 @@ public interface IConfiguration {
   /**
    * @return env used for connection
    */
-  public String getEnvProperty();
+  public IConfiguration.Environments getEnvironment();
+  
+  /**
+   * Set the {@link IConfiguration.Environments environment}
+   * @param env the environment to be use
+   */
+  public void setEnvironment(IConfiguration.Environments env);
 
   /**
    * @return protocol used for connection

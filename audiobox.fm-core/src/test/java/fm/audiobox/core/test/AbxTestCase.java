@@ -56,6 +56,7 @@ public abstract class AbxTestCase extends junit.framework.Assert {
     IConfiguration configuration = new DefaultConfiguration( APPLICATION_NAME );
 
     configuration.setUseCache(false);
+    configuration.setEnvironment( IConfiguration.Environments.test );
     
     return configuration;
   }

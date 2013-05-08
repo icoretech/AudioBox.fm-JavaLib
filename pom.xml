@@ -17,18 +17,6 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.env>${env}</project.env>
-    <project.rails.protocol>${fm.audiobox.rails.protocol}</project.rails.protocol>
-    <project.rails.host>${fm.audiobox.rails.host}</project.rails.host>
-    <project.rails.port>${fm.audiobox.rails.port}</project.rails.port>
-    <project.rails.apiPath>${fm.audiobox.rails.apiPath}</project.rails.apiPath>
-    <project.node.protocol>${fm.audiobox.node.protocol}</project.node.protocol>
-    <project.node.host>${fm.audiobox.node.host}</project.node.host>
-    <project.node.port>${fm.audiobox.node.port}</project.node.port>
-    <project.node.apiPath>${fm.audiobox.node.apiPath}</project.node.apiPath>
-    <project.daemon.protocol>${fm.audiobox.daemon.protocol}</project.daemon.protocol>
-    <project.daemon.host>${fm.audiobox.daemon.host}</project.daemon.host>
-    <project.daemon.port>${fm.audiobox.daemon.port}</project.daemon.port>
-    <project.daemon.apiPath>${fm.audiobox.daemon.apiPath}</project.daemon.apiPath>
     <project.logLevel>${fm.audiobox.logLevel}</project.logLevel>
   </properties>
   <organization>
@@ -256,18 +244,6 @@
       </activation>
       <properties>
         <env>development</env>
-        <fm.audiobox.rails.protocol>http</fm.audiobox.rails.protocol>
-        <fm.audiobox.rails.host>0.0.0.0</fm.audiobox.rails.host>
-        <fm.audiobox.rails.port>5000</fm.audiobox.rails.port>
-        <fm.audiobox.rails.apiPath>/api/v1</fm.audiobox.rails.apiPath>
-        <fm.audiobox.node.protocol>http</fm.audiobox.node.protocol>
-        <fm.audiobox.node.host>0.0.0.0</fm.audiobox.node.host>
-        <fm.audiobox.node.port>3000</fm.audiobox.node.port>
-        <fm.audiobox.node.apiPath>/api/v1</fm.audiobox.node.apiPath>
-        <fm.audiobox.daemon.protocol>http</fm.audiobox.daemon.protocol>
-        <fm.audiobox.daemon.host>0.0.0.0</fm.audiobox.daemon.host>
-        <fm.audiobox.daemon.port>3000</fm.audiobox.daemon.port>
-        <fm.audiobox.daemon.apiPath>/api/v1</fm.audiobox.daemon.apiPath>
         <fm.audiobox.skipTests>true</fm.audiobox.skipTests>
         <fm.audiobox.logLevel>DEBUG</fm.audiobox.logLevel>
         <maven.javadoc.skip>true</maven.javadoc.skip>
@@ -283,18 +259,6 @@
       </activation>
       <properties>
         <env>test</env>
-        <fm.audiobox.rails.protocol>http</fm.audiobox.rails.protocol>
-        <fm.audiobox.rails.host>staging.audiobox.fm</fm.audiobox.rails.host>
-        <fm.audiobox.rails.port>80</fm.audiobox.rails.port>
-        <fm.audiobox.rails.apiPath>/api/v1</fm.audiobox.rails.apiPath>
-        <fm.audiobox.node.protocol>http</fm.audiobox.node.protocol>
-        <fm.audiobox.node.host>staging.audiobox.fm</fm.audiobox.node.host>
-        <fm.audiobox.node.port>80</fm.audiobox.node.port>
-        <fm.audiobox.node.apiPath>/api/v1</fm.audiobox.node.apiPath>
-        <fm.audiobox.daemon.protocol>http</fm.audiobox.daemon.protocol>
-        <fm.audiobox.daemon.host>desk.staging.audiobox.fm</fm.audiobox.daemon.host>
-        <fm.audiobox.daemon.port>5100</fm.audiobox.daemon.port>
-        <fm.audiobox.daemon.apiPath>/api/v1</fm.audiobox.daemon.apiPath>
         <fm.audiobox.skipTests>false</fm.audiobox.skipTests>
         <fm.audiobox.logLevel>DEBUG</fm.audiobox.logLevel>
         <maven.javadoc.skip>true</maven.javadoc.skip>
@@ -353,18 +317,6 @@
       </activation>
       <properties>
         <env>production</env>
-        <fm.audiobox.rails.protocol>http</fm.audiobox.rails.protocol>
-        <fm.audiobox.rails.host>audiobox.fm</fm.audiobox.rails.host>
-        <fm.audiobox.rails.port>80</fm.audiobox.rails.port>
-        <fm.audiobox.rails.apiPath>/api/v1</fm.audiobox.rails.apiPath>
-        <fm.audiobox.node.protocol>http</fm.audiobox.node.protocol>
-        <fm.audiobox.node.host>audiobox.fm</fm.audiobox.node.host>
-        <fm.audiobox.node.port>80</fm.audiobox.node.port>
-        <fm.audiobox.node.apiPath>/api/v1</fm.audiobox.node.apiPath>
-        <fm.audiobox.daemon.protocol>http</fm.audiobox.daemon.protocol>
-        <fm.audiobox.daemon.host>audiobox.fm</fm.audiobox.daemon.host>
-        <fm.audiobox.daemon.port>8082</fm.audiobox.daemon.port>
-        <fm.audiobox.daemon.apiPath>/api/v1</fm.audiobox.daemon.apiPath>
         <fm.audiobox.logLevel>WARN</fm.audiobox.logLevel>
         <maven.javadoc.skip>false</maven.javadoc.skip>
       </properties>
