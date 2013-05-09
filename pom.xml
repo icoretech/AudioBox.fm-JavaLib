@@ -183,7 +183,7 @@
       <dependency>
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpclient</artifactId>
-        <version>4.2.2</version>
+        <version>4.0.1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.httpcomponents</groupId>
@@ -290,18 +290,6 @@
       </activation>
       <properties>
         <env>staging</env>
-        <fm.audiobox.rails.protocol>http</fm.audiobox.rails.protocol>
-        <fm.audiobox.rails.host>staging.audiobox.fm</fm.audiobox.rails.host>
-        <fm.audiobox.rails.port>80</fm.audiobox.rails.port>
-        <fm.audiobox.rails.apiPath>/api/v1</fm.audiobox.rails.apiPath>
-        <fm.audiobox.node.protocol>http</fm.audiobox.node.protocol>
-        <fm.audiobox.node.host>staging.audiobox.fm</fm.audiobox.node.host>
-        <fm.audiobox.node.port>80</fm.audiobox.node.port>
-        <fm.audiobox.node.apiPath>/api/v1</fm.audiobox.node.apiPath>
-        <fm.audiobox.daemon.protocol>http</fm.audiobox.daemon.protocol>
-        <fm.audiobox.daemon.host>staging.audiobox.fm</fm.audiobox.daemon.host>
-        <fm.audiobox.daemon.port>8082</fm.audiobox.daemon.port>
-        <fm.audiobox.daemon.apiPath>/api/v1</fm.audiobox.daemon.apiPath>
         <fm.audiobox.skipTests>true</fm.audiobox.skipTests>
         <fm.audiobox.logLevel>DEBUG</fm.audiobox.logLevel>
         <maven.javadoc.skip>true</maven.javadoc.skip>

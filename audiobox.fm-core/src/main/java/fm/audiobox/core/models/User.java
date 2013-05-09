@@ -29,11 +29,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.http.Consts;
 import org.apache.http.NameValuePair;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -666,7 +666,7 @@ public final class User extends AbstractEntity implements Serializable {
       req.setAuthenticationHandle(new IAuthenticationHandle() {
         public void handle(IConnectionMethod request) {
           UsernamePasswordCredentials mCredentials = new UsernamePasswordCredentials( username, password );
-          request.addHeader( BasicScheme.authenticate(mCredentials, Consts.UTF_8.name(), false ) );
+          request.addHeader( BasicScheme.authenticate(mCredentials, HTTP.UTF_8, false ) );
         }
       });
     }

@@ -1,6 +1,7 @@
 package fm.audiobox.configurations;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Observable;
 import java.util.concurrent.Callable;
@@ -8,7 +9,6 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import org.apache.http.Consts;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
@@ -24,6 +24,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HTTP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,7 +117,11 @@ public class DefaultRequestMethod extends Observable implements IConnectionMetho
         log.info("Params: " + sb.toString() );
       }
       
-      entity = new UrlEncodedFormEntity(params, Consts.UTF_8);
+      try {
+        entity = new UrlEncodedFormEntity(params, HTTP.UTF_8);
+      } catch (UnsupportedEncodingException e) {
+        e.printStackTrace();
+      }
     }
     return send(async, entity);
   }

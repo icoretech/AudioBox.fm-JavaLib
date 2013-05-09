@@ -32,7 +32,6 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.zip.GZIPInputStream;
 
-import org.apache.http.Consts;
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
@@ -49,6 +48,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.conn.params.ConnManagerParams;
+import org.apache.http.conn.params.ConnPerRouteBean;
 import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
@@ -57,10 +58,11 @@ import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.entity.HttpEntityWrapper;
 import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -271,7 +273,7 @@ public class AudioBox extends Observable {
     private String API_PATH = "";
 
     private HttpRoute mAudioBoxRoute;
-    private PoolingClientConnectionManager mCm;
+    private ThreadSafeClientConnManager mCm;
     private DefaultHttpClient mClient;
 
 
@@ -477,15 +479,17 @@ public class AudioBox extends Observable {
       this.mAudioBoxRoute = new HttpRoute(new HttpHost( HOST, Integer.parseInt(PORT) ) );
 
       SchemeRegistry schemeRegistry = new SchemeRegistry();
-      schemeRegistry.register( new Scheme("http", Integer.parseInt( PORT ), PlainSocketFactory.getSocketFactory() ));
-      schemeRegistry.register( new Scheme("https", 443, SSLSocketFactory.getSocketFactory() ));
+      schemeRegistry.register( new Scheme("http", PlainSocketFactory.getSocketFactory(), Integer.parseInt( PORT ) ));
+      schemeRegistry.register( new Scheme("https", SSLSocketFactory.getSocketFactory(), 443 ));
 
       HttpParams params = new BasicHttpParams();
 
       HttpConnectionParams.setConnectionTimeout(params, 30 * 1000);
       HttpConnectionParams.setSoTimeout(params, 30 * 1000);
+      
+      ConnManagerParams.setMaxConnectionsPerRoute(params, new ConnPerRouteBean(50));
 
-      this.mCm = new PoolingClientConnectionManager(schemeRegistry);
+      this.mCm = new ThreadSafeClientConnManager(params, schemeRegistry);
       this.mClient = new DefaultHttpClient( this.mCm, params );
       
       this.mClient.setKeepAliveStrategy(new DefaultConnectionKeepAliveStrategy() {
@@ -499,10 +503,6 @@ public class AudioBox extends Observable {
           return keepAlive;
         }
       });
-      
-
-      this.mCm.setMaxPerRoute(mAudioBoxRoute, 50);
-      
       
       if ( log.isDebugEnabled() ) {
         this.mClient.addRequestInterceptor(new HttpRequestInterceptor() {
@@ -612,7 +612,7 @@ public class AudioBox extends Observable {
       }
 
       if ( httpVerb.equals( IConnectionMethod.METHOD_GET ) || httpVerb.equals( IConnectionMethod.METHOD_DELETE ) ){
-        String query = URLEncodedUtils.format( params , Consts.UTF_8 );
+        String query = URLEncodedUtils.format( params , HTTP.UTF_8 );
         if ( query.length() > 0 )
           url += "?" + query;
       }
