@@ -118,6 +118,27 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
     return request;
   }
   
+  
+  /**
+   * Returns a list of {@link MediaFiles} modified since the specified date.
+   *
+   * @param async wether to load asyncronously or not
+   * @param responseHandler the {@link IResponseHandler} that will handle the response (may be null)
+   * @param since a long number representing the UTC timestamp. <b>must be represented in seconds</b>
+   * 
+   * @retun 
+   */
+  public IConnectionMethod load(boolean async, IResponseHandler responseHandler, long since) throws ServiceException, LoginException {
+    this.clear();
+
+    List<NameValuePair> params = new ArrayList<NameValuePair>();
+    params.add( new BasicNameValuePair("since", String.valueOf(since) ) );
+
+    IConnectionMethod request = getConnector(IConfiguration.Connectors.RAILS).get(this, this.getParent().getApiPath(), NAMESPACE, params);
+    request.send(async, null, responseHandler);
+    return request;
+  }
+  
 
   public boolean removeFromPlaylist(List<MediaFile> mediaFiles) throws ServiceException, LoginException {
 
