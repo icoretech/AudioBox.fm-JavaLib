@@ -737,6 +737,15 @@ public class MediaFile extends AbstractEntity implements Serializable {
     return request.getHttpMethod().getURI().toString();
   }
   
+  
+  /**
+   * Returns the complete stream url of the file pointing to AudioBox Desktop application
+   * running in the same LAN
+   * 
+   * @param ip the local {@code ip address} of the AudioBox Desktop application (see {@link User#remoteDaemonIp()}
+   * @param auth the {@link User#getAuthToken()}
+   * @return the complete stream url of the file
+   */
   public String computeStreamUrlForAudioBoxDesktop(String ip, String auth) {
     return "http://" + ip + ":44331/" + auth + "/stream/" + this.getToken() + "?f=" + this.getRemotePath();
   }
