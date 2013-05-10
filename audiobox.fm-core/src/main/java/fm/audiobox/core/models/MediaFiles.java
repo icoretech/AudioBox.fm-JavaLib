@@ -126,7 +126,9 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
    * @param responseHandler the {@link IResponseHandler} that will handle the response (may be null)
    * @param since a long number representing the UTC timestamp. <b>must be represented in seconds</b>
    * 
-   * @retun 
+   * @retun {@link MediaFiles} modified since the specified date.
+   * @throws ServiceException if any connection error occurs
+   * @throws LoginException if any login error occurs
    */
   public IConnectionMethod load(boolean async, IResponseHandler responseHandler, long since) throws ServiceException, LoginException {
     this.clear();
@@ -140,6 +142,15 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
   }
   
 
+  /**
+   * Removes a list of {@link MediaFile} from {@code parent} {@link Playlist}
+   * 
+   * @param mediaFiles list of {@link MediaFile} to be removed
+   * 
+   * @return {@code true} if everything went ok. {@code false} if not
+   * @throws ServiceException if any connection error occurs
+   * @throws LoginException if any login error occurs
+   */
   public boolean removeFromPlaylist(List<MediaFile> mediaFiles) throws ServiceException, LoginException {
 
     if ( mediaFiles == null || mediaFiles.size() == 0 )
@@ -159,7 +170,16 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
   }
   
   
-  
+  /**
+   * Deletes a list of {@link MediaFile}
+   * <br />
+   * <b>This action cannot be reversed</b>
+   * 
+   * @param mediaFiles list of {@link MediaFile}
+   * @return {@code true} if everything went ok. {@code false} if not
+   * @throws ServiceException if any connection error occurs
+   * @throws LoginException if any login error occurs
+   */
   public boolean destroy(List<MediaFile> mediaFiles) throws ServiceException, LoginException {
 
     if ( mediaFiles == null || mediaFiles.size() == 0 )
@@ -185,6 +205,14 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
     return result;
   }
 
+  /**
+   * Deletes all {@link MediaFile} contained in this {@code media files collection}
+   * <br />
+   * <b>This action cannot be reversed</b>
+   * @return {@code true} if everything went ok. {@code false} if not
+   * @throws ServiceException if any connection error occurs
+   * @throws LoginException if any login error occurs
+   */
   public boolean destroyAll() throws ServiceException, LoginException {
     return this.destroy( this.subList(0, this.size() ) );
   }
