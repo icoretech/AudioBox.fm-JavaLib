@@ -187,6 +187,16 @@ public class MediaFilesTest extends AbxTestCase {
     
     assertEquals( url + mf.getFilename(), mf.computeStreamUrl(false) );
     assertEquals( url + mf.getFilename() + "?flash=true", mf.computeStreamUrl(true) );
+    
+    
+    try {
+      mf.notifyNowPlaying();
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
   }
   
   

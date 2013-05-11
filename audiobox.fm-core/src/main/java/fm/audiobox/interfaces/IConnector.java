@@ -30,6 +30,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -54,6 +55,22 @@ public interface IConnector {
   
   public static final int DEFAULT_CHUNK = 1024 * 256;
   
+  
+  
+  /**
+   * Builds {@link HttpMethodBase} using HEAD method and passing parameters
+   * 
+   * @param destEntity the {@link IEntity} to populate retriving response content
+   * @param action the action to invoke
+   * @param params the request parameters to send
+   * 
+   * @return the {@link IConnectionMethod} used for a GET request
+   */
+  public IConnectionMethod head(IEntity destEntity, String action, List<NameValuePair> params);
+  
+  public IConnectionMethod head(IEntity destEntity, String path, String action, List<NameValuePair> params);
+  
+  public IConnectionMethod head(IEntity destEntity, String path, String action, ContentFormat format, List<NameValuePair> params);
   
   
   /**
@@ -137,6 +154,7 @@ public interface IConnector {
   public interface IConnectionMethod {
     
     /* Constants */
+    public static final String METHOD_HEAD = HttpHead.METHOD_NAME;
     public static final String METHOD_GET = HttpGet.METHOD_NAME;
     public static final String METHOD_POST = HttpPost.METHOD_NAME;
     public static final String METHOD_PUT = HttpPut.METHOD_NAME;

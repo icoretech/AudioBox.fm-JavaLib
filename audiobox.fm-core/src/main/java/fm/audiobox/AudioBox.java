@@ -36,7 +36,6 @@ import org.apache.http.Header;
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpException;
-import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponse;
@@ -44,13 +43,13 @@ import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.conn.params.ConnPerRouteBean;
-import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
@@ -272,7 +271,6 @@ public class AudioBox extends Observable {
 
     private String API_PATH = "";
 
-    private HttpRoute mAudioBoxRoute;
     private ThreadSafeClientConnManager mCm;
     private DefaultHttpClient mClient;
 
@@ -354,6 +352,9 @@ public class AudioBox extends Observable {
       } else if ( IConnectionMethod.METHOD_DELETE.equals( httpVerb ) ) {
         log.debug("Building HttpMethod DELETE");
         method = new HttpDelete(url);
+      } else if ( IConnectionMethod.METHOD_HEAD.equals( httpVerb ) ) {
+        log.debug("Building HttpMethod HEAD");
+        method = new HttpHead(url);
       } else {
         log.debug("Building HttpMethod GET");
         method = new HttpGet(url);
@@ -376,6 +377,27 @@ public class AudioBox extends Observable {
     }
 
 
+    public IConnectionMethod head(IEntity destEntity, String action, List<NameValuePair> params) {
+      return head(destEntity, destEntity.getApiPath(), action, params);
+    }
+
+
+    public IConnectionMethod head(IEntity destEntity, String path, String action, List<NameValuePair> params) {
+      return head(destEntity, path, action, getConfiguration().getRequestFormat(), params);
+    }
+
+    public IConnectionMethod head(IEntity destEntity, String path, String action, ContentFormat format, List<NameValuePair> params) {
+      IConnectionMethod method = getConnectionMethod();
+
+      if ( method != null ) {
+        HttpRequestBase originalMethod = this.createConnectionMethod(IConnectionMethod.METHOD_HEAD, path, action, format, params);
+        method.init(destEntity, originalMethod, this.mClient, getConfiguration(), format );
+        method.setUser( user );
+      }
+
+      return method;
+    }
+    
 
     public IConnectionMethod get(IEntity destEntity, String action, List<NameValuePair> params) {
      return get(destEntity, destEntity.getApiPath(), action, params);
@@ -476,7 +498,7 @@ public class AudioBox extends Observable {
      */
     private void buildClient() {
 
-      this.mAudioBoxRoute = new HttpRoute(new HttpHost( HOST, Integer.parseInt(PORT) ) );
+      //   this.mAudioBoxRoute = new HttpRoute(new HttpHost( HOST, Integer.parseInt(PORT) ) );
 
       SchemeRegistry schemeRegistry = new SchemeRegistry();
       schemeRegistry.register( new Scheme("http", PlainSocketFactory.getSocketFactory(), Integer.parseInt( PORT ) ));
@@ -611,7 +633,7 @@ public class AudioBox extends Observable {
         url += IConnector.DOT + format.toString().toLowerCase();
       }
 
-      if ( httpVerb.equals( IConnectionMethod.METHOD_GET ) || httpVerb.equals( IConnectionMethod.METHOD_DELETE ) ){
+      if ( httpVerb.equals( IConnectionMethod.METHOD_GET ) || httpVerb.equals( IConnectionMethod.METHOD_DELETE ) || httpVerb.equals( IConnectionMethod.METHOD_HEAD )  ){
         String query = URLEncodedUtils.format( params , HTTP.UTF_8 );
         if ( query.length() > 0 )
           url += "?" + query;

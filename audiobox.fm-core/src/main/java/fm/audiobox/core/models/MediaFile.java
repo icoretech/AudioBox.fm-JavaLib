@@ -765,6 +765,16 @@ public class MediaFile extends AbstractEntity implements Serializable {
   }
   
   
+  
+  
+  public void notifyNowPlaying() throws ServiceException, LoginException {
+    // return IConnector.URI_SEPARATOR + Actions.stream + IConnector.URI_SEPARATOR + this.getFilename();
+    IConnectionMethod request = getConnector(IConfiguration.Connectors.RAILS).head(this, IConnector.URI_SEPARATOR + Actions.stream, this.getToken(), null);
+    request.send(false);
+  }
+  
+  
+  
   /**
    * Use this method for getting {@code lyrics} from AudioBox.fm
    * 
