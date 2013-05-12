@@ -29,6 +29,7 @@ public class ThreadTest extends TestCase {
   }
   
   
+  @SuppressWarnings("static-access")
   public void test15ThreadsAndStop(){
     
     JobManager manager = new JobManager(4);
@@ -60,6 +61,7 @@ public class ThreadTest extends TestCase {
       super(name);
     }
 
+    @SuppressWarnings("static-access")
     public Object doTask() {
       
       try {
