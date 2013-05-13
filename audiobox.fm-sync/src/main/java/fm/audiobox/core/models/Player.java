@@ -115,28 +115,37 @@ public class Player extends AbstractEntity {
     return executeAction(Actions.pause, null);
   }
   
-  public boolean toggle_play() throws ServiceException, LoginException {
+  public boolean togglePlay() throws ServiceException, LoginException {
     return executeAction(Actions.toggle_play, null);
   }
 
   public boolean next() throws ServiceException, LoginException {
     return executeAction(Actions.next, null);
   }
+  
   public boolean prev() throws ServiceException, LoginException {
     return executeAction(Actions.prev, null);
   }
+  
   public boolean stop() throws ServiceException, LoginException {
     return executeAction(Actions.stop, null);
   }
-  public boolean show_info(MediaFile mediafile) throws ServiceException, LoginException {
-    return executeAction(Actions.show_info, null);
+  
+  public boolean showInfo(MediaFile mediafile) throws ServiceException, LoginException {
+    
+    List<NameValuePair> params = new ArrayList<NameValuePair>();
+    params.add(new BasicNameValuePair( MEDIA_TOKEN_PARAMETER, mediafile.getToken() ) );
+    
+    return executeAction(Actions.show_info, params);
   }
-  public boolean playlist_switch(Playlist playlist) throws ServiceException, LoginException {
+  
+  public boolean switchPlaylist(Playlist playlist) throws ServiceException, LoginException {
     List<NameValuePair> params = new ArrayList<NameValuePair>();
     params.add(new BasicNameValuePair( PLAYLIST_TOKEN_PARAMETER, playlist.getToken() ) );
     return executeAction(Actions.playlist_switch, params);
   }
-  public boolean switch_and_play(Playlist playlist, MediaFile mediafile) throws ServiceException, LoginException {
+  
+  public boolean switchAndPlay(Playlist playlist, MediaFile mediafile) throws ServiceException, LoginException {
     List<NameValuePair> params = new ArrayList<NameValuePair>();
     
     params.add(new BasicNameValuePair( PLAYLIST_TOKEN_PARAMETER, playlist.getToken() ) );
@@ -144,8 +153,6 @@ public class Player extends AbstractEntity {
     
     return executeAction(Actions.switch_and_play, params);
   }
-  
-  
   
   private boolean executeAction(Player.Actions action, List<NameValuePair> params) throws ServiceException, LoginException {
     

@@ -29,8 +29,42 @@ public class RemotePlayerTest extends AbxTestCase {
     player = new Player( user );
   }
 
+  
   @Test
-  public void testApp() {
+  public void playlistSwitchToCloud() {
+    Playlists pls = user.getPlaylists();
+    
+    try {
+      pls.load(false);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    Playlist pl = pls.getPlaylistByType( Playlists.Type.CloudPlaylist );
+    
+    try {
+      player.switchPlaylist( pl );
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    try {
+      Thread.sleep( 3000 );
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    
+  }
+  
+  
+  
+  @Test
+  public void play() {
+    
     Playlists pls = user.getPlaylists();
     
     try {
@@ -57,7 +91,7 @@ public class RemotePlayerTest extends AbxTestCase {
     }
     
     
-    MediaFile mf = mediaFiles.get(0);
+    MediaFile mf = mediaFiles.get(3);
     
     try {
       player.play( mf );
@@ -67,8 +101,180 @@ public class RemotePlayerTest extends AbxTestCase {
       fail( e.getMessage() );
     }
     
+    try {
+      Thread.sleep( 3000 );
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
     
   }
   
+  @Test
+  public void pause() {
+    
+    try {
+      player.pause();
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    try {
+      Thread.sleep( 3000 );
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    
+  }
+  
+  
+  @Test
+  public void togglePlayPause() {
+    
+    try {
+      player.togglePlay();
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    try {
+      Thread.sleep( 3000 );
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    
+  }
+  
+  
+  @Test
+  public void playlistSwitchToSkydrive() {
+    Playlists pls = user.getPlaylists();
+    
+    try {
+      pls.load(false);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    Playlist pl = pls.getPlaylistByType( Playlists.Type.SkydrivePlaylist );
+    
+    try {
+      player.switchPlaylist( pl );
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    
+    try {
+      Thread.sleep( 3000 );
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    
+  }
+  
+  
+  @Test
+  public void showInfoCloudMediaFile() {
+    Playlists pls = user.getPlaylists();
+    
+    try {
+      pls.load(false);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    Playlist pl = pls.getPlaylistByType( Playlists.Type.CloudPlaylist );
+    
+    MediaFiles mediaFiles = pl.getMediaFiles();
+    
+    assertFalse( mediaFiles.size() == pl.getMediaFilesCount() );
+    assertFalse( mediaFiles.size() > 0 );
+    
+    try {
+      mediaFiles.load(false);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    
+    MediaFile mf = mediaFiles.get(1);
+    
+    try {
+      player.showInfo( mf );
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    
+    try {
+      Thread.sleep( 3000 );
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    
+  }
+  
+  
+  
+  @Test
+  public void switchAndPlay() {
+    Playlists pls = user.getPlaylists();
+    
+    try {
+      pls.load(false);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    Playlist pl = pls.getPlaylistByType( Playlists.Type.CloudPlaylist );
+    
+    MediaFiles mediaFiles = pl.getMediaFiles();
+    
+    assertFalse( mediaFiles.size() == pl.getMediaFilesCount() );
+    assertFalse( mediaFiles.size() > 0 );
+    
+    try {
+      mediaFiles.load(false);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    
+    MediaFile mf = mediaFiles.get(2);
+    
+    try {
+      player.switchAndPlay(pl, mf);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    try {
+      Thread.sleep( 3000 );
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    
+    
+  }
   
 }
