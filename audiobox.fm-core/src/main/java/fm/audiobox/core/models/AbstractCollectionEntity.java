@@ -46,7 +46,7 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
   /**
    * Empties collection. You may have to call the {@link AbstractCollectionEntity#load} method again
    * <p>
-   * Note: it fires the {@link Event.States.COLLECTION_CLEARED}
+   * Note: it fires the {@link Event.States#COLLECTION_CLEARED}
    * </p>
    */
   public void clear() {

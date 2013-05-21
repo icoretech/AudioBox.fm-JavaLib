@@ -174,7 +174,6 @@ public final class User extends AbstractEntity implements Serializable {
   /**
    * Sets the {@code email} used for logging in
    */
-  @Deprecated
   public void setUsername(String username) {
     this.username = username;
   }
@@ -189,7 +188,6 @@ public final class User extends AbstractEntity implements Serializable {
   /**
    * This method is used by response parser
    */
-  @Deprecated
   public void setId(String id) {
     this.id = id;
   }
@@ -200,7 +198,6 @@ public final class User extends AbstractEntity implements Serializable {
    * <br />
    * It returns the password manually set to User while logging in
    */
-  @Deprecated
   public String getPassword() {
     return password;
   }
@@ -211,7 +208,6 @@ public final class User extends AbstractEntity implements Serializable {
    * Sets the password used for logging in
    * @param password the User's password used for logging in
    */
-  @Deprecated
   public void setPassword(String password) {
     this.password = password;
   }
@@ -229,7 +225,6 @@ public final class User extends AbstractEntity implements Serializable {
   /**
    * This method is used by response parser
    */
-  @Deprecated
   public void setRealName(String real_name) {
     this.real_name = real_name;
   }
@@ -246,7 +241,6 @@ public final class User extends AbstractEntity implements Serializable {
   /**
    * This method is used by response parser
    */
-  @Deprecated
   public void setEmail(String email) {
     this.email = email;
   }
@@ -263,7 +257,6 @@ public final class User extends AbstractEntity implements Serializable {
   /**
    * This method is used by response parser
    */
-  @Deprecated
   public void setCreatedAt(String createdAt) {
     this.createdAt = createdAt;
   }
@@ -281,7 +274,6 @@ public final class User extends AbstractEntity implements Serializable {
   /**
    * This method is used by response parser
    */
-  @Deprecated
   public void setUpdatedAt(String updatedAt) {
     this.updatedAt = updatedAt;
   }
@@ -299,7 +291,6 @@ public final class User extends AbstractEntity implements Serializable {
   /**
    * This method is used by response parser
    */
-  @Deprecated
   public void setCountry(String country) {
     this.country = country;
   }
@@ -316,7 +307,6 @@ public final class User extends AbstractEntity implements Serializable {
   /**
    * This method is used by response parser
    */
-  @Deprecated
   public void setTimeZone(String time_zone) {
     this.time_zone = time_zone;
   }
@@ -336,7 +326,6 @@ public final class User extends AbstractEntity implements Serializable {
   /**
    * This method is used by response parser
    */
-  @Deprecated
   public void setAcceptedExtensions(String accepted_extensions) {
     this.accepted_extensions = accepted_extensions;
   }
@@ -353,7 +342,6 @@ public final class User extends AbstractEntity implements Serializable {
   /**
    * This method is used by response parser
    */
-  @Deprecated
   public void setAcceptedFormats(String accepted_formats) {
     this.accepted_formats = accepted_formats;
   }
@@ -361,7 +349,6 @@ public final class User extends AbstractEntity implements Serializable {
   /**
    * This method is used by response parser
    */
-  @Deprecated
   public void setCometChannel(String cometChl) {
     this.comet_channel = cometChl;
   }
@@ -388,7 +375,6 @@ public final class User extends AbstractEntity implements Serializable {
   /**
    * This method is used by response parser
    */
-  @Deprecated
   public void setPlaylistsCount(int playlists_count) {
     this.playlists_count = playlists_count;
   }
@@ -405,7 +391,6 @@ public final class User extends AbstractEntity implements Serializable {
   /**
    * This method is used by response parser
    */
-  @Deprecated
   public void setMediaFilesCount(long media_files_count) {
     this.media_files_count = media_files_count;
   }
@@ -422,7 +407,6 @@ public final class User extends AbstractEntity implements Serializable {
   /**
    * This method is used by response parser
    */
-  @Deprecated
   public void setTotalPlayCount(long total_play_count) {
     this.total_play_count = total_play_count;
   }
@@ -431,7 +415,6 @@ public final class User extends AbstractEntity implements Serializable {
   /**
    * This method is used by response parser
    */
-  @Deprecated
   public void setSubscriptionState(String flag) {
     SubscriptionState state = null;
     if ( flag != null && ( ( state = SubscriptionState.valueOf( flag ) ) != null )  ) {
@@ -445,7 +428,6 @@ public final class User extends AbstractEntity implements Serializable {
   /**
    * This method is used by response parser
    */
-  @Deprecated
   public void setSubscriptionState(SubscriptionState state) {
     this.subscription_state = state;
   }
@@ -462,7 +444,6 @@ public final class User extends AbstractEntity implements Serializable {
   /**
    * This method is used by response parser
    */
-  @Deprecated
   public void setPermissions(Permissions permissions) {
     this.permissions = permissions;
   }
@@ -479,7 +460,6 @@ public final class User extends AbstractEntity implements Serializable {
   /**
    * This method is used by response parser
    */
-  @Deprecated
   public void setAccountStats(AccountStats accountStats) {
     this.accountStats = accountStats;
   }
@@ -494,7 +474,6 @@ public final class User extends AbstractEntity implements Serializable {
   /**
    * This method is used by response parser
    */
-  @Deprecated
   public void setPreferences(Preferences preferences) {
     this.preferences = preferences;
   }
@@ -510,7 +489,6 @@ public final class User extends AbstractEntity implements Serializable {
   /**
    * This method is used by response parser
    */
-  @Deprecated
   public void setExternalTokens(ExternalTokens externalTokens) {
     this.externalTokens = externalTokens;
   }

@@ -1,5 +1,7 @@
 package fm.audiobox.core.exceptions;
 
+import fm.audiobox.core.models.User;
+
 
 /**
  * This exception is thrown when a connection to AudioBox.fm service fails due to

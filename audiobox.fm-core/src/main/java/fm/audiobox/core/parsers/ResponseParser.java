@@ -1,7 +1,6 @@
 package fm.audiobox.core.parsers;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -104,7 +103,7 @@ public class ResponseParser implements ResponseHandler<Response> {
     ContentFormat format = isXml ? ContentFormat.XML : isJson ? ContentFormat.JSON : isText ? ContentFormat.TXT : ContentFormat.BINARY;
 
     // Build a new Response
-    Response response = new Response(format, responseCode, (InputStream) (entity != null ? entity.getContent() : null), cacheEnabled );
+    Response response = new Response(format, responseCode, entity != null ? entity.getContent() : null, cacheEnabled );
 
     switch ( responseCode ) {
     
