@@ -225,7 +225,7 @@ public class Playlist extends AbstractEntity implements Serializable {
 
 
   /**
-   * This method deletes entirly content of the {@link Playlists.Types.LocalPlaylist} drive. Use this method carefully
+   * This method deletes entirly content of the {@link Playlists.Type#LocalPlaylist} drive. Use this method carefully
    * <p>
    * Note: this action will be asynchronously performed by the server
    * </p>
@@ -421,7 +421,7 @@ public class Playlist extends AbstractEntity implements Serializable {
 
 
   /**
-   * Returns a {@link MediaFiles} instance ready to be populated through {@link MediaFiles#load()} method
+   * Returns a {@link MediaFiles} instance ready to be populated through {@link MediaFiles#load(boolean)} method
    * 
    * @return a {@link MediaFiles} instance
    */
@@ -435,7 +435,7 @@ public class Playlist extends AbstractEntity implements Serializable {
 
 
   /**
-   * Returns a {@link Albums} instance ready to be populated through {@link Albums#load(boolean))} method
+   * Returns a {@link Albums} instance ready to be populated through {@link Albums#load(boolean)} method
    * 
    * @return a {@link Albums} instance
    */

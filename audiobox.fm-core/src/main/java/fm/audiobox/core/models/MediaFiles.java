@@ -40,7 +40,7 @@ import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
 
 /**
- * <p>MediaFiles is a {@link AbstractCollectionEntity<MediaFile>} specialization for {@link MediaFile} collections.</p>
+ * <p>MediaFiles is a {@link AbstractCollectionEntity} specialization for {@link MediaFile} collections.</p>
  */
 public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements Serializable {
 
@@ -126,7 +126,7 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
    * @param responseHandler the {@link IResponseHandler} that will handle the response (may be null)
    * @param since a long number representing the UTC timestamp. <b>must be represented in seconds</b>
    * 
-   * @retun {@link MediaFiles} modified since the specified date.
+   * @return {@link MediaFiles} modified since the specified date.
    * @throws ServiceException if any connection error occurs
    * @throws LoginException if any login error occurs
    */

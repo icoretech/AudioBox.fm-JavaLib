@@ -38,7 +38,7 @@ import fm.audiobox.interfaces.IEntity;
 
 
 /**
- * <p>Playlists is a {@link ModelsCollection} specialization for {@link MediaFiles} collections.</p>
+ * <p>Playlists is a {@link AbstractCollectionEntity} specialization for {@link Playlist} collections.</p>
  *
  * @author Valerio Chiodino
  * @author Fabio Tunno

@@ -60,7 +60,7 @@ public class JParser {
   /**
    * Parses given string and returns the associated entity
    * 
-   * @param jstr the InputStreamReader representing a JSON string
+   * @param isr the InputStreamReader representing a JSON string
    * @return the {@link IEntity} associated with this instance
    */
   public IEntity parse ( InputStreamReader isr ){
@@ -80,7 +80,7 @@ public class JParser {
   /**
    * Parses given JsonObject and returns the associated entity
    * 
-   * @param jstr the JsonObject
+   * @param jobj the JsonObject
    * @return the {@link IEntity} associated with this instance
    */
   @SuppressWarnings("unchecked")

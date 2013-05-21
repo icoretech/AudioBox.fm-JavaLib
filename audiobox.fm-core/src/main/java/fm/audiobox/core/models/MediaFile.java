@@ -941,7 +941,7 @@ public class MediaFile extends AbstractEntity implements Serializable {
   }
 
   /**
-   * See {@link MediaFile#download(DownloadHandler)}
+   * See {@link MediaFile#download(boolean, DownloadHandler)}
    */
   public IConnectionMethod download(boolean async, File file) throws ServiceException, LoginException {
     if (file != null) {

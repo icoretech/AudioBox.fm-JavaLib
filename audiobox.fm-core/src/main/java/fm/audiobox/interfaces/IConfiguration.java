@@ -81,7 +81,7 @@ public interface IConfiguration {
   /**
    * Sets the default extension for each request
    * 
-   * @param requestFormat the {@link ContentFormat} used by each request
+   * @param requestFormat the {@link IConfiguration.ContentFormat} used by each request
    */
   public void setRequestFormat(ContentFormat requestFormat);
 
@@ -199,7 +199,7 @@ public interface IConfiguration {
 
   /**
    * Passing true AudioBox will try to use FileSystem to store information as cache
-   * @param useChache
+   * @param useCache
    */
   public void setUseCache(boolean useCache);
 

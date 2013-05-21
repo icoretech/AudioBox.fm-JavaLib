@@ -62,7 +62,7 @@ public interface IResponseHandler {
    * 
    * @param inputStream the the {@link InputStream} associated this response
    * @param destEntity the {@link IEntity} to populate
-   * @param format the response format identified with {@link RequestFormat}
+   * @param format the response format identified with {@link ContentFormat}
    * 
    * @return String the parsed response content
    * 
