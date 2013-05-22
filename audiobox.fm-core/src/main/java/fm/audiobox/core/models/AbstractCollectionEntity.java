@@ -46,7 +46,7 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
   /**
    * Empties collection. You may have to call the {@link AbstractCollectionEntity#load} method again
    * <p>
-   * Note: it fires the {@link Event.States.COLLECTION_CLEARED}
+   * Note: it fires the {@link Event.States#COLLECTION_CLEARED}
    * </p>
    */
   public void clear() {
@@ -209,7 +209,7 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
 
 
   /**
-   * This method is not implemented. Use {@link AbstractCollectionEntity#add(IEntity)} instead.
+   * This method is not implemented. Use {@link AbstractCollectionEntity#add(Object)} instead.
    */
   @Deprecated
   public void add(int index, E entity) {
@@ -217,7 +217,7 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
 
 
   /**
-   * This method is not implemented. Use {@link AbstractCollectionEntity#add(IEntity)} instead.
+   * This method is not implemented. Use {@link AbstractCollectionEntity#add(Object)} instead.
    */
   @Deprecated
   public boolean addAll(Collection<? extends E> c) {
@@ -225,7 +225,7 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
   }
 
   /**
-   * This method is not implemented. Use {@link AbstractCollectionEntity#add(IEntity)} instead.
+   * This method is not implemented. Use {@link AbstractCollectionEntity#add(Object)} instead.
    */
   @Deprecated
   public boolean addAll(int index, Collection<? extends E> c) {

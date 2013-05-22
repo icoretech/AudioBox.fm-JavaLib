@@ -178,7 +178,7 @@ public class AudioBox extends Observable {
    * </p>
    * 
    * <p>
-   * It fires the {@link Event.States.CONNECTED} event passing the  {@link User}.
+   * It fires the {@link Event.States#CONNECTED} event passing the {@link User}.
    * </p>
    * 
    * @param username is the {@code email} of the user
@@ -190,7 +190,6 @@ public class AudioBox extends Observable {
    * @throws LoginException identifies invalid credentials or user cannot be logged in due to subscription error.
    * @throws ServiceException if any connection problem occurs.
    */
-  @SuppressWarnings("deprecation")
   public User login(final String username, final String password, boolean async) throws LoginException, ServiceException {
     log.info("Executing login for user: " + username);
 
@@ -232,7 +231,7 @@ public class AudioBox extends Observable {
    * Logouts the current logged in {@link User}.
    * <p>
    * This method clear the {@link User} instance and 
-   * fires the {@link Event.States.DISCONNECTED} passing no arguments
+   * fires the {@link Event.States#DISCONNECTED} passing no arguments
    * </p>
    * <p>
    * <b>Note: this method set User to {@code null}</b>
@@ -274,7 +273,7 @@ public class AudioBox extends Observable {
    * Connector is the AudioBox http request wrapper.
    * 
    * <p>
-   * This class intantiates a {@link IConnectionMethod} used for
+   * This class intantiates a {@link IConnector.IConnectionMethod} used for
    * invoking AudioBox.fm server through HTTP requests
    * </p>
    * <p>
@@ -606,12 +605,12 @@ public class AudioBox extends Observable {
 
 
     /**
-     * This method creates a {@link IConnectionMethod} class
+     * This method creates a {@link IConnector.IConnectionMethod} class
      * that will be used for invoking AudioBox.fm servers
      * <p>
      * Note: you can use your own {@code IConnectionMethod} class using {@link IConfiguration#setHttpMethodType(Class)} method
      * </p> 
-     * @return the {@link IConnectionMethod} associated with this {@link AudioBox} class
+     * @return the {@link IConnector.IConnectionMethod} associated with this {@link AudioBox} class
      */
     protected IConnectionMethod getConnectionMethod(){
 
@@ -637,9 +636,9 @@ public class AudioBox extends Observable {
      *
      * @param entityPath the partial url to call. Typically this is the {@link IEntity#getApiPath()} 
      * @param action the {@code namespace} of the {@link IEntity} your are invoking. Typically this is the {@link IEntity#getNamespace()}
-     * @param httpVerb one of {@link IConnectionMethod#METHOD_GET GET} {@link IConnectionMethod#METHOD_POST POST} {@link IConnectionMethod#METHOD_PUT PUT} {@link IConnectionMethod#METHOD_DELETE DELETE}
+     * @param httpVerb one of {@link IConnector.IConnectionMethod#METHOD_GET GET} {@link IConnector.IConnectionMethod#METHOD_POST POST} {@link IConnector.IConnectionMethod#METHOD_PUT PUT} {@link IConnector.IConnectionMethod#METHOD_DELETE DELETE}
      * @param format the {@link ContentFormat} for this request
-     * @param params the query string parameters used for this request. <b>Used in case of {@link IConnectionMethod#METHOD_GET GET} {@link IConnectionMethod#METHOD_DELETE DELETE} only</b>
+     * @param params the query string parameters used for this request. <b>Used in case of {@link IConnector.IConnectionMethod#METHOD_GET GET} {@link IConnector.IConnectionMethod#METHOD_DELETE DELETE} only</b>
      * @return the URL string
      */
     protected String buildRequestUrl(String entityPath, String action, String httpVerb, ContentFormat format, List<NameValuePair> params) {

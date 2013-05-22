@@ -282,7 +282,7 @@ public interface IConnector {
      * The {@link IResponseHandler} is used as custom response handler.
      * 
      * @param async whether to make the request asynchronous or not.
-     * @param params a {@link HttpEntity} used as request parameter
+     * @param entity a {@link HttpEntity} used as request parameter
      * @param responseHandler a {@link IResponseHandler} used as custom response handler
      * 
      * @return the {@link Response} if the request is not asynchronous

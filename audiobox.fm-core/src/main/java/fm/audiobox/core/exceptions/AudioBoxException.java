@@ -10,7 +10,7 @@ import fm.audiobox.interfaces.IServiceExceptionHandler;
  * This is the abstract main Exception class.
  * 
  * <p>
- * {@link LoginException} and {@link SerciceException} extend this class
+ * {@link LoginException} and {@link ServiceException} extend this class
  * <p>
  */
 public abstract class AudioBoxException extends IOException {

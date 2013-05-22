@@ -38,7 +38,7 @@ import fm.audiobox.interfaces.IEntity;
 
 
 /**
- * <p>Playlists is a {@link ModelsCollection} specialization for {@link MediaFiles} collections.</p>
+ * <p>Playlists is a {@link AbstractCollectionEntity} specialization for {@link Playlist} collections.</p>
  *
  * @author Valerio Chiodino
  * @author Fabio Tunno
@@ -108,10 +108,10 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
   }
   
   /**
-   * Returns the <b>first</b> {@link MediaFiles} that matches with the given {@link PlaylistTypes}
+   * Returns the <b>first</b> {@link MediaFiles} that matches with the given {@link Playlists.Type}
    * 
-   * @param type the {@link PlaylistTypes}
-   * @return the first {@link MediaFiles} that matches with the given {@link PlaylistTypes}
+   * @param type the {@link Playlists.Type}
+   * @return the first {@link MediaFiles} that matches with the given {@link Playlists.Type}
    */
   public Playlist getPlaylistByType( String type ){
     for ( Iterator<Playlist> it = this.iterator(); it.hasNext();  ){
@@ -128,10 +128,10 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
   }
   
   /**
-   * Returns a list of {@link MediaFiles} that matches the given {@link PlaylistTypes}
+   * Returns a list of {@link MediaFiles} that matches the given {@link Playlists.Type}
    * 
-   * @param type the {@link PlaylistTypes}
-   * @return a list of {@link MediaFiles} that matches with the given {@link PlaylistTypes}
+   * @param type the {@link Playlists.Type}
+   * @return a list of {@link MediaFiles} that matches with the given {@link Playlists.Type}
    */
   public List<Playlist> getPlaylistsByType( String type ){
     List<Playlist> pls = new ArrayList<Playlist>();

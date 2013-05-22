@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import fm.audiobox.configurations.DefaultResponseDeserializer;
 import fm.audiobox.core.exceptions.ServiceException;
+import fm.audiobox.core.models.MediaFile;
 import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IEntity;
 

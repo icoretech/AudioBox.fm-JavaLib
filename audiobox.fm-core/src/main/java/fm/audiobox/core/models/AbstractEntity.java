@@ -128,9 +128,9 @@ public abstract class AbstractEntity extends Observable implements IEntity {
 
   /**
    * Returns the specified {@link IConnector} associated with this {@link IConfiguration}
-   * by given {@link Connectors}
+   * by given {@link IConfiguration.Connectors}
    *
-   * @param the specified {@link Connectors connector}
+   * @param server the specified {@link IConfiguration.Connectors connector}
    * @return the {@link IConnector}
    */
   protected IConnector getConnector(IConfiguration.Connectors server) {
@@ -214,8 +214,8 @@ public abstract class AbstractEntity extends Observable implements IEntity {
   
   
   /**
-   * Serialization of the collection depending to given {@link ContentFormat}
-   * @param format the {@link ContentFormat} used for serialization
+   * Serialization of the collection depending to given {@link IConfiguration.ContentFormat}
+   * @param format the {@link IConfiguration.ContentFormat} used for serialization
    * @return the String representation
    */
   public String serialize(IConfiguration.ContentFormat format) {

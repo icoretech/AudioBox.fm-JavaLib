@@ -52,7 +52,7 @@ public interface IEntity {
   /**
    * Sets a generic property. This method is used for general purposes
    *
-   * @param tagName the tagName found while parsing response content
+   * @param key the tagName found while parsing response content
    * @param value general Object as field value
    */
   public void setProperty(String key, Object value);
@@ -77,18 +77,18 @@ public interface IEntity {
   public String getApiPath();
 
   /**
-   * @param the {@link IEntity} parent object
+   * @param parent the {@link IEntity} parent object
    */
   public void setParent(IEntity parent);
 
 
   /**
-   * This method should fire the {@link Event.States.START_LOADING} event
+   * This method should fire the {@link Event.States#START_LOADING} event
    */
   public void startLoading();
 
   /**
-   * This method should fire the {@link Event.States.END_LOADING} event
+   * This method should fire the {@link Event.States#END_LOADING} event
    */
   public void endLoading();
 

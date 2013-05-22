@@ -299,7 +299,6 @@ public class MediaFile extends AbstractEntity implements Serializable {
   /**
    * This method is used by response parser
    */
-  @Deprecated
   public void setLoved(boolean loved) {
     this.loved = loved;
   }
@@ -330,7 +329,6 @@ public class MediaFile extends AbstractEntity implements Serializable {
   /**
    * This method is used by response parser
    */
-  @Deprecated
   public void setLenStr(String len_str) {
     this.len_str = len_str;
   }
@@ -361,7 +359,6 @@ public class MediaFile extends AbstractEntity implements Serializable {
   /**
    * Sets the {@code track number} of this media file
    */
-  @Deprecated
   public void setPosition(int position) {
     this.position = position;
   }
@@ -377,7 +374,6 @@ public class MediaFile extends AbstractEntity implements Serializable {
   /**
    * This method is used by response parser
    */
-  @Deprecated
   public void setSize(long size) {
     this.size = size;
   }
@@ -408,7 +404,6 @@ public class MediaFile extends AbstractEntity implements Serializable {
   /**
    * This method is used by response parser
    */
-  @Deprecated
   public void setType(Type t) {
     this.type = t;
   }
@@ -416,7 +411,6 @@ public class MediaFile extends AbstractEntity implements Serializable {
   /**
    * This method is used by response parser
    */
-  @Deprecated
   public void setType(String type) {
 
     if (Type.AudioFile.toString().equals(type)) {
@@ -437,7 +431,6 @@ public class MediaFile extends AbstractEntity implements Serializable {
   /**
    * This method is used by response parser
    */
-  @Deprecated
   public void setSource(String s) {
     this.source = s;
   }
@@ -452,7 +445,6 @@ public class MediaFile extends AbstractEntity implements Serializable {
   /**
    * This method is used by response parser
    */
-  @Deprecated
   public void setRemotePath(String remotePath) {
     this.remote_path = remotePath;
   }
@@ -468,7 +460,6 @@ public class MediaFile extends AbstractEntity implements Serializable {
   /**
    * This method is used by response parser
    */
-  @Deprecated
   public void setShareToken(String shareToken) {
     this.share_token = shareToken;
   }
@@ -484,7 +475,6 @@ public class MediaFile extends AbstractEntity implements Serializable {
   /**
    * This method is used by response parser
    */
-  @Deprecated
   public void setMime(String mime) {
     this.mime = mime;
   }
@@ -538,7 +528,6 @@ public class MediaFile extends AbstractEntity implements Serializable {
   /**
    * This method is used by response parser
    */
-  @Deprecated
   public void setArtwork(String artwork) {
     this.artwork = artwork;
   }
@@ -692,7 +681,6 @@ public class MediaFile extends AbstractEntity implements Serializable {
   /**
    * This method is used by response parser
    */
-  @Deprecated
   public void setLyrics(String lyrics) {
     this.lyrics = lyrics != null ? lyrics : "";
   }
@@ -941,7 +929,7 @@ public class MediaFile extends AbstractEntity implements Serializable {
   }
 
   /**
-   * See {@link MediaFile#download(DownloadHandler)}
+   * See {@link MediaFile#download(boolean, DownloadHandler)}
    */
   public IConnectionMethod download(boolean async, File file) throws ServiceException, LoginException {
     if (file != null) {

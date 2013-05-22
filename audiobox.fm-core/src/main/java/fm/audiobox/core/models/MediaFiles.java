@@ -35,12 +35,12 @@ import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
+import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
-import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 
 /**
- * <p>MediaFiles is a {@link AbstractCollectionEntity<MediaFile>} specialization for {@link MediaFile} collections.</p>
+ * <p>MediaFiles is a {@link AbstractCollectionEntity} specialization for {@link MediaFile} collections.</p>
  */
 public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements Serializable {
 
@@ -58,8 +58,8 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
   /**
    *  MediaFiles are grouped by types that are:
    * <ul>
-   *   <li>{@link MediaFilesTypes#AudioFile AudioFile}</li>
-   *   <li>{@link MediaFilesTypes#VideoFile VideoFile}</li>
+   *   <li>{@link MediaFiles.Type#AudioFile AudioFile}</li>
+   *   <li>{@link MediaFiles.Type#VideoFile VideoFile}</li>
    * </ul>
    */
   public enum Type {
@@ -126,7 +126,7 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
    * @param responseHandler the {@link IResponseHandler} that will handle the response (may be null)
    * @param since a long number representing the UTC timestamp. <b>must be represented in seconds</b>
    * 
-   * @retun {@link MediaFiles} modified since the specified date.
+   * @return {@link MediaFiles} modified since the specified date.
    * @throws ServiceException if any connection error occurs
    * @throws LoginException if any login error occurs
    */
@@ -220,10 +220,10 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
 
 
   /**
-   * Returns a list of {@link MediaFile} that matches the given {@link MediaFilesTypes}
+   * Returns a list of {@link MediaFile} that matches the given {@link MediaFiles.Type}
    *
-   * @param type the {@link MediaFilesTypes}
-   * @return a list of {@link MediaFile} that matches with the given {@link MediaFilesTypes}
+   * @param type the {@link MediaFiles.Type}
+   * @return a list of {@link MediaFile} that matches with the given {@link MediaFiles.Type}
    */
   public List<MediaFile> getMediaFilesByType( Type type ){
     List<MediaFile> pls = new ArrayList<MediaFile>();

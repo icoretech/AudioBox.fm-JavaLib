@@ -15,7 +15,7 @@ public interface IFactory {
   /**
    * Returns the right entity associated with its default class
    * 
-   * @param klass default {@link Class}
+   * @param tagName default {@link Class}
    * @param configuration the {@link IConfiguration} to pass to {@link IEntity} to be instantiated
    * @return the right {@link IEntity}
    */
@@ -44,7 +44,7 @@ public interface IFactory {
    * <b>NOTE: do not use this method for general purpose</b>
    * 
    * @param server the name of the server. See the configuration file
-   * @param connector the global {@link IConnector} associated with this {@link AubioBox} instance
+   * @param connector the global {@link IConnector} associated with this {@link AudioBox} instance
    */
   public void addConnector(IConfiguration.Connectors server, IConnector connector);
  
