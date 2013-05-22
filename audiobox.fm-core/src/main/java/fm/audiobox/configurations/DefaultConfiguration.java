@@ -113,7 +113,7 @@ public class DefaultConfiguration implements IConfiguration {
       nodeValues.put("apiPath", "/api/v1");
       Map<String, String> daemonValues = new HashMap<String, String>();
       daemonValues.put("protocol", "http");
-      daemonValues.put("host", "audiobox.fm");
+      daemonValues.put("host", "staging.audiobox.fm");
       daemonValues.put("port", "8082");
       daemonValues.put("apiPath", "/api/v1");
       
@@ -152,6 +152,10 @@ public class DefaultConfiguration implements IConfiguration {
   }
 
   public DefaultConfiguration(String appName, int major, int minor, int revision, ContentFormat requestFormat){
+    this(appName, major, minor, revision, requestFormat, Environments.live);
+  }
+  
+  public DefaultConfiguration(String appName, int major, int minor, int revision, ContentFormat requestFormat, Environments env){
     this.setApplicationName(appName);
     this.setVersion(major, minor, revision);
     this.setRequestFormat(requestFormat);

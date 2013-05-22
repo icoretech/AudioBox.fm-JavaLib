@@ -109,28 +109,55 @@ public class AudioBox extends Observable {
   private final IConfiguration configuration;
   private User user;
 
-
+  
   /**
    * Creates a new {@code AudioBox} instance ready to be used
    * @param config the {@link IConfiguration} used by this instance
    */
   public AudioBox(IConfiguration config) {
+    this(config, IConfiguration.Environments.live);
+  }
+  
+  /**
+   * Creates a new {@code AudioBox} instance ready to be used
+   * @param config the {@link IConfiguration} used by this instance
+   */
+  public AudioBox(IConfiguration config, IConfiguration.Environments env) {
     log.trace("New AudioBox is going to be instantiated");
     this.configuration = config;
-
-    IConnector standardConnector = new Connector(IConfiguration.Connectors.RAILS);
-    IConnector uploaderConnector = new Connector(IConfiguration.Connectors.NODE);
-    IConnector daemonerConnector = new Connector(IConfiguration.Connectors.DAEMON);
-
-    config.getFactory().addConnector(IConfiguration.Connectors.RAILS, standardConnector );
-    config.getFactory().addConnector(IConfiguration.Connectors.NODE, uploaderConnector );
-    config.getFactory().addConnector(IConfiguration.Connectors.DAEMON, daemonerConnector );
+    
+    this.setEnvironment(env);
 
     log.trace("New AudioBox correctly instantiated");
   }
 
 
 
+  /**
+   * @return Returns the {@code environment} of the connectors
+   */
+  public IConfiguration.Environments getEnvironment(){
+    return this.configuration.getEnvironment();
+  }
+  
+  /**
+   * This method is used for setting the {@code environemnt} of the connectors
+   */
+  @SuppressWarnings("deprecation")
+  public void setEnvironment(IConfiguration.Environments env) {
+    this.configuration.setEnvironment(env);
+    
+    // Create connectors
+    IConnector standardConnector = new Connector(IConfiguration.Connectors.RAILS);
+    IConnector uploaderConnector = new Connector(IConfiguration.Connectors.NODE);
+    IConnector daemonerConnector = new Connector(IConfiguration.Connectors.DAEMON);
+
+    this.configuration.getFactory().addConnector(IConfiguration.Connectors.RAILS, standardConnector );
+    this.configuration.getFactory().addConnector(IConfiguration.Connectors.NODE, uploaderConnector );
+    this.configuration.getFactory().addConnector(IConfiguration.Connectors.DAEMON, daemonerConnector );
+    
+    log.info("Environment set to: " + env);
+  }
 
 
   /**

@@ -24,6 +24,7 @@ package fm.audiobox.interfaces;
 
 import java.util.concurrent.ExecutorService;
 
+import fm.audiobox.AudioBox;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
@@ -169,8 +170,12 @@ public interface IConfiguration {
   
   /**
    * Set the {@link IConfiguration.Environments environment}
+   * <br />
+   * <b>This method should not be used.</b><i>Use {@link AudioBox#setEnvironment} instead</i>
+   * 
    * @param env the environment to be use
    */
+  @Deprecated
   public void setEnvironment(IConfiguration.Environments env);
 
   /**
