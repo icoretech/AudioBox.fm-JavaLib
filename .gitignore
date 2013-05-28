@@ -34,5 +34,7 @@ manifest.mf
 audiobox.fm-core/src/docbkx
 
 # Credentials
-#audiobox.fm-core/src/test/java/fm/audiobox/core/test/mocks/fixtures/fixtures.properties
-#audiobox.fm-sync/src/test/java/fm/audiobox/sync/test/mocks/fixtures/fixtures.properties
+# audiobox.fm-core/src/test/java/fm/audiobox/core/test/mocks/fixtures/fixtures.properties
+# audiobox.fm-sync/src/test/java/fm/audiobox/sync/test/mocks/fixtures/fixtures.properties
+audiobox.fm-sync/src/test/resources/fm/audiobox/sync/test/mocks/fixtures/fixtures.properties
+audiobox.fm-core/src/test/resources/fm/audiobox/core/test/mocks/fixtures/fixtures.properties
