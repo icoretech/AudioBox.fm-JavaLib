@@ -26,8 +26,7 @@ public abstract class AbxTestCase extends junit.framework.Assert {
   public void setup() {
     log.info("========================= Test started =========================");
     startTime = System.currentTimeMillis();
-    
-    abx = new AudioBox( setConfig() );
+    abx = new AudioBox( setConfig(), IConfiguration.Environments.test );
     assertNotNull(abx);
     
   }
@@ -56,7 +55,6 @@ public abstract class AbxTestCase extends junit.framework.Assert {
     IConfiguration configuration = new DefaultConfiguration( APPLICATION_NAME );
 
     configuration.setUseCache(false);
-    configuration.setEnvironment( IConfiguration.Environments.test );
     
     return configuration;
   }
