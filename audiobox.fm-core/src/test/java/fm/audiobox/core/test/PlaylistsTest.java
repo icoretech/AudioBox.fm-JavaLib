@@ -75,7 +75,7 @@ public class PlaylistsTest extends AbxTestCase {
     
     Playlist playlist = pls.getPlaylistByType( Playlists.Type.CloudPlaylist );
 
-    Playlist p = (Playlist) pls.get( playlist.getToken() );
+    Playlist p = pls.get(playlist.getToken());
     assertNotNull(p);
     assertSame(p, playlist);
     

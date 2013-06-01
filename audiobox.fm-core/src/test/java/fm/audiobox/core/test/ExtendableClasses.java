@@ -29,7 +29,7 @@ public class ExtendableClasses extends AbxTestCase {
       pls.load(false);
       Playlist pl = (Playlist) pls.getPlaylistByType( Playlists.Type.CloudPlaylist );
       
-      MediaFiles mfs = (MediaFiles) pl.getMediaFiles();
+      MediaFiles mfs = pl.getMediaFiles();
       mfs.load(false);
       
       MediaFile mf = (MediaFile) mfs.get(0);

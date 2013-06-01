@@ -10,8 +10,8 @@ import fm.audiobox.configurations.DefaultConfiguration;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.User;
-import fm.audiobox.sync.test.mocks.fixtures.Fixtures;
 import fm.audiobox.interfaces.IConfiguration;
+import fm.audiobox.sync.test.mocks.fixtures.Fixtures;
 
 public abstract class AbxTestCase extends junit.framework.Assert {
 
@@ -42,7 +42,7 @@ public abstract class AbxTestCase extends junit.framework.Assert {
   
   protected void loginCatched() {
     try {
-      user = (User) abx.login(Fixtures.get(Fixtures.LOGIN), Fixtures.get(Fixtures.RIGHT_PASS));
+      user = abx.login(Fixtures.get(Fixtures.LOGIN), Fixtures.get(Fixtures.RIGHT_PASS));
     } catch (LoginException e) {
       fail(e.getMessage());
     } catch (ServiceException e) {

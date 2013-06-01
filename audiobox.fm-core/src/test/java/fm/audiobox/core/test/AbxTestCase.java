@@ -41,7 +41,7 @@ public abstract class AbxTestCase extends junit.framework.Assert {
   
   protected void loginCatched() {
     try {
-      user = (User) abx.login(Fixtures.get(Fixtures.LOGIN), Fixtures.get(Fixtures.RIGHT_PASS));
+      user = abx.login(Fixtures.get(Fixtures.LOGIN), Fixtures.get(Fixtures.RIGHT_PASS));
     } catch (LoginException e) {
       fail(e.getMessage());
     } catch (ServiceException e) {

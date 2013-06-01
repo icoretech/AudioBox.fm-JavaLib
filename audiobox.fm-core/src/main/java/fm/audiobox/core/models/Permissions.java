@@ -48,6 +48,7 @@ public final class Permissions extends AbstractEntity implements Serializable {
   public static final String TWITTER = "twitter";
   public static final String MUSIXMATCH = "musixmatch";
   public static final String SONGKICK = "songkick";
+  public static final String UBUNTU = "ubuntu";
 
   
   private boolean player = true;
@@ -65,6 +66,7 @@ public final class Permissions extends AbstractEntity implements Serializable {
   private boolean twitter = true;
   private boolean musixmatch = true;
   private boolean songkick = true;
+  private boolean ubuntu = true;
 
 
   private static final Map<String, Method> setterMethods = new HashMap<String, Method>();
@@ -85,6 +87,7 @@ public final class Permissions extends AbstractEntity implements Serializable {
       setterMethods.put( TWITTER,  Permissions.class.getMethod( "setTwitter", boolean.class )  );
       setterMethods.put( MUSIXMATCH,  Permissions.class.getMethod( "setMusixmatch", boolean.class )  );
       setterMethods.put( SONGKICK,  Permissions.class.getMethod( "setSongkick", boolean.class )  );
+      setterMethods.put( UBUNTU,  Permissions.class.getMethod( "setUbuntu", boolean.class )  );
     } catch (SecurityException e) {
       log.error("Security error", e);
     } catch (NoSuchMethodException e) {
@@ -366,6 +369,22 @@ public final class Permissions extends AbstractEntity implements Serializable {
     this.facebook = facebook;
   }
 
+
+  /**
+   * @return {@code true} when {@link User} is able to use the Ubuntu feature. {@code false} if not
+   */
+  public boolean isUbuntu() {
+    return ubuntu;
+  }
+
+
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
+  public void setUbuntu(boolean ubuntu) {
+    this.ubuntu = ubuntu;
+  }
 
 
   /**

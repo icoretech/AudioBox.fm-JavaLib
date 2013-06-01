@@ -7,7 +7,6 @@ import org.junit.Test;
 
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
-import fm.audiobox.core.models.User;
 import fm.audiobox.interfaces.IAuthenticationHandle;
 import fm.audiobox.interfaces.IConnector;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
@@ -35,7 +34,7 @@ public class AuthenticationTest extends AbxTestCase {
     
     
     try {
-      user = (User) abx.login(null, null);
+      user = abx.login(null, null);
     } catch (LoginException e) {
       fail(e.getMessage());
     } catch (ServiceException e) {
@@ -64,7 +63,7 @@ public class AuthenticationTest extends AbxTestCase {
     
     
     try {
-      user = (User) abx.login(null, null);
+      user = abx.login(null, null);
     } catch (LoginException e) {
       fail(e.getMessage());
     } catch (ServiceException e) {

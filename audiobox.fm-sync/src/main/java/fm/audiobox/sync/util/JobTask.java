@@ -86,7 +86,7 @@ public abstract class JobTask extends Observable implements Runnable {
   
   
   protected void execute() {
-    FutureTask<Object> ft = new FutureTask<Object>((Runnable) this, new Object());
+    FutureTask<Object> ft = new FutureTask<Object>(this, new Object());
     this.setReferencedTask( ft );
     ft.run();
   }

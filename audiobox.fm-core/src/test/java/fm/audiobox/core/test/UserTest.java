@@ -132,7 +132,7 @@ public class UserTest extends AbxTestCase {
   @Test
   public void testLoginShouldThrowsLoginExceptionOnWrongPassword() {
     try {
-      user = (User) abx.login(Fixtures.get(Fixtures.LOGIN), Fixtures.get(Fixtures.WRONG_PASS));
+      user = abx.login(Fixtures.get(Fixtures.LOGIN), Fixtures.get(Fixtures.WRONG_PASS));
     } catch (LoginException e) {
       assertEquals(HttpStatus.SC_UNAUTHORIZED, e.getErrorCode() );
     } catch (ServiceException e) {

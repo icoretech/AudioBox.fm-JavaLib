@@ -44,6 +44,7 @@ public final class ExternalTokens extends AbstractEntity implements Serializable
   public static final String TWITCHTV = "twitchtv";
   public static final String FACEBOOK = "facebook";
   public static final String TWITTER = "twitter";
+  public static final String UBUNTU = "ubuntu";
   
   
   private boolean dropbox = false;
@@ -56,6 +57,7 @@ public final class ExternalTokens extends AbstractEntity implements Serializable
   private boolean twitchtv = false;
   private boolean facebook = false;
   private boolean twitter = false;
+  private boolean ubuntu = false;
   
   
   private static final Map<String, Method> setterMethods = new HashMap<String, Method>();
@@ -71,6 +73,7 @@ public final class ExternalTokens extends AbstractEntity implements Serializable
       setterMethods.put( TWITCHTV, ExternalTokens.class.getMethod( "setTwitchtv" , boolean.class ) );
       setterMethods.put( FACEBOOK, ExternalTokens.class.getMethod( "setFacebook" , boolean.class ) );
       setterMethods.put( TWITTER, ExternalTokens.class.getMethod( "setTwitter" , boolean.class ) );
+      setterMethods.put( UBUNTU, ExternalTokens.class.getMethod( "setUbuntu" , boolean.class ) );
     } catch (SecurityException e) {
       log.error("Security error", e);
     } catch (NoSuchMethodException e) {
@@ -248,6 +251,22 @@ public final class ExternalTokens extends AbstractEntity implements Serializable
     this.twitter = twitter;
   }
 
+
+  /**
+   * @return {@code true} if Ubuntu feature is available for this {@link User}. {@code false} if not
+   */
+  public boolean isUbuntu() {
+    return ubuntu;
+  }
+
+  
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
+  public void setUbuntu(boolean ubuntu) {
+    this.ubuntu = ubuntu;
+  }
 
   public Method getSetterMethod(String tagName) {
     if ( setterMethods.containsKey( tagName) ) {

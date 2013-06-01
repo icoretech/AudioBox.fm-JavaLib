@@ -57,6 +57,8 @@ public final class AccountStats extends AbstractEntity implements Serializable {
   public static final String SOUNDCLOUD_DATA_STORED_OVERALL = "soundcloud_data_stored_overall";
   public static final String YOUTUBE_DATA_STORED_THIS_MONTH = "youtube_data_stored_this_month";
   public static final String YOUTUBE_DATA_STORED_OVERALL = "youtube_data_stored_overall";
+  public static final String UBUNTU_DATA_STORED_THIS_MONTH = "ubuntu_data_stored_this_month";
+  public static final String UBUNTU_DATA_STORED_OVERALL = "ubuntu_data_stored_overall";
   
   
   private long data_served_this_month;
@@ -79,6 +81,10 @@ public final class AccountStats extends AbstractEntity implements Serializable {
   private long soundcloud_data_stored_overall;
   private long youtube_data_stored_this_month;
   private long youtube_data_stored_overall;
+  
+  private long ubuntu_data_stored_this_month;
+  private long ubuntu_data_stored_overall;
+  
   
   
   private static final Map<String, Method> setterMethods = new HashMap<String, Method>();
@@ -104,6 +110,10 @@ public final class AccountStats extends AbstractEntity implements Serializable {
       setterMethods.put( SOUNDCLOUD_DATA_STORED_OVERALL, AccountStats.class.getMethod( "setSoundcloudDataStoredOverall", long.class ) );
       setterMethods.put( YOUTUBE_DATA_STORED_THIS_MONTH, AccountStats.class.getMethod( "setYoutubeDataStoredThisMonth", long.class ) );
       setterMethods.put( YOUTUBE_DATA_STORED_OVERALL, AccountStats.class.getMethod( "setYoutubeDataStoredOverall", long.class ) );
+
+      setterMethods.put(UBUNTU_DATA_STORED_THIS_MONTH, AccountStats.class.getMethod("setUbuntuDataStoredThisMonth", long.class));
+      setterMethods.put(UBUNTU_DATA_STORED_OVERALL, AccountStats.class.getMethod("setYoutubeDataStoredOverall", long.class));
+
     } catch (SecurityException e) {
       log.error("Security error", e);
     } catch (NoSuchMethodException e) {
@@ -432,6 +442,40 @@ public final class AccountStats extends AbstractEntity implements Serializable {
   }
   
   
+  /**
+   * @return the streaming data amount <b>in the last month</b> related to <b>{@code Ubuntu One}</b> drive
+   */
+  public long getUbuntuDataStoredThisMonth() {
+    return ubuntu_data_stored_this_month;
+  }
+
+
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
+  public void setUbuntuDataStoredThisMonth(long ubuntu_data_stored_this_month) {
+    this.ubuntu_data_stored_this_month = ubuntu_data_stored_this_month;
+  }
+
+
+  /**
+   * @return the <b>total</b> streaming data amount related to <b>{@code Ubuntu One}</b> drive
+   */
+  public long getUbuntuDataStoredOverall() {
+    return ubuntu_data_stored_overall;
+  }
+
+
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
+  public void setUbuntuDataStoredOverall(long ubuntu_data_stored_overall) {
+    this.ubuntu_data_stored_overall = ubuntu_data_stored_overall;
+  }
+
+
   public Method getSetterMethod(String tagName) {
     if ( setterMethods.containsKey( tagName) ) {
       return setterMethods.get( tagName );
