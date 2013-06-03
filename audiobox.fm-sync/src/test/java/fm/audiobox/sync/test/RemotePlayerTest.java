@@ -300,7 +300,7 @@ public class RemotePlayerTest extends AbxTestCase {
   @Test
   public void testPrev() {
     try {
-      player.next();
+      player.prev();
     } catch (ServiceException e) {
       fail( e.getMessage() );
     } catch (LoginException e) {
