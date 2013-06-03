@@ -160,8 +160,8 @@ public class DefaultConfiguration implements IConfiguration {
     this.setVersion(major, minor, revision);
     this.setRequestFormat(requestFormat);
     
-    this.executor = Executors.newSingleThreadExecutor();
-    this.setCacheManager( new DefaultCacheManager() );
+    this.executor = Executors.newFixedThreadPool(10);
+    this.setCacheManager(new DefaultCacheManager());
 
     String version = "unattended";
     String ga_flag = "S";
