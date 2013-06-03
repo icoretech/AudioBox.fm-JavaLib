@@ -277,4 +277,81 @@ public class RemotePlayerTest extends AbxTestCase {
     
   }
   
+  
+  
+  @Test
+  public void testNext() {
+    try {
+      player.next();
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    try {
+      Thread.sleep( 3000 );
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    
+  }
+  
+  @Test
+  public void testPrev() {
+    try {
+      player.next();
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    try {
+      Thread.sleep( 3000 );
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    
+  }
+  
+  
+  @Test
+  public void testShuffle() {
+    try {
+      player.toggleShuffle();
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    try {
+      Thread.sleep( 3000 );
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    
+    this.testNext();
+    
+  }
+  
+  @Test
+  public void testRepeat() {
+    try {
+      player.toggleRepeat();
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    try {
+      Thread.sleep( 3000 );
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+  }
+  
+  
 }

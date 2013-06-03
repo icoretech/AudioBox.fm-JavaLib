@@ -37,7 +37,9 @@ public class Player extends AbstractEntity {
     stop,
     show_info,
     playlist_switch,
-    switch_and_play
+    switch_and_play,
+    toggle_shuffle,
+    toggle_repeat
   }
   
 
@@ -129,6 +131,14 @@ public class Player extends AbstractEntity {
   
   public boolean stop() throws ServiceException, LoginException {
     return executeAction(Actions.stop, null);
+  }
+  
+  public boolean toggleShuffle() throws ServiceException, LoginException {
+    return executeAction(Actions.toggle_shuffle, null);
+  }
+  
+  public boolean toggleRepeat() throws ServiceException, LoginException {
+    return executeAction(Actions.toggle_repeat, null);
   }
   
   public boolean showInfo(MediaFile mediafile) throws ServiceException, LoginException {
