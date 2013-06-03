@@ -62,7 +62,7 @@ public class DefaultConfiguration implements IConfiguration {
   private Class<? extends IConnectionMethod> connMethodClass = DefaultRequestMethod.class;
   private Class<? extends IResponseHandler> responseParserClass = DefaultResponseDeserializer.class;
   private Class<? extends IRequestHandler> requestParserClass = DefaultRequestSerializer.class;
-  private ExecutorService executor;
+  protected ExecutorService executor;
   private ICacheManager cacheManager;
   private IAuthenticationHandle authenticationHandle = new DefaultAuthenticationHandle();
 
@@ -160,7 +160,6 @@ public class DefaultConfiguration implements IConfiguration {
     this.setVersion(major, minor, revision);
     this.setRequestFormat(requestFormat);
     
-    this.executor = Executors.newFixedThreadPool(10);
     this.setCacheManager(new DefaultCacheManager());
 
     String version = "unattended";
@@ -342,7 +341,10 @@ public class DefaultConfiguration implements IConfiguration {
 
   @Override
   public ExecutorService getExecutor() {
-    return executor;
+    if ( this.executor == null ) {
+      this.executor = Executors.newSingleThreadExecutor();
+    }
+    return this.executor;
   }
 
 
