@@ -101,20 +101,24 @@ public class Report {
   
   private void _report(HttpEntity entity) {
     
-    HttpPost post = new HttpPost( this.url );
+    final HttpPost post = new HttpPost( this.url );
     
     post.setEntity(entity);
     
-    HttpClient client = new DefaultHttpClient();
+    final HttpClient client = new DefaultHttpClient();
     
-    try {
-      client.execute(post, new BasicHttpContext());
-    } catch (ClientProtocolException e) {
-      log.error("Protocol exception while sending report");
-    } catch (IOException e) {
-      log.error("Network error while sending report");
-    }
     
+    (new Thread() {
+      public void run() {
+        try {
+          client.execute(post, new BasicHttpContext());
+        } catch (ClientProtocolException e) {
+          log.error("Protocol exception while sending report");
+        } catch (IOException e) {
+          log.error("Network error while sending report");
+        }
+      }
+    }).start();
   }
   
 }
