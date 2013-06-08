@@ -57,7 +57,7 @@ public class Report {
   
   
   
-  public void report(Throwable t) {
+  public void report(Throwable t, String extra) {
     
     
     String message = t.getMessage();
@@ -77,6 +77,9 @@ public class Report {
     params.add( new BasicNameValuePair("message", message) );
     params.add( new BasicNameValuePair("klass", klass) );
     params.add( new BasicNameValuePair("backtrace", backtrace) );
+    if ( extra != null ) {
+      params.add( new BasicNameValuePair("extra", extra) );
+    }
     
     try {
       this._report( new UrlEncodedFormEntity(params, HTTP.UTF_8) );
@@ -87,9 +90,12 @@ public class Report {
   }
   
   
-  public void report( String message ) { 
+  public void report( String message, String extra ) { 
     List<NameValuePair> params = new ArrayList<NameValuePair>();
     params.add( new BasicNameValuePair("message", message) );
+    if ( extra != null ) {
+      params.add( new BasicNameValuePair("extra", extra) );
+    }
     try {
       this._report( new UrlEncodedFormEntity(params, HTTP.UTF_8) );
     } catch (UnsupportedEncodingException e) {
