@@ -8,7 +8,7 @@ import java.util.concurrent.Executors;
  */
 public class DefaultMultiThreadConfiguration extends DefaultConfiguration {
 
-  private int numberOfThreads = 10;
+  private int numberOfThreads = 3;
 
   
   public DefaultMultiThreadConfiguration(String appName, int numberOfThreads){
