@@ -50,8 +50,9 @@ public class Report {
     String protocol = this.configuration.getProtocol(IConfiguration.Connectors.RAILS);
     String host = this.configuration.getHost(IConfiguration.Connectors.RAILS);
     String port = "" + this.configuration.getPort(IConfiguration.Connectors.RAILS);
-    log.info("URL found: " + protocol + "://" + host + ":" + port);
     this.url = protocol + "://" + host + ":" + port + IConnector.URI_SEPARATOR + "webhooks/crashes/" + this.endpoint.toString();
+    
+    log.info("URL found: " + this.url);
     
   }
   
