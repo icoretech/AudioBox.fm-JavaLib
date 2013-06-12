@@ -69,7 +69,6 @@ public abstract class AbstractEntity extends Observable implements IEntity {
 
   public AbstractEntity(IConfiguration config) {
     this.configuration = config;
-    this.properties = new ConcurrentHashMap<String, Object>();
     if (log.isTraceEnabled()) {
       log.trace("Entity instantiated: " + this.getNamespace());
     }
@@ -88,6 +87,9 @@ public abstract class AbstractEntity extends Observable implements IEntity {
   }
 
   public void setProperty(String key, Object value) {
+    if ( this.properties == null ) {
+      this.properties = new ConcurrentHashMap<String, Object>();
+    }
     if (value == null) {
       if (this.properties.containsKey(key)) {
         this.properties.remove(key);
@@ -98,6 +100,9 @@ public abstract class AbstractEntity extends Observable implements IEntity {
   }
 
   public Object getProperty(String key) {
+    if ( this.properties == null ) {
+      this.properties = new ConcurrentHashMap<String, Object>();
+    }
     return this.properties.get(key);
   }
 
