@@ -589,6 +589,35 @@ public final class User extends AbstractEntity implements Serializable {
     return res.getBody();
   }
   
+  
+  
+  /**
+   * This method registers the device to {@code AudioBox.fm Push channels}
+   * 
+   * @param token the {@code token} of the device will be registered
+   * @param extra extra arguments
+   * 
+   * @return {@code true} if everything went fine. {@code false} if not
+   * 
+   * @throws ServiceException if any connection error occurrs
+   * @throws LoginException if any login error occurrs
+   */
+  public boolean registerDevice(String token, String extra) throws ServiceException, LoginException {
+    
+    List<NameValuePair> params = new ArrayList<NameValuePair>();
+    params.add( new BasicNameValuePair("token", token) );
+    
+    if ( extra != null ) {
+      params.add( new BasicNameValuePair("extra", extra) );
+    }
+    
+    IConnectionMethod req = this.getConfiguration().getFactory().getConnector().post(this, IConnector.URI_SEPARATOR.concat("mobile"), "register_android_device");
+    
+    return req.send(true, params).isOK();
+  }
+  
+  
+  
   /**
    * @return a {@code Playlists} object associated with this User
    */
