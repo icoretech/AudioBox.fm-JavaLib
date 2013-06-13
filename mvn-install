@@ -1,0 +1,3 @@
+#!/bin/bash
+
+mvn clean install -Denv=$1 -Dfm.audiobox.skipTests=true
