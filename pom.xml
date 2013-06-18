@@ -228,12 +228,12 @@
     <repository>
       <id>keytwo.net</id>
       <name>Keytwo.net Repository</name>
-      <url>http://audiobox.keytwo.net</url>
+      <url>scp://audiobox.keytwo.net</url>
     </repository>
     <site>
       <id>keytwo.net</id>
       <name>audiobox.keytwo.net doc site</name>
-      <url>ftp://ftp.keytwo.net</url>
+      <url>http://audiobox.keytwo.net</url>
     </site>
   </distributionManagement>
   <profiles>
