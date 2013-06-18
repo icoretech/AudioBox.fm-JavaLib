@@ -51,11 +51,12 @@ import com.google.gson.JsonObject;
 public class SocketClient extends Observable implements IOCallback {
 
   private static Logger log = LoggerFactory.getLogger(SocketClient.class);
-
+  
   
   public static enum EventsTypes {
     MESSAGE
   }
+  
   
   private AudioBox audiobox;
   private IConfiguration configuration;
@@ -70,8 +71,11 @@ public class SocketClient extends Observable implements IOCallback {
   
   private boolean reconnectOnError = false;
   
-  public SocketClient(AudioBox abx) throws ServiceException {
+  private IConfiguration.Connectors server;
+  
+  public SocketClient(AudioBox abx, IConfiguration.Connectors server) throws ServiceException {
     this.audiobox = abx;
+    this.server = server;
     this.configuration = this.audiobox.getConfiguration();
     
     // I'm not sure it is needed
@@ -156,6 +160,9 @@ public class SocketClient extends Observable implements IOCallback {
       }
       
       this.socket = new SocketIO( url );
+      if ( this.server == IConfiguration.Connectors.RAILS ) {
+        this.socket.setQueryString( "chl=" + this.audiobox.getUser().getCometChannel() );
+      }
       this.socket.addHeader( IConnector.X_AUTH_TOKEN_HEADER, this.audiobox.getUser().getAuthToken() );
       
       Set<String> keys = this.headers.keySet();
@@ -194,15 +201,21 @@ public class SocketClient extends Observable implements IOCallback {
   }
   
   
+  public void send(String message) {
+    log.warn("not implemented yet");
+  }
+  
+  public void sendEvent(String event, String message) {
+    log.warn("not implemented yet");
+  }
+  
   protected String getServerUrl() {
-    String protocol = this.configuration.getProtocol(IConfiguration.Connectors.DAEMON);
-    String host = this.configuration.getHost(IConfiguration.Connectors.DAEMON);
-    String port = "" + this.configuration.getPort(IConfiguration.Connectors.DAEMON);
+    String protocol = this.configuration.getProtocol( this.server );
+    String host = this.configuration.getHost( this.server );
+    String port = "" + this.configuration.getPort( this.server );
     log.info("URL found: " + protocol + "://" + host + ":" + port);
     return protocol + "://" + host + ":" + port;
   }
-
-
   
   
   @Override

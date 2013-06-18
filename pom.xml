@@ -228,7 +228,7 @@
     <repository>
       <id>keytwo.net</id>
       <name>Keytwo.net Repository</name>
-      <url>ftp://ftp.keytwo.net</url>
+      <url>http://audiobox.keytwo.net</url>
     </repository>
     <site>
       <id>keytwo.net</id>
