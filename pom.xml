@@ -145,7 +145,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
-        <version>2.3.2</version>
+        <version>2.4.1</version>
       </plugin>
       <!-- Manifest -->
       <plugin>
@@ -173,8 +173,8 @@
       <!-- Enabling the use of FTP -->
       <extension>
         <groupId>org.apache.maven.wagon</groupId>
-        <artifactId>wagon-ftp</artifactId>
-        <version>2.2</version>
+        <artifactId>wagon-ssh</artifactId>
+        <version>2.4</version>
       </extension>
     </extensions>
   </build>
@@ -228,12 +228,12 @@
     <repository>
       <id>keytwo.net</id>
       <name>Keytwo.net Repository</name>
-      <url>http://audiobox.keytwo.net</url>
+      <url>scp://audiobox.keytwo.net</url>
     </repository>
     <site>
       <id>keytwo.net</id>
       <name>audiobox.keytwo.net doc site</name>
-      <url>ftp://ftp.keytwo.net</url>
+      <url>http://audiobox.keytwo.net</url>
     </site>
   </distributionManagement>
   <profiles>
