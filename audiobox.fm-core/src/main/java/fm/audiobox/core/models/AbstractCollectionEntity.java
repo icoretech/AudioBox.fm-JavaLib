@@ -1,10 +1,13 @@
 package fm.audiobox.core.models;
 
+import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.Observable;
 
 import fm.audiobox.core.exceptions.LoginException;
@@ -264,6 +267,16 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
   public E set(int index, E element) {
     return null;
   }
+  
+  
+  /**
+   * This method is not used in {@code AbstractCollectionEntity}
+   */
+  @Deprecated
+  public Map<String, Method> getGetterMethods() {
+    return new HashMap<String, Method>();
+  }
+  
 
   /**
    * Returns the {@link IEntity#getTagName()} of the entity which can be contained in this collection.

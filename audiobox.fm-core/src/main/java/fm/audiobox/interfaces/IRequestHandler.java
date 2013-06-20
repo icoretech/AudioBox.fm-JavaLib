@@ -1,5 +1,7 @@
 package fm.audiobox.interfaces;
 
+import com.google.gson.JsonElement;
+
 
 /**
  * This class should be used as request serializer for sending data to AudioBox.fm server.
@@ -10,13 +12,13 @@ public interface IRequestHandler {
 
   public String serialize(IEntity entity, IConfiguration.ContentFormat format);
   
-  public String serializeJson(IEntity entity, IConfiguration.ContentFormat format);
+  public JsonElement serializeJson(IEntity entity);
   
-  public String serializeXml(IEntity entity, IConfiguration.ContentFormat format);
+  public Object serializeXml(IEntity entity);
   
-  public String serializeText(IEntity entity, IConfiguration.ContentFormat format);
+  public String serializeText(IEntity entity);
   
-  public String serializeBinary(IEntity entity, IConfiguration.ContentFormat format);
+  public Object serializeBinary(IEntity entity);
   
 }
 

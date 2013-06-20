@@ -117,9 +117,11 @@ public final class User extends AbstractEntity implements Serializable {
   
   
   private static Map<String, Method> setterMethods = new HashMap<String, Method>();
+  private static Map<String, Method> getterMethods = null;
   
   static {
     try {
+      
       setterMethods.put( ID, User.class.getMethod("setId", String.class) );
       setterMethods.put( USERNAME, User.class.getMethod("setUsername", String.class) );
       setterMethods.put( REAL_NAME, User.class.getMethod("setRealName", String.class) );
@@ -620,6 +622,42 @@ public final class User extends AbstractEntity implements Serializable {
     }
     return null;
   }
+  
+  
+  public Map<String, Method> getGetterMethods() {
+    if ( getterMethods == null ) {
+      getterMethods = new HashMap<String, Method>();
+      try {  
+        getterMethods.put( ID, User.class.getMethod("getId") );
+        getterMethods.put( USERNAME, User.class.getMethod("getUsername") );
+        getterMethods.put( REAL_NAME, User.class.getMethod("getRealName") );
+        getterMethods.put( COMET_CHANNEL, User.class.getMethod("getCometChannel") );
+        getterMethods.put( EMAIL, User.class.getMethod("getEmail") );
+        getterMethods.put( AUTH_TOKEN, User.class.getMethod("getAuthToken") );
+        getterMethods.put( TIME_ZONE, User.class.getMethod("getTimeZone") );
+        getterMethods.put( ACCEPTED_EXTENSIONS, User.class.getMethod("getAcceptedExtensions") );
+        getterMethods.put( ACCEPTED_FORMATS, User.class.getMethod("getAcceptedFormats") );
+        getterMethods.put( CREATED_AT, User.class.getMethod("getCreatedAt") );
+        getterMethods.put( UPDATED_AT, User.class.getMethod("getUpdatedAt") );
+        getterMethods.put( COUNTRY, User.class.getMethod("getCountry") );
+        getterMethods.put( PLAYLISTS_COUNT, User.class.getMethod("getPlaylistsCount") );
+        getterMethods.put( TOTAL_PLAY_COUNT, User.class.getMethod("getTotalPlayCount") );
+        getterMethods.put( MEDIA_FILES_COUNT, User.class.getMethod("getMediaFilesCount") );
+        getterMethods.put( SUBSCRIPTION_STATE, User.class.getMethod("getSubscriptionState") );
+        getterMethods.put( Permissions.TAGNAME, User.class.getMethod("getPermissions") );
+        getterMethods.put( AccountStats.TAGNAME, User.class.getMethod("getAccountStats") );
+        getterMethods.put( ExternalTokens.TAGNAME, User.class.getMethod("getExternalTokens") );
+        getterMethods.put( Preferences.TAGNAME, User.class.getMethod("getPreferences") );
+      } catch (Throwable e) {
+        log.error("Security error", e);
+      /*} catch (NoSuchMethodException e) {
+        log.error("No method found", e);*/
+      }
+    }
+    
+    return getterMethods;
+  }
+  
 
   public String getApiPath() {
     return IConnector.URI_SEPARATOR + NAMESPACE;

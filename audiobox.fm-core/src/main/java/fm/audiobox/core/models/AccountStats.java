@@ -88,6 +88,8 @@ public final class AccountStats extends AbstractEntity implements Serializable {
   
   
   private static final Map<String, Method> setterMethods = new HashMap<String, Method>();
+  private static Map<String, Method> getterMethods = null;
+  
   static {
     try {
       setterMethods.put( DATA_SERVED_THIS_MONTH, AccountStats.class.getMethod( "setDataServedThisMonth", long.class ) );
@@ -482,6 +484,43 @@ public final class AccountStats extends AbstractEntity implements Serializable {
     }
     return null;
   }
+  
+  public Map<String, Method> getGetterMethods() {
+    if ( getterMethods == null ) {
+      getterMethods = new HashMap<String, Method>();
+      try {  
+        getterMethods.put( DATA_SERVED_THIS_MONTH, AccountStats.class.getMethod( "getDataServedThisMonth") );
+        getterMethods.put( DATA_SERVED_OVERALL, AccountStats.class.getMethod( "getDataServedOverall") );
+        getterMethods.put( CLOUD_DATA_STORED_OVERALL, AccountStats.class.getMethod( "getCloudDataStoredOverall") );
+        getterMethods.put( CLOUD_DATA_STORED_THIS_MONTH, AccountStats.class.getMethod( "getCloudDataStoredThisMonth") );
+        getterMethods.put( LOCAL_DATA_STORED_OVERALL, AccountStats.class.getMethod( "getLocalDataStoredOverall") );
+        getterMethods.put( LOCAL_DATA_STORED_THIS_MONTH, AccountStats.class.getMethod( "getLocalDataStoredThisMonth") );
+        getterMethods.put( DROPBOX_DATA_STORED_OVERALL, AccountStats.class.getMethod( "getDropboxDataStoredOverall") );
+        getterMethods.put( DROPBOX_DATA_STORED_THIS_MONTH, AccountStats.class.getMethod( "getDropboxDataStoredThisMonth") );
+        getterMethods.put( GDRIVE_DATA_STORED_THIS_MONTH, AccountStats.class.getMethod( "getGdriveDataStoredThisMonth") );
+        getterMethods.put( GDRIVE_DATA_STORED_OVERALL, AccountStats.class.getMethod( "getGdriveDataStoredOverall") );
+        getterMethods.put( SKYDRIVE_DATA_STORED_THIS_MONTH, AccountStats.class.getMethod( "getSkydriveDataStoredThisMonth") );
+        getterMethods.put( SKYDRIVE_DATA_STORED_OVERALL, AccountStats.class.getMethod( "getSkydriveDataStoredOverall") );
+        getterMethods.put( BOX_DATA_STORED_THIS_MONTH, AccountStats.class.getMethod( "getBoxDataStoredThisMonth") );
+        getterMethods.put( BOX_DATA_STORED_OVERALL, AccountStats.class.getMethod( "getBoxDataStoredOverall") );
+        getterMethods.put( PARTNER_DATA_STORED_THIS_MONTH, AccountStats.class.getMethod( "getPartnerDataStoredThisMonth") );
+        getterMethods.put( PARTNER_DATA_STORED_OVERALL, AccountStats.class.getMethod( "getPartnerDataStoredOverall") );
+        getterMethods.put( SOUNDCLOUD_DATA_STORED_THIS_MONTH, AccountStats.class.getMethod( "getSoundcloudDataStoredThisMonth") );
+        getterMethods.put( SOUNDCLOUD_DATA_STORED_OVERALL, AccountStats.class.getMethod( "getSoundcloudDataStoredOverall") );
+        getterMethods.put( YOUTUBE_DATA_STORED_THIS_MONTH, AccountStats.class.getMethod( "getYoutubeDataStoredThisMonth") );
+        getterMethods.put( YOUTUBE_DATA_STORED_OVERALL, AccountStats.class.getMethod( "getYoutubeDataStoredOverall") );
+        getterMethods.put( UBUNTU_DATA_STORED_THIS_MONTH, AccountStats.class.getMethod("getUbuntuDataStoredThisMonth"));
+        getterMethods.put( UBUNTU_DATA_STORED_OVERALL, AccountStats.class.getMethod("getYoutubeDataStoredOverall"));
+      } catch (SecurityException e) {
+        log.error("Security error", e);
+      } catch (NoSuchMethodException e) {
+        log.error("No method found", e);
+      }
+    }
+    
+    return getterMethods;
+  }
+  
   
   
   public String getApiPath() {

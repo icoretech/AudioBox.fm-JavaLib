@@ -55,6 +55,8 @@ public class Preferences extends AbstractEntity implements Serializable {
   
   
   private static final Map<String, Method> setterMethods = new HashMap<String, Method>();
+  private static Map<String, Method> getterMethods = null;
+  
   static {
     try {
       setterMethods.put( ACCEPT_EMAILS, Preferences.class.getMethod( "setAcceptEmails", boolean.class )  );
@@ -238,7 +240,32 @@ public class Preferences extends AbstractEntity implements Serializable {
       return setterMethods.get( tagName );
     }
     return null;
-  }  
+  }
+  
+  
+  public Map<String, Method> getGetterMethods() {
+    if ( getterMethods == null ) {
+      getterMethods = new HashMap<String, Method>();
+      try {  
+        getterMethods.put( ACCEPT_EMAILS, Preferences.class.getMethod( "isAcceptEmails")  );
+        getterMethods.put( AUTOPLAY, Preferences.class.getMethod( "isAutoplay")  );
+        getterMethods.put( VOLUME_LEVEL, Preferences.class.getMethod( "getVolumeLevel" )  );
+        getterMethods.put( COLOR, Preferences.class.getMethod( "getColor" )  );
+        getterMethods.put( TOP_BAR_BG, Preferences.class.getMethod( "getTopBarBg" )  );
+        getterMethods.put( PREBUFFER, Preferences.class.getMethod( "isPrebuffer" )  );
+        getterMethods.put( REPEAT, Preferences.class.getMethod( "isRepeat" )  );
+        getterMethods.put( SHUFFLE, Preferences.class.getMethod( "isShuffle" )  );
+        getterMethods.put( DEMUXER, Preferences.class.getMethod( "isDemuxer" )  );
+      } catch (SecurityException e) {
+        log.error("Security error", e);
+      } catch (NoSuchMethodException e) {
+        log.error("No method found", e);
+      }
+    }
+    
+    return getterMethods;
+  }
+  
   
   
   public String getApiPath() {

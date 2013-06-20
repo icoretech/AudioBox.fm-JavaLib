@@ -62,58 +62,38 @@ public class Playlist extends AbstractEntity implements Serializable {
   public static final String TAGNAME = "playlist";
 
   public static final String CUSTOM_SYSTEM_NAME = "custom";
-
   public static final String SMART_SYSTEM_NAME = "smart";
-
+  
   public static final String NAME = "name";
-
   public static final String POSITION = "position";
-
   public static final String TYPE = "type";
-
   public static final String MEDIA_FILES_COUNT = "media_files_count";
-
   public static final String UPDATED_AT = "updated_at";
-
   public static final String LAST_ACCESSED = "last_accessed";
-
   public static final String SYSTEM_NAME = "system_name";
-
   public static final String OFFLINE = "offline";
-
   public static final String EMBEDDABLE = "embeddable";
-
   public static final String VISIBLE = "visible";
-
   public static final String SYNCABLE = "syncable";
 
   private String name;
-
   private int position = 0;
-
   private String type;
-
   private long media_files_count;
-
   private MediaFiles mediafiles;
-
   private Albums albums;
-
   private String updated_at;
-
   private boolean last_accessed;
-
   private boolean offline;
-
   private boolean embeddable;
-
   private boolean visible;
-
   private String system_name;
-
   private boolean syncable;
 
   private static final Map<String, Method> setterMethods = new HashMap<String, Method>();
+  private static Map<String, Method> getterMethods = null;
+  
+  
   static {
     try {
       setterMethods.put(TOKEN, Playlist.class.getMethod("setToken", String.class));
@@ -454,6 +434,34 @@ public class Playlist extends AbstractEntity implements Serializable {
     }
     return null;
   }
+  
+  
+  public Map<String, Method> getGetterMethods() {
+    if ( getterMethods == null ) {
+      getterMethods = new HashMap<String, Method>();
+      try {  
+        getterMethods.put(TOKEN, Playlist.class.getMethod("getToken"));
+        getterMethods.put(NAME, Playlist.class.getMethod("getName"));
+        getterMethods.put(POSITION, Playlist.class.getMethod("getPosition"));
+        getterMethods.put(TYPE, Playlist.class.getMethod("getType"));
+        getterMethods.put(MEDIA_FILES_COUNT, Playlist.class.getMethod("getMediaFilesCount"));
+        getterMethods.put(UPDATED_AT, Playlist.class.getMethod("getUpdatedAt"));
+        getterMethods.put(LAST_ACCESSED, Playlist.class.getMethod("isLastAccessed"));
+        getterMethods.put(SYSTEM_NAME, Playlist.class.getMethod("getSystemName"));
+        getterMethods.put(OFFLINE, Playlist.class.getMethod("isOffline"));
+        getterMethods.put(EMBEDDABLE, Playlist.class.getMethod("isEmbeddable"));
+        getterMethods.put(VISIBLE, Playlist.class.getMethod("isVisible"));
+        getterMethods.put(SYNCABLE, Playlist.class.getMethod("isSyncable"));
+      } catch (SecurityException e) {
+        log.error("Security error", e);
+      } catch (NoSuchMethodException e) {
+        log.error("No method found", e);
+      }
+    }
+    
+    return getterMethods;
+  }
+  
 
 
   /**

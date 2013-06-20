@@ -1,6 +1,7 @@
 package fm.audiobox.interfaces;
 
 import java.lang.reflect.Method;
+import java.util.Map;
 
 import fm.audiobox.core.observables.Event;
 
@@ -47,6 +48,19 @@ public interface IEntity {
    */
   @Deprecated
   public Method getSetterMethod(String tagName);
+  
+  
+  /**
+   * Returns all methods names associated with each fields
+   * <br />
+   * <b>This method is used by parser</b>
+   * <br />
+   * <b>Do not use this method for general purpose</b>
+   *
+   * @return all available getter methods for this {@code entity}
+   */
+  @Deprecated
+  public Map<String, Method> getGetterMethods();
 
   
   /**

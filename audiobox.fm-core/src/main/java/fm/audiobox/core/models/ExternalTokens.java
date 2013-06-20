@@ -61,6 +61,8 @@ public final class ExternalTokens extends AbstractEntity implements Serializable
   
   
   private static final Map<String, Method> setterMethods = new HashMap<String, Method>();
+  private static Map<String, Method> getterMethods = null;
+  
   static {
     try {
       setterMethods.put( DROPBOX, ExternalTokens.class.getMethod( "setDropbox" , boolean.class ) );
@@ -274,6 +276,34 @@ public final class ExternalTokens extends AbstractEntity implements Serializable
     }
     return null;
   }
+  
+  
+  public Map<String, Method> getGetterMethods() {
+    if ( getterMethods == null ) {
+      getterMethods = new HashMap<String, Method>();
+      try {  
+        getterMethods.put( DROPBOX, ExternalTokens.class.getMethod( "isDropbox") );
+        getterMethods.put( GDRIVE, ExternalTokens.class.getMethod( "isGdrive") );
+        getterMethods.put( SKYDRIVE, ExternalTokens.class.getMethod( "isSkydrive") );
+        getterMethods.put( SOUNDCLOUD, ExternalTokens.class.getMethod( "isSoundcloud") );
+        getterMethods.put( YOUTUBE, ExternalTokens.class.getMethod( "isYoutube") );
+        getterMethods.put( BOX, ExternalTokens.class.getMethod( "isBox") );
+        getterMethods.put( LASTFM, ExternalTokens.class.getMethod( "isLastfm") );
+        getterMethods.put( TWITCHTV, ExternalTokens.class.getMethod( "isTwitchtv") );
+        getterMethods.put( FACEBOOK, ExternalTokens.class.getMethod( "isFacebook") );
+        getterMethods.put( TWITTER, ExternalTokens.class.getMethod( "isTwitter") );
+        getterMethods.put( UBUNTU, ExternalTokens.class.getMethod( "isUbuntu") );
+      } catch (SecurityException e) {
+        log.error("Security error", e);
+      } catch (NoSuchMethodException e) {
+        log.error("No method found", e);
+      }
+    }
+    
+    return getterMethods;
+  }
+  
+  
 
   public String getApiPath() {
     return null;

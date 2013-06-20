@@ -23,6 +23,7 @@ package fm.audiobox.core.models;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -50,8 +51,11 @@ public class Error implements IEntity, Serializable {
   
   protected Map<String, Object> properties;
   
+  private static Map<String, Method> getterMethods = null;
+  
+  
   private IConfiguration configuration;
-
+  
   private int status;
 
   private String message;
@@ -133,6 +137,26 @@ public class Error implements IEntity, Serializable {
 
     return null;
   }
+  
+  
+  public Map<String, Method> getGetterMethods() {
+    if ( getterMethods == null ) {
+      getterMethods = new HashMap<String, Method>();
+      try {  
+        getterMethods.put( MESSAGE, Error.class.getMethod("getMessage") );
+        getterMethods.put( STATUS, Error.class.getMethod("getStatus") );
+      } catch (SecurityException e) {
+        log.error("Security error", e);
+      } catch (NoSuchMethodException e) {
+        log.error("No method found", e);
+      }
+    }
+    
+    return getterMethods;
+  }
+  
+  
+  
 
   public void setProperty(String key, Object value) {
     if (value == null) {

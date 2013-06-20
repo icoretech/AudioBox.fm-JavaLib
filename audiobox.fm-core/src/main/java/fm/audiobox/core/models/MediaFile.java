@@ -147,6 +147,8 @@ public class MediaFile extends AbstractEntity implements Serializable {
   }
 
   private static final Map<String, Method> setterMethods = new HashMap<String, Method>();
+  private static Map<String, Method> getterMethods = null;
+  
   static {
     try {
       setterMethods.put( TOKEN_SHORT, MediaFile.class.getMethod("setToken", String.class));
@@ -692,6 +694,55 @@ public class MediaFile extends AbstractEntity implements Serializable {
     }
     return null;
   }
+  
+  
+  public Map<String, Method> getGetterMethods() {
+    if ( getterMethods == null ) {
+      getterMethods = new HashMap<String, Method>();
+      try {  
+        getterMethods.put( TOKEN_SHORT, MediaFile.class.getMethod("getToken"));
+        getterMethods.put( TOKEN, MediaFile.class.getMethod("getToken"));
+        getterMethods.put( ARTIST, MediaFile.class.getMethod("getArtist"));
+        getterMethods.put( ALBUM, MediaFile.class.getMethod("getAlbum"));
+        getterMethods.put( GENRE, MediaFile.class.getMethod("getGenre"));
+        getterMethods.put( RELEASE_YEAR, MediaFile.class.getMethod("getReleaseYear"));
+        getterMethods.put( TITLE, MediaFile.class.getMethod("getTitle"));
+        getterMethods.put( LEN_STR, MediaFile.class.getMethod("getLenStr"));
+        getterMethods.put( LEN_INT, MediaFile.class.getMethod("getLenInt"));
+        getterMethods.put( POSITION, MediaFile.class.getMethod("getPosition"));
+        getterMethods.put( DISC_NUMBER, MediaFile.class.getMethod("getDiscNumber"));
+        getterMethods.put( MIME, MediaFile.class.getMethod("getMime"));
+        getterMethods.put( TYPE, MediaFile.class.getMethod("getType"));
+        getterMethods.put( SOURCE, MediaFile.class.getMethod("getSource"));
+        getterMethods.put( SIZE, MediaFile.class.getMethod("getSize"));
+        getterMethods.put( AUDIO_SAMPLE_RATE, MediaFile.class.getMethod("getAudioSampleRate"));
+        getterMethods.put( AUDIO_BITRATE, MediaFile.class.getMethod("getAudioBitrate"));
+        getterMethods.put( ARTWORK, MediaFile.class.getMethod("getArtwork"));
+        getterMethods.put( HASH, MediaFile.class.getMethod("getHash"));
+        getterMethods.put( FILENAME, MediaFile.class.getMethod("getFilename"));
+        getterMethods.put( LOVED, MediaFile.class.getMethod("isLoved"));
+        getterMethods.put( REMOTE_PATH, MediaFile.class.getMethod("getRemotePath"));
+        getterMethods.put( SHARE_TOKEN, MediaFile.class.getMethod("getShareToken"));
+        getterMethods.put( VIDEO_BITRATE,  MediaFile.class.getMethod( "getVideoBitrate")  );
+        getterMethods.put( VIDEO_CODEC,  MediaFile.class.getMethod( "getVideoCodec")  );
+        getterMethods.put( VIDEO_RESOLUTION,  MediaFile.class.getMethod( "getVideoResolution")  );
+        getterMethods.put( VIDEO_FPS,  MediaFile.class.getMethod( "getVideoFps")  );
+        getterMethods.put( VIDEO_ASPECT,  MediaFile.class.getMethod( "getVideoAspect")  );
+        getterMethods.put( VIDEO_CONTAINER,  MediaFile.class.getMethod( "getVideoContainer")  );
+        getterMethods.put( AUDIO_CODEC,  MediaFile.class.getMethod( "getAudioCodec")  );
+        getterMethods.put( LYRICS,  MediaFile.class.getMethod( "getLyrics")  );
+        getterMethods.put( ALBUM_ARTIST,  MediaFile.class.getMethod( "getAlbumArtist")  );
+        getterMethods.put( COMPOSER, MediaFile.class.getMethod( "getComposer")  );
+      } catch (SecurityException e) {
+        log.error("Security error", e);
+      } catch (NoSuchMethodException e) {
+        log.error("No method found", e);
+      }
+    }
+    
+    return getterMethods;
+  }
+  
 
 
   protected void copy(IEntity entity) {

@@ -70,6 +70,8 @@ public final class Permissions extends AbstractEntity implements Serializable {
 
 
   private static final Map<String, Method> setterMethods = new HashMap<String, Method>();
+  private static Map<String, Method> getterMethods = null;
+  
   static {
     try {
       setterMethods.put( PLAYER,  Permissions.class.getMethod( "setPlayer", boolean.class )  );
@@ -411,6 +413,37 @@ public final class Permissions extends AbstractEntity implements Serializable {
       return setterMethods.get( tagName );
     }
     return null;
+  }
+  
+  
+  public Map<String, Method> getGetterMethods() {
+    if ( getterMethods == null ) {
+      getterMethods = new HashMap<String, Method>();
+      try {  
+        getterMethods.put( PLAYER,  Permissions.class.getMethod( "isPlayer")  );
+        getterMethods.put( LOCAL,  Permissions.class.getMethod( "isLocal")  );
+        getterMethods.put( CLOUD,  Permissions.class.getMethod( "isCloud")  );
+        getterMethods.put( DROPBOX,  Permissions.class.getMethod( "isDropbox")  );
+        getterMethods.put( GDRIVE,  Permissions.class.getMethod( "isGdrive")  );
+        getterMethods.put( SKYDRIVE,  Permissions.class.getMethod( "isSkydrive")  );
+        getterMethods.put( SOUNDCLOUD,  Permissions.class.getMethod( "isSoundcloud")  );
+        getterMethods.put( YOUTUBE,  Permissions.class.getMethod( "isYoutube")  );
+        getterMethods.put( BOX,  Permissions.class.getMethod( "isBox")  );
+        getterMethods.put( LASTFM,  Permissions.class.getMethod( "isLastfm")  );
+        getterMethods.put( TWITCHTV,  Permissions.class.getMethod( "isTwitchtv")  );
+        getterMethods.put( FACEBOOK,  Permissions.class.getMethod( "isFacebook")  );
+        getterMethods.put( TWITTER,  Permissions.class.getMethod( "isTwitter")  );
+        getterMethods.put( MUSIXMATCH,  Permissions.class.getMethod( "isMusixmatch")  );
+        getterMethods.put( SONGKICK,  Permissions.class.getMethod( "isSongkick")  );
+        getterMethods.put( UBUNTU,  Permissions.class.getMethod( "isUbuntu" )  );
+      } catch (SecurityException e) {
+        log.error("Security error", e);
+      } catch (NoSuchMethodException e) {
+        log.error("No method found", e);
+      }
+    }
+    
+    return getterMethods;
   }
 
 

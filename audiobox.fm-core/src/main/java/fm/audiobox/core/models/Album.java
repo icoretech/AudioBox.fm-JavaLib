@@ -64,6 +64,8 @@ public class Album extends AbstractEntity implements Serializable {
   
   
   private static final Map<String, Method> setterMethods = new HashMap<String, Method>();
+  private static Map<String, Method> getterMethods = null;
+  
   static {
     try {
       setterMethods.put( ARTIST, Album.class.getMethod( "setArtist", String.class ) );
@@ -144,6 +146,25 @@ public class Album extends AbstractEntity implements Serializable {
       return setterMethods.get( tagName );
     }
     return null;
+  }
+  
+  
+  public Map<String, Method> getGetterMethods() {
+    if ( getterMethods == null ) {
+      getterMethods = new HashMap<String, Method>();
+      try {  
+        getterMethods.put( ARTIST, Album.class.getMethod( "getArtist" ) );
+        getterMethods.put( ALBUM, Album.class.getMethod( "getAlbum") );
+        getterMethods.put( ARTWORK, Album.class.getMethod( "getArtwork") );
+        getterMethods.put( MediaFiles.TAGNAME, Album.class.getMethod( "getMediaFiles" )  );
+      } catch (SecurityException e) {
+        log.error("Security error", e);
+      } catch (NoSuchMethodException e) {
+        log.error("No method found", e);
+      }
+    }
+    
+    return getterMethods;
   }
   
   
