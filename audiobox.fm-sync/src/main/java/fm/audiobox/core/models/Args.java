@@ -55,6 +55,8 @@ public class Args extends AbstractEntity implements Serializable{
 
 
   private static final Map<String, Method> setterMethods = new HashMap<String, Method>();
+  private static Map<String, Method> getterMethods = null;
+  
   static {
     try {
       setterMethods.put( FILENAME, Args.class.getMethod("setFileName", String.class) );
@@ -172,6 +174,32 @@ public class Args extends AbstractEntity implements Serializable{
     }
     return null;
   }
+  
+  public Map<String, Method> getGetterMethods() {
+    if ( getterMethods == null ) {
+      getterMethods = new HashMap<String, Method>();
+      try {  
+        getterMethods.put( FILENAME, Args.class.getMethod("getFileName") );
+        getterMethods.put( RANGEMIN, Args.class.getMethod("getRangeMin") );
+        getterMethods.put( RANGEMAX, Args.class.getMethod("getRangeMax") );
+        getterMethods.put( ETAG, Args.class.getMethod("getEtag") );
+        getterMethods.put( SERVER_IP, Args.class.getMethod("getServerIp") );
+        getterMethods.put( SERVER_PORT, Args.class.getMethod("getServerPort") );
+        getterMethods.put( REMOTE_PATH, Args.class.getMethod("getRemotePath") );
+        getterMethods.put( MESSAGE, Args.class.getMethod("getMessage") );
+        getterMethods.put( CRITICAL, Args.class.getMethod("getCritical") );
+        getterMethods.put( DESTINATION_HOST, Args.class.getMethod("getDestinationHash") );
+      } catch (SecurityException e) {
+        log.error("Security error", e);
+      } catch (NoSuchMethodException e) {
+        log.error("No method found", e);
+      }
+    }
+    
+    return getterMethods;
+  }
+  
+  
 
   @Override
   public String getApiPath() {

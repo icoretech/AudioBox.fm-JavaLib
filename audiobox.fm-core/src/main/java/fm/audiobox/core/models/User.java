@@ -648,10 +648,10 @@ public final class User extends AbstractEntity implements Serializable {
         getterMethods.put( AccountStats.TAGNAME, User.class.getMethod("getAccountStats") );
         getterMethods.put( ExternalTokens.TAGNAME, User.class.getMethod("getExternalTokens") );
         getterMethods.put( Preferences.TAGNAME, User.class.getMethod("getPreferences") );
-      } catch (Throwable e) {
+      } catch (SecurityException e) {
         log.error("Security error", e);
-      /*} catch (NoSuchMethodException e) {
-        log.error("No method found", e);*/
+      } catch (NoSuchMethodException e) {
+        log.error("No method found", e);
       }
     }
     

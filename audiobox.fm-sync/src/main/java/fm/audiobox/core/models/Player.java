@@ -2,7 +2,9 @@ package fm.audiobox.core.models;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -74,6 +76,16 @@ public class Player extends AbstractEntity {
   public Method getSetterMethod(String tagName) {
     return null;
   }
+  
+  
+  /**
+   * This entity has not methods to get
+   */
+  @Deprecated
+  public Map<String, Method> getGetterMethods() {
+    return new HashMap<String, Method>();
+  }
+  
 
   @Override
   public String getApiPath() {

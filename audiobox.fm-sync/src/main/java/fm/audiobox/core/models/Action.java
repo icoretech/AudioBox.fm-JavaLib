@@ -48,6 +48,8 @@ public class Action extends AbstractEntity implements Serializable {
   
   
   private static final Map<String, Method> setterMethods = new HashMap<String, Method>();
+  private static Map<String, Method> getterMethods = null;
+  
   static {
     try {
       setterMethods.put( NAME, Action.class.getMethod("setName", String.class) );
@@ -107,6 +109,24 @@ public class Action extends AbstractEntity implements Serializable {
       return setterMethods.get( tagName );
     }
     return null;
+  }
+  
+  
+  public Map<String, Method> getGetterMethods() {
+    if ( getterMethods == null ) {
+      getterMethods = new HashMap<String, Method>();
+      try {  
+        getterMethods.put( NAME, Action.class.getMethod("getName") );
+        getterMethods.put( REQUESTID, Action.class.getMethod("getId") );
+        getterMethods.put( ARGS, Action.class.getMethod("getArgs") );
+      } catch (SecurityException e) {
+        log.error("Security error", e);
+      } catch (NoSuchMethodException e) {
+        log.error("No method found", e);
+      }
+    }
+    
+    return getterMethods;
   }
 
 
