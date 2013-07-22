@@ -403,4 +403,22 @@ public class MediaFilesTest extends AbxTestCase {
   }
   
   
+  
+  @Test
+  public void mediaFileOffline() {
+    MediaFiles mfs = user.getOfflineMediaFiles();
+    
+    try {
+      mfs.load(false);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    assertTrue( mfs.size() > 0 );
+    
+  }
+  
+  
 }

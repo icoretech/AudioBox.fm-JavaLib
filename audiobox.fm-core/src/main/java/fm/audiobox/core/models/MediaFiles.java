@@ -54,6 +54,7 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
   protected static final String TOKENS_PARAMETER =        "tokens[]";
 
 
+  private boolean offline = false;
   
   /**
    *  MediaFiles are grouped by types that are:
@@ -88,6 +89,12 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
   public String getTagName() {
     return TAGNAME;
   }
+  
+  
+  void setOffline(boolean off) {
+    this.offline = off;
+  }
+  
 
   @Override
   public Method getSetterMethod(String tagName) {
@@ -113,7 +120,12 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
   
   public IConnectionMethod load(boolean async, IResponseHandler responseHandler) throws ServiceException, LoginException {
     this.clear();
-    IConnectionMethod request = getConnector(IConfiguration.Connectors.RAILS).get(this, this.getParent().getApiPath(), NAMESPACE, null);
+    IConnectionMethod request = null;
+    if ( this.offline ) {
+      request = getConnector(IConfiguration.Connectors.RAILS).get(this, IConnector.URI_SEPARATOR + MediaFiles.NAMESPACE, "offline", null);
+    } else {
+      request = getConnector(IConfiguration.Connectors.RAILS).get(this, this.getParent().getApiPath(), NAMESPACE, null);
+    }
     request.send(async, null, responseHandler);
     return request;
   }
