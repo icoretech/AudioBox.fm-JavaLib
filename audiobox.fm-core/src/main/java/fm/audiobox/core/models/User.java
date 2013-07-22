@@ -603,6 +603,10 @@ public final class User extends AbstractEntity implements Serializable {
     return playlists;
   }
   
+  
+  /**
+   * @return a {@code MediaFiles} collection representing all offline media files
+   */
   public MediaFiles getOfflineMediaFiles() {
     if ( this.offlines == null ) {
       this.offlines = (MediaFiles) getConfiguration().getFactory().getEntity(MediaFiles.TAGNAME, getConfiguration());
