@@ -104,7 +104,7 @@ public class Playlist extends AbstractEntity implements Serializable {
       setterMethods.put(UPDATED_AT, Playlist.class.getMethod("setUpdatedAt", String.class));
       setterMethods.put(LAST_ACCESSED, Playlist.class.getMethod("setLastAccessed", boolean.class));
       setterMethods.put(SYSTEM_NAME, Playlist.class.getMethod("setSystemName", String.class));
-      setterMethods.put(OFFLINE, Playlist.class.getMethod("setOffline", boolean.class));
+      setterMethods.put(OFFLINE, Playlist.class.getMethod("setOffline", Boolean.class));
       setterMethods.put(EMBEDDABLE, Playlist.class.getMethod("setEmbeddable", boolean.class));
       setterMethods.put(VISIBLE, Playlist.class.getMethod("setVisible", boolean.class));
       setterMethods.put(SYNCABLE, Playlist.class.getMethod("setSyncable", boolean.class));
@@ -313,8 +313,11 @@ public class Playlist extends AbstractEntity implements Serializable {
    * 
    * @param offline
    */
-  public void setOffline(boolean offline) {
-    this.offline = offline;
+  public void setOffline(Boolean offline) {
+    if ( offline == null ) {
+      offline = new Boolean(false);
+    }
+    this.offline = offline.booleanValue();
   }
 
 

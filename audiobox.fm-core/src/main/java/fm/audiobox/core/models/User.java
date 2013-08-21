@@ -76,6 +76,7 @@ public final class User extends AbstractEntity implements Serializable {
   public static final String MEDIA_FILES_COUNT = "media_files_count";
   public static final String SUBSCRIPTION_STATE = "subscription_state";
   public static final String COMET_CHANNEL = "comet_channel";
+  public static final String PLAN = "plan";
   public static final String CREATED_AT = "created_at";
   public static final String UPDATED_AT = "updated_at";
 
@@ -107,6 +108,7 @@ public final class User extends AbstractEntity implements Serializable {
   private String comet_channel;
   private String createdAt;
   private String updatedAt;
+  private String plan;
 
   private Playlists playlists;
   private Permissions permissions;
@@ -138,6 +140,7 @@ public final class User extends AbstractEntity implements Serializable {
       setterMethods.put( TOTAL_PLAY_COUNT, User.class.getMethod("setTotalPlayCount", long.class) );
       setterMethods.put( MEDIA_FILES_COUNT, User.class.getMethod("setMediaFilesCount", long.class) );
       setterMethods.put( SUBSCRIPTION_STATE, User.class.getMethod("setSubscriptionState", String.class) );
+      setterMethods.put( PLAN, User.class.getMethod("setPlan", String.class) );
       setterMethods.put( Permissions.TAGNAME, User.class.getMethod("setPermissions", Permissions.class) );
       setterMethods.put( AccountStats.TAGNAME, User.class.getMethod("setAccountStats", AccountStats.class) );
       setterMethods.put( ExternalTokens.TAGNAME, User.class.getMethod("setExternalTokens", ExternalTokens.class) );
@@ -443,6 +446,20 @@ public final class User extends AbstractEntity implements Serializable {
   }
 
 
+  /**
+   * This method is used by response parser
+   */
+  public void setPlan(String p) {
+    this.plan = p;
+  }
+  
+  /**
+   * @return the {@code plan name} set for this user
+   */
+  public String getPlan() {
+    return this.plan;
+  }
+  
   /**
    * This method is used by response parser
    */
