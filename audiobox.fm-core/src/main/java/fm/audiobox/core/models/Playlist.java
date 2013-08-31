@@ -63,7 +63,7 @@ public class Playlist extends AbstractEntity implements Serializable {
 
   public static final String CUSTOM_SYSTEM_NAME = "custom";
   public static final String SMART_SYSTEM_NAME = "smart";
-  public static final String OFFLINE_SYSTEM_NAME = "custom";
+  public static final String OFFLINE_SYSTEM_NAME = "offline";
   
   public static final String NAME = "name";
   public static final String POSITION = "position";
