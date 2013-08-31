@@ -96,7 +96,6 @@ public class MediaFile extends AbstractEntity implements Serializable {
   public static final String ALBUM_ARTIST = "album_artist";
   public static final String COMPOSER = "composer";
   public static final String MEDIA_FILE_NAME = "media_file_name";
-  public static final String OFFLINE = "offline";
 
 
   private MediaFiles.Type type;
@@ -130,7 +129,6 @@ public class MediaFile extends AbstractEntity implements Serializable {
   private String lyrics = ""; // Default empty string
   private String album_artist;
   private String composer;
-  private boolean offline = false;
   
   @SuppressWarnings("unused")
   private String media_file_name;
@@ -190,7 +188,6 @@ public class MediaFile extends AbstractEntity implements Serializable {
       setterMethods.put( ALBUM_ARTIST,  MediaFile.class.getMethod( "setAlbumArtist", String.class )  );
       setterMethods.put( COMPOSER, MediaFile.class.getMethod( "setComposer", String.class )  );
       setterMethods.put( MEDIA_FILE_NAME, MediaFile.class.getMethod( "setMediaFileName", String.class )  );
-      setterMethods.put( OFFLINE, MediaFile.class.getMethod( "setOffline", Boolean.class )  );
     } catch (SecurityException e) {
       log.error("Security error", e);
     } catch (NoSuchMethodException e) {
@@ -244,26 +241,6 @@ public class MediaFile extends AbstractEntity implements Serializable {
   }
   
   
-  /**
-   * Sets this {@code mediafile} as {@code offline}
-   * @param off
-   */
-  public void setOffline(Boolean off) {
-    if ( off == null ) {
-      off = new Boolean(false);
-    }
-    this.offline = off.booleanValue();
-  }
-  
-  
-  /**
-   * @return {@code true} if this {@code mediafile} has been marked as {@code offline}
-   */
-  public boolean isOffline() {
-    return this.offline;
-  }
-  
-
   /**
    * @return the {@code ablum} of the MediaFile
    */
@@ -768,7 +745,6 @@ public class MediaFile extends AbstractEntity implements Serializable {
         getterMethods.put( LYRICS,  MediaFile.class.getMethod( "getLyrics")  );
         getterMethods.put( ALBUM_ARTIST,  MediaFile.class.getMethod( "getAlbumArtist")  );
         getterMethods.put( COMPOSER, MediaFile.class.getMethod( "getComposer")  );
-        getterMethods.put( OFFLINE, MediaFile.class.getMethod( "isOffline")  );
         getterMethods.put( LOVED, MediaFile.class.getMethod( "isLoved")  );
       } catch (SecurityException e) {
         log.error("Security error", e);
