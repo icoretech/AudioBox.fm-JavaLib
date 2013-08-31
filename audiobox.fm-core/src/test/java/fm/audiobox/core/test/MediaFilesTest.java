@@ -406,7 +406,19 @@ public class MediaFilesTest extends AbxTestCase {
   
   @Test
   public void mediaFileOffline() {
-    MediaFiles mfs = user.getOfflineMediaFiles();
+    Playlists pls = user.getPlaylists();
+    
+    try {
+      pls.load(false);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    Playlist pl = pls.getOfflinePlaylist();
+    
+    MediaFiles mfs = pl.getMediaFiles();
     
     try {
       mfs.load(false);

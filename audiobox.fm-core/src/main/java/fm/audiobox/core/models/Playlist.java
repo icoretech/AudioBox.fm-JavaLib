@@ -63,6 +63,7 @@ public class Playlist extends AbstractEntity implements Serializable {
 
   public static final String CUSTOM_SYSTEM_NAME = "custom";
   public static final String SMART_SYSTEM_NAME = "smart";
+  public static final String OFFLINE_SYSTEM_NAME = "custom";
   
   public static final String NAME = "name";
   public static final String POSITION = "position";
@@ -71,7 +72,6 @@ public class Playlist extends AbstractEntity implements Serializable {
   public static final String UPDATED_AT = "updated_at";
   public static final String LAST_ACCESSED = "last_accessed";
   public static final String SYSTEM_NAME = "system_name";
-  public static final String OFFLINE = "offline";
   public static final String EMBEDDABLE = "embeddable";
   public static final String VISIBLE = "visible";
   public static final String SYNCABLE = "syncable";
@@ -84,7 +84,6 @@ public class Playlist extends AbstractEntity implements Serializable {
   private Albums albums;
   private String updated_at;
   private boolean last_accessed;
-  private boolean offline;
   private boolean embeddable;
   private boolean visible;
   private String system_name;
@@ -104,7 +103,6 @@ public class Playlist extends AbstractEntity implements Serializable {
       setterMethods.put(UPDATED_AT, Playlist.class.getMethod("setUpdatedAt", String.class));
       setterMethods.put(LAST_ACCESSED, Playlist.class.getMethod("setLastAccessed", boolean.class));
       setterMethods.put(SYSTEM_NAME, Playlist.class.getMethod("setSystemName", String.class));
-      setterMethods.put(OFFLINE, Playlist.class.getMethod("setOffline", Boolean.class));
       setterMethods.put(EMBEDDABLE, Playlist.class.getMethod("setEmbeddable", boolean.class));
       setterMethods.put(VISIBLE, Playlist.class.getMethod("setVisible", boolean.class));
       setterMethods.put(SYNCABLE, Playlist.class.getMethod("setSyncable", boolean.class));
@@ -202,8 +200,8 @@ public class Playlist extends AbstractEntity implements Serializable {
   public boolean isDrive() {
     return !(isCustom() || isSmart());
   }
-
-
+  
+  
   /**
    * This method deletes entirly content of the {@link Playlists.Type#LocalPlaylist} drive. Use this method carefully
    * <p>
@@ -301,23 +299,10 @@ public class Playlist extends AbstractEntity implements Serializable {
 
 
   /**
-   * @return {@code true} if Playlist has been marked as {@code offline}. {@code false} if not
+   * @return {@code true} if this Playlist the {@code offline} special playlist
    */
   public boolean isOffline() {
-    return offline;
-  }
-
-
-  /**
-   * Marks this Playlist as offline
-   * 
-   * @param offline
-   */
-  public void setOffline(Boolean offline) {
-    if ( offline == null ) {
-      offline = new Boolean(false);
-    }
-    this.offline = offline.booleanValue();
+    return OFFLINE_SYSTEM_NAME.equals(this.getSystemName());
   }
 
 
@@ -451,7 +436,6 @@ public class Playlist extends AbstractEntity implements Serializable {
         getterMethods.put(UPDATED_AT, Playlist.class.getMethod("getUpdatedAt"));
         getterMethods.put(LAST_ACCESSED, Playlist.class.getMethod("isLastAccessed"));
         getterMethods.put(SYSTEM_NAME, Playlist.class.getMethod("getSystemName"));
-        getterMethods.put(OFFLINE, Playlist.class.getMethod("isOffline"));
         getterMethods.put(EMBEDDABLE, Playlist.class.getMethod("isEmbeddable"));
         getterMethods.put(VISIBLE, Playlist.class.getMethod("isVisible"));
         getterMethods.put(SYNCABLE, Playlist.class.getMethod("isSyncable"));
@@ -480,7 +464,6 @@ public class Playlist extends AbstractEntity implements Serializable {
     this.media_files_count = pl.getMediaFilesCount();
     this.updated_at = pl.getUpdatedAt();
     this.last_accessed = pl.isLastAccessed();
-    this.offline = pl.isOffline();
     this.embeddable = pl.isEmbeddable();
     this.visible = pl.isVisible();
     this.system_name = pl.getSystemName();
@@ -652,7 +635,6 @@ public class Playlist extends AbstractEntity implements Serializable {
       params.add(new BasicNameValuePair(prefix + UPDATED_AT + suffix, this.updated_at));
       params.add(new BasicNameValuePair(prefix + LAST_ACCESSED + suffix, String.valueOf(this.last_accessed)));
       params.add(new BasicNameValuePair(prefix + SYSTEM_NAME + suffix, this.system_name));
-      params.add(new BasicNameValuePair(prefix + OFFLINE + suffix, String.valueOf(this.offline)));
       params.add(new BasicNameValuePair(prefix + EMBEDDABLE + suffix, String.valueOf(this.embeddable)));
       params.add(new BasicNameValuePair(prefix + VISIBLE + suffix, String.valueOf(this.visible)));
       params.add(new BasicNameValuePair(prefix + SYNCABLE + suffix, String.valueOf(this.syncable)));

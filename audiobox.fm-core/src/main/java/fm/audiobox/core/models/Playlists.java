@@ -63,7 +63,8 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
     GdrivePlaylist,
     YoutubePlaylist,
     SoundcloudPlaylist,
-    CustomPlaylist
+    CustomPlaylist,
+    OfflinePlaylist
   }
   
   /**
@@ -125,6 +126,14 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
   
   public Playlist getPlaylistByType( Type type ){
     return this.getPlaylistByType( type.toString() );
+  }
+  
+  
+  /**
+   * @return the {@code offline} Playlist
+   */
+  public Playlist getOfflinePlaylist() {
+    return this.getPlaylistByType(Type.OfflinePlaylist);
   }
   
   /**

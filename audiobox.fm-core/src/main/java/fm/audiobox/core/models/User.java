@@ -116,8 +116,6 @@ public final class User extends AbstractEntity implements Serializable {
   private Preferences preferences;
   private ExternalTokens externalTokens;
   
-  private MediaFiles offlines;
-  
   private static Map<String, Method> setterMethods = new HashMap<String, Method>();
   private static Map<String, Method> getterMethods = null;
   
@@ -621,18 +619,6 @@ public final class User extends AbstractEntity implements Serializable {
   }
   
   
-  /**
-   * @return a {@code MediaFiles} collection representing all offline media files
-   */
-  public MediaFiles getOfflineMediaFiles() {
-    if ( this.offlines == null ) {
-      this.offlines = (MediaFiles) getConfiguration().getFactory().getEntity(MediaFiles.TAGNAME, getConfiguration());
-      this.offlines.setOffline( true );
-    }
-    return this.offlines;
-  }
-
-
   /**
    * This method invokes {@link User#load(boolean)}
    */
