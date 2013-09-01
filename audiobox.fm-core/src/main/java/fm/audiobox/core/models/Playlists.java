@@ -94,14 +94,30 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
 
   
   /**
-   * Returns the {@link MediaFiles} associated with the given <code>name</code>
-   * @param name the MediaFiles name
-   * @return the {@link MediaFiles} associated with the given <code>name</code>
+   * Returns first {@link Playlist} associated with the given <code>name</code>
+   * @param name the Playlist name
+   * @return the {@link Playlist} associated with the given <code>name</code>
    */
   public Playlist getPlaylistByName(String name){
     for ( Iterator<Playlist> it = this.iterator(); it.hasNext();  ){
       Playlist pl = it.next();
       if (  pl.getName().equalsIgnoreCase( name )  ) {
+        return pl;
+      }
+    }
+    return null;
+  }
+  
+  /**
+   * Returns first {@link Playlist} associated with the given {@code name} and {@code type}
+   * @param name the Playlist name
+   * @param type the Playlist type
+   * @return the {@link Playlist} associated with the given {@code name} and {@code type}
+   */
+  public Playlist getPlaylistByNameAndType(String name, Type type){
+    for ( Iterator<Playlist> it = this.iterator(); it.hasNext();  ){
+      Playlist pl = it.next();
+      if (  pl.getName().equalsIgnoreCase( name ) && type.toString().equals(pl.getType()) ) {
         return pl;
       }
     }
