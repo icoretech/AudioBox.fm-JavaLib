@@ -75,6 +75,7 @@ public class Playlist extends AbstractEntity implements Serializable {
   public static final String EMBEDDABLE = "embeddable";
   public static final String VISIBLE = "visible";
   public static final String SYNCABLE = "syncable";
+  public static final String OFFLINE = "offline";
 
   private String name;
   private int position = 0;
@@ -106,6 +107,8 @@ public class Playlist extends AbstractEntity implements Serializable {
       setterMethods.put(EMBEDDABLE, Playlist.class.getMethod("setEmbeddable", boolean.class));
       setterMethods.put(VISIBLE, Playlist.class.getMethod("setVisible", boolean.class));
       setterMethods.put(SYNCABLE, Playlist.class.getMethod("setSyncable", boolean.class));
+      setterMethods.put(OFFLINE, Playlist.class.getMethod("setOffline", boolean.class));
+      
     } catch (SecurityException e) {
       log.error("Security error", e);
     } catch (NoSuchMethodException e) {
@@ -319,6 +322,15 @@ public class Playlist extends AbstractEntity implements Serializable {
    */
   public void setSyncable(boolean syncable) {
     this.syncable = syncable;
+  }
+  
+  
+  /**
+   * This method is no longer used
+   */
+  @Deprecated
+  public void setOffline(boolean offline) {
+    
   }
 
 
