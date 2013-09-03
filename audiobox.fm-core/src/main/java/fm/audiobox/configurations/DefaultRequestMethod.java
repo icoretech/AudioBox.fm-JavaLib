@@ -170,6 +170,8 @@ public class DefaultRequestMethod extends Observable implements IConnectionMetho
            * we have to catch the exception and cast it to a known custom exception object
            */
           
+          log.error("An error occurred while executing request: " + getHttpMethod().getRequestLine().getUri(), e);
+          
           response = new Response( DefaultRequestMethod.this.format, AudioBoxException.GENERIC_ERROR, e.getMessage(), false );
           AudioBoxException responseException = null;
           
@@ -242,10 +244,10 @@ public class DefaultRequestMethod extends Observable implements IConnectionMetho
       log.error("Request has been interrupted: " + getHttpMethod().getURI().toString() + " - " + e.getMessage() );
       throw new ServiceException(AudioBoxException.GENERIC_ERROR, "Interrupted: " + e.getMessage() );
     } catch ( CancellationException ce ) {
-      log.error("Request has been cancelled: " + getHttpMethod().getURI().toString() );
+      log.error("Request has been cancelled: " + getHttpMethod().getRequestLine().getUri() );
       throw new ServiceException(AudioBoxException.GENERIC_ERROR, "Cancelled: " + ce.getMessage() );
     } catch (ExecutionException e) {
-      log.error("An error occurred while executing request", e);
+      log.error("An error occurred while executing request: " + getHttpMethod().getRequestLine().getUri(), e);
       throw new ServiceException(AudioBoxException.GENERIC_ERROR, "Execution error: " + e.getMessage() );
     }
     
