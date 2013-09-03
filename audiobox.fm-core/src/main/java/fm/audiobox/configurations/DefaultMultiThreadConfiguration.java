@@ -15,19 +15,14 @@ public class DefaultMultiThreadConfiguration extends DefaultConfiguration {
     super(appName);
     this.numberOfThreads = numberOfThreads;
   }
-  
-  public DefaultMultiThreadConfiguration(String appName, int major, int minor, int revision, int numberOfThreads){
-    super(appName);
-    this.numberOfThreads = numberOfThreads;
-  }
 
-  public DefaultMultiThreadConfiguration(String appName, int major, int minor, int revision, ContentFormat requestFormat, int numberOfThreads) {
+  public DefaultMultiThreadConfiguration(String appName, ContentFormat requestFormat, int numberOfThreads) {
     super(appName, requestFormat);
     this.numberOfThreads = numberOfThreads;
   }
 
 
-  public DefaultMultiThreadConfiguration(String appName, int major, int minor, int revision, ContentFormat requestFormat, Environments env, int numberOfThreads) {
+  public DefaultMultiThreadConfiguration(String appName, ContentFormat requestFormat, Environments env, int numberOfThreads) {
     super(appName, requestFormat, env);
     this.numberOfThreads = numberOfThreads;
   }
