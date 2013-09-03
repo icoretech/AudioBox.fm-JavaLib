@@ -151,13 +151,15 @@ public class DefaultConfiguration implements IConfiguration {
     
   }
 
-  public DefaultConfiguration(String appName, int major, int minor, int revision, ContentFormat requestFormat){
-    this(appName, major, minor, revision, requestFormat, Environments.live);
+  public DefaultConfiguration(String appName, ContentFormat requestFormat){
+    this(appName, requestFormat, Environments.live);
   }
   
-  public DefaultConfiguration(String appName, int major, int minor, int revision, ContentFormat requestFormat, Environments env){
+  public DefaultConfiguration(String appName, ContentFormat requestFormat, Environments env){
     this.setApplicationName(appName);
-    this.setVersion(major, minor, revision);
+    
+    this.version = MAJOR + "." + MINOR + "." + REVISION;
+    
     this.setRequestFormat(requestFormat);
     
     this.setCacheManager(new DefaultCacheManager());
@@ -189,14 +191,9 @@ public class DefaultConfiguration implements IConfiguration {
   }
 
 
-  public DefaultConfiguration(String appName, int major, int minor, int revision){
-    this(appName, major, minor, revision, ContentFormat.JSON);
-  }
-
   public DefaultConfiguration(String appName){
-    this(appName, MAJOR, MINOR, REVISION);
+    this(appName, ContentFormat.JSON);
   }
-
 
   @Override
   public void setRequestFormat(ContentFormat requestFormat) {
