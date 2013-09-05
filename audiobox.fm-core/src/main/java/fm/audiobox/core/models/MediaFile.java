@@ -62,6 +62,8 @@ public class MediaFile extends AbstractEntity implements Serializable {
   public static final String NAMESPACE = MediaFiles.TAGNAME;
   public static final String TAGNAME = "media_file";
   
+  public static final String X_MD5_FILE_HEADER = "x-md5-file";
+  
   protected static final String ORIGINAL_FILE_NAME = "original_file_name";
 
   public static final String TYPE = "type";
@@ -988,6 +990,9 @@ public class MediaFile extends AbstractEntity implements Serializable {
     }
 
     IConnectionMethod request = this.getConnector(IConfiguration.Connectors.NODE).post(this, path, null, null);
+    if ( this.hash != null ) {
+      request.addHeader(X_MD5_FILE_HEADER, this.hash);
+    }
     request.send(async, entity);
     return request;
   }
