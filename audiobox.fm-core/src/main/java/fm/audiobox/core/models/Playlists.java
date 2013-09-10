@@ -32,8 +32,11 @@ import org.apache.http.NameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fm.audiobox.core.exceptions.LoginException;
+import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
+import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
 
 
@@ -195,6 +198,16 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
 
     return null;
   }
+  
+  
+  public void syncAll() throws ServiceException, LoginException {
+    
+    IConnectionMethod request = this.getConnector(IConfiguration.Connectors.RAILS).put(this, "sync_all");
+    request.send(false);
+    
+  }
+  
+  
 
   @Override
   public String getSubTagName() {

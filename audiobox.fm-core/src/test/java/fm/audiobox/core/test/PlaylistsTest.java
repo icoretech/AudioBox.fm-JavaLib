@@ -219,6 +219,22 @@ public class PlaylistsTest extends AbxTestCase {
   }
   
   
+  @Test
+  public void testSyncAllDrives() {
+    
+    
+    Playlists pls = user.getPlaylists();
+    
+    try {
+      pls.syncAll();
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+  }
+  
   
   @Test
   public void createNewCustomPlaylist() {
