@@ -42,6 +42,7 @@ import fm.audiobox.configurations.Response;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.MediaFiles.Type;
+import fm.audiobox.core.observables.Event;
 import fm.audiobox.core.parsers.DownloadHandler;
 import fm.audiobox.core.parsers.UploadHandler;
 import fm.audiobox.interfaces.IConfiguration;
@@ -861,6 +862,11 @@ public class MediaFile extends AbstractEntity implements Serializable {
     boolean result = request.getResponse().isOK();
     if ( result ) {
       this.loved = true;
+      // fire events
+      this._fireEvent(this, Event.States.ENTITY_REFRESHED);
+      if ( this.getParent() != null && this.getParent() instanceof AbstractCollectionEntity ) {
+        ((AbstractCollectionEntity<?>)this.getParent())._fireEvent(this,  Event.States.ENTITY_REFRESHED);
+      }
     }
     return result;
   }
@@ -882,6 +888,11 @@ public class MediaFile extends AbstractEntity implements Serializable {
     boolean result = request.getResponse().isOK();
     if ( result ) {
       this.loved = false;
+      // fire events
+      this._fireEvent(this, Event.States.ENTITY_REFRESHED);
+      if ( this.getParent() != null && this.getParent() instanceof AbstractCollectionEntity ) {
+        ((AbstractCollectionEntity<?>)this.getParent())._fireEvent(this,  Event.States.ENTITY_REFRESHED);
+      }
     }
     return result;
   }
@@ -941,8 +952,16 @@ public class MediaFile extends AbstractEntity implements Serializable {
 
     List<NameValuePair> params = this.toQueryParameters(true);
     Response response = this.getConnector(IConfiguration.Connectors.RAILS).put(this, namespace, action, null).send(false, params);
-
-    return response.isOK();
+    
+    boolean result = response.isOK();
+    if ( result ) {
+      // fire events
+      this._fireEvent(this, Event.States.ENTITY_REFRESHED);
+      if ( this.getParent() != null && this.getParent() instanceof AbstractCollectionEntity ) {
+        ((AbstractCollectionEntity<?>)this.getParent())._fireEvent(this,  Event.States.ENTITY_REFRESHED);
+      }
+    }
+    return result;
   }
 
   /**

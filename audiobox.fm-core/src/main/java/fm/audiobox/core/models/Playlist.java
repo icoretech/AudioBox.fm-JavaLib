@@ -93,6 +93,12 @@ public class Playlist extends AbstractEntity implements Serializable {
   private static final Map<String, Method> setterMethods = new HashMap<String, Method>();
   private static Map<String, Method> getterMethods = null;
   
+  /**
+   * Use to invoke the correct remote action
+   */
+  private enum Actions {
+    visible, sync
+  }
   
   static {
     try {
@@ -487,6 +493,57 @@ public class Playlist extends AbstractEntity implements Serializable {
 
   }
 
+  /**
+   * Toggles {@code visibility} of this {@code Playlist}
+   * @return {@code true} if everything went fine. {@code false} if not.
+   * 
+   * @throws ServiceException if any connection error occurs
+   * @throws LoginException if any login error occurs
+   */
+  public boolean toggleVisible() throws ServiceException, LoginException {
+    
+    String path = IConnector.URI_SEPARATOR + Playlists.NAMESPACE + IConnector.URI_SEPARATOR + this.getToken();
+    
+    IConnectionMethod request = this.getConnector(IConfiguration.Connectors.RAILS).put(this, path, Actions.visible.toString(), null);
+    Response response = request.send(false);
+
+    boolean result = response.isOK();
+
+    if ( result ) {
+      this.visible = !this.visible;
+      
+      // fire events
+      this._fireEvent(this, Event.States.ENTITY_REFRESHED);
+      if ( this.getParent() != null && this.getParent() instanceof AbstractCollectionEntity ) {
+        ((AbstractCollectionEntity<?>)this.getParent())._fireEvent(this,  Event.States.ENTITY_REFRESHED);
+      }
+    }
+    
+    return true;
+  }
+  
+  
+  /**
+   * Synchronizes the {@code drive}
+   * @return {@code true} if everything went fine. {@code false} if not.
+   * 
+   * @throws ServiceException if any connection error occurs
+   * @throws LoginException if any login error occurs
+   */
+  public boolean sync() throws ServiceException, LoginException {
+    if ( !this.isDrive() ) {
+      throw new ServiceException("Only drives can be sync");
+    }
+    
+    String path = IConnector.URI_SEPARATOR + Playlists.NAMESPACE + IConnector.URI_SEPARATOR + this.getToken();
+    
+    IConnectionMethod request = this.getConnector(IConfiguration.Connectors.RAILS).put(this, path, Actions.sync.toString(), null);
+    Response response = request.send(false);
+
+    return response.isOK();
+  }
+  
+  
 
   /**
    * This method delete this {@link Playlist} <br/>
@@ -494,10 +551,8 @@ public class Playlist extends AbstractEntity implements Serializable {
    * 
    * @return {@code true} if everything went ok. {@code false} if not.
    * 
-   * @throws ServiceException
-   *           if any connection error occurrs
-   * @throws LoginException
-   *           if any login error occurrs
+   * @throws ServiceException if any connection error occurrs
+   * @throws LoginException if any login error occurrs
    */
   public boolean destroy() throws ServiceException, LoginException {
     if ( this.getToken() == null || "".equals(this.getToken()) ) {

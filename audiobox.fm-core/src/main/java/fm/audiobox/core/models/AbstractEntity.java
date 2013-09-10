@@ -193,19 +193,27 @@ public abstract class AbstractEntity extends Observable implements IEntity {
   
   public void startLoading() {
     this.loaded = false;
-    this.setChanged();
-    Event event = new Event(this);
-    event.state = Event.States.START_LOADING;
-    this.notifyObservers(event);
+    this._fireEvent(this, Event.States.START_LOADING);
   }
 
   public void endLoading() {
     this.loaded = true;
+    this._fireEvent(this, Event.States.END_LOADING);
+  }
+  
+  
+  /**
+   * This method fires events
+   * 
+   * @param entity the {@code Entity} that fires event
+   * @param type the {@code type} of the event
+   */
+  protected void _fireEvent(IEntity entity, Event.States type ) {
     this.setChanged();
-    Event event = new Event(this);
-    event.state = Event.States.END_LOADING;
+    Event event = new Event(entity, type);
     this.notifyObservers(event);
   }
+  
   
   
   /**

@@ -132,6 +132,95 @@ public class PlaylistsTest extends AbxTestCase {
   
   
   @Test
+  public void testToggleVisible() {
+    
+    Playlists pls = user.getPlaylists();
+
+    try {
+      pls.load(false);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    Playlist pl = pls.getPlaylistByType(Playlists.Type.DropboxPlaylist);
+    boolean curr_visible = pl.isVisible();
+    try {
+      boolean result = pl.toggleVisible();
+      if ( result ) {
+        assertFalse( curr_visible && pl.isVisible() );
+      } else {
+        fail( "Toggle visible fails" );
+      }
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+  }
+  
+  
+  @Test
+  public void testSyncDropbox() {
+    
+    Playlists pls = user.getPlaylists();
+
+    try {
+      pls.load(false);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    Playlist pl = pls.getPlaylistByType(Playlists.Type.DropboxPlaylist);
+    
+    try {
+      pl.sync();
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+  }
+  
+  
+  @Test
+  public void testMakeDropboxVisible() {
+    Playlists pls = user.getPlaylists();
+
+    try {
+      pls.load(false);
+    } catch (ServiceException e) {
+      fail( e.getMessage() );
+    } catch (LoginException e) {
+      fail( e.getMessage() );
+    }
+    
+    Playlist pl = pls.getPlaylistByType(Playlists.Type.DropboxPlaylist);
+    boolean curr_visible = pl.isVisible();
+    if ( !curr_visible ) {
+      try {
+        boolean result = pl.toggleVisible();
+        if ( result ) {
+          assertFalse( curr_visible && pl.isVisible() );
+        } else {
+          fail( "Toggle visible fails" );
+        }
+      } catch (ServiceException e) {
+        fail( e.getMessage() );
+      } catch (LoginException e) {
+        fail( e.getMessage() );
+      }
+    }
+  }
+  
+  
+  
+  @Test
   public void createNewCustomPlaylist() {
     
     Playlists pls = user.getPlaylists();

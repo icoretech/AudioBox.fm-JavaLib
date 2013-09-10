@@ -54,10 +54,8 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
    */
   public void clear() {
     this.collection.clear();
-    this.setChanged();
     this.loaded = false;
-    Event event = new Event(this, Event.States.COLLECTION_CLEARED);
-    this.notifyObservers(event);
+    _fireEvent(this, Event.States.COLLECTION_CLEARED);
   }
 
   public boolean contains(Object entity) {
@@ -153,9 +151,7 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
   public boolean remove(Object entity){
     boolean result = this.collection.remove( entity );
     if ( result ){
-      this.setChanged();
-      Event event = new Event(entity, Event.States.ENTITY_REMOVED);
-      this.notifyObservers(event);
+      _fireEvent((IEntity)entity, Event.States.ENTITY_REMOVED);
     }
     return result;
   }
@@ -171,10 +167,7 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
     boolean result = this.collection.add( entity );
     if ( result ){
       entity.setParent( this );
-      this.setChanged();
-      Event event = new Event(entity, Event.States.ENTITY_ADDED);
-      event.detail = this.collection.size();
-      this.notifyObservers(event);
+      _fireEvent(entity, Event.States.ENTITY_ADDED);
     }
     return result;
   }
@@ -191,6 +184,20 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
     IConnectionMethod request = getConnector(IConfiguration.Connectors.RAILS).get(this, null, null);
     request.send(async, null, responseHandler);
     return request;
+  }
+  
+  
+  /**
+   * This method fires events
+   * 
+   * @param entity the {@code Entity} that fires event
+   * @param type the {@code type} of the event
+   */
+  protected void _fireEvent(IEntity entity, Event.States type ) {
+    this.setChanged();
+    Event event = new Event(entity, type);
+    event.detail = this.collection.size();
+    this.notifyObservers(event);
   }
   
   
