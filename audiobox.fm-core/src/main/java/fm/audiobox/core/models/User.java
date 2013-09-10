@@ -79,6 +79,8 @@ public final class User extends AbstractEntity implements Serializable {
   public static final String PLAN = "plan";
   public static final String CREATED_AT = "created_at";
   public static final String UPDATED_AT = "updated_at";
+  public static final String OFFLINE_PLAYLIST = "offline_playlist";
+  
 
   public static enum SubscriptionState {
     nothing,
@@ -109,6 +111,7 @@ public final class User extends AbstractEntity implements Serializable {
   private String createdAt;
   private String updatedAt;
   private String plan;
+  private String offlineToken;
 
   private Playlists playlists;
   private Permissions permissions;
@@ -138,6 +141,7 @@ public final class User extends AbstractEntity implements Serializable {
       setterMethods.put( TOTAL_PLAY_COUNT, User.class.getMethod("setTotalPlayCount", long.class) );
       setterMethods.put( MEDIA_FILES_COUNT, User.class.getMethod("setMediaFilesCount", long.class) );
       setterMethods.put( SUBSCRIPTION_STATE, User.class.getMethod("setSubscriptionState", String.class) );
+      setterMethods.put( OFFLINE_PLAYLIST, User.class.getMethod("setOfflineToken", String.class) );
       setterMethods.put( PLAN, User.class.getMethod("setPlan", String.class) );
       setterMethods.put( Permissions.TAGNAME, User.class.getMethod("setPermissions", Permissions.class) );
       setterMethods.put( AccountStats.TAGNAME, User.class.getMethod("setAccountStats", AccountStats.class) );
@@ -441,6 +445,23 @@ public final class User extends AbstractEntity implements Serializable {
    */
   public SubscriptionState getSubscriptionState() {
     return this.subscription_state;
+  }
+  
+  
+  /**
+   * @return the {@code offline playlist token} associated with this {@link User}
+   */
+  public String getOfflineToken() {
+    return this.offlineToken;
+  }
+  
+  
+  /**
+   * This method is used by the response parser
+   */
+  @Deprecated
+  public void setOfflineToken(String tk) {
+    this.offlineToken = tk;
   }
 
 

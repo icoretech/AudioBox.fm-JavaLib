@@ -41,6 +41,8 @@ public class Preferences extends AbstractEntity implements Serializable {
   public static final String REPEAT = "repeat";
   public static final String SHUFFLE = "shuffle";
   public static final String DEMUXER = "js_demuxer";
+  public static final String HIDE_TOOLTIPS = "hide_tooltips";
+  
   
   
   private boolean accept_emails = false;
@@ -52,6 +54,7 @@ public class Preferences extends AbstractEntity implements Serializable {
   private boolean repeat;
   private boolean shuffle;
   private boolean js_demuxer;
+  private boolean hideTooltips;
   
   
   private static final Map<String, Method> setterMethods = new HashMap<String, Method>();
@@ -68,6 +71,8 @@ public class Preferences extends AbstractEntity implements Serializable {
       setterMethods.put( REPEAT, Preferences.class.getMethod( "setRepeat", boolean.class )  );
       setterMethods.put( SHUFFLE, Preferences.class.getMethod( "setShuffle", boolean.class )  );
       setterMethods.put( DEMUXER, Preferences.class.getMethod( "setDemuxer", boolean.class )  );
+      setterMethods.put( HIDE_TOOLTIPS, Preferences.class.getMethod( "setHideTooltips", boolean.class )  );
+      
     } catch (SecurityException e) {
       log.error("Security error", e);
     } catch (NoSuchMethodException e) {
@@ -233,6 +238,23 @@ public class Preferences extends AbstractEntity implements Serializable {
   public void setDemuxer(boolean js_demuxer) {
     this.js_demuxer = js_demuxer;
   }
+  
+  
+  /**
+   * @return {@code true} if {@link User} has disabled the {@code tooltips} feature in Cloud Web Player
+   */
+  public boolean isHideTooltips() {
+    return this.hideTooltips;
+  }
+
+
+  /**
+   * This method is used by response parser
+   */
+  @Deprecated
+  public void setHideTooltips(boolean htt) {
+    this.hideTooltips = htt;
+  }
 
 
   public Method getSetterMethod(String tagName) {
@@ -256,6 +278,7 @@ public class Preferences extends AbstractEntity implements Serializable {
         getterMethods.put( REPEAT, Preferences.class.getMethod( "isRepeat" )  );
         getterMethods.put( SHUFFLE, Preferences.class.getMethod( "isShuffle" )  );
         getterMethods.put( DEMUXER, Preferences.class.getMethod( "isDemuxer" )  );
+        getterMethods.put( HIDE_TOOLTIPS, Preferences.class.getMethod( "isHideTooltips" )  );
       } catch (SecurityException e) {
         log.error("Security error", e);
       } catch (NoSuchMethodException e) {
