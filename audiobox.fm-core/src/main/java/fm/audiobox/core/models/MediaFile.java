@@ -883,7 +883,8 @@ public class MediaFile extends AbstractEntity implements Serializable {
    * @throws LoginException if any login error occurs
    */
   public boolean unlove() throws ServiceException, LoginException {
-    IConnectionMethod request = getConnector(IConfiguration.Connectors.RAILS).post(this, Actions.unlove.toString());
+    String path = IConnector.URI_SEPARATOR + MediaFiles.NAMESPACE + IConnector.URI_SEPARATOR + this.getToken();
+    IConnectionMethod request = getConnector(IConfiguration.Connectors.RAILS).post(this, path, Actions.unlove.toString());
     request.send(false);
     boolean result = request.getResponse().isOK();
     if ( result ) {
