@@ -424,13 +424,17 @@ public final class User extends AbstractEntity implements Serializable {
    * This method is used by response parser
    */
   public void setSubscriptionState(String flag) {
-    SubscriptionState state = null;
-    if ( flag != null && ( ( state = SubscriptionState.valueOf( flag ) ) != null )  ) {
-      this.subscription_state = state;
-    } else {
-      this.subscription_state = SubscriptionState.no;
-      log.info("no subscription_state is given, use 'no'");
+    if ( flag != null ) {
+      SubscriptionState[] sss = SubscriptionState.values();
+      for( SubscriptionState s : sss ){
+        if ( s.toString().equals( flag ) ) {
+          this.subscription_state = s;
+          return;
+        }
+      }
     }
+    this.subscription_state = SubscriptionState.no;
+    log.info("no subscription_state is given, use 'no'");
   }
 
   /**
