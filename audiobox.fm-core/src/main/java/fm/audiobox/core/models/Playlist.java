@@ -594,6 +594,25 @@ public class Playlist extends AbstractEntity implements Serializable {
    *           if any login error occurrs
    */
   public boolean addMediaFiles(List<MediaFile> mediaFiles) throws ServiceException, LoginException {
+    return this.addMediaFiles(mediaFiles, false);
+  }
+  
+  
+  /**
+   * This method adds given media files to this playlist <br/>
+   * Playlist should be an already existing playlist with a valid {@code token}
+   * 
+   * @param mediaFiles list of mediafiles to be added to this playlist.
+   * @param addToMedia if {@code true} all passed mediafiles will be added to collection
+   * 
+   * @return {@code true} if everything went ok. {@code false} if not.
+   * 
+   * @throws ServiceException
+   *           if any connection error occurrs
+   * @throws LoginException
+   *           if any login error occurrs
+   */
+  public boolean addMediaFiles(List<MediaFile> mediaFiles, boolean addToMedia) throws ServiceException, LoginException {
 
     if ( this.getToken() == null || "".equals(this.getToken()) ) {
       // playlists has not token
@@ -617,7 +636,17 @@ public class Playlist extends AbstractEntity implements Serializable {
     }
 
     Response response = request.send(false, tokens);
-    return response.isOK();
+    boolean result = response.isOK();
+    
+    if ( result && addToMedia && (this.mediafiles != null && this.mediafiles.isLoaded() ) ) {
+      for ( MediaFile mf : mediaFiles ) {
+        if ( this.mediafiles.get( mf.getToken() ) == null ) {
+          this.mediafiles.add( mf );
+        }
+      }
+    }
+    
+    return result;
   }
 
 
