@@ -83,7 +83,7 @@ public final class User extends AbstractEntity implements Serializable {
   
 
   public static enum SubscriptionState {
-    nothing,
+    no,
     active,
     trialing,
     past_due,
@@ -106,7 +106,8 @@ public final class User extends AbstractEntity implements Serializable {
   private int playlists_count;
   private long total_play_count;
   private long media_files_count;
-  private SubscriptionState subscription_state = SubscriptionState.nothing;
+
+  private SubscriptionState subscription_state = SubscriptionState.no;
   private String comet_channel;
   private String createdAt;
   private String updatedAt;
@@ -427,8 +428,8 @@ public final class User extends AbstractEntity implements Serializable {
     if ( flag != null && ( ( state = SubscriptionState.valueOf( flag ) ) != null )  ) {
       this.subscription_state = state;
     } else {
-      this.subscription_state = SubscriptionState.nothing;
-      log.info( "no subscription_state is given, use 'nothing'");
+      this.subscription_state = SubscriptionState.no;
+      log.info("no subscription_state is given, use 'no'");
     }
   }
 
