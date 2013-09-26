@@ -47,6 +47,7 @@ import fm.audiobox.core.parsers.DownloadHandler;
 import fm.audiobox.core.parsers.UploadHandler;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
+import fm.audiobox.interfaces.IConfiguration.ContentFormat;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
@@ -1009,10 +1010,16 @@ public class MediaFile extends AbstractEntity implements Serializable {
       }
     }
 
-    IConnectionMethod request = this.getConnector(IConfiguration.Connectors.NODE).post(this, path, null, null);
+    
     if ( this.hash != null ) {
+      IConnectionMethod request = this.getConnector(IConfiguration.Connectors.NODE).head(this, path, null, null, null);
       request.addHeader(X_MD5_FILE_HEADER, this.hash);
+      Response r = request.send(false);
+      if ( ! r.isOK() ) {
+        throw new ServiceException( r.getStatus(), r.getBody() );
+      }
     }
+    IConnectionMethod request = this.getConnector(IConfiguration.Connectors.NODE).post(this, path, null, null);
     request.send(async, entity);
     return request;
   }

@@ -170,7 +170,12 @@ public class DefaultRequestMethod extends Observable implements IConnectionMetho
            * we have to catch the exception and cast it to a known custom exception object
            */
           
-          log.error("An error occurred while executing request: " + getHttpMethod().getRequestLine().getUri(), e);
+          log.error("An error occurred while executing request: " + getHttpMethod().getRequestLine().getUri());
+          if ( e instanceof LoginException ) {
+            log.error(e.getMessage() );
+          } else {
+            log.error("", e);
+          }
           
           response = new Response( DefaultRequestMethod.this.format, AudioBoxException.GENERIC_ERROR, e.getMessage(), false );
           AudioBoxException responseException = null;

@@ -16,8 +16,14 @@ public class Fixtures {
     public static final String USERNAME = "username";
     public static final String WRONG_PASS = "wrong_pass";
     public static final String REAL_NAME = "real_name";
-    public static final String SCAN_FOLDER = "scan_folder";
-    public static final String TEST_FILE = "test_file";
+    public static final String CUSTOM_PLAYLIST_NAME = "custom_playlist_name";
+    public static final String SMART_PLAYLIST_NAME = "smart_playlist_name";
+    public static final String FILE_TO_UPLOAD = "file_to_upload";
+    public static final String ARTIST_NAME = "artist_name";
+    public static final String TRACK_TITLE = "track_title";
+    public static final String GENRE_NAME = "genre_name";
+    public static final String ALBUM_NAME = "album_name";
+    public static final String TOKEN_LYRICS = "token_lyrics";
     
     private static Properties ps = new Properties();
     
