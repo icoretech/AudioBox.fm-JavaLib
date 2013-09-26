@@ -47,7 +47,6 @@ import fm.audiobox.core.parsers.DownloadHandler;
 import fm.audiobox.core.parsers.UploadHandler;
 import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector;
-import fm.audiobox.interfaces.IConfiguration.ContentFormat;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
 import fm.audiobox.interfaces.IResponseHandler;
