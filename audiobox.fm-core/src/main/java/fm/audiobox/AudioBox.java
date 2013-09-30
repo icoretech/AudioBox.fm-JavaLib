@@ -386,12 +386,12 @@ public class AudioBox extends Observable {
         method = new HttpGet(url);
       }
 
-      log.debug("[ " + httpVerb + " ] " + url);
+      log.trace("[ " + httpVerb + " ] " + url);
 
       if ( log.isDebugEnabled() ) {
-        log.debug("Setting default headers");
-        log.debug("-> Accept-Encoding: gzip");
-        log.debug("-> User-Agent: " + getConfiguration().getUserAgent() );
+        log.trace("Setting default headers");
+        log.trace("-> Accept-Encoding: gzip");
+        log.trace("-> User-Agent: " + getConfiguration().getUserAgent());
       }
 
       if ( getConfiguration().getEnvironment() == IConfiguration.Environments.live ){
