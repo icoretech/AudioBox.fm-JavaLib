@@ -370,19 +370,19 @@ public class AudioBox extends Observable {
       HttpRequestBase method = null;
 
       if ( IConnectionMethod.METHOD_POST.equals( httpVerb ) ) {
-        log.debug("Building HttpMethod POST");
+        log.trace("Building HttpMethod POST");
         method = new HttpPost(url);
       } else if ( IConnectionMethod.METHOD_PUT.equals( httpVerb ) ) {
-        log.debug("Building HttpMethod PUT");
+        log.trace("Building HttpMethod PUT");
         method = new HttpPut(url);
       } else if ( IConnectionMethod.METHOD_DELETE.equals( httpVerb ) ) {
-        log.debug("Building HttpMethod DELETE");
+        log.trace("Building HttpMethod DELETE");
         method = new HttpDelete(url);
       } else if ( IConnectionMethod.METHOD_HEAD.equals( httpVerb ) ) {
-        log.debug("Building HttpMethod HEAD");
+        log.trace("Building HttpMethod HEAD");
         method = new HttpHead(url);
       } else {
-        log.debug("Building HttpMethod GET");
+        log.trace("Building HttpMethod GET");
         method = new HttpGet(url);
       }
 
