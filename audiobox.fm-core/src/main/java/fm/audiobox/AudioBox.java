@@ -386,7 +386,7 @@ public class AudioBox extends Observable {
         method = new HttpGet(url);
       }
 
-      log.info( "[ " + httpVerb + " ] " + url );
+      log.debug("[ " + httpVerb + " ] " + url);
 
       if ( log.isDebugEnabled() ) {
         log.debug("Setting default headers");
@@ -575,7 +575,7 @@ public class AudioBox extends Observable {
               HeaderElement[] codecs = ceheader.getElements();
               for (int i = 0; i < codecs.length; i++) {
                 if (codecs[i].getName().equalsIgnoreCase("gzip")) {
-                  log.info("Response is gzipped");
+                  log.trace("Response is gzipped");
 
                   response.setEntity(new HttpEntityWrapper(entity){
                     private GZIPInputStream stream = null;
