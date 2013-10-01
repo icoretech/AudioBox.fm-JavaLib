@@ -63,7 +63,7 @@ public class MediaFile extends AbstractEntity implements Serializable {
   public static final String NAMESPACE = MediaFiles.TAGNAME;
   public static final String TAGNAME = "media_file";
   
-  public static final String X_MD5_FILE_HEADER = "x-md5-file";
+  public static final String X_MD5_FILE_HEADER = "x-uploading-md5";
   
   protected static final String ORIGINAL_FILE_NAME = "original_file_name";
 
