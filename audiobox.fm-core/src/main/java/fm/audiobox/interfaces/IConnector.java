@@ -34,6 +34,7 @@ import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.protocol.HttpContext;
 
 import fm.audiobox.configurations.Response;
 import fm.audiobox.core.exceptions.LoginException;
@@ -55,8 +56,7 @@ public interface IConnector {
   
   public static final int DEFAULT_CHUNK = 1024 * 256;
   
-  
-  
+
   /**
    * Builds {@link HttpMethodBase} using HEAD method and passing parameters
    * 
@@ -163,6 +163,7 @@ public interface IConnector {
     public static final String HTTP_HEADER_ETAG = "ETag";
     public static final String HTTP_HEADER_IF_NONE_MATCH = "If-None-Match";
     
+    public HttpContext getRequestContext();
     
     /**
      * Initializes an {@link IConnectionMethod} object with given values.

@@ -57,6 +57,7 @@ import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.entity.HttpEntityWrapper;
 import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
@@ -340,6 +341,7 @@ public class AudioBox extends Observable {
     public void setTimeout(int timeout) {
       log.info("Setting timeout parameter to: " + timeout);
       HttpConnectionParams.setConnectionTimeout( mClient.getParams() , timeout);
+      HttpConnectionParams.setSoTimeout(mClient.getParams() , timeout);
     }
 
 
@@ -536,11 +538,12 @@ public class AudioBox extends Observable {
       HttpConnectionParams.setConnectionTimeout(params, 30 * 1000);
       HttpConnectionParams.setSoTimeout(params, 30 * 1000);
       
-
       ConnManagerParams.setMaxConnectionsPerRoute(params, new ConnPerRouteBean(50));
 
       this.mCm = new ThreadSafeClientConnManager(params, schemeRegistry);
       this.mClient = new DefaultHttpClient( this.mCm, params );
+      
+      this.mClient.setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler(0, false) );
       
       this.mClient.setKeepAliveStrategy(new DefaultConnectionKeepAliveStrategy() {
         public long getKeepAliveDuration(HttpResponse response, HttpContext context) {

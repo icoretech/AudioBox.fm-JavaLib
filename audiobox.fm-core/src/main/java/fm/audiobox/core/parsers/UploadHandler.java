@@ -6,12 +6,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.protocol.ExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fm.audiobox.configurations.MimeTypes;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.interfaces.IConnector;
+import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 
 
 /**
@@ -22,7 +24,8 @@ public class UploadHandler extends FileBody {
   private static final Logger log = LoggerFactory.getLogger( UploadHandler.class );
   private int chunk = IConnector.DEFAULT_CHUNK;
   
-
+  protected volatile transient IConnectionMethod req = null;
+  
   public UploadHandler(File file) {
     super( file, MimeTypes.getMime( file )  );
   }
@@ -33,14 +36,25 @@ public class UploadHandler extends FileBody {
   }
   
   
+  public void setRequestMethod(IConnectionMethod r) {
+    this.req = r;
+  }
+  
   public void writeTo(OutputStream out) throws IOException {
     InputStream in = this.getInputStream();
-    
+
     byte[] buf = new byte[ this.chunk ];
-    int len = 0;
+    int len = 0, step = 0;
     try {
       boolean canUpload = true;
       while( canUpload && (len = in.read(buf) ) > 0 ){
+        
+        if ( step++ < 2 ) {
+          boolean hasResponse = ((org.apache.http.HttpClientConnection)this.req.getRequestContext().getAttribute(ExecutionContext.HTTP_CONNECTION)).isResponseAvailable(2000);
+          if ( hasResponse ){
+            break;
+          }
+        }
         canUpload = this.write(out, buf, len );
         if ( !canUpload ) {
           log.warn("Upload has been interrupted");

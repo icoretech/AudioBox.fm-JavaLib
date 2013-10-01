@@ -25,6 +25,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
+import org.apache.http.protocol.HttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,6 +59,8 @@ public class DefaultRequestMethod extends Observable implements IConnectionMetho
   private volatile transient boolean running = false;
   private volatile transient boolean aborted = false;
   private volatile transient IAuthenticationHandle authenticationHandle;
+  
+  private volatile transient HttpContext requestContext;
 
   public DefaultRequestMethod(){
     super();
@@ -72,6 +75,10 @@ public class DefaultRequestMethod extends Observable implements IConnectionMetho
     this.format = format;
   }
 
+  
+  public HttpContext getRequestContext() {
+    return this.requestContext;
+  }
   
   public void setUser( User user ){
     this.user = user;
@@ -148,14 +155,16 @@ public class DefaultRequestMethod extends Observable implements IConnectionMetho
           DefaultRequestMethod.this.running = true;
           DefaultRequestMethod.this.aborted = false;
           
+          
           String ecode = "";
           if ( isGET() && configuration.isCacheEnabled() ) {
             String url = getHttpMethod().getRequestLine().getUri();
             ecode = DefaultRequestMethod.this.configuration.getCacheManager().setup(destEntity, url, DefaultRequestMethod.this);
           }
           
+          DefaultRequestMethod.this.requestContext = new BasicHttpContext();
           
-          return connector.execute( getHttpMethod(), new ResponseParser( DefaultRequestMethod.this.configuration, DefaultRequestMethod.this, responseHandler, ecode), new BasicHttpContext() );
+          return connector.execute( getHttpMethod(), new ResponseParser( DefaultRequestMethod.this.configuration, DefaultRequestMethod.this, responseHandler, ecode), DefaultRequestMethod.this.requestContext );
 
         } catch (ClientProtocolException e) {
           

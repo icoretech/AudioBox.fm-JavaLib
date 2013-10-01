@@ -13,6 +13,7 @@ import fm.audiobox.configurations.DefaultResponseDeserializer;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.MediaFile;
 import fm.audiobox.interfaces.IConnector;
+import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 import fm.audiobox.interfaces.IEntity;
 
 
@@ -25,6 +26,8 @@ public class DownloadHandler extends DefaultResponseDeserializer {
   
   protected FileOutputStream fileOutput;
   private int chunk = IConnector.DEFAULT_CHUNK;
+  
+  protected volatile transient IConnectionMethod req = null;
   
   public DownloadHandler(File file, int chunk) {
     try {
@@ -41,7 +44,10 @@ public class DownloadHandler extends DefaultResponseDeserializer {
     this.chunk = chunk;
   }
   
-  
+
+  public void setRequestMethod(IConnectionMethod r) {
+    this.req = r;
+  }
   /**
    * This method is used for downloading a binary {@code InputStream} and store it into
    * a {@link FileOutputStream}

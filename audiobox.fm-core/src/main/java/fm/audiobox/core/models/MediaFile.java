@@ -1010,15 +1010,19 @@ public class MediaFile extends AbstractEntity implements Serializable {
     }
 
     
-    if ( this.hash != null ) {
-      IConnectionMethod request = this.getConnector(IConfiguration.Connectors.NODE).head(this, path, null, null, null);
-      request.addHeader(X_MD5_FILE_HEADER, this.hash);
-      Response r = request.send(false);
-      if ( ! r.isOK() ) {
-        throw new ServiceException( r.getStatus(), r.getBody() );
-      }
-    }
+//    if ( this.hash != null ) {
+//      IConnectionMethod request = this.getConnector(IConfiguration.Connectors.NODE).head(this, path, null, null, null);
+//      request.addHeader(X_MD5_FILE_HEADER, this.hash);
+//      Response r = request.send(false);
+//      if ( ! r.isOK() ) {
+//        throw new ServiceException( r.getStatus(), r.getBody() );
+//      }
+//    }
     IConnectionMethod request = this.getConnector(IConfiguration.Connectors.NODE).post(this, path, null, null);
+    if ( this.hash != null ) {
+      request.addHeader(X_MD5_FILE_HEADER, this.hash);
+    }
+    uploadHandler.setRequestMethod( request );
     request.send(async, entity);
     return request;
   }
@@ -1054,6 +1058,8 @@ public class MediaFile extends AbstractEntity implements Serializable {
       String action = this.getFilename();
 
       IConnectionMethod request = this.getConnector(IConfiguration.Connectors.NODE).get(this, path, action, null, null);
+      
+      downloadHandler.setRequestMethod( request );
       request.send(async, null, downloadHandler);
       return request;
 
