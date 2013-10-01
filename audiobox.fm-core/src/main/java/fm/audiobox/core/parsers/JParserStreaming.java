@@ -108,7 +108,7 @@ public class JParserStreaming {
           if ( reader.peek() != JsonToken.NULL ) {
             log.warn("Property has been skipped by the parser: " + prop);
           } else {
-            log.debug("Property " + prop + " is null, so not set");
+            log.trace("Property " + prop + " is null, so not set");
           }
           reader.skipValue();
         }

@@ -75,9 +75,9 @@ public class ResponseParser implements ResponseHandler<Response> {
     String url = this.method.getHttpMethod().getURI().toString();
     
     if ( log.isDebugEnabled() ) {
-      log.debug("Response code: " + responseCode + " for " + url );
+      log.trace("Response code: " + responseCode + " for " + url);
     } else {
-      log.info( "Response code: " + responseCode );
+      log.trace("Response code: " + responseCode);
     }
 
     // No response found. Build a new Response

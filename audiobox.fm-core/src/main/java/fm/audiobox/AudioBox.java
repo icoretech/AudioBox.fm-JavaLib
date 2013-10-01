@@ -370,28 +370,28 @@ public class AudioBox extends Observable {
       HttpRequestBase method = null;
 
       if ( IConnectionMethod.METHOD_POST.equals( httpVerb ) ) {
-        log.debug("Building HttpMethod POST");
+        log.trace("Building HttpMethod POST");
         method = new HttpPost(url);
       } else if ( IConnectionMethod.METHOD_PUT.equals( httpVerb ) ) {
-        log.debug("Building HttpMethod PUT");
+        log.trace("Building HttpMethod PUT");
         method = new HttpPut(url);
       } else if ( IConnectionMethod.METHOD_DELETE.equals( httpVerb ) ) {
-        log.debug("Building HttpMethod DELETE");
+        log.trace("Building HttpMethod DELETE");
         method = new HttpDelete(url);
       } else if ( IConnectionMethod.METHOD_HEAD.equals( httpVerb ) ) {
-        log.debug("Building HttpMethod HEAD");
+        log.trace("Building HttpMethod HEAD");
         method = new HttpHead(url);
       } else {
-        log.debug("Building HttpMethod GET");
+        log.trace("Building HttpMethod GET");
         method = new HttpGet(url);
       }
 
-      log.info( "[ " + httpVerb + " ] " + url );
+      log.trace("[ " + httpVerb + " ] " + url);
 
       if ( log.isDebugEnabled() ) {
-        log.debug("Setting default headers");
-        log.debug("-> Accept-Encoding: gzip");
-        log.debug("-> User-Agent: " + getConfiguration().getUserAgent() );
+        log.trace("Setting default headers");
+        log.trace("-> Accept-Encoding: gzip");
+        log.trace("-> User-Agent: " + getConfiguration().getUserAgent());
       }
 
       if ( getConfiguration().getEnvironment() == IConfiguration.Environments.live ){
@@ -575,7 +575,7 @@ public class AudioBox extends Observable {
               HeaderElement[] codecs = ceheader.getElements();
               for (int i = 0; i < codecs.length; i++) {
                 if (codecs[i].getName().equalsIgnoreCase("gzip")) {
-                  log.info("Response is gzipped");
+                  log.trace("Response is gzipped");
 
                   response.setEntity(new HttpEntityWrapper(entity){
                     private GZIPInputStream stream = null;

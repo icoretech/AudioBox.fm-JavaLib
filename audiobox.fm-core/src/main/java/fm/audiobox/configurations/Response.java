@@ -66,7 +66,7 @@ public final class Response implements Serializable {
     this.status = status;
     if ( stream == null ) {
       stream = new ByteArrayInputStream( ("no response body").getBytes() );
-      log.info("No response body, it's empty");
+      log.debug("No response body, it's empty");
     }
     if ( this.useCache ) {
       this.stream = new InternalInputStream( stream );
@@ -286,7 +286,7 @@ public final class Response implements Serializable {
         this.rowBody.append( new String(cbuf, offset, read) );
         
       } else if ( ! (this.in instanceof ByteArrayInputStream) ) {
-        log.debug("Response stream is terminated, convert it into ByteArrayStream");
+        log.trace("Response stream is terminated, convert it into ByteArrayStream");
         this.in = new ByteArrayInputStream( this.rowBody.toString().getBytes() );
       }
       
@@ -306,7 +306,7 @@ public final class Response implements Serializable {
     }
     
     protected void switchInputStream() {
-      log.info("Force to switch input stream");
+      log.debug("Force to switch input stream");
       this.in = new ByteArrayInputStream( this.rowBody.toString().getBytes() );
     }
 
