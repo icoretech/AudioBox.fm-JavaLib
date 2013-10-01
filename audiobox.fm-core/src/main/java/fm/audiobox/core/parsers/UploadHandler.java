@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.protocol.ExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,17 +43,10 @@ public class UploadHandler extends FileBody {
     InputStream in = this.getInputStream();
 
     byte[] buf = new byte[ this.chunk ];
-    int len = 0, step = 0;
+    int len = 0;
     try {
       boolean canUpload = true;
       while( canUpload && (len = in.read(buf) ) > 0 ){
-        
-        if ( step++ < 2 ) {
-          boolean hasResponse = ((org.apache.http.HttpClientConnection)this.req.getRequestContext().getAttribute(ExecutionContext.HTTP_CONNECTION)).isResponseAvailable(2000);
-          if ( hasResponse ){
-            break;
-          }
-        }
         canUpload = this.write(out, buf, len );
         if ( !canUpload ) {
           log.warn("Upload has been interrupted");
