@@ -531,7 +531,7 @@ public class AudioBox extends Observable {
       schemeRegistry.register( new Scheme("https", SSLSocketFactory.getSocketFactory(), 443 ));
 
       HttpParams params = new BasicHttpParams();
-      params.setParameter("http.protocol.-charset", "UTF-8");
+      params.setParameter("http.protocol.content-charset", "UTF-8");
 
       HttpConnectionParams.setConnectionTimeout(params, 30 * 1000);
       HttpConnectionParams.setSoTimeout(params, 30 * 1000);
