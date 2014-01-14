@@ -128,6 +128,14 @@ public interface IConfiguration {
   
   public void setAuthenticationHandle(IAuthenticationHandle handle);
   
+  
+  /**
+   * Get/Set class for handling the retry request process
+   */
+  public IRetryRequestHandle getRetryRequestHandle();
+  
+  public void setRetryRequestHandle(IRetryRequestHandle handle);
+  
 
   /**
    * Sets the application name sent to server as "User-Agent" request header

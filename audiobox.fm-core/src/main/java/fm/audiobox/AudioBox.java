@@ -57,7 +57,6 @@ import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.entity.HttpEntityWrapper;
 import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
@@ -543,7 +542,7 @@ public class AudioBox extends Observable {
       this.mCm = new ThreadSafeClientConnManager(params, schemeRegistry);
       this.mClient = new DefaultHttpClient( this.mCm, params );
       
-      this.mClient.setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler(0, false) );
+      this.mClient.setHttpRequestRetryHandler( getConfiguration().getRetryRequestHandle() );
       
       this.mClient.setKeepAliveStrategy(new DefaultConnectionKeepAliveStrategy() {
         public long getKeepAliveDuration(HttpResponse response, HttpContext context) {

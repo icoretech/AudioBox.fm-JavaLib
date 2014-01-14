@@ -163,6 +163,7 @@ public class DefaultRequestMethod extends Observable implements IConnectionMetho
           }
           
           DefaultRequestMethod.this.requestContext = new BasicHttpContext();
+          requestContext.setAttribute(IConnectionMethod.class.getName(), DefaultRequestMethod.this);
           
           return connector.execute( getHttpMethod(), new ResponseParser( DefaultRequestMethod.this.configuration, DefaultRequestMethod.this, responseHandler, ecode), DefaultRequestMethod.this.requestContext );
 

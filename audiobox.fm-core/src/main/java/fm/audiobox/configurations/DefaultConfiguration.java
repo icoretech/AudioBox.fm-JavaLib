@@ -19,6 +19,7 @@ import fm.audiobox.interfaces.IFactory;
 import fm.audiobox.interfaces.ILoginExceptionHandler;
 import fm.audiobox.interfaces.IRequestHandler;
 import fm.audiobox.interfaces.IResponseHandler;
+import fm.audiobox.interfaces.IRetryRequestHandle;
 import fm.audiobox.interfaces.IServiceExceptionHandler;
 
 
@@ -65,7 +66,8 @@ public class DefaultConfiguration implements IConfiguration {
   protected ExecutorService executor;
   private ICacheManager cacheManager;
   private IAuthenticationHandle authenticationHandle = new DefaultAuthenticationHandle();
-
+  private IRetryRequestHandle retryHandle = new DefaultRetryRequestHandle(0, false);
+  
   private String mUserAgent;
   private IConfiguration.Environments environment = IConfiguration.Environments.live;
   
@@ -232,6 +234,16 @@ public class DefaultConfiguration implements IConfiguration {
   public void setAuthenticationHandle(IAuthenticationHandle handle){
     this.authenticationHandle = handle;
   }
+  
+  
+  public IRetryRequestHandle getRetryRequestHandle() {
+    return this.retryHandle;
+  }
+  
+  public void setRetryRequestHandle(IRetryRequestHandle handle){
+    this.retryHandle = handle;
+  }
+  
   
   @Override
   public IFactory getFactory() {
