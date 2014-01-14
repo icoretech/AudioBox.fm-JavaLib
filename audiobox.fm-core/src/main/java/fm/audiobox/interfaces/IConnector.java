@@ -24,6 +24,7 @@ package fm.audiobox.interfaces;
 
 import java.util.List;
 
+import fm.audiobox.core.exceptions.ForbiddenException;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
@@ -245,7 +246,7 @@ public interface IConnector {
      * @throws LoginException if any unauthorized exception occurs
      * 
      */
-    public Response send(boolean async) throws ServiceException, LoginException;
+    public Response send(boolean async) throws ServiceException, LoginException, ForbiddenException;
     
     
     /**
@@ -260,7 +261,7 @@ public interface IConnector {
      * @throws ServiceException if any exception remote exception occurs
      * @throws LoginException if any unauthorized exception occurs
      */
-    public Response send(boolean async, List<NameValuePair> params) throws ServiceException, LoginException;
+    public Response send(boolean async, List<NameValuePair> params) throws ServiceException, LoginException, ForbiddenException;
     
     
     /**
@@ -275,7 +276,7 @@ public interface IConnector {
      * @throws ServiceException if any exception remote exception occurs
      * @throws LoginException if any unauthorized exception occurs
      */
-    public Response send(boolean async, HttpEntity params) throws ServiceException, LoginException;
+    public Response send(boolean async, HttpEntity params) throws ServiceException, LoginException, ForbiddenException;
     
     
     /**
@@ -292,7 +293,7 @@ public interface IConnector {
      * @throws LoginException if any unauthorized exception occurs
      * 
      */
-    public Response send(boolean async, HttpEntity entity, IResponseHandler responseHandler) throws ServiceException, LoginException;
+    public Response send(boolean async, HttpEntity entity, IResponseHandler responseHandler) throws ServiceException, LoginException, ForbiddenException;
     
 
     /**
@@ -303,7 +304,7 @@ public interface IConnector {
      * @throws ServiceException if any exception remote exception occurs
      * @throws LoginException if any unauthorized exception occurs
      */
-    public Response getResponse() throws ServiceException, LoginException;
+    public Response getResponse() throws ServiceException, LoginException, ForbiddenException;
     
     
     /**

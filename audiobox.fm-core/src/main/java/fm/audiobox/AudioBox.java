@@ -32,6 +32,7 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.zip.GZIPInputStream;
 
+import fm.audiobox.core.exceptions.ForbiddenException;
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
@@ -190,7 +191,7 @@ public class AudioBox extends Observable {
    * @throws LoginException identifies invalid credentials or user cannot be logged in due to subscription error.
    * @throws ServiceException if any connection problem occurs.
    */
-  public User login(final String username, final String password, boolean async) throws LoginException, ServiceException {
+  public User login(final String username, final String password, boolean async) throws LoginException, ServiceException, ForbiddenException {
     log.info("Executing login for user: " + username);
 
     // Destroy old user's pointer
@@ -222,7 +223,7 @@ public class AudioBox extends Observable {
    * 
    * @return the {@link User} instance if everything went ok
    */
-  public User login(String username, String password) throws LoginException, ServiceException {
+  public User login(String username, String password) throws LoginException, ServiceException, ForbiddenException {
     return this.login( username, password, false);
   }
 
@@ -353,10 +354,7 @@ public class AudioBox extends Observable {
      * Creates a HttpRequestBase
      *
      * @param httpVerb the HTTP method to use for the request (ie: GET, PUT, POST and DELETE)
-     * @param source usually reffers the Model that invokes method
-     * @param dest Model that intercepts the response
      * @param action the remote action to execute on the model that executes the action (ex. "scrobble")
-     * @param entity HttpEntity used by POST and PUT method
      *
      * @return the HttpRequestBase
      */

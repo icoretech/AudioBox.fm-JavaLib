@@ -9,6 +9,7 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import fm.audiobox.core.exceptions.ForbiddenException;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
@@ -108,11 +109,11 @@ public class DefaultRequestMethod extends Observable implements IConnectionMetho
     this.addHeader( header.getName(), header.getValue() );
   }
 
-  public Response send(boolean async) throws ServiceException, LoginException {
+  public Response send(boolean async) throws ServiceException, LoginException, ForbiddenException {
     return send(async, null,null);
   }
 
-  public Response send(boolean async, List<NameValuePair> params) throws ServiceException, LoginException {
+  public Response send(boolean async, List<NameValuePair> params) throws ServiceException, LoginException, ForbiddenException {
     HttpEntity entity = null;
     if (  (! isGET() && ! isDELETE() )  && params != null ){
       
@@ -134,12 +135,12 @@ public class DefaultRequestMethod extends Observable implements IConnectionMetho
   }
 
 
-  public Response send(boolean async, HttpEntity params) throws ServiceException, LoginException {
+  public Response send(boolean async, HttpEntity params) throws ServiceException, LoginException, ForbiddenException {
     return send(async, params, null);
   }
 
 
-  public synchronized Response send(boolean async, HttpEntity params, final IResponseHandler responseHandler) throws ServiceException, LoginException {
+  public synchronized Response send(boolean async, HttpEntity params, final IResponseHandler responseHandler) throws ServiceException, LoginException, ForbiddenException {
     if (   ( ! isGET() && ! isDELETE() )  && params != null ){
       ((HttpEntityEnclosingRequestBase) getHttpMethod() ).setEntity( params );
     }
@@ -232,7 +233,7 @@ public class DefaultRequestMethod extends Observable implements IConnectionMetho
     return async ? null : this.getResponse();
   }
 
-  public Response getResponse()  throws ServiceException, LoginException {
+  public Response getResponse()  throws ServiceException, LoginException, ForbiddenException {
     try {
       Response response = this.futureResponse.get();
       
@@ -248,6 +249,10 @@ public class DefaultRequestMethod extends Observable implements IConnectionMetho
           
           if ( ex instanceof LoginException ){
             throw (LoginException) ex;
+
+          } else if (ex instanceof ForbiddenException) {
+            throw (ForbiddenException) ex;
+
           } else {
             throw (ServiceException) ex;
           }

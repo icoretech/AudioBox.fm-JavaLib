@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import fm.audiobox.core.exceptions.ForbiddenException;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
@@ -219,7 +220,7 @@ public class Playlist extends AbstractEntity implements Serializable {
    * 
    * @return {@code true} if everything went ok. {@code false} if not
    */
-  public boolean clearContent() throws ServiceException, LoginException {
+  public boolean clearContent() throws ServiceException, LoginException, ForbiddenException {
 
     List<NameValuePair> params = new ArrayList<NameValuePair>();
     params.add(new BasicNameValuePair("confirm", "YES"));
@@ -242,7 +243,7 @@ public class Playlist extends AbstractEntity implements Serializable {
    * @throws LoginException
    *           if any authentication problem occurs.
    */
-  public MediaFiles getMediaFilesHashesMap(boolean async) throws ServiceException, LoginException {
+  public MediaFiles getMediaFilesHashesMap(boolean async) throws ServiceException, LoginException, ForbiddenException {
     if ( MediaFile.Source.cloud.toString().equals(this.getSystemName()) || MediaFile.Source.local.toString().equals(this.getSystemName()) ) {
 
       MediaFiles mediaFiles = (MediaFiles) getConfiguration().getFactory().getEntity(MediaFiles.TAGNAME, getConfiguration());
@@ -500,7 +501,7 @@ public class Playlist extends AbstractEntity implements Serializable {
    * @throws ServiceException if any connection error occurs
    * @throws LoginException if any login error occurs
    */
-  public boolean toggleVisible() throws ServiceException, LoginException {
+  public boolean toggleVisible() throws ServiceException, LoginException, ForbiddenException {
     
     String path = IConnector.URI_SEPARATOR + Playlists.NAMESPACE + IConnector.URI_SEPARATOR + this.getToken();
     
@@ -530,7 +531,7 @@ public class Playlist extends AbstractEntity implements Serializable {
    * @throws ServiceException if any connection error occurs
    * @throws LoginException if any login error occurs
    */
-  public boolean sync() throws ServiceException, LoginException {
+  public boolean sync() throws ServiceException, LoginException, ForbiddenException {
     if ( !this.isDrive() ) {
       throw new ServiceException("Only drives can be sync");
     }
@@ -554,7 +555,7 @@ public class Playlist extends AbstractEntity implements Serializable {
    * @throws ServiceException if any connection error occurrs
    * @throws LoginException if any login error occurrs
    */
-  public boolean destroy() throws ServiceException, LoginException {
+  public boolean destroy() throws ServiceException, LoginException, ForbiddenException {
     if ( this.getToken() == null || "".equals(this.getToken()) ) {
       // playlists has not token
       return false;
@@ -593,7 +594,7 @@ public class Playlist extends AbstractEntity implements Serializable {
    * @throws LoginException
    *           if any login error occurrs
    */
-  public boolean addMediaFiles(List<MediaFile> mediaFiles) throws ServiceException, LoginException {
+  public boolean addMediaFiles(List<MediaFile> mediaFiles) throws ServiceException, LoginException, ForbiddenException {
     return this.addMediaFiles(mediaFiles, false);
   }
   
@@ -612,7 +613,7 @@ public class Playlist extends AbstractEntity implements Serializable {
    * @throws LoginException
    *           if any login error occurrs
    */
-  public boolean addMediaFiles(List<MediaFile> mediaFiles, boolean addToMedia) throws ServiceException, LoginException {
+  public boolean addMediaFiles(List<MediaFile> mediaFiles, boolean addToMedia) throws ServiceException, LoginException, ForbiddenException {
 
     if ( this.getToken() == null || "".equals(this.getToken()) ) {
       // playlists has not token
@@ -665,7 +666,7 @@ public class Playlist extends AbstractEntity implements Serializable {
    * @throws LoginException
    *           if any login error occurrs
    */
-  public boolean removeMediaFiles(List<MediaFile> mediaFiles) throws ServiceException, LoginException {
+  public boolean removeMediaFiles(List<MediaFile> mediaFiles) throws ServiceException, LoginException, ForbiddenException {
 
     if ( this.getToken() == null || "".equals(this.getToken()) ) {
       // playlists has not token
@@ -700,12 +701,12 @@ public class Playlist extends AbstractEntity implements Serializable {
   }
 
 
-  public IConnectionMethod load(boolean async) throws ServiceException, LoginException {
+  public IConnectionMethod load(boolean async) throws ServiceException, LoginException, ForbiddenException {
     return this.load(false, null);
   }
 
 
-  public IConnectionMethod load(boolean async, IResponseHandler responseHandler) throws ServiceException, LoginException {
+  public IConnectionMethod load(boolean async, IResponseHandler responseHandler) throws ServiceException, LoginException, ForbiddenException {
     IConnectionMethod request = getConnector(IConfiguration.Connectors.RAILS).get(this, null, null);
     request.send(async, null, responseHandler);
     return request;

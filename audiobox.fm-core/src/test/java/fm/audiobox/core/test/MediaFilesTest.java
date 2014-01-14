@@ -1,5 +1,6 @@
 package fm.audiobox.core.test;
 
+import fm.audiobox.core.exceptions.ForbiddenException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,8 +33,10 @@ public class MediaFilesTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     Playlist pl = pls.getPlaylistByType( Playlists.Type.CloudPlaylist );
     MediaFiles mfs = null;
     try {
@@ -42,8 +45,10 @@ public class MediaFilesTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     assertNotNull( mfs );
     assertTrue( mfs.size() > 0 );
   }
@@ -60,8 +65,10 @@ public class MediaFilesTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     Playlist pl = pls.getPlaylistByType( Playlists.Type.CloudPlaylist );
     
     MediaFiles mediaFiles = pl.getMediaFiles();
@@ -75,8 +82,10 @@ public class MediaFilesTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     assertEquals( mediaFiles.size(), pl.getMediaFilesCount() );
     assertTrue( mediaFiles.size() > 0 );
     
@@ -96,8 +105,10 @@ public class MediaFilesTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     for( MediaFile mf : mfs ) {
       assertSame( mf.getType(), MediaFiles.Type.AudioFile );
       assertNotNull( mf.getToken()  );
@@ -135,8 +146,10 @@ public class MediaFilesTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     String proto = abx.getConfiguration().getProtocol( IConfiguration.Connectors.NODE );
     String host = abx.getConfiguration().getHost( IConfiguration.Connectors.NODE );
     int port = abx.getConfiguration().getPort( IConfiguration.Connectors.NODE );
@@ -152,8 +165,10 @@ public class MediaFilesTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     assertNotNull(       mf.getType()                  );
     assertNotNull(       mf.getToken()                  );
     assertNotNull(       mf.getArtist()                  );
@@ -195,8 +210,10 @@ public class MediaFilesTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
   }
   
   
@@ -214,8 +231,10 @@ public class MediaFilesTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     MediaFile mf = mfs.get(0);
     
     String ip;
@@ -226,6 +245,8 @@ public class MediaFilesTest extends AbxTestCase {
       log.info("Stream url for daemon: " + url);
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
   }
   
@@ -240,8 +261,10 @@ public class MediaFilesTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     Playlist pl = pls.getPlaylistByType( Playlists.Type.CloudPlaylist );
     
     MediaFiles mediaFiles = pl.getMediaFiles();
@@ -252,9 +275,11 @@ public class MediaFilesTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
-    
+
+
     MediaFile mf = mediaFiles.get( Fixtures.get( Fixtures.TOKEN_LYRICS ) );
     assertNotNull( mf );
     
@@ -269,9 +294,11 @@ public class MediaFilesTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
-    
+
+
   }
   
   
@@ -286,8 +313,10 @@ public class MediaFilesTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     Playlist pl = pls.getPlaylistByType( Playlists.Type.CloudPlaylist );
     
     MediaFiles mediaFiles = pl.getMediaFiles();
@@ -298,8 +327,10 @@ public class MediaFilesTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     MediaFile mf = mediaFiles.get( Fixtures.get( Fixtures.TOKEN_LYRICS ) );
     assertNotNull( mf );
     
@@ -311,8 +342,10 @@ public class MediaFilesTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     assertTrue( mf.isLoved() );
     
   }
@@ -328,8 +361,10 @@ public class MediaFilesTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     Playlist pl = pls.getPlaylistByType( Playlists.Type.CloudPlaylist );
     
     MediaFiles mediaFiles = pl.getMediaFiles();
@@ -340,8 +375,10 @@ public class MediaFilesTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     MediaFile mf = mediaFiles.get( Fixtures.get( Fixtures.TOKEN_LYRICS ) );
     assertNotNull( mf );
     
@@ -353,8 +390,10 @@ public class MediaFilesTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     assertFalse( mf.isLoved() );
     
   }
@@ -371,8 +410,10 @@ public class MediaFilesTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     Playlist pl = pls.getPlaylistByType( Playlists.Type.CloudPlaylist );
     
     MediaFiles mediaFiles = pl.getMediaFiles();
@@ -383,9 +424,11 @@ public class MediaFilesTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
-    
+
+
     MediaFile mf = mediaFiles.get( Fixtures.get( Fixtures.TOKEN_LYRICS ) );
     assertNotNull( mf );
     
@@ -398,8 +441,10 @@ public class MediaFilesTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
   }
   
   
@@ -414,8 +459,10 @@ public class MediaFilesTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     Playlist pl = pls.getOfflinePlaylist();
     
     MediaFiles mfs = pl.getMediaFiles();
@@ -426,8 +473,10 @@ public class MediaFilesTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     assertTrue( mfs.size() > 0 );
     
   }

@@ -1,5 +1,6 @@
 package fm.audiobox.core.test;
 
+import fm.audiobox.core.exceptions.ForbiddenException;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,7 +27,7 @@ public class CacheTest extends AbxTestCase {
 
 
   @Test
-  public void timingManagement() throws ServiceException, LoginException {
+  public void timingManagement() throws ServiceException, LoginException, ForbiddenException {
     
     Playlists pls = user.getPlaylists();
     pls.load(false);

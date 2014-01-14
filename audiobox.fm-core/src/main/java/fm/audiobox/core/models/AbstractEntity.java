@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.concurrent.ConcurrentHashMap;
 
+import fm.audiobox.core.exceptions.ForbiddenException;
 import org.apache.http.NameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -166,7 +167,7 @@ public abstract class AbstractEntity extends Observable implements IEntity {
    * This method invokes {@link AbstractEntity#load(boolean, IResponseHandler)}
    * passing {@code false} as {@code async} switch
    */
-  public abstract IConnectionMethod load(boolean async)  throws ServiceException, LoginException;
+  public abstract IConnectionMethod load(boolean async)  throws ServiceException, LoginException, ForbiddenException;
   
   /**
    * Executes request populating this class.
@@ -188,7 +189,7 @@ public abstract class AbstractEntity extends Observable implements IEntity {
    * @throws ServiceException if any connection error occurrs
    * @throws LoginException if any login error occurrs
    */
-  public abstract IConnectionMethod load(boolean async, IResponseHandler responseHandler)  throws ServiceException, LoginException;
+  public abstract IConnectionMethod load(boolean async, IResponseHandler responseHandler)  throws ServiceException, LoginException, ForbiddenException;
   
   
   public void startLoading() {

@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import fm.audiobox.core.exceptions.ForbiddenException;
 import org.apache.http.NameValuePair;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.StringBody;
@@ -809,11 +810,11 @@ public class MediaFile extends AbstractEntity implements Serializable {
     return this.getParent().getApiPath() + IConnector.URI_SEPARATOR + this.getToken();
   }
 
-  public IConnectionMethod load(boolean async) throws ServiceException, LoginException {
+  public IConnectionMethod load(boolean async) throws ServiceException, LoginException, ForbiddenException {
     return this.load(false, null);
   }
 
-  public IConnectionMethod load(boolean async, IResponseHandler responseHandler) throws ServiceException, LoginException {
+  public IConnectionMethod load(boolean async, IResponseHandler responseHandler) throws ServiceException, LoginException, ForbiddenException {
     IConnectionMethod request = getConnector(IConfiguration.Connectors.RAILS).get(this, IConnector.URI_SEPARATOR + MediaFiles.NAMESPACE, this.getToken(), null);
     request.send(async, null, responseHandler);
     return request;
@@ -822,7 +823,7 @@ public class MediaFile extends AbstractEntity implements Serializable {
   
   
   
-  public void notifyNowPlaying() throws ServiceException, LoginException {
+  public void notifyNowPlaying() throws ServiceException, LoginException, ForbiddenException {
     // return IConnector.URI_SEPARATOR + Actions.stream + IConnector.URI_SEPARATOR + this.getFilename();
     IConnectionMethod request = getConnector(IConfiguration.Connectors.RAILS).head(this, IConnector.URI_SEPARATOR + Actions.stream, this.getToken(), null);
     request.send(false);
@@ -837,7 +838,7 @@ public class MediaFile extends AbstractEntity implements Serializable {
    * @throws ServiceException if any connection error occurs
    * @throws LoginException if any login error occurs
    */
-  public String lyrics(boolean async) throws ServiceException, LoginException {
+  public String lyrics(boolean async) throws ServiceException, LoginException, ForbiddenException {
     String path = IConnector.URI_SEPARATOR + MediaFiles.NAMESPACE + IConnector.URI_SEPARATOR  + this.getToken();
     IConnectionMethod request = getConnector(IConfiguration.Connectors.RAILS).get(this, path, Actions.lyrics.toString(), null);
     request.send(async);
@@ -855,7 +856,7 @@ public class MediaFile extends AbstractEntity implements Serializable {
    * @throws ServiceException if any connection error occurs
    * @throws LoginException if any login error occurs
    */
-  public boolean love() throws ServiceException, LoginException {
+  public boolean love() throws ServiceException, LoginException, ForbiddenException {
     String path = IConnector.URI_SEPARATOR + MediaFiles.NAMESPACE + IConnector.URI_SEPARATOR  + this.getToken();
     IConnectionMethod request = getConnector(IConfiguration.Connectors.RAILS).post(this, path, Actions.love.toString());
     request.send(false);
@@ -882,7 +883,7 @@ public class MediaFile extends AbstractEntity implements Serializable {
    * @throws ServiceException if any connection error occurs
    * @throws LoginException if any login error occurs
    */
-  public boolean unlove() throws ServiceException, LoginException {
+  public boolean unlove() throws ServiceException, LoginException, ForbiddenException {
     String path = IConnector.URI_SEPARATOR + MediaFiles.NAMESPACE + IConnector.URI_SEPARATOR + this.getToken();
     IConnectionMethod request = getConnector(IConfiguration.Connectors.RAILS).post(this, path, Actions.unlove.toString());
     request.send(false);
@@ -906,7 +907,7 @@ public class MediaFile extends AbstractEntity implements Serializable {
    * @throws ServiceException if any connection error occurs
    * @throws LoginException if any login error occurs
    */
-  public boolean scrobble() throws ServiceException, LoginException {
+  public boolean scrobble() throws ServiceException, LoginException, ForbiddenException {
     String path = IConnector.URI_SEPARATOR + MediaFiles.NAMESPACE + IConnector.URI_SEPARATOR  + this.getToken();
     IConnectionMethod request = getConnector(IConfiguration.Connectors.RAILS).post(this, path, Actions.scrobble.toString());
     request.send(false);
@@ -924,7 +925,7 @@ public class MediaFile extends AbstractEntity implements Serializable {
    * @throws ServiceException if any connection error occurs
    * @throws LoginException if any login error occurs
    */
-  public boolean destroy() throws ServiceException, LoginException {
+  public boolean destroy() throws ServiceException, LoginException, ForbiddenException {
 
     if ( this.getToken() == null || "".equals(this.getToken()) ) {
       return false;
@@ -947,7 +948,7 @@ public class MediaFile extends AbstractEntity implements Serializable {
    * @throws ServiceException if any connection error occurrs
    * @throws LoginException if any login error occurrs
    */
-  public boolean update() throws ServiceException, LoginException {
+  public boolean update() throws ServiceException, LoginException, ForbiddenException {
     String namespace = IConnector.URI_SEPARATOR + MediaFiles.NAMESPACE;
     String action = this.getToken();
 
@@ -968,7 +969,7 @@ public class MediaFile extends AbstractEntity implements Serializable {
   /**
    * See {@link MediaFile#upload(boolean, UploadHandler, boolean)}
    */
-  public IConnectionMethod upload(boolean async, UploadHandler uploadHandler) throws ServiceException, LoginException {
+  public IConnectionMethod upload(boolean async, UploadHandler uploadHandler) throws ServiceException, LoginException, ForbiddenException {
     return this.upload(async, uploadHandler, false);
   }
 
@@ -983,7 +984,7 @@ public class MediaFile extends AbstractEntity implements Serializable {
    * @throws ServiceException if any connection error occurrs
    * @throws LoginException if any login error occurrs
    */
-  public IConnectionMethod upload(boolean async, UploadHandler uploadHandler, boolean customFields) throws ServiceException, LoginException {
+  public IConnectionMethod upload(boolean async, UploadHandler uploadHandler, boolean customFields) throws ServiceException, LoginException, ForbiddenException {
     String path = IConnector.URI_SEPARATOR.concat(Actions.upload.toString());
 
     MultipartEntity entity = new MultipartEntity();
@@ -1027,7 +1028,7 @@ public class MediaFile extends AbstractEntity implements Serializable {
   /**
    * See {@link MediaFile#download(boolean, DownloadHandler)}
    */
-  public IConnectionMethod download(boolean async, File file) throws ServiceException, LoginException {
+  public IConnectionMethod download(boolean async, File file) throws ServiceException, LoginException, ForbiddenException {
     if (file != null) {
 
       return download(async, new DownloadHandler(file, IConnector.DEFAULT_CHUNK));
@@ -1046,7 +1047,7 @@ public class MediaFile extends AbstractEntity implements Serializable {
    * @throws ServiceException if any connection error occurrs
    * @throws LoginException if any login error occurrs
    */
-  public IConnectionMethod download(boolean async, DownloadHandler downloadHandler) throws ServiceException, LoginException {
+  public IConnectionMethod download(boolean async, DownloadHandler downloadHandler) throws ServiceException, LoginException, ForbiddenException {
 
     if (downloadHandler != null) {
       // In this case we are using 'path' for the action
@@ -1079,7 +1080,7 @@ public class MediaFile extends AbstractEntity implements Serializable {
    * @throws ServiceException if any connection error occurrs
    * @throws LoginException if any login error occurrs
    */
-  public boolean notifyAsLocal(File file) throws ServiceException, LoginException {
+  public boolean notifyAsLocal(File file) throws ServiceException, LoginException, ForbiddenException {
     String path = IConnector.URI_SEPARATOR.concat(Actions.local.toString());
     String action = Actions.upload.toString();
     

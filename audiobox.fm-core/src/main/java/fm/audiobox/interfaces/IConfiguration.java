@@ -27,6 +27,7 @@ import java.util.concurrent.ExecutorService;
 import fm.audiobox.AudioBox;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
+import fm.audiobox.core.exceptions.ForbiddenException;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
 
 /**
@@ -250,6 +251,21 @@ public interface IConfiguration {
    * @return the {@link IServiceExceptionHandler}
    */
   public IServiceExceptionHandler getDefaultServiceExceptionHandler();
+
+
+
+  /**
+   * Sets the default handler for {@link ForbiddenException}
+   * @param handler the {@link IForbiddenExceptionHandler} instance
+   */
+  public void setDefaultForbiddenExceptionHandler(IForbiddenExceptionHandler handler);
+
+
+  /**
+   * Returns the default handler for {@link ForbiddenException}
+   * @return the {@link IForbiddenExceptionHandler}
+   */
+  public IForbiddenExceptionHandler getDefaultForbiddenExceptionHandler();
 
   /**
    * Sets the connection method class used for connection

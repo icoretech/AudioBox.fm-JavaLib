@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import fm.audiobox.core.exceptions.ForbiddenException;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
@@ -111,7 +112,7 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
   }
 
   
-  public IConnectionMethod load(boolean async, IResponseHandler responseHandler) throws ServiceException, LoginException {
+  public IConnectionMethod load(boolean async, IResponseHandler responseHandler) throws ServiceException, LoginException, ForbiddenException {
     this.clear();
     IConnectionMethod request = null;
     request = getConnector(IConfiguration.Connectors.RAILS).get(this, this.getParent().getApiPath(), NAMESPACE, null);
@@ -131,7 +132,7 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
    * @throws ServiceException if any connection error occurs
    * @throws LoginException if any login error occurs
    */
-  public IConnectionMethod load(boolean async, IResponseHandler responseHandler, long since) throws ServiceException, LoginException {
+  public IConnectionMethod load(boolean async, IResponseHandler responseHandler, long since) throws ServiceException, LoginException, ForbiddenException {
     this.clear();
 
     List<NameValuePair> params = new ArrayList<NameValuePair>();
@@ -152,7 +153,7 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
    * @throws ServiceException if any connection error occurs
    * @throws LoginException if any login error occurs
    */
-  public boolean removeFromPlaylist(List<MediaFile> mediaFiles) throws ServiceException, LoginException {
+  public boolean removeFromPlaylist(List<MediaFile> mediaFiles) throws ServiceException, LoginException, ForbiddenException {
 
     if ( mediaFiles == null || mediaFiles.size() == 0 )
       return false;
@@ -181,7 +182,7 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
    * @throws ServiceException if any connection error occurs
    * @throws LoginException if any login error occurs
    */
-  public boolean destroy(List<MediaFile> mediaFiles) throws ServiceException, LoginException {
+  public boolean destroy(List<MediaFile> mediaFiles) throws ServiceException, LoginException, ForbiddenException {
 
     if ( mediaFiles == null || mediaFiles.size() == 0 )
       return false;
@@ -214,7 +215,7 @@ public class MediaFiles extends AbstractCollectionEntity<MediaFile> implements S
    * @throws ServiceException if any connection error occurs
    * @throws LoginException if any login error occurs
    */
-  public boolean destroyAll() throws ServiceException, LoginException {
+  public boolean destroyAll() throws ServiceException, LoginException, ForbiddenException {
     return this.destroy( this.subList(0, this.size() ) );
   }
 

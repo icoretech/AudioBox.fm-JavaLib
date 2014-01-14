@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import fm.audiobox.core.exceptions.ForbiddenException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -45,8 +46,10 @@ public class PlaylistsTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     assertFalse( pls.size() == 0 );
     assertEquals( user.getPlaylistsCount(), pls.size() );
   }
@@ -61,8 +64,10 @@ public class PlaylistsTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     for (Playlist pl : pls) {
       assertNotNull( pl );
       assertNotNull( pl.getName() );
@@ -124,8 +129,10 @@ public class PlaylistsTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     assertEquals( number_event, pls.size() + 3 );
   }
   
@@ -142,8 +149,10 @@ public class PlaylistsTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     Playlist pl = pls.getPlaylistByType(Playlists.Type.DropboxPlaylist);
     boolean curr_visible = pl.isVisible();
     try {
@@ -157,8 +166,10 @@ public class PlaylistsTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
   }
   
   
@@ -173,8 +184,10 @@ public class PlaylistsTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     Playlist pl = pls.getPlaylistByType(Playlists.Type.DropboxPlaylist);
     
     try {
@@ -183,8 +196,10 @@ public class PlaylistsTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
   }
   
   
@@ -198,8 +213,10 @@ public class PlaylistsTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     Playlist pl = pls.getPlaylistByType(Playlists.Type.DropboxPlaylist);
     boolean curr_visible = pl.isVisible();
     if ( !curr_visible ) {
@@ -214,6 +231,8 @@ public class PlaylistsTest extends AbxTestCase {
         fail( e.getMessage() );
       } catch (LoginException e) {
         fail( e.getMessage() );
+      } catch (ForbiddenException e) {
+        fail(e.getMessage());
       }
     }
   }
@@ -231,8 +250,10 @@ public class PlaylistsTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      e.printStackTrace();
     }
-    
+
   }
   
   
@@ -247,8 +268,10 @@ public class PlaylistsTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     int plsCount = pls.size();
     
     
@@ -259,16 +282,20 @@ public class PlaylistsTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     try {
       pls.load(false);
     } catch (ServiceException e) {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     Playlist pl = pls.getPlaylistByName( Fixtures.get( Fixtures.CUSTOM_PLAYLIST_NAME ) );
     assertNotNull( pl );
     assertTrue( pl.isCustom() );
@@ -290,8 +317,10 @@ public class PlaylistsTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     Playlist pl = pls.getPlaylistByName( Fixtures.get( Fixtures.CUSTOM_PLAYLIST_NAME ) );
     Playlist cloud = pls.getPlaylistByType( Playlists.Type.CloudPlaylist );
     
@@ -305,8 +334,10 @@ public class PlaylistsTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     long original_size = pl.getMediaFilesCount();
     List<MediaFile> sublist = cloud.getMediaFiles().subList(0, 2);
     
@@ -317,9 +348,11 @@ public class PlaylistsTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
-    
+
+
     assertEquals( original_size + sublist.size(), pl.getMediaFilesCount());
     
     try {
@@ -328,8 +361,10 @@ public class PlaylistsTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     assertEquals( original_size + sublist.size(), pl.getMediaFiles().size() );
     
   }
@@ -349,8 +384,10 @@ public class PlaylistsTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     Playlist pl = pls.getPlaylistByName( Fixtures.get( Fixtures.CUSTOM_PLAYLIST_NAME ) );
     
     assertNotNull( pl );
@@ -361,8 +398,10 @@ public class PlaylistsTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     number_event = 0;
     pl.getMediaFiles().addObserver(new Observer() {
       public void update(Observable obj, Object evt) {
@@ -384,9 +423,11 @@ public class PlaylistsTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
-    
+
+
     assertEquals( original_size - sublist_size, pl.getMediaFilesCount());
     
     assertTrue( event_fired );
@@ -398,8 +439,10 @@ public class PlaylistsTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     assertEquals( original_size - sublist_size, pl.getMediaFiles().size() );
     
   }
@@ -415,8 +458,10 @@ public class PlaylistsTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     Playlist pl = pls.getPlaylistByName( Fixtures.get( Fixtures.CUSTOM_PLAYLIST_NAME ) );
     assertNotNull( pl );
     
@@ -437,8 +482,10 @@ public class PlaylistsTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     assertTrue( event_fired );
     assertEquals( number_event, 1 );
     

@@ -2,6 +2,7 @@ package fm.audiobox.core.parsers;
 
 import java.io.IOException;
 
+import fm.audiobox.core.exceptions.ForbiddenException;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -137,10 +138,12 @@ public class ResponseParser implements ResponseHandler<Response> {
         break;
   
       case HttpStatus.SC_PAYMENT_REQUIRED:
-        throw new LoginException(responseCode, "Unauthorized user plan", method.getRequestContext());
+        throw new ForbiddenException(responseCode, "Unauthorized user plan", true);
+
+      case HttpStatus.SC_FORBIDDEN:
+        throw new ForbiddenException(responseCode, response.getBody());
   
       case HttpStatus.SC_UNAUTHORIZED:
-      case HttpStatus.SC_FORBIDDEN:
         throw new LoginException(responseCode, response.getBody(), method.getRequestContext());
   
       default:

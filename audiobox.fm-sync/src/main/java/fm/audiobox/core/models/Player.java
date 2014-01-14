@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import fm.audiobox.core.exceptions.ForbiddenException;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
@@ -117,7 +118,7 @@ public class Player extends AbstractEntity {
 
   
   
-  public boolean play(MediaFile mediafile) throws ServiceException, LoginException {
+  public boolean play(MediaFile mediafile) throws ServiceException, LoginException, ForbiddenException {
     
     List<NameValuePair> params = new ArrayList<NameValuePair>();
     params.add(new BasicNameValuePair( MEDIA_TOKEN_PARAMETER, mediafile.getToken() ) );
@@ -125,35 +126,35 @@ public class Player extends AbstractEntity {
     return executeAction(Actions.play, params);
   }
   
-  public boolean pause() throws ServiceException, LoginException {
+  public boolean pause() throws ServiceException, LoginException, ForbiddenException {
     return executeAction(Actions.pause, null);
   }
   
-  public boolean togglePlay() throws ServiceException, LoginException {
+  public boolean togglePlay() throws ServiceException, LoginException, ForbiddenException {
     return executeAction(Actions.toggle_play, null);
   }
 
-  public boolean next() throws ServiceException, LoginException {
+  public boolean next() throws ServiceException, LoginException, ForbiddenException {
     return executeAction(Actions.next, null);
   }
   
-  public boolean prev() throws ServiceException, LoginException {
+  public boolean prev() throws ServiceException, LoginException, ForbiddenException {
     return executeAction(Actions.prev, null);
   }
   
-  public boolean stop() throws ServiceException, LoginException {
+  public boolean stop() throws ServiceException, LoginException, ForbiddenException {
     return executeAction(Actions.stop, null);
   }
   
-  public boolean toggleShuffle() throws ServiceException, LoginException {
+  public boolean toggleShuffle() throws ServiceException, LoginException, ForbiddenException {
     return executeAction(Actions.toggle_shuffle, null);
   }
   
-  public boolean toggleRepeat() throws ServiceException, LoginException {
+  public boolean toggleRepeat() throws ServiceException, LoginException, ForbiddenException {
     return executeAction(Actions.toggle_repeat, null);
   }
   
-  public boolean showInfo(MediaFile mediafile) throws ServiceException, LoginException {
+  public boolean showInfo(MediaFile mediafile) throws ServiceException, LoginException, ForbiddenException {
     
     List<NameValuePair> params = new ArrayList<NameValuePair>();
     params.add(new BasicNameValuePair( MEDIA_TOKEN_PARAMETER, mediafile.getToken() ) );
@@ -161,13 +162,13 @@ public class Player extends AbstractEntity {
     return executeAction(Actions.show_info, params);
   }
   
-  public boolean switchPlaylist(Playlist playlist) throws ServiceException, LoginException {
+  public boolean switchPlaylist(Playlist playlist) throws ServiceException, LoginException, ForbiddenException {
     List<NameValuePair> params = new ArrayList<NameValuePair>();
     params.add(new BasicNameValuePair( PLAYLIST_TOKEN_PARAMETER, playlist.getToken() ) );
     return executeAction(Actions.playlist_switch, params);
   }
   
-  public boolean switchAndPlay(Playlist playlist, MediaFile mediafile) throws ServiceException, LoginException {
+  public boolean switchAndPlay(Playlist playlist, MediaFile mediafile) throws ServiceException, LoginException, ForbiddenException {
     List<NameValuePair> params = new ArrayList<NameValuePair>();
     
     params.add(new BasicNameValuePair( PLAYLIST_TOKEN_PARAMETER, playlist.getToken() ) );
@@ -176,7 +177,7 @@ public class Player extends AbstractEntity {
     return executeAction(Actions.switch_and_play, params);
   }
   
-  private boolean executeAction(Player.Actions action, List<NameValuePair> params) throws ServiceException, LoginException {
+  private boolean executeAction(Player.Actions action, List<NameValuePair> params) throws ServiceException, LoginException, ForbiddenException {
     
     IConnectionMethod request = this.getConnector(IConfiguration.Connectors.RAILS).get(this, IConnector.URI_SEPARATOR + NAMESPACE, action.toString(), params);
     

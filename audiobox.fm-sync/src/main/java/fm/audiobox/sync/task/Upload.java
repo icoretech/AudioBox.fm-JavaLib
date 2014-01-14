@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import fm.audiobox.core.exceptions.ForbiddenException;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.MediaFile;
@@ -53,18 +54,20 @@ public class Upload extends JobTask {
   public synchronized Object doTask() {
 
     try {
-      this.media.upload( false, new UploadHandler(this.mFile) {
+      this.media.upload(false, new UploadHandler(this.mFile) {
         public synchronized boolean write(OutputStream out, byte[] buffer, int length) throws IOException {
-          out.write( buffer, 0, length );
-          return ! Upload.this.isCancelled();
+          out.write(buffer, 0, length);
+          return !Upload.this.isCancelled();
         }
       });
     } catch (LoginException e) {
       this.log.error("Login error", e);
     } catch (ServiceException e) {
       this.log.error("Error occurred while uploading", e);
+    } catch (ForbiddenException e) {
+      this.log.error("Error occurred while uploading", e);
     }
-    
+
     return null;
 
   }

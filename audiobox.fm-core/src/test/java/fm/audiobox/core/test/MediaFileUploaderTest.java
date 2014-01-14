@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Observable;
 import java.util.Observer;
 
+import fm.audiobox.core.exceptions.ForbiddenException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -42,9 +43,11 @@ public class MediaFileUploaderTest extends AbxTestCase {
       fail(e.getMessage());
     } catch (LoginException e) {
       fail(e.getMessage());
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
-    
+
+
     MediaFile mf = user.newMediaFile();
     
     assertNull( mf.getToken() );
@@ -60,8 +63,10 @@ public class MediaFileUploaderTest extends AbxTestCase {
       fail(e.getMessage());
     } catch (LoginException e) {
       fail(e.getMessage());
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     try {
       pls.load(false);
       Playlist pl = pls.getPlaylistByType( Playlists.Type.CloudPlaylist );
@@ -70,8 +75,10 @@ public class MediaFileUploaderTest extends AbxTestCase {
       fail(e.getMessage());
     } catch (LoginException e) {
       fail(e.getMessage());
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
   }
   
   
@@ -86,8 +93,10 @@ public class MediaFileUploaderTest extends AbxTestCase {
       fail(e.getMessage());
     } catch (LoginException e) {
       fail(e.getMessage());
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     assertEquals( mf.getTitle(), "My Custom Title");
   }
   
@@ -104,6 +113,8 @@ public class MediaFileUploaderTest extends AbxTestCase {
         fail(e.getMessage());
       } catch (LoginException e) {
         fail(e.getMessage());
+      } catch (ForbiddenException e) {
+        fail(e.getMessage());
       }
     }
     MediaFiles mfs = pl.getMediaFiles();
@@ -113,9 +124,11 @@ public class MediaFileUploaderTest extends AbxTestCase {
       fail(e.getMessage());
     } catch (LoginException e) {
       fail(e.getMessage());
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
-    
+
+
     MediaFile mf = mfs.get( lastTokenMedia );
     
     assertNotNull( mf );
@@ -126,8 +139,10 @@ public class MediaFileUploaderTest extends AbxTestCase {
       fail(e.getMessage() );
     } catch (LoginException e) {
       fail(e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     mfs.addObserver(new Observer() {
       public void update(Observable _mfs, Object evt) {
         Event event = (Event) evt;
@@ -144,8 +159,10 @@ public class MediaFileUploaderTest extends AbxTestCase {
       fail(e.getMessage() );
     } catch (LoginException e) {
       fail(e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
   }
   
 

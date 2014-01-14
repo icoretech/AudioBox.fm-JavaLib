@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import fm.audiobox.core.exceptions.ForbiddenException;
 import org.apache.http.NameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -200,7 +201,7 @@ public class Playlists extends AbstractCollectionEntity<Playlist> implements Ser
   }
   
   
-  public void syncAll() throws ServiceException, LoginException {
+  public void syncAll() throws ServiceException, LoginException, ForbiddenException {
     
     IConnectionMethod request = this.getConnector(IConfiguration.Connectors.RAILS).put(this, "sync_all");
     request.send(false);

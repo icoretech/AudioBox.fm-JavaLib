@@ -1,5 +1,6 @@
 package fm.audiobox.sync.test;
 
+import fm.audiobox.core.exceptions.ForbiddenException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,8 +41,10 @@ public class RemotePlayerTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     Playlist pl = pls.getPlaylistByType( Playlists.Type.CloudPlaylist );
     
     try {
@@ -50,8 +53,10 @@ public class RemotePlayerTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     try {
       Thread.sleep( 3000 );
     } catch (InterruptedException e) {
@@ -73,8 +78,10 @@ public class RemotePlayerTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     Playlist pl = pls.getPlaylistByType( Playlists.Type.CloudPlaylist );
     
     MediaFiles mediaFiles = pl.getMediaFiles();
@@ -88,9 +95,11 @@ public class RemotePlayerTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
-    
+
+
     MediaFile mf = mediaFiles.get(3);
     
     try {
@@ -99,8 +108,10 @@ public class RemotePlayerTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     try {
       Thread.sleep( 3000 );
     } catch (InterruptedException e) {
@@ -118,8 +129,10 @@ public class RemotePlayerTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     try {
       Thread.sleep( 3000 );
     } catch (InterruptedException e) {
@@ -138,8 +151,10 @@ public class RemotePlayerTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     try {
       Thread.sleep( 3000 );
     } catch (InterruptedException e) {
@@ -159,8 +174,10 @@ public class RemotePlayerTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     Playlist pl = pls.getPlaylistByType( Playlists.Type.SkydrivePlaylist );
     
     try {
@@ -169,9 +186,11 @@ public class RemotePlayerTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
-    
+
+
     try {
       Thread.sleep( 3000 );
     } catch (InterruptedException e) {
@@ -191,8 +210,10 @@ public class RemotePlayerTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     Playlist pl = pls.getPlaylistByType( Playlists.Type.CloudPlaylist );
     
     MediaFiles mediaFiles = pl.getMediaFiles();
@@ -206,9 +227,11 @@ public class RemotePlayerTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
-    
+
+
     MediaFile mf = mediaFiles.get(1);
     
     try {
@@ -217,9 +240,11 @@ public class RemotePlayerTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
-    
+
+
     try {
       Thread.sleep( 3000 );
     } catch (InterruptedException e) {
@@ -240,8 +265,10 @@ public class RemotePlayerTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     Playlist pl = pls.getPlaylistByType( Playlists.Type.CloudPlaylist );
     
     MediaFiles mediaFiles = pl.getMediaFiles();
@@ -255,9 +282,11 @@ public class RemotePlayerTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
-    
+
+
     MediaFile mf = mediaFiles.get(2);
     
     try {
@@ -266,8 +295,10 @@ public class RemotePlayerTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     try {
       Thread.sleep( 3000 );
     } catch (InterruptedException e) {
@@ -287,8 +318,10 @@ public class RemotePlayerTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     try {
       Thread.sleep( 3000 );
     } catch (InterruptedException e) {
@@ -305,8 +338,10 @@ public class RemotePlayerTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     try {
       Thread.sleep( 3000 );
     } catch (InterruptedException e) {
@@ -324,8 +359,10 @@ public class RemotePlayerTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     try {
       Thread.sleep( 3000 );
     } catch (InterruptedException e) {
@@ -344,8 +381,10 @@ public class RemotePlayerTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     try {
       Thread.sleep( 3000 );
     } catch (InterruptedException e) {

@@ -1,5 +1,6 @@
 package fm.audiobox.core.test;
 
+import fm.audiobox.core.exceptions.ForbiddenException;
 import org.junit.Test;
 
 import fm.audiobox.core.exceptions.LoginException;
@@ -42,10 +43,11 @@ public class ExtendableClasses extends AbxTestCase {
       assertNull(e);
     } catch (LoginException e) {
       assertNull(e);
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
-    
-    
+
+
   }
 
 }

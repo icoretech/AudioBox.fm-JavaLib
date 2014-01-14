@@ -10,6 +10,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Observable;
 
+import fm.audiobox.core.exceptions.ForbiddenException;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.observables.Event;
@@ -174,12 +175,12 @@ public abstract class AbstractCollectionEntity<E> extends AbstractEntity impleme
   
 
   
-  public IConnectionMethod load(boolean async) throws ServiceException, LoginException {
+  public IConnectionMethod load(boolean async) throws ServiceException, LoginException, ForbiddenException {
     return this.load(async, null);
   }
   
   
-  public IConnectionMethod load(boolean async, IResponseHandler responseHandler) throws ServiceException, LoginException {
+  public IConnectionMethod load(boolean async, IResponseHandler responseHandler) throws ServiceException, LoginException, ForbiddenException {
     this.clear();
     IConnectionMethod request = getConnector(IConfiguration.Connectors.RAILS).get(this, null, null);
     request.send(async, null, responseHandler);

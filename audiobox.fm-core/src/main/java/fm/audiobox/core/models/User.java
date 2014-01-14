@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import fm.audiobox.core.exceptions.ForbiddenException;
 import org.apache.http.NameValuePair;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.impl.auth.BasicScheme;
@@ -579,7 +580,7 @@ public final class User extends AbstractEntity implements Serializable {
    * @throws ServiceException if any connection error occurrs
    * @throws LoginException if any login error occurrs
    */
-  public Playlist createPlaylist(String name)  throws ServiceException, LoginException {
+  public Playlist createPlaylist(String name)  throws ServiceException, LoginException, ForbiddenException {
     Playlist playlist = (Playlist) getConfiguration().getFactory().getEntity( Playlist.TAGNAME, getConfiguration() );
     String action = IConnector.URI_SEPARATOR + Playlists.NAMESPACE;
 
@@ -606,7 +607,7 @@ public final class User extends AbstractEntity implements Serializable {
    * @return {@code true} if AudioBox Desktop application is active on any computer. {@code false} if not
    * @throws LoginException if any login error occurrs
    */
-  public boolean isDaemonRunning() throws LoginException {
+  public boolean isDaemonRunning() throws LoginException, ForbiddenException {
     String remoteIp = this.remoteDaemonIp();
     return remoteIp != null && ! "".equals(remoteIp);
   }
@@ -618,7 +619,7 @@ public final class User extends AbstractEntity implements Serializable {
    * @return the {@code remote ip address}
    * @throws LoginException if any login error occurrs
    */
-  public String remoteDaemonIp() throws LoginException {
+  public String remoteDaemonIp() throws LoginException, ForbiddenException {
     IConnectionMethod req = this.getConfiguration().getFactory().getConnector().get(this, IConnector.URI_SEPARATOR.concat("daemon"), "keepalive", null);
     
     Response res;
@@ -648,7 +649,7 @@ public final class User extends AbstractEntity implements Serializable {
   /**
    * This method invokes {@link User#load(boolean)}
    */
-  public void load() throws ServiceException, LoginException {
+  public void load() throws ServiceException, LoginException, ForbiddenException {
     this.load(false);
   }
 
@@ -705,7 +706,7 @@ public final class User extends AbstractEntity implements Serializable {
   }
 
   
-  public IConnectionMethod load(boolean async) throws ServiceException, LoginException {
+  public IConnectionMethod load(boolean async) throws ServiceException, LoginException, ForbiddenException {
     return this.load(async, null);
   }
 
@@ -718,7 +719,7 @@ public final class User extends AbstractEntity implements Serializable {
    * <b><i>Use {@link AudioBox#login(String, String)} method instead</i></b>
    */
   @Deprecated
-  public IConnectionMethod load(boolean async, IResponseHandler responseHandler) throws ServiceException, LoginException {
+  public IConnectionMethod load(boolean async, IResponseHandler responseHandler) throws ServiceException, LoginException, ForbiddenException {
     IConnectionMethod req = this.getConfiguration().getFactory().getConnector().get(this, null, null);
 
     if ( this.getUsername() != null && this.getPassword() != null ) {

@@ -3,6 +3,7 @@ package fm.audiobox.core.test;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import fm.audiobox.core.exceptions.ForbiddenException;
 import org.junit.Test;
 
 import fm.audiobox.core.exceptions.LoginException;
@@ -39,6 +40,8 @@ public class AuthenticationTest extends AbxTestCase {
       fail(e.getMessage());
     } catch (ServiceException e) {
       fail(e.getMessage());
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
     assertNotNull(user);
     
@@ -67,6 +70,8 @@ public class AuthenticationTest extends AbxTestCase {
     } catch (LoginException e) {
       fail(e.getMessage());
     } catch (ServiceException e) {
+      fail(e.getMessage());
+    } catch (ForbiddenException e) {
       fail(e.getMessage());
     }
     assertNotNull(user);

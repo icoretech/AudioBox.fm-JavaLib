@@ -3,6 +3,7 @@ package fm.audiobox.core.test;
 import java.util.Observable;
 import java.util.Observer;
 
+import fm.audiobox.core.exceptions.ForbiddenException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -43,8 +44,10 @@ public class ThreadedTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     assertTrue( pls.size() == 0 );
   }
   
@@ -62,8 +65,10 @@ public class ThreadedTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
-    
+
     assertTrue( pls.size() == 0 );
     
     Response res =  null;
@@ -73,6 +78,8 @@ public class ThreadedTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
+    } catch (ForbiddenException e) {
+      fail(e.getMessage());
     }
     assertTrue( res.isOK() );
     
