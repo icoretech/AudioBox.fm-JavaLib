@@ -15,23 +15,29 @@ import fm.audiobox.interfaces.IRetryRequestHandle;
  */
 public class DefaultRetryRequestHandle extends DefaultHttpRequestRetryHandler implements IRetryRequestHandle {
 
-  
+
   public DefaultRetryRequestHandle(int count, boolean retry) {
     super(count, retry);
   }
-  
+
   public boolean retryRequest(IOException exception, int executionCount, HttpContext context) {
-    boolean result = super.retryRequest(exception, executionCount, context);
-    if ( ! result && exception instanceof AudioBoxException ) {
+    boolean result = false;
+
+    if ( exception instanceof AudioBoxException ) {
       IConnectionMethod req = (IConnectionMethod) context.getAttribute( IConnectionMethod.class.getName() );
       result = this.handle((AudioBoxException) exception, req, executionCount);
     }
+
+    if (!result) {
+      result = super.retryRequest(exception, executionCount, context);
+    }
+
     return result;
   }
-  
+
   public boolean handle(AudioBoxException exception, IConnectionMethod request, int executionCount) {
     return false;
   }
-  
+
 
 }

@@ -1,6 +1,7 @@
 package fm.audiobox.core.exceptions;
 
 import fm.audiobox.core.models.User;
+import org.apache.http.protocol.HttpContext;
 
 
 /**
@@ -10,15 +11,26 @@ import fm.audiobox.core.models.User;
 public class LoginException extends AudioBoxException {
   
   private static final long serialVersionUID = 1L;
+
+  private HttpContext ctx;
   
-  public LoginException(int errorCode, String message){
+  public LoginException(int errorCode, String message, HttpContext ctx){
+    this(errorCode, message);
+    this.ctx = ctx;
+  }
+
+  private LoginException(int errorCode, String message){
     super(message);
     this.errorCode = errorCode;
   }
 
-
   public void fireGlobally() {
     this.configuration.getDefaultLoginExceptionHandler().handle( this );
   }
+
+  public HttpContext getContext() {
+    return this.ctx;
+  }
+
   
 }

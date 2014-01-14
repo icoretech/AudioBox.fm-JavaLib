@@ -399,7 +399,7 @@ public class AudioBox extends Observable {
         method.addHeader("Accept-Encoding", "gzip");
       }
       method.addHeader("User-Agent",  getConfiguration().getUserAgent());
-
+      
       return method;
     }
 

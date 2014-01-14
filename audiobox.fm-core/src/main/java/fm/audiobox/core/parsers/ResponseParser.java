@@ -137,11 +137,11 @@ public class ResponseParser implements ResponseHandler<Response> {
         break;
   
       case HttpStatus.SC_PAYMENT_REQUIRED:
-        throw new LoginException(responseCode, "Unauthorized user plan");
+        throw new LoginException(responseCode, "Unauthorized user plan", method.getRequestContext());
   
       case HttpStatus.SC_UNAUTHORIZED:
       case HttpStatus.SC_FORBIDDEN:
-        throw new LoginException(responseCode, response.getBody());
+        throw new LoginException(responseCode, response.getBody(), method.getRequestContext());
   
       default:
         // Assuming we are in case of server error
