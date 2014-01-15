@@ -56,11 +56,11 @@ public class DefaultRequestMethod extends Observable implements IConnectionMetho
   private volatile transient Future<Response> futureResponse;
   private volatile transient IConfiguration.ContentFormat format;
   private volatile transient User user;
-  
+
   private volatile transient boolean running = false;
   private volatile transient boolean aborted = false;
   private volatile transient IAuthenticationHandle authenticationHandle;
-  
+
   private volatile transient HttpContext requestContext;
 
   public DefaultRequestMethod(){
@@ -76,35 +76,35 @@ public class DefaultRequestMethod extends Observable implements IConnectionMetho
     this.format = format;
   }
 
-  
+
   public HttpContext getRequestContext() {
     return this.requestContext;
   }
-  
+
   public void setUser( User user ){
     this.user = user;
   }
-  
+
   public User getUser() {
     return this.user;
   }
-  
+
   public void setAuthenticationHandle(IAuthenticationHandle handle){
     this.authenticationHandle = handle;
   }
-  
+
   public IAuthenticationHandle getAuthenticationHandle() {
     return this.authenticationHandle != null ? this.authenticationHandle : this.configuration.getAuthenticationHandle();
   }
-  
-  
+
+
   public void addHeader(String header, String value) {
     if ( value != null )
       this.method.addHeader(header, value);
     else
       this.method.removeHeaders(header);
   }
-  
+
   public void addHeader(Header header) {
     this.addHeader( header.getName(), header.getValue() );
   }
@@ -116,7 +116,7 @@ public class DefaultRequestMethod extends Observable implements IConnectionMetho
   public Response send(boolean async, List<NameValuePair> params) throws ServiceException, LoginException, ForbiddenException {
     HttpEntity entity = null;
     if (  (! isGET() && ! isDELETE() )  && params != null ){
-      
+
       if ( log.isInfoEnabled() ) {
         StringBuffer sb = new StringBuffer();
         for ( NameValuePair param : params ){
@@ -124,7 +124,7 @@ public class DefaultRequestMethod extends Observable implements IConnectionMetho
         }
         log.info("Params: " + sb.toString() );
       }
-      
+
       try {
         entity = new UrlEncodedFormEntity(params, HTTP.UTF_8);
       } catch (UnsupportedEncodingException e) {
@@ -144,9 +144,9 @@ public class DefaultRequestMethod extends Observable implements IConnectionMetho
     if (   ( ! isGET() && ! isDELETE() )  && params != null ){
       ((HttpEntityEnclosingRequestBase) getHttpMethod() ).setEntity( params );
     }
-    
+
     this.getAuthenticationHandle().handle( this );
-    
+
     Callable<Response> start = new Callable<Response>() {
 
       public Response call() throws ServiceException, LoginException {
@@ -155,80 +155,76 @@ public class DefaultRequestMethod extends Observable implements IConnectionMetho
 
           DefaultRequestMethod.this.running = true;
           DefaultRequestMethod.this.aborted = false;
-          
-          
+
+
           String ecode = "";
           if ( isGET() && configuration.isCacheEnabled() ) {
             String url = getHttpMethod().getRequestLine().getUri();
             ecode = DefaultRequestMethod.this.configuration.getCacheManager().setup(destEntity, url, DefaultRequestMethod.this);
           }
-          
+
           DefaultRequestMethod.this.requestContext = new BasicHttpContext();
           requestContext.setAttribute(IConnectionMethod.class.getName(), DefaultRequestMethod.this);
-          
+
           return connector.execute( getHttpMethod(), new ResponseParser( DefaultRequestMethod.this.configuration, DefaultRequestMethod.this, responseHandler, ecode), DefaultRequestMethod.this.requestContext );
 
         } catch (ClientProtocolException e) {
-          
+
           response = new Response( DefaultRequestMethod.this.format, AudioBoxException.GENERIC_ERROR, e.getMessage(), false );
           log.error("ClientProtocolException thrown while executing request method", e);
           response.setException( new ServiceException(e) );
 
         } catch (IOException e) {
-          
+
           /*
            * An error occurred:
            * we have to catch the exception and cast it to a known custom exception object
            */
-          
+
           log.error("An error occurred while executing request: " + getHttpMethod().getRequestLine().getUri());
-          if ( e instanceof LoginException ) {
-            log.error(e.getMessage() );
-          } else {
-            log.error("", e);
-          }
-          
+          log.error( e.getMessage() );
+
           response = new Response( DefaultRequestMethod.this.format, AudioBoxException.GENERIC_ERROR, e.getMessage(), false );
           AudioBoxException responseException = null;
-          
+
           if ( e instanceof LoginException ) {
             // A login error occurred
-            
+
             LoginException le = (LoginException) e;
             response = new Response( DefaultRequestMethod.this.format, le.getErrorCode(), le.getMessage(), false );
             responseException =  le;
-            
+
           } else {
-            
+
             // Generic error, we should catch the exception and cast it to a ServiceException
-            
+
             if ( e instanceof ServiceException ) {
-              
+
               ServiceException se = (ServiceException) e;
               response = new Response( DefaultRequestMethod.this.format, se.getErrorCode(), se.getMessage(), false );
               responseException =  se;
-              
+
             } else {
               // This is a generic exception
-              
+
               ServiceException se = new ServiceException( e );
               response = new Response( DefaultRequestMethod.this.format, se.getErrorCode(), se.getMessage(), false );
               responseException =  se;
-              
+
             }
-            
+
           }
-          
+
           // Set the exception into Response (this value will be used in getResponse() method)
           response.setException( responseException );
-          
+
         }
         return response;
       }
 
     };
 
-    this.futureResponse = this.configuration.getExecutor().submit( start ); 
+    this.futureResponse = this.configuration.getExecutor().submit( start );
 
     return async ? null : this.getResponse();
   }
@@ -236,17 +232,17 @@ public class DefaultRequestMethod extends Observable implements IConnectionMetho
   public Response getResponse()  throws ServiceException, LoginException, ForbiddenException {
     try {
       Response response = this.futureResponse.get();
-      
+
       this.running = false;
       this.aborted = false;
-      
+
       if ( response != null ) {
         if ( response.getException() != null ) {
           AudioBoxException ex = response.getException();
           ex.setConfiguration( this.configuration );
-          
+
           // try/catch block, in order to correctly throw the exception
-          
+
           if ( ex instanceof LoginException ){
             throw (LoginException) ex;
 
@@ -256,7 +252,7 @@ public class DefaultRequestMethod extends Observable implements IConnectionMetho
           } else {
             throw (ServiceException) ex;
           }
-          
+
         }
         return response;
       }
@@ -270,7 +266,7 @@ public class DefaultRequestMethod extends Observable implements IConnectionMetho
       log.error("An error occurred while executing request: " + getHttpMethod().getRequestLine().getUri(), e);
       throw new ServiceException(AudioBoxException.GENERIC_ERROR, "Execution error: " + e.getMessage() );
     }
-    
+
     // A generic error occurred, throw a generic ServiceException
     throw new ServiceException(HttpStatus.SC_PRECONDITION_FAILED, "No response");
   }
@@ -295,12 +291,12 @@ public class DefaultRequestMethod extends Observable implements IConnectionMetho
   public boolean isRunning() {
     return this.running;
   }
-  
+
   public boolean isAborted() {
     return this.aborted;
   }
-  
-  
+
+
   public boolean isGET() {
     return getHttpMethod().getMethod().equals( HttpGet.METHOD_NAME );
   }

@@ -44,14 +44,14 @@ public class ResponseParser implements ResponseHandler<Response> {
   public ResponseParser(IConfiguration config, IConnectionMethod method) {
     this(config, method, null);
   }
-  
+
   public ResponseParser(IConfiguration config, IConnectionMethod method, IResponseHandler responseHandler) {
     this(config, method, responseHandler, null);
   }
 
   /**
    * Constructor method
-   * 
+   *
    * @param config the {@link IConfiguration} associated with this class
    * @param method the {@link IConnectionMethod} associated with this request
    * @param responseHandler a {@link IResponseHandler} will be use for handling the response body
@@ -74,7 +74,7 @@ public class ResponseParser implements ResponseHandler<Response> {
 
     int responseCode = httpResponse.getStatusLine().getStatusCode();
     String url = this.method.getHttpMethod().getURI().toString();
-    
+
     if ( log.isDebugEnabled() ) {
       log.trace("Response code: " + responseCode + " for " + url);
     } else {
@@ -89,12 +89,12 @@ public class ResponseParser implements ResponseHandler<Response> {
     }
     Header contentType = entity != null ? entity.getContentType() : null;
     boolean
-      isXml = false, 
+      isXml = false,
       isJson = false,
       // Default value is TEXT
       isText = true,
       cacheEnabled = this.configuration.isCacheEnabled();
-    
+
     if (contentType != null){
       isXml = contentType.getValue().contains(ContentFormat.XML.toString().toLowerCase());
       isJson = contentType.getValue().contains(ContentFormat.JSON.toString().toLowerCase());
@@ -107,7 +107,7 @@ public class ResponseParser implements ResponseHandler<Response> {
     Response response = new Response(format, responseCode, entity != null ? entity.getContent() : null, cacheEnabled );
 
     switch ( responseCode ) {
-    
+
       case HttpStatus.SC_NOT_MODIFIED:
         response = this.configuration.getCacheManager().getResponse(destEntity, this.ecode);
         response.setStatus( HttpStatus.SC_NOT_MODIFIED );
@@ -115,7 +115,7 @@ public class ResponseParser implements ResponseHandler<Response> {
       case HttpStatus.SC_CREATED:
       case HttpStatus.SC_OK:
       case HttpStatus.SC_ACCEPTED:
-      
+
         // Try to parse response body
         if ( destEntity != null ) {
           String text = this.responseHandler.deserialize( response.getStream(), destEntity, response.getFormat() );
@@ -123,29 +123,29 @@ public class ResponseParser implements ResponseHandler<Response> {
             response.setBody( text );
           }
         }
-        
+
         if ( responseCode != HttpStatus.SC_NOT_MODIFIED && this.method.isGET() && this.configuration.isCacheEnabled() ) {
           this.configuration.getCacheManager().store(this.destEntity, this.ecode, url, response, httpResponse);
         }
         break;
-  
+
       case HttpStatus.SC_NO_CONTENT:
         response = new Response(response.getFormat(), responseCode, "Ok, no content", cacheEnabled);
         break;
-  
+
       case HttpStatus.SC_SEE_OTHER:
         response = new Response(response.getFormat(), responseCode, httpResponse.getFirstHeader("Location").getValue(), cacheEnabled);
         break;
-  
+
       case HttpStatus.SC_PAYMENT_REQUIRED:
         throw new ForbiddenException(responseCode, "Unauthorized user plan", true);
 
       case HttpStatus.SC_FORBIDDEN:
         throw new ForbiddenException(responseCode, response.getBody());
-  
+
       case HttpStatus.SC_UNAUTHORIZED:
         throw new LoginException(responseCode, response.getBody(), method.getRequestContext());
-  
+
       default:
         // Assuming we are in case of server error
         if (response.getFormat() == ContentFormat.XML || response.getFormat() == ContentFormat.JSON) {
@@ -156,7 +156,7 @@ public class ResponseParser implements ResponseHandler<Response> {
             this.responseHandler.deserializeJson(response.getStream(), error);
           }
           response = new Response(response.getFormat(), response.getStatus(), error.getMessage(), false);
-  
+
         } else {
           // default: do nothing
         }
@@ -170,16 +170,16 @@ public class ResponseParser implements ResponseHandler<Response> {
 
     return response;
   }
-  
-  
-  
+
+
+
   private IResponseHandler getResponseParser(Class<? extends IResponseHandler> klass) {
     try {
       return klass.newInstance();
     } catch (InstantiationException e) {
-      log.error("An error occurred while instantiating IResponseHandler class", e);
+      log.error("An error occurred while instantiating IResponseHandler class: " + e.getMessage());
     } catch (IllegalAccessException e) {
-      log.error("An error occurred while accessing to IResponseHandler class", e);
+      log.error("An error occurred while accessing to IResponseHandler class: " + e.getMessage());
     }
     return null;
   }
