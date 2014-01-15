@@ -194,6 +194,12 @@ public class DefaultRequestMethod extends Observable implements IConnectionMetho
             response = new Response( DefaultRequestMethod.this.format, le.getErrorCode(), le.getMessage(), false );
             responseException =  le;
 
+          } else if ( e instanceof ForbiddenException ) {
+            
+            ForbiddenException fe = (ForbiddenException) e;
+            response = new Response( DefaultRequestMethod.this.format, fe.getErrorCode(), fe.getMessage(), false );
+            responseException =  fe;
+
           } else {
 
             // Generic error, we should catch the exception and cast it to a ServiceException
