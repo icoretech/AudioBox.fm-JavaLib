@@ -1,31 +1,16 @@
 package fm.audiobox.core.exceptions;
 
+import org.apache.http.HttpStatus;
+
 /**
  * Created by keytwo on 15/01/14.
  */
-public class ForbiddenException extends AudioBoxException {
+public class ForbiddenException extends LoginException {
 
   private static final long serialVersionUID = 1L;
 
-  boolean paymentRequired = false;
-
-
-  public ForbiddenException(int errorCode, String message) {
-    super(message);
-    this.errorCode = errorCode;
+  public ForbiddenException(String message) {
+    super(HttpStatus.SC_FORBIDDEN, message);
   }
 
-  public ForbiddenException(int errorCode, String message, boolean isPaymentRequired) {
-    this(errorCode, message);
-    this.paymentRequired = isPaymentRequired;
-  }
-
-  @Override
-  public void fireGlobally() {
-    this.configuration.getDefaultForbiddenExceptionHandler().handle(this);
-  }
-
-  public boolean isPaymentRequired() {
-    return this.paymentRequired;
-  }
 }

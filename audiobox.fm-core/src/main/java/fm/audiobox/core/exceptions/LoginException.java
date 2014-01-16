@@ -1,7 +1,9 @@
 package fm.audiobox.core.exceptions;
 
-import fm.audiobox.core.models.User;
+import org.apache.http.HttpStatus;
 import org.apache.http.protocol.HttpContext;
+
+import fm.audiobox.core.models.User;
 
 
 /**
@@ -12,15 +14,15 @@ public class LoginException extends AudioBoxException {
   
   private static final long serialVersionUID = 1L;
 
-  private HttpContext ctx;
+  private volatile transient HttpContext ctx;
   
   public LoginException(int errorCode, String message, HttpContext ctx){
     this(errorCode, message);
     this.ctx = ctx;
   }
 
-  private LoginException(int errorCode, String message){
-    super(message);
+  public LoginException(int errorCode, String message){
+    super(errorCode, message);
     this.errorCode = errorCode;
   }
 
@@ -32,5 +34,17 @@ public class LoginException extends AudioBoxException {
     return this.ctx;
   }
 
+  
+  public boolean isPaymentError() {
+    return this.getErrorCode() == HttpStatus.SC_PAYMENT_REQUIRED;
+  }
+  
+  public boolean isUserForbidden() {
+    return this.getErrorCode() == HttpStatus.SC_FORBIDDEN;
+  }
+  
+  public boolean isCredentialError() {
+    return this.getErrorCode() == HttpStatus.SC_UNAUTHORIZED;
+  }
   
 }

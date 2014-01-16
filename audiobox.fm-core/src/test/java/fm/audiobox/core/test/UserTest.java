@@ -6,7 +6,6 @@ package fm.audiobox.core.test;
 import java.util.Observable;
 import java.util.Observer;
 
-import fm.audiobox.core.exceptions.ForbiddenException;
 import org.apache.http.HttpStatus;
 import org.junit.Test;
 
@@ -72,8 +71,6 @@ public class UserTest extends AbxTestCase {
       result = user.isDaemonRunning();
     } catch (LoginException e) {
       fail(e.getMessage());
-    } catch (ForbiddenException e) {
-      fail(e.getMessage());
     }
 
     try {
@@ -81,8 +78,6 @@ public class UserTest extends AbxTestCase {
       assertSame( ip == null, !result );
     } catch (LoginException e) {
       fail(e.getMessage());
-    } catch (ForbiddenException e) {
-      e.printStackTrace();
     }
 
     log.info("Daemon is running: ***  " + result + " ***");
@@ -142,8 +137,6 @@ public class UserTest extends AbxTestCase {
       assertEquals(HttpStatus.SC_UNAUTHORIZED, e.getErrorCode() );
     } catch (ServiceException e) {
       fail( e.getMessage() );
-    } catch (ForbiddenException e) {
-      fail(e.getMessage());
     }
   }
 

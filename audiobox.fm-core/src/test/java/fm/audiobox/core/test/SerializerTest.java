@@ -1,6 +1,5 @@
 package fm.audiobox.core.test;
 
-import fm.audiobox.core.exceptions.ForbiddenException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -49,8 +48,6 @@ public class SerializerTest extends AbxTestCase {
       fail(e.getMessage());
     } catch (LoginException e) {
       fail(e.getMessage());
-    } catch (ForbiddenException e) {
-      fail(e.getMessage());
     }
 
     Playlist pl = pls.getPlaylistByType( Playlists.Type.CloudPlaylist );
@@ -62,8 +59,6 @@ public class SerializerTest extends AbxTestCase {
     } catch (ServiceException e) {
       fail(e.getMessage());
     } catch (LoginException e) {
-      fail(e.getMessage());
-    } catch (ForbiddenException e) {
       fail(e.getMessage());
     }
 

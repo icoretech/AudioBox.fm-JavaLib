@@ -26,7 +26,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import fm.audiobox.core.exceptions.ForbiddenException;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.MediaFile;
@@ -63,8 +62,6 @@ public class Upload extends JobTask {
     } catch (LoginException e) {
       this.log.error("Login error", e);
     } catch (ServiceException e) {
-      this.log.error("Error occurred while uploading", e);
-    } catch (ForbiddenException e) {
       this.log.error("Error occurred while uploading", e);
     }
 

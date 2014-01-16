@@ -2,7 +2,6 @@ package fm.audiobox.sync.test;
 
 import java.io.File;
 
-import fm.audiobox.core.exceptions.ForbiddenException;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -49,8 +48,6 @@ public class MediaFilesUploaderTest extends AbxTestCase {
       fail(e.getMessage());
     } catch (LoginException e) {
       fail(e.getMessage());
-    } catch (ForbiddenException e) {
-      fail(e.getMessage());
     }
   }
   
@@ -75,8 +72,6 @@ public class MediaFilesUploaderTest extends AbxTestCase {
       assertTrue( e.getErrorCode() == 409 );
     } catch (LoginException e) {
       fail(e.getMessage());
-    } catch (ForbiddenException e) {
-      fail(e.getMessage());
     }
 
   }
@@ -92,8 +87,6 @@ public class MediaFilesUploaderTest extends AbxTestCase {
     } catch (ServiceException e) {
       fail(e.getMessage());
     } catch (LoginException e) {
-      fail(e.getMessage());
-    } catch (ForbiddenException e) {
       fail(e.getMessage());
     }
 
@@ -116,8 +109,6 @@ public class MediaFilesUploaderTest extends AbxTestCase {
       fail(e.getMessage());
     } catch (LoginException e) {
       fail(e.getMessage());
-    } catch (ForbiddenException e) {
-      fail(e.getMessage());
     }
 
 
@@ -128,8 +119,6 @@ public class MediaFilesUploaderTest extends AbxTestCase {
     } catch (ServiceException e) {
       fail(e.getMessage());
     } catch (LoginException e) {
-      fail(e.getMessage());
-    } catch (ForbiddenException e) {
       fail(e.getMessage());
     }
 

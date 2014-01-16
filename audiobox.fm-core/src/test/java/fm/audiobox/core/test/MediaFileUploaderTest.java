@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.Observable;
 import java.util.Observer;
 
-import fm.audiobox.core.exceptions.ForbiddenException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -43,8 +42,6 @@ public class MediaFileUploaderTest extends AbxTestCase {
       fail(e.getMessage());
     } catch (LoginException e) {
       fail(e.getMessage());
-    } catch (ForbiddenException e) {
-      fail(e.getMessage());
     }
 
 
@@ -63,8 +60,6 @@ public class MediaFileUploaderTest extends AbxTestCase {
       fail(e.getMessage());
     } catch (LoginException e) {
       fail(e.getMessage());
-    } catch (ForbiddenException e) {
-      fail(e.getMessage());
     }
 
     try {
@@ -74,8 +69,6 @@ public class MediaFileUploaderTest extends AbxTestCase {
     } catch (ServiceException e) {
       fail(e.getMessage());
     } catch (LoginException e) {
-      fail(e.getMessage());
-    } catch (ForbiddenException e) {
       fail(e.getMessage());
     }
 
@@ -92,8 +85,6 @@ public class MediaFileUploaderTest extends AbxTestCase {
     } catch (ServiceException e) {
       fail(e.getMessage());
     } catch (LoginException e) {
-      fail(e.getMessage());
-    } catch (ForbiddenException e) {
       fail(e.getMessage());
     }
 
@@ -113,8 +104,6 @@ public class MediaFileUploaderTest extends AbxTestCase {
         fail(e.getMessage());
       } catch (LoginException e) {
         fail(e.getMessage());
-      } catch (ForbiddenException e) {
-        fail(e.getMessage());
       }
     }
     MediaFiles mfs = pl.getMediaFiles();
@@ -123,8 +112,6 @@ public class MediaFileUploaderTest extends AbxTestCase {
     } catch (ServiceException e) {
       fail(e.getMessage());
     } catch (LoginException e) {
-      fail(e.getMessage());
-    } catch (ForbiddenException e) {
       fail(e.getMessage());
     }
 
@@ -139,8 +126,6 @@ public class MediaFileUploaderTest extends AbxTestCase {
       fail(e.getMessage() );
     } catch (LoginException e) {
       fail(e.getMessage() );
-    } catch (ForbiddenException e) {
-      fail(e.getMessage());
     }
 
     mfs.addObserver(new Observer() {
@@ -159,8 +144,6 @@ public class MediaFileUploaderTest extends AbxTestCase {
       fail(e.getMessage() );
     } catch (LoginException e) {
       fail(e.getMessage() );
-    } catch (ForbiddenException e) {
-      fail(e.getMessage());
     }
 
   }

@@ -3,7 +3,6 @@ package fm.audiobox.core.test;
 import java.util.HashMap;
 import java.util.Map;
 
-import fm.audiobox.core.exceptions.ForbiddenException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,7 +26,7 @@ public class DefaultExceptionHandlerTests extends AbxTestCase {
     
     abx.getConfiguration().setDefaultLoginExceptionHandler(new ILoginExceptionHandler() {
       public void handle(LoginException loginException) {
-        params.put("loginException", loginException.getMessage() );
+        params.put("loginException", loginException.getClass().getSimpleName() + " - " + loginException.getMessage() );
       }
     });
     
@@ -38,22 +37,17 @@ public class DefaultExceptionHandlerTests extends AbxTestCase {
     } catch (LoginException e) {
       // Fire globally the exception
       e.fireGlobally();
-    } catch (ForbiddenException e) {
-      fail(e.getMessage());
     }
 
     assertTrue( params.containsKey("loginException") );
-    
-    
     params.clear();
+    
     try {
       abx.login(Fixtures.get(Fixtures.LOGIN), Fixtures.get(Fixtures.WRONG_PASS));
     } catch (ServiceException e) {
       fail( e.getMessage() );
     } catch (LoginException e) {
       // not globally
-    } catch (ForbiddenException e) {
-      fail(e.getMessage());
     }
 
     assertFalse( params.containsKey("loginException") ); 

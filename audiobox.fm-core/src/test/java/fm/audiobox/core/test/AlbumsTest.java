@@ -1,6 +1,5 @@
 package fm.audiobox.core.test;
 
-import fm.audiobox.core.exceptions.ForbiddenException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -35,8 +34,6 @@ public class AlbumsTest extends AbxTestCase {
       
       fail( e.getMessage() );
       
-    } catch (ForbiddenException e) {
-      fail(e.getMessage());
     }
 
     Playlist cloud = playlists.getPlaylistByType( Playlists.Type.CloudPlaylist );
@@ -51,8 +48,6 @@ public class AlbumsTest extends AbxTestCase {
       fail( e.getMessage() );
     } catch (LoginException e) {
       fail( e.getMessage() );
-    } catch (ForbiddenException e) {
-      fail(e.getMessage());
     }
 
     int originalSize = covers.size();

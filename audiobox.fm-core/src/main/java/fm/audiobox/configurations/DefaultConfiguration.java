@@ -8,11 +8,21 @@ import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import fm.audiobox.interfaces.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fm.audiobox.core.exceptions.LoginException;
+import fm.audiobox.core.exceptions.ServiceException;
+import fm.audiobox.interfaces.IAuthenticationHandle;
+import fm.audiobox.interfaces.ICacheManager;
+import fm.audiobox.interfaces.IConfiguration;
 import fm.audiobox.interfaces.IConnector.IConnectionMethod;
+import fm.audiobox.interfaces.IFactory;
+import fm.audiobox.interfaces.ILoginExceptionHandler;
+import fm.audiobox.interfaces.IRequestHandler;
+import fm.audiobox.interfaces.IResponseHandler;
+import fm.audiobox.interfaces.IRetryRequestHandle;
+import fm.audiobox.interfaces.IServiceExceptionHandler;
 
 
 /**
@@ -48,9 +58,19 @@ public class DefaultConfiguration implements IConfiguration {
   private ContentFormat requestFormat = ContentFormat.XML;
   private boolean useCache = false;
   private IFactory factory = new DefaultFactory();
-  private ILoginExceptionHandler loginHandler;
-  private IServiceExceptionHandler serviceHandler;
-  private IForbiddenExceptionHandler forbiddenHandler;
+  
+  // Default empty interceptor for LoginException
+  private ILoginExceptionHandler loginHandler = new ILoginExceptionHandler() {
+    public void handle(LoginException loginException) {
+    }
+  };
+  
+  // Default empty interceptor for ServiceException
+  private IServiceExceptionHandler serviceHandler = new IServiceExceptionHandler() {
+    public void handle(ServiceException serivceException) {
+    }
+  };
+  
   private String appName = APPLICATION_NAME;
   private String version = VERSION;
   private Class<? extends IConnectionMethod> connMethodClass = DefaultRequestMethod.class;
@@ -329,15 +349,6 @@ public class DefaultConfiguration implements IConfiguration {
     return this.serviceHandler;
   }
 
-  @Override
-  public void setDefaultForbiddenExceptionHandler(IForbiddenExceptionHandler handler) {
-    this.forbiddenHandler = handler;
-  }
-
-  @Override
-  public IForbiddenExceptionHandler getDefaultForbiddenExceptionHandler() {
-    return this.forbiddenHandler;
-  }
 
   @Override
   public void setHttpMethodType(Class<? extends IConnectionMethod> method) {

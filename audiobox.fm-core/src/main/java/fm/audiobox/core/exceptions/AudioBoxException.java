@@ -48,6 +48,17 @@ public abstract class AudioBoxException extends IOException {
     this.cause = cause;
   }
   
+  
+  public AudioBoxException(int errorCode, String message){
+    super(message);
+    this.errorCode = errorCode;
+  }
+  
+  public AudioBoxException(int errorCode, String message, Throwable cause){
+    this(errorCode, message);
+    this.cause = cause;
+  }
+  
   public int getErrorCode(){
     return errorCode;
   }

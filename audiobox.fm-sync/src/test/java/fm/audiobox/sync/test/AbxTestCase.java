@@ -1,6 +1,5 @@
 package fm.audiobox.sync.test;
 
-import fm.audiobox.core.exceptions.ForbiddenException;
 import org.junit.After;
 import org.junit.Before;
 import org.slf4j.Logger;
@@ -47,8 +46,6 @@ public abstract class AbxTestCase extends junit.framework.Assert {
     } catch (LoginException e) {
       fail(e.getMessage());
     } catch (ServiceException e) {
-      fail(e.getMessage());
-    } catch (ForbiddenException e) {
       fail(e.getMessage());
     }
     assertNotNull(user);
