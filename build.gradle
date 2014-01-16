@@ -1,0 +1,27 @@
+allprojects  {
+  apply plugin: 'maven'
+
+  group = 'fm.audiobox'
+version = '3.0-SNAPSHOT'
+}
+
+subprojects {
+  apply plugin: 'java'
+  sourceCompatibility = 1.7
+  targetCompatibility = 1.7
+
+
+  repositories {
+    mavenLocal()
+
+    maven { url "http://maven.jahia.org/maven2/" }
+    maven { url "http://nexus.magnolia-cms.com/content/repositories/magnolia.enterprise.releases" }
+    maven { url "http://repository.jboss.org/maven2" }
+    maven { url "http://audiobox.keytwo.net/" }
+    maven { url "http://repo.maven.apache.org/maven2" }
+  }
+
+
+
+
+}
