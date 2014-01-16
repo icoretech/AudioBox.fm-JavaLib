@@ -1,0 +1,5 @@
+rootProject.name = 'components'
+include ':audiobox.fm-core', ':audiobox.fm-sync'
+
+project(':audiobox.fm-core').projectDir = "$rootDir/audiobox.fm-core" as File
+project(':audiobox.fm-sync').projectDir = "$rootDir/audiobox.fm-sync" as File
