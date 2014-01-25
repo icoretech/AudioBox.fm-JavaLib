@@ -28,14 +28,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import fm.audiobox.core.exceptions.ForbiddenException;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.JsonElement;
+
 import fm.audiobox.AudioBox;
 import fm.audiobox.configurations.Response;
+import fm.audiobox.core.exceptions.ForbiddenException;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.observables.Event;
@@ -77,6 +79,7 @@ public class Playlist extends AbstractEntity implements Serializable {
   public static final String VISIBLE = "visible";
   public static final String SYNCABLE = "syncable";
   public static final String OFFLINE = "offline";
+  public static final String SEARCH_PARAMS = "search_params";
 
   private String name;
   private int position = 0;
@@ -90,6 +93,7 @@ public class Playlist extends AbstractEntity implements Serializable {
   private boolean visible;
   private String system_name;
   private boolean syncable;
+  private JsonElement search_params;
 
   private static final Map<String, Method> setterMethods = new HashMap<String, Method>();
   private static Map<String, Method> getterMethods = null;
@@ -115,6 +119,8 @@ public class Playlist extends AbstractEntity implements Serializable {
       setterMethods.put(VISIBLE, Playlist.class.getMethod("setVisible", boolean.class));
       setterMethods.put(SYNCABLE, Playlist.class.getMethod("setSyncable", boolean.class));
       setterMethods.put(OFFLINE, Playlist.class.getMethod("setOffline", boolean.class));
+      setterMethods.put(SEARCH_PARAMS, Playlist.class.getMethod("setSearchParams", JsonElement.class));
+      
       
     } catch (SecurityException e) {
       log.error("Security error", e);
@@ -163,6 +169,15 @@ public class Playlist extends AbstractEntity implements Serializable {
    */
   public void setName(String name) {
     this.name = name;
+  }
+  
+  
+  public void setSearchParams(JsonElement params) {
+    this.search_params = params;
+  }
+  
+  public JsonElement getSearchParams() {
+    return this.search_params;
   }
 
 
@@ -458,6 +473,7 @@ public class Playlist extends AbstractEntity implements Serializable {
         getterMethods.put(EMBEDDABLE, Playlist.class.getMethod("isEmbeddable"));
         getterMethods.put(VISIBLE, Playlist.class.getMethod("isVisible"));
         getterMethods.put(SYNCABLE, Playlist.class.getMethod("isSyncable"));
+        getterMethods.put(SEARCH_PARAMS, Playlist.class.getMethod("getSearchParams"));
       } catch (SecurityException e) {
         log.error("Security error", e);
       } catch (NoSuchMethodException e) {
