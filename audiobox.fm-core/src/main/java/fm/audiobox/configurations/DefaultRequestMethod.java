@@ -9,7 +9,6 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import fm.audiobox.core.exceptions.ForbiddenException;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
@@ -31,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fm.audiobox.core.exceptions.AudioBoxException;
+import fm.audiobox.core.exceptions.ForbiddenException;
 import fm.audiobox.core.exceptions.LoginException;
 import fm.audiobox.core.exceptions.ServiceException;
 import fm.audiobox.core.models.User;
@@ -181,8 +181,10 @@ public class DefaultRequestMethod extends Observable implements IConnectionMetho
            * we have to catch the exception and cast it to a known custom exception object
            */
 
-          log.error("An error occurred while executing request: " + getHttpMethod().getRequestLine().getUri());
-          log.error( e.getMessage() );
+          log.error(e.getClass().getSimpleName() + " while executing request: " + getHttpMethod().getRequestLine().getUri() );
+          if ( e.getMessage() != null && !"".equals(e.getMessage()) ) {
+            log.error( e.getMessage() );
+          }
 
           response = new Response( DefaultRequestMethod.this.format, AudioBoxException.GENERIC_ERROR, e.getMessage(), false );
           AudioBoxException responseException = null;
