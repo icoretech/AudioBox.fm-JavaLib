@@ -266,13 +266,13 @@ public class DefaultRequestMethod extends Observable implements IConnectionMetho
       }
     } catch (InterruptedException e) {
       log.error("Request has been interrupted: " + getHttpMethod().getURI().toString() + " - " + e.getMessage() );
-      throw new ServiceException(AudioBoxException.GENERIC_ERROR, "Interrupted: " + e.getMessage() );
+      throw new ServiceException(AudioBoxException.GENERIC_ERROR, "Interrupted", e );
     } catch ( CancellationException ce ) {
       log.error("Request has been cancelled: " + getHttpMethod().getRequestLine().getUri() );
-      throw new ServiceException(AudioBoxException.GENERIC_ERROR, "Cancelled: " + ce.getMessage() );
+      throw new ServiceException(AudioBoxException.GENERIC_ERROR, "Cancelled" + ce.getMessage(), ce );
     } catch (ExecutionException e) {
       log.error("An error occurred while executing request: " + getHttpMethod().getRequestLine().getUri(), e);
-      throw new ServiceException(AudioBoxException.GENERIC_ERROR, "Execution error: " + e.getMessage() );
+      throw new ServiceException(AudioBoxException.GENERIC_ERROR, "Execution error" + e.getMessage(), e );
     }
 
     // A generic error occurred, throw a generic ServiceException

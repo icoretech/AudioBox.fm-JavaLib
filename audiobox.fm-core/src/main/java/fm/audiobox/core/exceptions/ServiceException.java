@@ -41,6 +41,10 @@ public class ServiceException extends AudioBoxException {
     this.errorCode = errorCode;
   }
   
+  public ServiceException(int errorCode, String message, Throwable cause) {
+    super(errorCode, message, cause);
+  }
+  
 
   public ServiceException(String message) {
     super(message);
